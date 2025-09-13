@@ -5,7 +5,7 @@ import Pill from "@/components/ui/pill";
 
 export default function Hero() {
   return (
-    <section className='relative min-h-screen pt-[168px] pb-[26px]'>
+    <section className='relative min-h-screen pt-[168px]'>
       {/* Background div with gradient and blur */}
       <div className='absolute inset-0 w-full h-full -z-10 blur-[66.5px] bg-gradient-to-r from-[#EFF6FF] to-[#F0FDF4]' />
 
@@ -37,7 +37,7 @@ export default function Hero() {
 
           {/* Right Content - Image Space */}
           <div className='flex-1 flex justify-end'>
-            <div className='relative -right-8' style={{ minWidth: '692px' }}>
+            <div className='relative right-8' >
               {/* Placeholder for image */}
               <Image
                 src='/images/homepage/banner.png'
@@ -88,7 +88,6 @@ export default function Hero() {
             style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
             text='Transparantie'
             dotColor='#0AB27E'
-            hasBackground={true}
           />
           <Pill
             className='w-[264px] h-[52px]'
@@ -101,7 +100,6 @@ export default function Hero() {
             style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
             text='Geen valse beloften'
             dotColor='#0AB27E'
-            hasBackground={true}
           />
         </div>
       </div>
