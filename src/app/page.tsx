@@ -6,9 +6,7 @@ export default function Home() {
   return (
 <>
 <Hero />
-<section className="py-16">
-  <CTASection />
-</section>
+<CTASection />
 </>
   );
 }

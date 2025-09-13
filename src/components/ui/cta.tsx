@@ -23,36 +23,38 @@ function CTA({
   const fallbackImage = "/images/cta-img.png"
   
   return (
-    <div className={cn(
-      "w-full flex items-center justify-between bg-gradient-to-r from-green-100 to-blue-50 rounded-[24px] p-8 lg:p-12 lg:py-16",
-      className
-    )}>
-      <div className="flex-1 max-w-[500px] pr-8">
-        <h2 className="text-[32px] lg:text-[36px] font-bold text-gray-900 mb-6 leading-tight">
+    <div
+      className={cn(
+        'w-full flex items-center justify-between bg-gradient-to-r from-green-100 to-blue-50 rounded-[25px] lg:pt-9.5 lg:pb-14 lg:px-16 relative',
+        className
+      )}
+    >
+      <div className='flex-1 max-w-[700px]'>
+        <h2 className='text-[32px] lg:text-5xl font-semibold text-foreground lg:leading-12.5'>
           {heading}
         </h2>
-        <p className="text-gray-600 text-[16px] lg:text-[18px] mb-8 leading-relaxed">
+        <p className='text[#434343] text-[16px] lg:text-2xl lg:leading-[40px] mt-9.5 mb-14.5'>
           {description}
         </p>
-        <Button 
+        <Button
           onClick={ctaAction}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold text-[16px] shadow-lg"
+          className='py-[11px] px-[31px] text-2xl leading-10 font-medium'
         >
           {ctaText}
         </Button>
       </div>
-      
-      <div className="flex-shrink-0">
+
+      <div className='absolute bottom-0 right-0'>
         <Image
           src={image || fallbackImage}
-          alt="CTA Image"
-          width={280}
-          height={280}
-          className="w-[280px] h-[280px] object-contain"
+          alt='CTA Image'
+          width={379}
+          height={373}
+          className='object-contain'
         />
       </div>
     </div>
-  )
+  );
 }
 
 export { CTA }

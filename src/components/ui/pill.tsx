@@ -42,7 +42,7 @@ export default function Pill({ text, dotColor = '#0AB27E', className = '', hasBa
           style={{ backgroundColor: dotColor }}
         ></div>
       </div>
-      <span className="text-foreground font-medium text-sm whitespace-nowrap">
+      <span className="text-foreground font-medium text-sm whitespace-nowrap font-montserrat">
         {text}
       </span>
     </div>

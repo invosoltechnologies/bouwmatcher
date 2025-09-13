@@ -9,15 +9,15 @@ export default function CTASection() {
   }
 
   return (
-    <div className="w-full">
-      <div className="container mx-auto px-4">
+    <section className='w-full lg:my-20.5'>
+      <div className='custom-container'>
         <CTA
-          heading="Heeft u vragen over ons proces?"
-          description="Neem gerust contact met ons op via e-mail, telefoon of WhatsApp. Ons team staat klaar om u verder te helpen."
-          ctaText="Neem contact op"
+          heading='Heeft u vragen over ons proces?'
+          description='Neem gerust contact met ons op via e-mail, telefoon of WhatsApp. Ons team staat klaar om u verder te helpen.'
+          ctaText='Neem contact op'
           ctaAction={handleCTAClick}
         />
       </div>
-    </div>
-  )
+    </section>
+  );
 }
