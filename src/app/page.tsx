@@ -1,10 +1,14 @@
+
 import Hero from "@/components/Homepage/Hero";
-import TopBar from "@/components/TopBar";
+import CTASection from "@/components/Homepage/CTASection";
 
 export default function Home() {
   return (
 <>
 <Hero />
+<section className="py-16">
+  <CTASection />
+</section>
 </>
   );
 }
