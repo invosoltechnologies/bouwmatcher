@@ -7,11 +7,13 @@ import StatsSection from "@/components/Homepage/StatsSection";
 import PartnersSection from "@/components/Homepage/PartnersSection";
 import ServicesSection from "@/components/Homepage/ServicesSection";
 import ProcessSection from "@/components/Homepage/ProcessSection";
+import Values from "@/components/Homepage/Values";
 
 export default function Home() {
   return (
 <>
 <Hero />
+<Values />
 <ProcessSection />
 <ServicesSection />
 <PartnersSection />
