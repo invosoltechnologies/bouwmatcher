@@ -70,7 +70,7 @@ export default function ProcessSteps({
               </h2>
             )}
             {subtitle && (
-              <p className='text-gray-600 text-2xl'>
+              <p className='text-muted-foreground  text-2xl'>
                 {subtitle}
               </p>
             )}
