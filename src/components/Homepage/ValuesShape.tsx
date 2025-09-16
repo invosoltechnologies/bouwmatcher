@@ -68,13 +68,13 @@ export default function ValuesShape() {
                   className='w-[76px] h-[76px]'
                 />
 
-                <h3 className='text-lg font-bold text-gray-900'>
+                <h3 className='text-[26px] font-bold text-slate-900'>
                   {value.title}
                 </h3>
               </div>
               {/* Description */}
               <p
-                className={`text-sm text-gray-700 leading-relaxed max-w-44 text-wrap ${
+                className={`text-base text-slate-900 leading-relaxed max-w-44 text-wrap ${
                   value.id % 2 === 0 ? 'text-right' : 'text-left'
                 }  `}
               >
