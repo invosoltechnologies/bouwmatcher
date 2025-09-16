@@ -33,9 +33,9 @@ const valuesData = [
 
 export default function ValuesShape() {
   return (
-    <div className="relative flex justify-center items-center max-w-4xl mx-auto px-4">
+    <div className='relative flex justify-center items-center max-w-4xl mx-auto px-4'>
       {/* Cards Grid */}
-      <div className="grid grid-cols-2 gap-x-[35px] gap-y-[27px] relative z-10">
+      <div className='grid grid-cols-2 gap-x-[35px] gap-y-[27px] relative z-10'>
         {valuesData.map((value) => {
           const isBottomCard = value.position.includes('bottom');
 
@@ -86,32 +86,32 @@ export default function ValuesShape() {
       </div>
 
       {/* Center Circle */}
-      {/* <div className="absolute inset-0 flex items-center justify-center">
-        <div
-          className="relative rounded-full border border-gray-200"
-          style={{
-            width: '231px',
-            height: '231px',
-            background: 'linear-gradient(90deg, rgba(2, 58, 162, 0.34) 0%, #0AB27E 50%, rgba(2, 58, 162, 0.23) 100%)'
-          }}
-        >
-          <div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-primary rounded-full flex items-center justify-center"
-            style={{
-              width: '176px',
-              height: '176px',
-              boxShadow: '0px 10px 15px 0px #0000001A'
-            }}
-          >
-            <div className="text-center text-white">
-              <div className="text-sm font-medium leading-tight">
-                Jouw zekerheid<br />
-                in de bouw.
-              </div>
-            </div>
+
+      <div
+        className='absolute inset-0  top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 rounded-full border border-gray-200 '
+        style={{
+          width: '231px',
+          height: '231px',
+          background:
+            'linear-gradient(90deg, rgba(2, 58, 162, 0.34) 0%, #0AB27E 50%, rgba(2, 58, 162, 0.23) 100%)',
+        }}
+      ></div>
+      <div
+        className='absolute z-30 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-primary rounded-full flex items-center justify-center opacity-100'
+        style={{
+          width: '176px',
+          height: '176px',
+          boxShadow: '0px 10px 15px 0px #0000001A',
+        }}
+      >
+        <div className='text-center text-white'>
+          <div className='text-sm font-medium leading-tight'>
+            Jouw zekerheid
+            <br />
+            in de bouw.
           </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 }
