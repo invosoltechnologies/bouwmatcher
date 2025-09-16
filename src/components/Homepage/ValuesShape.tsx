@@ -32,12 +32,48 @@ const valuesData = [
 ];
 
 export default function ValuesShape() {
+  const getInvertedRadiusMask = (position: string) => {
+    const borderRadius = '20px'; // Corner radius of the cards
+    const cutoutDepth = '5px'; // How deep the curved cutout goes into the card
+    const cutoutLengthHorizontal = '90px'; // How far the cutout extends horizontally
+    const cutoutLengthVertical = '110px'; // How far the cutout extends vertically
+
+    const baseMask = `calc(2*${borderRadius}) calc(2*${borderRadius}) radial-gradient(#000 70%,#0000 72%)`;
+    const totalCutoutSize = `(${cutoutDepth} + ${borderRadius})`; // Combined size for positioning calculations
+
+    switch (position) {
+      case 'top-left':
+        return {
+          mask: `calc(100% - ${totalCutoutSize} - ${cutoutLengthHorizontal}) 100% /${baseMask}, 100% calc(100% - ${totalCutoutSize} - ${cutoutLengthVertical}) /${baseMask}, radial-gradient(${cutoutDepth} at 100% 100%,#0000 99%,#000 calc(100% + 1px)) calc(-1*${borderRadius} - ${cutoutLengthHorizontal}) calc(-1*${borderRadius} - ${cutoutLengthVertical}), conic-gradient(from 90deg at calc(100% - ${borderRadius}) calc(100% - ${borderRadius}),#0000 25%,#000 0) calc(-1*${totalCutoutSize} - ${cutoutLengthHorizontal}) 0, conic-gradient(from 90deg at calc(100% - ${borderRadius}) calc(100% - ${borderRadius}),#0000 25%,#000 0) 0 calc(-1*${totalCutoutSize} - ${cutoutLengthVertical})`,
+          maskRepeat: 'no-repeat'
+        };
+      case 'top-right':
+        return {
+          mask: `calc(${totalCutoutSize} + ${cutoutLengthHorizontal}) 100% /${baseMask}, 0 calc(100% - ${totalCutoutSize} - ${cutoutLengthVertical}) /${baseMask}, radial-gradient(${cutoutDepth} at 0 100%,#0000 99%,#000 calc(100% + 1px)) calc(${borderRadius} + ${cutoutLengthHorizontal}) calc(-1*${borderRadius} - ${cutoutLengthVertical}), conic-gradient(from 180deg at ${borderRadius} calc(100% - ${borderRadius}),#0000 25%,#000 0) calc(${totalCutoutSize} + ${cutoutLengthHorizontal}) 0, conic-gradient(from 180deg at ${borderRadius} calc(100% - ${borderRadius}),#0000 25%,#000 0) 0 calc(-1*${totalCutoutSize} - ${cutoutLengthVertical})`,
+          maskRepeat: 'no-repeat'
+        };
+      case 'bottom-left':
+        return {
+          mask: `calc(100% - ${totalCutoutSize} - ${cutoutLengthHorizontal}) 0 /${baseMask}, 100% calc(${totalCutoutSize} + ${cutoutLengthVertical}) /${baseMask}, radial-gradient(${cutoutDepth} at 100% 0,#0000 99%,#000 calc(100% + 1px)) calc(-1*${borderRadius} - ${cutoutLengthHorizontal}) calc(${borderRadius} + ${cutoutLengthVertical}), conic-gradient(at calc(100% - ${borderRadius}) ${borderRadius},#0000 25%,#000 0) calc(-1*${totalCutoutSize} - ${cutoutLengthHorizontal}) 0, conic-gradient(at calc(100% - ${borderRadius}) ${borderRadius},#0000 25%,#000 0) 0 calc(${totalCutoutSize} + ${cutoutLengthVertical})`,
+          maskRepeat: 'no-repeat'
+        };
+      case 'bottom-right':
+        return {
+          mask: `calc(${totalCutoutSize} + ${cutoutLengthHorizontal}) 0 /${baseMask}, 0 calc(${totalCutoutSize} + ${cutoutLengthVertical}) /${baseMask}, radial-gradient(${cutoutDepth} at 0 0,#0000 99%,#000 calc(100% + 1px)) calc(${borderRadius} + ${cutoutLengthHorizontal}) calc(${borderRadius} + ${cutoutLengthVertical}), conic-gradient(at ${borderRadius} ${borderRadius},#000 75%,#0000 0) calc(${totalCutoutSize} + ${cutoutLengthHorizontal}) 0, conic-gradient(at ${borderRadius} ${borderRadius},#000 75%,#0000 0) 0 calc(${totalCutoutSize} + ${cutoutLengthVertical})`,
+          maskRepeat: 'no-repeat'
+        };
+      default:
+        return {};
+    }
+  };
+
   return (
     <div className='relative flex justify-center items-center max-w-4xl mx-auto px-4'>
       {/* Cards Grid */}
       <div className='grid grid-cols-2 gap-x-[35px] gap-y-[27px] relative z-10'>
         {valuesData.map((value) => {
           const isBottomCard = value.position.includes('bottom');
+          const maskStyle = getInvertedRadiusMask(value.position);
 
           return (
             <div
@@ -51,6 +87,7 @@ export default function ValuesShape() {
                     ? 'linear-gradient(90deg, rgba(10, 178, 126, 0.25) 0%, rgba(2, 58, 162, 0.25) 100%)'
                     : 'linear-gradient(90deg, rgba(2, 58, 162, 0.25) 0%, rgba(10, 178, 126, 0.25) 100%)',
                 boxShadow: '0px 16px 40px 0px #2929291F',
+                ...maskStyle
               }}
             >
               {/* Content based on position */}
