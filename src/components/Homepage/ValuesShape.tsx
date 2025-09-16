@@ -33,10 +33,10 @@ const valuesData = [
 
 export default function ValuesShape() {
   const getInvertedRadiusMask = (position: string) => {
-    const borderRadius = '20px'; // Corner radius of the cards
-    const cutoutDepth = '5px'; // How deep the curved cutout goes into the card
-    const cutoutLengthHorizontal = '90px'; // How far the cutout extends horizontally
-    const cutoutLengthVertical = '110px'; // How far the cutout extends vertically
+    const borderRadius = '10px'; // Corner radius of the cards
+    const cutoutDepth = '100px'; // How deep the curved cutout goes into the card
+    const cutoutLengthHorizontal = '20px'; // How far the cutout extends horizontally
+    const cutoutLengthVertical = '20px'; // How far the cutout extends vertically
 
     const baseMask = `calc(2*${borderRadius}) calc(2*${borderRadius}) radial-gradient(#000 70%,#0000 72%)`;
     const totalCutoutSize = `(${cutoutDepth} + ${borderRadius})`; // Combined size for positioning calculations
@@ -78,15 +78,23 @@ export default function ValuesShape() {
           return (
             <div
               key={value.id}
-              className={`relative w-[333px] h-[291px] rounded-[20px] p-6 flex flex-col gap-0.5 ${
+              className={`relative w-[333px] h-[291px] rounded-[20px] p-5 flex flex-col gap-0.5 transition-all duration-300 ease-in-out cursor-pointer ${
                 isBottomCard ? 'flex-col-reverse' : ''
-              } ${value.id % 2 === 0 ? 'items-end' : 'items-start'}`}
+              } ${value.id % 2 === 0 ? 'items-end' : 'items-start'} ${
+                value.position === 'top-left'
+                  ? 'hover:scale-110 hover:-translate-x-6 hover:-translate-y-6'
+                  : value.position === 'top-right'
+                  ? 'hover:scale-110 hover:translate-x-6 hover:-translate-y-6'
+                  : value.position === 'bottom-left'
+                  ? 'hover:scale-110 hover:-translate-x-6 hover:translate-y-6'
+                  : 'hover:scale-110 hover:translate-x-6 hover:translate-y-6'
+              }`}
               style={{
                 background:
                   value.id % 2 === 0
                     ? 'linear-gradient(90deg, rgba(10, 178, 126, 0.25) 0%, rgba(2, 58, 162, 0.25) 100%)'
                     : 'linear-gradient(90deg, rgba(2, 58, 162, 0.25) 0%, rgba(10, 178, 126, 0.25) 100%)',
-                boxShadow: '0px 16px 40px 0px #2929291F',
+                filter: 'drop-shadow(0px 16px 40px #2929291F)',
                 ...maskStyle
               }}
             >
