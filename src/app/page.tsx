@@ -13,8 +13,8 @@ export default function Home() {
   return (
 <>
 <Hero />
-<Values />
 <ProcessSection />
+<Values />
 <ServicesSection />
 <PartnersSection />
 <StatsSection />
