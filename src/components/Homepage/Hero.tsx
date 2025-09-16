@@ -37,7 +37,7 @@ export default function Hero() {
 
           {/* Right Content - Image Space */}
           <div className='flex-1 flex justify-end'>
-            <div className='relative right-8' >
+            <div className='relative right-8'>
               {/* Placeholder for image */}
               <Image
                 src='/images/homepage/banner.png'
@@ -58,13 +58,13 @@ export default function Hero() {
               ></div>
 
               {/* Bottom right pill */}
-              <div className='absolute bottom-10 left-4 bg-white/80 backdrop-blur-sm rounded-xl p-4 pr-5 border border-gray-200'>
-                <div className='flex items-center gap-2'>
-                  <div className='w-2 h-2 bg-accent rounded-full'></div>
-                  <span className='text-sm text-gray-700 font-medium'>
-                    24/7 beschikbaar
-                  </span>
-                </div>
+              <div className='absolute bottom-10 left-4'>
+                <Pill
+                  className='bg-white/80 p-4 pr-5'
+                  style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
+                  text='24/7 beschikbaar'
+                  dotColor='#0AB27E'
+                />
               </div>
             </div>
           </div>
@@ -103,7 +103,7 @@ export default function Hero() {
           />
         </div>
       </div>
-      <div className="bg-white w-full h-14"></div>
+      <div className='bg-white w-full h-14'></div>
     </section>
   );
 }
