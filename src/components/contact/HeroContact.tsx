@@ -52,8 +52,8 @@ export default function HeroContact() {
               <div
                 className='absolute w-24 h-24 bg-primary border border-gray-200 rounded-2xl -z-10'
                 style={{
-                  top: '-12px',
-                  left: '12px',
+                  top: '5px',
+                  left: '25px',
                   boxShadow:
                     '0px 20px 25px 0px #0000001A, 0px 8px 10px 0px #0000001A',
                 }}
@@ -62,8 +62,8 @@ export default function HeroContact() {
               <div
                 className='absolute w-24 h-24 bg-accent border border-gray-200 rounded-2xl -z-10'
                 style={{
-                  bottom: '-12px',
-                  right: '12px',
+                  bottom: '45px',
+                  right: '25px',
                   boxShadow:
                     '0px 20px 25px 0px #0000001A, 0px 8px 10px 0px #0000001A',
                 }}
