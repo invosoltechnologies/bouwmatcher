@@ -32,9 +32,9 @@ export default function Navbar() {
             <Image
               src='/images/logo.svg'
               alt='Bouw Matcher'
-              width={120}
-              height={32}
-              className='h-8 w-auto'
+              width={105}
+              height={40}
+              className='h-10 w-[105px]'
             />
           </Link>
 
