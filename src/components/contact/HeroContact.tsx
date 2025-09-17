@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Pill from "@/components/ui/pill";
+import { ArrowDown, Clock, Shield, Globe } from "lucide-react";
 
 export default function HeroContact() {
   return (
@@ -27,13 +28,33 @@ export default function HeroContact() {
               Bouwmatcher
             </h1>
 
-            <p className='text-2xl leading-7 text-[#555555E5]'>
+            <p className='text-2xl leading-7 text-[#555555E5] mb-6'>
               We reageren binnen 24 uur. Gratis & vrijblijvend.
             </p>
 
+            {/* Feature Pills */}
+            <div className='flex flex-wrap gap-4 mb-8'>
+              <div className='flex items-center gap-2 bg-white rounded-full px-4 py-2 border border-gray-200'>
+                <Clock className='w-4 h-4 text-blue-600' />
+                <span className='text-sm font-medium'>&lt;24u reactie</span>
+              </div>
+              <div className='flex items-center gap-2 bg-white rounded-full px-4 py-2 border border-gray-200'>
+                <Shield className='w-4 h-4 text-blue-600' />
+                <span className='text-sm font-medium'>Veilige gegevens (GDPR)</span>
+              </div>
+              <div className='flex items-center gap-2 bg-white rounded-full px-4 py-2 border border-gray-200'>
+                <Globe className='w-4 h-4 text-blue-600' />
+                <span className='text-sm font-medium'>NL/EN</span>
+              </div>
+            </div>
+
             {/* CTA Button */}
-            <Button size='lg' className='text-lg h-auto px-9.5 py-4'>
-              Hoe werkt het?
+            <Button
+              size='lg'
+              className='text-lg h-auto px-9.5 py-4 flex items-center gap-4'
+            >
+              <span>Stel je vraag</span>
+              <ArrowDown />
             </Button>
           </div>
 
@@ -81,35 +102,8 @@ export default function HeroContact() {
             </div>
           </div>
         </div>
-        {/* Trust Pills */}
-        <div className='mt-16 mb-6.5 flex flex-wrap justify-center gap-4'>
-          <Pill
-            className='w-[264px] h-[52px]'
-            style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
-            text='Eerlijkheid'
-            dotColor='#0AB27E'
-          />
-          <Pill
-            className='w-[264px] h-[52px]'
-            style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
-            text='Transparantie'
-            dotColor='#0AB27E'
-          />
-          <Pill
-            className='w-[264px] h-[52px]'
-            style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
-            text='Doelgericht'
-            dotColor='#0AB27E'
-          />
-          <Pill
-            className='w-[264px] h-[52px]'
-            style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
-            text='Geen valse beloften'
-            dotColor='#0AB27E'
-          />
-        </div>
       </div>
-      <div className='bg-white w-full h-14'></div>
+      {/* <div className='bg-white w-full h-14'></div> */}
     </section>
   );
 }
