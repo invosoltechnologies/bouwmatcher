@@ -14,47 +14,84 @@ export default function HeroContact() {
         <div className='flex flex-col lg:flex-row gap-8 items-center w-full'>
           {/* Left Content */}
           <div className='flex-1'>
-            {/* Trust Pill */}
-            <div className='inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-8 py-2 mb-6 border border-[#023AA233]'>
-              <div className='w-2 h-2 bg-accent rounded-full'></div>
-              <span className='text-sm text-primary font-medium'>
-                Vertrouwen door 10,000+ Klanten
-              </span>
-            </div>
-
             {/* Main Heading */}
             <h1 className='text-4xl lg:text-5xl font-display font-normal leading-tight mb-6'>
               Neem <span className='text-accent'>contact </span>op met
               Bouwmatcher
             </h1>
 
-            <p className='text-2xl leading-7 text-[#555555E5] mb-6'>
+            <p className='text-2xl leading-7 text-[#555555E5] mb-8'>
               We reageren binnen 24 uur. Gratis & vrijblijvend.
             </p>
 
             {/* Feature Pills */}
             <div className='flex flex-wrap gap-4 mb-8'>
-              <div className='flex items-center gap-2 bg-white rounded-full px-4 py-2 border border-gray-200'>
-                <Clock className='w-4 h-4 text-blue-600' />
-                <span className='text-sm font-medium'>&lt;24u reactie</span>
+              <div
+                className='flex items-center gap-2 bg-white rounded-full px-6 py-3 border border-gray-200'
+                style={{
+                  boxShadow:
+                    '0px 10px 15px 0px #0000000D, 0px 4px 6px 0px #0000000D',
+                }}
+              >
+                <Image
+                  src='/icons/clock-icon.svg'
+                  width={16}
+                  height={16}
+                  alt='Date'
+                  className='-mt-0.5'
+                />
+                <span className='text-sm font-semibold text-primary'>
+                  &lt; 24u reactie
+                </span>
               </div>
-              <div className='flex items-center gap-2 bg-white rounded-full px-4 py-2 border border-gray-200'>
-                <Shield className='w-4 h-4 text-blue-600' />
-                <span className='text-sm font-medium'>Veilige gegevens (GDPR)</span>
+              <div
+                className='flex items-center gap-2 bg-white rounded-full px-4 py-2 border border-gray-200'
+                style={{
+                  boxShadow:
+                    '0px 10px 15px 0px #0000000D, 0px 4px 6px 0px #0000000D',
+                }}
+              >
+                <Image
+                  src='/icons/shield.svg'
+                  width={16}
+                  height={16}
+                  alt='Date'
+                  className='-mt-0.5'
+                />
+                <span className='text-sm font-semibold text-primary'>
+                  Veilige gegevens (GDPR)
+                </span>
               </div>
-              <div className='flex items-center gap-2 bg-white rounded-full px-4 py-2 border border-gray-200'>
-                <Globe className='w-4 h-4 text-blue-600' />
-                <span className='text-sm font-medium'>NL/EN</span>
+              <div
+                className='flex items-center gap-2 bg-white rounded-full px-4 py-2 border border-gray-200'
+                style={{
+                  boxShadow:
+                    '0px 10px 15px 0px #0000000D, 0px 4px 6px 0px #0000000D',
+                }}
+              >
+                <Image
+                  src='/icons/globe.svg'
+                  width={16}
+                  height={16}
+                  alt='Date'
+                  className='-mt-0.5'
+                />
+                <span className='text-sm font-semibold text-primary'>
+                  NL/EN
+                </span>
               </div>
             </div>
 
             {/* CTA Button */}
             <Button
-              size='lg'
-              className='text-lg h-auto px-9.5 py-4 flex items-center gap-4'
+              className='text-lg h-auto px-11 py-5 flex items-center font-semibold rounded-2xl gap-2'
+              style={{
+                boxShadow:
+                  '0px 10px 15px 0px #0000001A, 0px 4px 6px 0px #0000001A',
+              }}
             >
               <span>Stel je vraag</span>
-              <ArrowDown />
+              <ArrowDown className='font-semibold text-lg' />
             </Button>
           </div>
 
