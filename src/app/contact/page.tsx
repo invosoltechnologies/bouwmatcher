@@ -1,6 +1,7 @@
 
 import HeroContact from "@/components/contact/HeroContact";
 import ContactForm from "@/components/contact/ContactForm";
+import ContactMethods from "@/components/contact/ContactMethods";
 
 export default function Contact() {
   return (
@@ -11,6 +12,7 @@ export default function Contact() {
           <ContactForm />
         </div>
       </section>
+      <ContactMethods />
     </>
   );
 }

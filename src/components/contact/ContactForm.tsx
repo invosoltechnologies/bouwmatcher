@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,242 +15,339 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Send, CloudUpload } from "lucide-react";
+import { ContactFormData, ContactFormProps } from "@/types/contact";
 
-export default function ContactForm() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    subject: "",
-    category: "",
-    message: "",
-    file: null as File | null,
-    agreeToTerms: false,
+export default function ContactForm({ onSubmit }: ContactFormProps) {
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<ContactFormData>({
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      subject: "",
+      category: "",
+      message: "",
+      agreeToTerms: false,
+    },
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  const watchedFile = watch("file");
+  const selectedFileName = watchedFile?.[0]?.name;
 
-  const handleCheckboxChange = (checked: boolean) => {
-    setFormData(prev => ({ ...prev, agreeToTerms: checked }));
-  };
-
-  const handleSelectChange = (value: string) => {
-    setFormData(prev => ({ ...prev, category: value }));
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setFormData(prev => ({ ...prev, file }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission
-    console.log("Form submitted:", formData);
+  const onFormSubmit = async (data: ContactFormData) => {
+    try {
+      console.log("Form submitted:", data);
+      if (onSubmit) {
+        await onSubmit(data);
+      }
+      // Reset form after successful submission
+      reset();
+    } catch (error) {
+      console.error("Form submission error:", error);
+    }
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto bg-white rounded-3xl p-12 shadow-lg relative z-20 -top-20">
+    <div className='w-full max-w-3xl mx-auto bg-white/90 border-gray-200 rounded-3xl p-12 shadow-lg relative z-20 -top-20'>
       {/* Header */}
-      <div className="flex items-center gap-3 mb-8">
-          <Image
-            src="/images/contact/contact-form-head.svg"
-            width={48}
-            height={48}
-            alt="Contact"
-            className="w-12 h-12"
-          />
+      <div className='flex items-center gap-4 mb-8'>
+        <Image
+          src='/images/contact/contact-form-head.svg'
+          width={48}
+          height={48}
+          alt='Contact'
+          className='w-12 h-12'
+        />
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className='text-2xl leading-8 text-foreground'>
             Stuur ons een bericht
           </h2>
-          <p className="text-sm text-gray-500">
+          <p className='text-base leading-5 text-muted-foreground'>
             Gratis, reactietijd &lt;24u
           </p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit(onFormSubmit)} className='space-y-6'>
         {/* Name and Email Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           <div>
-            <Label htmlFor="name" className="block text-gray-700 mb-2">
-              Naam *
+            <Label
+              htmlFor='name'
+              className='block text-lg font-medium text-slate-700 mb-2'
+            >
+              Naam <span className='text-red-600'>*</span>
             </Label>
             <Input
-              id="name"
-              name="name"
-              type="text"
-              placeholder="Uw volledige naam"
-              value={formData.name}
-              onChange={handleInputChange}
-              required
-              className="h-12"
+              id='name'
+              type='text'
+              placeholder='Uw volledige naam'
+              className='h-12 md:text-lg'
+              {...register('name', {
+                required: 'Naam is verplicht',
+                minLength: {
+                  value: 2,
+                  message: 'Naam moet minimaal 2 karakters bevatten',
+                },
+              })}
             />
+            {errors.name && (
+              <p className='text-sm text-red-500 mt-1'>{errors.name.message}</p>
+            )}
           </div>
           <div>
-            <Label htmlFor="email" className="block text-gray-700 mb-2">
-              E-mail *
+            <Label
+              htmlFor='email'
+              className='block text-lg font-medium text-slate-700 mb-2'
+            >
+              E-mail <span className='text-red-600'>*</span>
             </Label>
             <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="uw.email@voorbeeld.nl"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-              className="h-12"
+              id='email'
+              type='email'
+              placeholder='uw.email@voorbeeld.nl'
+              className='h-12 md:text-lg'
+              {...register('email', {
+                required: 'E-mail is verplicht',
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: 'Voer een geldig e-mailadres in',
+                },
+              })}
             />
+            {errors.email && (
+              <p className='text-sm text-red-500 mt-1'>
+                {errors.email.message}
+              </p>
+            )}
           </div>
         </div>
 
         {/* Phone and Subject Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           <div>
-            <Label htmlFor="phone" className="block text-gray-700 mb-2">
+            <Label
+              htmlFor='phone'
+              className='block text-lg font-medium text-slate-700 mb-2'
+            >
               Telefoon
             </Label>
             <Input
-              id="phone"
-              name="phone"
-              type="tel"
-              placeholder="06 12 34 56 78"
-              value={formData.phone}
-              onChange={handleInputChange}
-              className="h-12"
+              id='phone'
+              type='tel'
+              placeholder='06 12 34 56 78'
+              className='h-12 md:text-lg'
+              {...register('phone', {
+                pattern: {
+                  value: /^[\+]?[0-9\s\-\(\)]+$/,
+                  message: 'Voer een geldig telefoonnummer in',
+                },
+              })}
             />
+            {errors.phone && (
+              <p className='text-sm text-red-500 mt-1'>
+                {errors.phone.message}
+              </p>
+            )}
           </div>
           <div>
-            <Label htmlFor="subject" className="block text-gray-700 mb-2">
-              Onderwerp *
+            <Label
+              htmlFor='subject'
+              className='block text-lg font-medium text-slate-700 mb-2'
+            >
+              Onderwerp <span className='text-red-600'>*</span>
             </Label>
             <Input
-              id="subject"
-              name="subject"
-              type="text"
-              placeholder="Waar gaat uw vraag over?"
-              value={formData.subject}
-              onChange={handleInputChange}
-              required
-              className="h-12"
+              id='subject'
+              type='text'
+              placeholder='Waar gaat uw vraag over?'
+              className='h-12 md:text-lg'
+              {...register('subject', {
+                required: 'Onderwerp is verplicht',
+                minLength: {
+                  value: 3,
+                  message: 'Onderwerp moet minimaal 3 karakters bevatten',
+                },
+              })}
             />
+            {errors.subject && (
+              <p className='text-sm text-red-500 mt-1'>
+                {errors.subject.message}
+              </p>
+            )}
           </div>
         </div>
 
         {/* Category Select */}
         <div>
-          <Label htmlFor="category" className="block text-gray-700 mb-2">
+          <Label
+            htmlFor='category'
+            className='block text-lg font-medium text-slate-700 mb-2'
+          >
             Type vraag
           </Label>
-          <Select onValueChange={handleSelectChange}>
-            <SelectTrigger className="w-full h-12">
-              <SelectValue placeholder="Selecteer een categorie" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="general">Algemene vraag</SelectItem>
-              <SelectItem value="quote">Offerte aanvraag</SelectItem>
-              <SelectItem value="support">Ondersteuning</SelectItem>
-              <SelectItem value="partnership">Samenwerking</SelectItem>
-              <SelectItem value="complaint">Klacht</SelectItem>
-            </SelectContent>
-          </Select>
+          <Controller
+            name='category'
+            control={control}
+            rules={{ required: 'Selecteer een categorie' }}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value}>
+                <SelectTrigger
+                  className='w-full h-12 md:text-lg cursor-pointer'
+                  iconClassName='w-[31px] h-[31px]'
+                >
+                  <SelectValue placeholder='Selecteer een categorie' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='general'>Algemene vraag</SelectItem>
+                  <SelectItem value='quote'>Offerte aanvraag</SelectItem>
+                  <SelectItem value='support'>Ondersteuning</SelectItem>
+                  <SelectItem value='partnership'>Samenwerking</SelectItem>
+                  <SelectItem value='complaint'>Klacht</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {errors.category && (
+            <p className='text-sm text-red-500 mt-1'>
+              {errors.category.message}
+            </p>
+          )}
         </div>
 
         {/* Message */}
         <div>
-          <Label htmlFor="message" className="block text-gray-700 mb-2">
-            Bericht *
+          <Label
+            htmlFor='message'
+            className='block text-lg font-medium text-slate-700 mb-2'
+          >
+            Bericht <span className='text-red-600'>*</span>
           </Label>
           <Textarea
-            id="message"
-            name="message"
-            placeholder="Beschrijf uw vraag of project zo gedetailleerd mogelijk..."
-            value={formData.message}
-            onChange={handleInputChange}
-            required
-            className="min-h-32 resize-none"
+            id='message'
+            placeholder='Beschrijf uw vraag of project zo gedetailleerd mogelijk...'
+            className='min-h-32 resize-none md:text-lg'
+            {...register('message', {
+              required: 'Bericht is verplicht',
+              minLength: {
+                value: 10,
+                message: 'Bericht moet minimaal 10 karakters bevatten',
+              },
+            })}
           />
+          {errors.message && (
+            <p className='text-sm text-red-500 mt-1'>
+              {errors.message.message}
+            </p>
+          )}
         </div>
 
         {/* File Upload */}
         <div>
-          <Label htmlFor="file" className="block text-gray-700 mb-2">
+          <Label
+            htmlFor='file'
+            className='block text-lg font-medium text-slate-700 mb-2'
+          >
             Bestand toevoegen (optioneel)
           </Label>
-          <div className="relative">
+          <div className='relative'>
             <input
-              id="file"
-              name="file"
-              type="file"
-              onChange={handleFileChange}
-              className="hidden"
-              accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+              id='file'
+              type='file'
+              className='hidden'
+              accept='.jpg,.jpeg,.png,.pdf,.doc,.docx'
+              {...register('file', {
+                validate: {
+                  fileSize: (files) => {
+                    if (!files || files.length === 0) return true;
+                    const file = files[0];
+                    return (
+                      file.size <= 10 * 1024 * 1024 ||
+                      'Bestand mag maximaal 10MB zijn'
+                    );
+                  },
+                },
+              })}
             />
             <label
-              htmlFor="file"
-              className="flex items-center justify-center w-full h-12 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition-colors"
+              htmlFor='file'
+              className='flex items-center justify-center w-full h-12 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition-colors'
             >
-              <div className="flex items-center gap-2 text-gray-500">
-                <CloudUpload className="w-5 h-5" />
-                <span className="text-sm">
-                  {formData.file ? formData.file.name : "Klik om bestand te selecteren"}
+              <div className='flex items-center gap-2 text-slate-600'>
+                <CloudUpload className='w-5 h-4' />
+                <span className='text-lg'>
+                  {selectedFileName || 'Klik om bestand te selecteren'}
                 </span>
               </div>
             </label>
           </div>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className='text-xs text-slate-600 mt-1'>
             JPG, PNG of PDF - max 10MB
           </p>
+          {errors.file && (
+            <p className='text-sm text-red-500 mt-1'>{errors.file.message}</p>
+          )}
         </div>
 
         {/* Terms Agreement */}
-        <div className="flex items-start gap-3">
-          <Checkbox
-            id="terms"
-            checked={formData.agreeToTerms}
-            onCheckedChange={handleCheckboxChange}
-            required
-            className="mt-1"
+        <div className='flex items-start gap-3'>
+          <Controller
+            name='agreeToTerms'
+            control={control}
+            rules={{ required: 'U moet akkoord gaan met de privacyverklaring' }}
+            render={({ field }) => (
+              <Checkbox
+                id='terms'
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                className=' rounded text-bold'
+              />
+            )}
           />
-          <Label htmlFor="terms" className="text-sm text-gray-600">
-            Ik ga akkoord met de{" "}
-            <a href="#" className="text-primary hover:underline">
+          <Label htmlFor='terms' className='text-base text-slate-600'>
+            Ik ga akkoord met de{' '}
+            <a href='#' className='text-primary hover:underline'>
               privacyverklaring
             </a>
+            <span className='text-red-600'> *</span>
           </Label>
         </div>
+        {errors.agreeToTerms && (
+          <p className='text-sm text-red-500'>{errors.agreeToTerms.message}</p>
+        )}
 
         {/* Submit Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 pt-4">
+        <div className='flex flex-col sm:flex-row gap-4 pt-4'>
           <Button
-            type="submit"
-            className="flex-1 h-12 bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl flex items-center justify-center gap-2"
+            type='submit'
+            disabled={isSubmitting}
+            className='flex-1 bg-primary hover:bg-primary/90 text-white font-semibold py-4 flex items-center text-xl rounded-[12px] justify-center gap-2 disabled:opacity-50'
             style={{
-              boxShadow: "0px 10px 15px 0px #0000001A, 0px 4px 6px 0px #0000001A",
+              boxShadow:
+                '0px 10px 15px 0px #0000001A, 0px 4px 6px 0px #0000001A',
             }}
           >
-            <span>Versturen</span>
-            <Send className="w-4 h-4" />
+            <span>{isSubmitting ? 'Versturen...' : 'Versturen'}</span>
+            <Send className='w-5 h-5' />
           </Button>
 
           <Button
-            type="button"
-            variant="outline"
-            className="h-12 px-6 border-primary text-primary hover:bg-primary/5 font-semibold rounded-xl flex items-center justify-center gap-2"
+            type='button'
+            variant='outline'
+            className='px-6 text-primary border-none hover:border hover:border-primary hover:bg-transparent hover:text-primary font-semibold  py-4  text-xl rounded-[12px] flex items-center justify-center gap-2'
           >
             <Image
-              src="/icons/chat.svg"
-              width={16}
-              height={16}
-              alt="Chat"
-              className="w-4 h-4"
+              src='/icons/chat.svg'
+              width={20}
+              height={24}
+              alt='Chat'
+              className='w-5 h-6'
             />
             <span>Liever direct chatten?</span>
           </Button>
