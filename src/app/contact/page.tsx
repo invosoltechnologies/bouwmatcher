@@ -6,8 +6,8 @@ export default function Contact() {
   return (
     <>
       <HeroContact />
-      <section className="py-16 bg-gray-50">
-        <div className="custom-container">
+      <section className='pt-0 pb-16 bg-white'>
+        <div className='custom-container'>
           <ContactForm />
         </div>
       </section>

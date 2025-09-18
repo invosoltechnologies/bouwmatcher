@@ -5,6 +5,8 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -27,11 +29,15 @@ export default function ContactForm() {
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value
+      [name]: value
     }));
+  };
+
+  const handleCheckboxChange = (checked: boolean) => {
+    setFormData(prev => ({ ...prev, agreeToTerms: checked }));
   };
 
   const handleSelectChange = (value: string) => {
@@ -50,7 +56,7 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto bg-white rounded-3xl p-8 shadow-lg">
+    <div className="w-full max-w-3xl mx-auto bg-white rounded-3xl p-12 shadow-lg relative z-20 -top-20">
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
           <Image
@@ -74,9 +80,9 @@ export default function ContactForm() {
         {/* Name and Email Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+            <Label htmlFor="name" className="block text-gray-700 mb-2">
               Naam *
-            </label>
+            </Label>
             <Input
               id="name"
               name="name"
@@ -89,9 +95,9 @@ export default function ContactForm() {
             />
           </div>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <Label htmlFor="email" className="block text-gray-700 mb-2">
               E-mail *
-            </label>
+            </Label>
             <Input
               id="email"
               name="email"
@@ -108,9 +114,9 @@ export default function ContactForm() {
         {/* Phone and Subject Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+            <Label htmlFor="phone" className="block text-gray-700 mb-2">
               Telefoon
-            </label>
+            </Label>
             <Input
               id="phone"
               name="phone"
@@ -122,9 +128,9 @@ export default function ContactForm() {
             />
           </div>
           <div>
-            <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+            <Label htmlFor="subject" className="block text-gray-700 mb-2">
               Onderwerp *
-            </label>
+            </Label>
             <Input
               id="subject"
               name="subject"
@@ -140,9 +146,9 @@ export default function ContactForm() {
 
         {/* Category Select */}
         <div>
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+          <Label htmlFor="category" className="block text-gray-700 mb-2">
             Type vraag
-          </label>
+          </Label>
           <Select onValueChange={handleSelectChange}>
             <SelectTrigger className="w-full h-12">
               <SelectValue placeholder="Selecteer een categorie" />
@@ -159,9 +165,9 @@ export default function ContactForm() {
 
         {/* Message */}
         <div>
-          <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+          <Label htmlFor="message" className="block text-gray-700 mb-2">
             Bericht *
-          </label>
+          </Label>
           <Textarea
             id="message"
             name="message"
@@ -175,9 +181,9 @@ export default function ContactForm() {
 
         {/* File Upload */}
         <div>
-          <label htmlFor="file" className="block text-sm font-medium text-gray-700 mb-2">
+          <Label htmlFor="file" className="block text-gray-700 mb-2">
             Bestand toevoegen (optioneel)
-          </label>
+          </Label>
           <div className="relative">
             <input
               id="file"
@@ -206,21 +212,19 @@ export default function ContactForm() {
 
         {/* Terms Agreement */}
         <div className="flex items-start gap-3">
-          <input
+          <Checkbox
             id="terms"
-            name="agreeToTerms"
-            type="checkbox"
             checked={formData.agreeToTerms}
-            onChange={handleInputChange}
+            onCheckedChange={handleCheckboxChange}
             required
-            className="mt-1 w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+            className="mt-1"
           />
-          <label htmlFor="terms" className="text-sm text-gray-600">
+          <Label htmlFor="terms" className="text-sm text-gray-600">
             Ik ga akkoord met de{" "}
             <a href="#" className="text-primary hover:underline">
               privacyverklaring
             </a>
-          </label>
+          </Label>
         </div>
 
         {/* Submit Buttons */}

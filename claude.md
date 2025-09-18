@@ -6,6 +6,7 @@
 - Do not create custom components - always use existing ones or check package.json for available libraries
 - Strictly use the tailwind classes dont add the inline-styles until or unless its necessary
 - Don't use the grid instead of grid use flex until or unless It is necessary
+- For Form use the React hook Form
 
 
 ## Technical Stack

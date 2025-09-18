@@ -103,7 +103,7 @@ export default function Hero() {
           />
         </div>
       </div>
-      <div className='bg-white w-full h-14'></div>
+      {/* <div className='bg-white w-full h-14'></div> */}
     </section>
   );
 }

@@ -5,7 +5,7 @@ import { ArrowDown, Clock, Shield, Globe } from "lucide-react";
 
 export default function HeroContact() {
   return (
-    <section className='relative min-h-screen pt-[168px]'>
+    <section className='pt-[168px] pb-56 relative'>
       {/* Background div with gradient and blur */}
       <div className='absolute inset-0 w-full h-full -z-10 blur-[66.5px] bg-gradient-to-r from-[#EFF6FF] to-[#F0FDF4]' />
 
