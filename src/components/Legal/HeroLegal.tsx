@@ -19,12 +19,8 @@ export default function HeroLegal() {
               <div className='bg-primary text-white font-montserrat rounded-full px-4 py-2'>
                 <span className='text-sm font-extrabold'>v1.0</span>
               </div>
-              <div
-                className='bg-emerald-100 border border-accent/55 font-montserrat text-emerald-700 rounded-full px-4 py-2'
-              >
-                <span className='text-sm'>
-                  Last updated: January 15, 2025
-                </span>
+              <div className='bg-emerald-100 border border-accent/55 font-montserrat text-emerald-700 rounded-full px-4 py-2'>
+                <span className='text-sm'>Last updated: January 15, 2025</span>
               </div>
             </div>
 
@@ -43,7 +39,7 @@ export default function HeroLegal() {
               <Button
                 variant='outline'
                 size='sm'
-                className='px-3 py-1 h-auto text-gray-700 border-gray-300'
+                className='px-3 py-1 h-auto text-slate-700 border-gray-300'
               >
                 EN
               </Button>
@@ -54,28 +50,28 @@ export default function HeroLegal() {
 
             {/* Legal Policy Buttons */}
             <div className='flex flex-wrap gap-4 mb-8'>
-              <Button className='flex items-center gap-3 rounded-full px-6 py-4 h-auto text-white font-medium'>
+              <Button className='flex items-center gap-2 text-lg rounded-2xl px-4 py-2 h-auto text-white font-medium'>
                 <Image
                   src='/icons/shield.svg'
-                  width={20}
-                  height={20}
+                  width={15}
+                  height={15}
                   alt='Privacy Policy'
                   className='filter brightness-0 invert'
                 />
                 <span>Privacybeleid</span>
               </Button>
-              <Button className='flex items-center gap-3 rounded-full px-6 py-4 h-auto bg-accent hover:bg-accent/90 text-white font-medium'>
+              <Button className='flex items-center gap-2 text-lg rounded-2xl px-4 py-5 h-auto bg-accent hover:bg-accent/90 text-white font-medium'>
                 <Image
                   src='/icons/agreement-document.svg'
-                  width={20}
-                  height={20}
+                  width={15}
+                  height={15}
                   alt='Terms & Conditions'
                   className='filter brightness-0 invert'
                 />
                 <span>Algemene voorwaarden</span>
               </Button>
-              <Button className='flex items-center gap-3 rounded-full px-6 py-4 h-auto text-white font-medium'>
-                <Cookie size={20} />
+              <Button className='flex items-center gap-2 text-lg rounded-2xl px-4 py-5 h-auto text-white font-medium'>
+                <Cookie size={15} />
                 <span>Cookiebeleid</span>
               </Button>
             </div>
