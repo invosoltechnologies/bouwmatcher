@@ -41,7 +41,7 @@ export function SectionAccordion({
               <div className="flex items-center gap-4">
                 <div className="transition-transform duration-300">
                   <Image
-                    src="/icons/faq_accordian-icon.svg"
+                    src="icons/dropdown-icon.svg"
                     width={32}
                     height={32}
                     alt="accordion-icon"
