@@ -1,7 +1,7 @@
 
-import HeroContact from "@/components/contact/HeroContact";
-import ContactForm from "@/components/contact/ContactForm";
-import ContactMethods from "@/components/contact/ContactMethods";
+import HeroContact from "@/components/Contact/HeroContact";
+import ContactForm from "@/components/Contact/ContactForm";
+import ContactMethods from "@/components/Contact/ContactMethods";
 
 export default function Contact() {
   return (
