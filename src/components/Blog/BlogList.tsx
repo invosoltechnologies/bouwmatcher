@@ -1,142 +1,169 @@
+'use client';
+
+import { useState } from "react";
 import Image from "next/image";
+import { ArrowRight } from "lucide-react";
+import { NavigationArrow } from "@/components/ui/navigation-arrow";
 
 // Mock data for demonstration - this will be replaced with dynamic content
 const mockBlogs = [
   {
     id: 1,
-    title: "De perfecte voordeur kiezen: materialen, isolatie en veiligheid",
-    excerpt: "Hout, kunststof of aluminium? In dit artikel vergelijken we looks, onderhoud, U-waardes en inbraakwerendheid zodat je gericht kunt kiezen.",
+    title: "Winter of zomer schilderen",
+    excerpt: "Wanneer presteerd verf het best, welke voorbereiding is nodig en wat kost het per m².",
     image: "/images/blog/temp-blog.png",
-    readTime: "8 mins read",
-    isNew: true,
-    category: "Renovatie"
+    date: "02 Sep 2025",
+    category: "Painting"
   },
   {
     id: 2,
-    title: "Badkamer renovatie: stap-voor-stap plan",
-    excerpt: "Een complete gids voor het renoveren van je badkamer, van ontwerp tot afwerking. Inclusief budgettips en veelgemaakte fouten.",
+    title: "Badkamer renoveren stap voor stap",
+    excerpt: "Realistische doorlooptijd, budgetopbouw en veelgemaakte fouten om te vermijden.",
     image: "/images/blog/temp-blog.png",
-    readTime: "12 mins read",
-    isNew: false,
-    category: "Badkamer"
+    date: "01 Sep 2025",
+    category: "Badkamer renoveren"
   },
   {
     id: 3,
-    title: "Duurzame isolatie: welke opties heb je?",
-    excerpt: "Vergelijk verschillende isolatiematerialen en hun impact op je energierekening en het milieu.",
+    title: "Lekkage? Snel handelen met deze checklist",
+    excerpt: "Wat je direct zelf controleert, wanneer je een loodgieter belt en welke info hij nodig heeft.",
     image: "/images/blog/temp-blog.png",
-    readTime: "6 mins read",
-    isNew: true,
-    category: "Duurzaamheid"
+    date: "23 Aug 2025",
+    category: "Lekkage"
   },
   {
     id: 4,
-    title: "Keuken verbouwen: trends en praktische tips",
-    excerpt: "De nieuwste keukentrends en praktische tips voor een succesvolle keukenverbouwing binnen je budget.",
+    title: "Meterkast klaar voor inductie en EV",
+    excerpt: "Groeperen, vermogen en kosten voor een veilige elektrische upgrade.",
     image: "/images/blog/temp-blog.png",
-    readTime: "10 mins read",
-    isNew: false,
-    category: "Keuken"
+    date: "12 Jul 2025",
+    category: "Inductie en EV"
   },
   {
     id: 5,
-    title: "Zonnepanelen installeren: wat moet je weten?",
-    excerpt: "Alles over zonnepanelen: van aanschaf tot installatie en onderhoud. Inclusief subsidies en terugverdientijd.",
+    title: "Spouwmuur of zolder isoleren",
+    excerpt: "Warmteverlies, terugverdientijd en welke isolatie waar het meeste oplevert.",
     image: "/images/blog/temp-blog.png",
-    readTime: "15 mins read",
-    isNew: false,
-    category: "Energie"
+    date: "01 Sep 2025",
+    category: "Isoleren"
   },
   {
     id: 6,
-    title: "Tuinontwerp: van plan tot paradijs",
-    excerpt: "Stap voor stap je tuin ontwerpen en aanleggen. Van voorbereiding tot de finishing touch.",
+    title: "HR++ of triple glas in nieuwe kozijnen",
+    excerpt: "Vergelijk comfort, geluiddemping en prijs per raamtype.",
     image: "/images/blog/temp-blog.png",
-    readTime: "9 mins read",
-    isNew: false,
-    category: "Tuin"
+    date: "23 Aug 2025",
+    category: "Raamtype"
   }
 ];
 
+const BLOGS_PER_PAGE = 3;
+
 export default function BlogList() {
+  const [currentPage, setCurrentPage] = useState(0);
+  const totalPages = Math.ceil(mockBlogs.length / BLOGS_PER_PAGE);
+
+  const currentBlogs = mockBlogs.slice(
+    currentPage * BLOGS_PER_PAGE,
+    (currentPage + 1) * BLOGS_PER_PAGE
+  );
+
+  const handlePrevious = () => {
+    setCurrentPage((prev) => Math.max(0, prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));
+  };
+
   return (
-    <section className="py-16 px-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            Alle artikelen
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Ontdek onze collectie van praktische gidsen, tips en inspiratie voor je volgende bouwproject.
-          </p>
+    <section className="py-14 bg-white">
+      <div className="custom-container">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-16">
+          <div className="flex-1">
+            <h2 className="text-5xl font-display font-normal text-foreground mb-5">
+              Onze recente artikelen
+            </h2>
+            <p className="text-muted-foreground text-2xl">
+              Blijf op de hoogte van onze nieuwste inzichten
+            </p>
+          </div>
+
+          {/* Navigation Arrows */}
+          <div className="flex gap-4">
+            <NavigationArrow
+              direction="left"
+              onClick={handlePrevious}
+              disabled={currentPage === 0}
+            />
+            <NavigationArrow
+              direction="right"
+              onClick={handleNext}
+              disabled={currentPage === totalPages - 1}
+            />
+          </div>
         </div>
 
         {/* Blog Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {mockBlogs.map((blog) => (
-            <article
-              key={blog.id}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
-            >
-              <div className="relative">
+          {currentBlogs.map((blog) => (
+            <article key={blog.id} className="group cursor-pointer">
+              {/* Image */}
+              <div className="mb-6 overflow-hidden rounded-lg">
                 <Image
                   src={blog.image}
                   alt={blog.title}
                   width={400}
                   height={240}
-                  className="w-full h-48 object-cover"
+                  className="w-full h-60 object-cover transition-transform duration-300 group-hover:scale-105"
                 />
-                <div className="absolute top-4 left-4 flex gap-2">
-                  {blog.isNew && (
-                    <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                      Nieuw!
-                    </span>
-                  )}
-                  <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
-                    {blog.category}
-                  </span>
-                </div>
-                <div className="absolute top-4 right-4">
-                  <span className="bg-white text-gray-600 px-3 py-1 rounded-full text-sm">
-                    {blog.readTime}
-                  </span>
-                </div>
               </div>
 
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3 leading-tight line-clamp-2">
+              {/* Content */}
+              <div className="space-y-4">
+                {/* Category and Date */}
+                <div className="w-full flex items-center justify-between gap-4">
+                  <span className="bg-accent/10 text-accent px-3 py-1.5 rounded-full text-sm font-medium">
+                    {blog.category}
+                  </span>
+                  <span className="text-muted-foreground text-sm">
+                    {blog.date}
+                  </span>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-2xl font-display font-normal leading-tight text-foreground group-hover:text-primary transition-colors">
                   {blog.title}
                 </h3>
-                <p className="text-gray-600 mb-4 leading-relaxed line-clamp-3">
+
+                {/* Excerpt */}
+                <p className="text-muted-foreground leading-relaxed">
                   {blog.excerpt}
                 </p>
-                <button className="flex items-center text-blue-600 font-semibold hover:text-blue-700 transition-colors">
-                  Lees meer
-                  <svg
-                    className="ml-2 w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
+
+                {/* Read More */}
+                <button className="flex items-center gap-3 text-primary font-medium hover:text-primary/80 transition-colors">
+                  Read more
+                  <ArrowRight size={20} />
                 </button>
               </div>
             </article>
           ))}
         </div>
 
-        {/* Load More Button */}
-        <div className="text-center mt-12">
-          <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-            Meer artikelen laden
-          </button>
+        {/* Pagination Dots */}
+        <div className="flex justify-center items-center gap-2 mt-16">
+          {Array.from({ length: totalPages }).map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentPage(index)}
+              className={`w-3 h-3 rounded-full transition-colors ${
+                currentPage === index ? 'bg-primary' : 'bg-gray-300'
+              }`}
+              aria-label={`Go to page ${index + 1}`}
+            />
+          ))}
         </div>
       </div>
     </section>
