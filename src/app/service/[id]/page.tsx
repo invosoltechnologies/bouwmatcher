@@ -5,6 +5,7 @@ import { SectionPill } from '@/components/ui/section-pill';
 import CTASection from '@/components/Homepage/CTASection';
 import ServiceBanner from '@/components/Service/ServiceBanner';
 import ServiceDetails from '@/components/Service/ServiceDetails';
+import ProcessSection from '@/components/Homepage/ProcessSection';
 
 interface ServicePageProps {
   params: Promise<{ id: string }>;
@@ -25,6 +26,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
     <>
       <ServiceBanner service={service} />
       <ServiceDetails service={service} />
+      <ProcessSection/>
       <CTASection />
     </>
   );
