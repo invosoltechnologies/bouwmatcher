@@ -29,9 +29,15 @@ function SelectTrigger({
   className,
   size = "default",
   children,
+  iconWidth = 39,
+  iconHeight = 39,
+  iconClassName,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
   size?: "sm" | "default"
+  iconWidth?: number
+  iconHeight?: number
+  iconClassName?: string
 }) {
   return (
     <SelectPrimitive.Trigger
@@ -45,12 +51,15 @@ function SelectTrigger({
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <Image 
-          src="/icons/dropdown-icon.svg" 
-          width={39} 
-          height={39} 
-          alt="Dropdown" 
-          className="transition-transform duration-200 data-[state=open]:rotate-180"
+        <Image
+          src="/icons/dropdown-icon.svg"
+          width={iconWidth}
+          height={iconHeight}
+          alt="Dropdown"
+          className={cn(
+            "transition-transform duration-200 data-[state=open]:rotate-180",
+            iconClassName
+          )}
         />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>

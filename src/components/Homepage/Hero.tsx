@@ -5,7 +5,7 @@ import Pill from "@/components/ui/pill";
 
 export default function Hero() {
   return (
-    <section className='relative min-h-screen pt-[168px]'>
+    <section className='relative min-h-screen pt-[168px] '>
       {/* Background div with gradient and blur */}
       <div className='absolute inset-0 w-full h-full -z-10 blur-[66.5px] bg-gradient-to-r from-[#EFF6FF] to-[#F0FDF4]' />
 
@@ -103,7 +103,7 @@ export default function Hero() {
           />
         </div>
       </div>
-      <div className='bg-white w-full h-14'></div>
+      {/* <div className='bg-white w-full h-14'></div> */}
     </section>
   );
 }

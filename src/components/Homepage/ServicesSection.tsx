@@ -12,7 +12,6 @@ import Link from 'next/link';
 const ServiceCard = ({ service }: { service: typeof servicesData[0] }) => (
   <Link
     href={service.url}
-    target="_blank"
     className="cursor-pointer block"
   >
     <div className="bg-white rounded-[12px] border-2 border-gray-200 pt-6.5 min-w-[133px] h-[152px] min-w flex flex-col items-center justify-start gap-4">
