@@ -28,12 +28,20 @@ function AccordionItem({
 
 interface AccordionTriggerProps extends React.ComponentProps<typeof AccordionPrimitive.Trigger> {
   icon?: string
+  iconClassName?: string
+  iconStyle?: React.CSSProperties
+  chevronClassName?: string
+  chevronStyle?: React.CSSProperties
 }
 
 function AccordionTrigger({
   className,
   children,
   icon,
+  iconClassName,
+  iconStyle,
+  chevronClassName,
+  chevronStyle,
   ...props
 }: AccordionTriggerProps) {
   return (
@@ -53,10 +61,14 @@ function AccordionTrigger({
             width={32}
             height={32}
             alt='accordion-icon'
-            className='pointer-events-none shrink-0 transition-transform duration-200'
+            className={cn('pointer-events-none shrink-0 transition-transform duration-200', iconClassName)}
+            style={iconStyle}
           />
         ) : (
-          <ChevronDownIcon className='text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200' />
+          <ChevronDownIcon
+            className={cn('text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200', chevronClassName)}
+            style={chevronStyle}
+          />
         )}
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>

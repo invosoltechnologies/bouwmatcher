@@ -4,6 +4,7 @@ import { MapPin, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { servicesData } from '@/data/services';
 import Image from 'next/image';
 
 export default function ProjectForm() {
@@ -11,16 +12,7 @@ export default function ProjectForm() {
   const [postcode, setPostcode] = useState('');
   const [executionDate, setExecutionDate] = useState('');
 
-  const categories = [
-    'Badkamer renovatie',
-    'Keuken installatie', 
-    'Vloer leggen',
-    'Schilderwerk',
-    'Dakwerken',
-    'Elektriciteit',
-    'Loodgieterij',
-    'Tuinwerken'
-  ];
+  const categories = servicesData.map(service => service.name);
 
   const executionDates = [
     'Zo snel mogelijk',
