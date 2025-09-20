@@ -2,7 +2,7 @@
 
 import { Service } from '@/data/services';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { ArrowBigDown, ArrowDown, ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 
 interface ServiceDetailsProps {
   service: Service;

@@ -8,7 +8,7 @@ interface PillProps {
   style?: React.CSSProperties;
 }
 
-export default function Pill({ text, dotColor = '#0AB27E', className = '', hasBackground = false, style }: PillProps) {
+export default function Pill({ text, dotColor = '#0AB27E', className = '',  style }: PillProps) {
   return (
     <div className={`inline-flex justify-center items-center gap-4 bg-white/60 backdrop-blur-sm rounded-xl px-6 py-4.5 border border-gray-200 ${className}`} style={style}>
       <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 relative">

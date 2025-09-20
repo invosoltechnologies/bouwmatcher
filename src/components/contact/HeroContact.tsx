@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Pill from "@/components/ui/pill";
-import { ArrowDown, Clock, Shield, Globe } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 
 export default function HeroContact() {
   return (

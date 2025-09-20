@@ -1,7 +1,5 @@
 import { notFound } from 'next/navigation';
-import Image from 'next/image';
 import { servicesData } from '@/data/services';
-import { SectionPill } from '@/components/ui/section-pill';
 import CTASection from '@/components/Homepage/CTASection';
 import ServiceBanner from '@/components/Service/ServiceBanner';
 import ServiceDetails from '@/components/Service/ServiceDetails';

@@ -1,9 +1,4 @@
 'use client'
-
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import Pill from '@/components/ui/pill';
-import { Cookie } from 'lucide-react';
 import { SectionAccordion } from '@/components/ui/section-accordion';
 
 export default function LegalDescription() {
