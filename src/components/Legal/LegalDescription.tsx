@@ -13,11 +13,11 @@ export default function LegalDescription() {
   };
 
   return (
-    <section className='pt-0 pb-56 relative'>
+    <section className='pt-12 pb-56 relative'>
       {/* Background div with gradient and blur */}
       <div className='absolute inset-0 w-full h-full -z-10 blur-[33.5px] bg-gradient-to-r from-[#EFF6FF] to-[#F0FDF4]' />
       <div className='custom-container'>
-        <div className='max-w-4xl mx-auto space-y-6'>
+        <div className='w-full space-y-6'>
           <SectionAccordion
             title='Privacy Policy'
             onDownload={handleDownloadPDF}
