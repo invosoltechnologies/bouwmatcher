@@ -4,7 +4,9 @@ import { KeyPoints } from '@/components/ui/key-points';
 import { DataCollectionCard } from '@/components/ui/data-collection-card';
 import { AlertCard, AlertCardHeader, AlertCardContent } from '@/components/ui/alert-card';
 import { BorderedCard, BorderedCardHeader, BorderedCardContent } from '@/components/ui/bordered-card';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { KeyRound, Check, UserRound, ChartLine, Smartphone, Shield } from 'lucide-react';
+import Image from 'next/image';
 
 export default function LegalDescription() {
   const handleDownloadPDF = () => {
@@ -102,6 +104,39 @@ export default function LegalDescription() {
     "Adequacy decisions by the European Commission",
     "Standard Contractual Clauses (SCCs)",
     "Certification schemes and codes of conduct"
+  ];
+
+  const gdprRights = [
+    {
+      title: "Access",
+      description: "Request a copy of your personal data we hold",
+      icon: "/icons/legal/access.svg"
+    },
+    {
+      title: "Rectification",
+      description: "Correct inaccurate or incomplete data",
+      icon: "/icons/legal/rectification.svg"
+    },
+    {
+      title: "Erasure",
+      description: "Request deletion of your personal data",
+      icon: "/icons/legal/erasure.svg"
+    },
+    {
+      title: "Restriction",
+      description: "Limit how we process your data",
+      icon: "/icons/legal/restriction.svg"
+    },
+    {
+      title: "Portability",
+      description: "Receive your data in a portable format",
+      icon: "/icons/legal/portability.svg"
+    },
+    {
+      title: "Object",
+      description: "Object to processing based on legitimate interests",
+      icon: "/icons/legal/object.svg"
+    }
   ];
 
   return (
@@ -284,6 +319,122 @@ export default function LegalDescription() {
                     </li>
                   ))}
                 </ul>
+              </div>
+
+              {/* Data Retention Section */}
+              <div className='mt-12'>
+                <h2 className='text-secondary-foreground text-3xl mb-4'>
+                  Data Retention
+                </h2>
+                <p className='text-slate-700 text-xl font-montserrat mb-8'>
+                  We retain your data only as long as necessary for the purposes
+                  outlined in this policy:
+                </p>
+                <div className='bg-slate-50 p-8 rounded-2xl'>
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-6'>
+                    <div>
+                      <h4 className='text-secondary-foreground text-2xl font-montserrat font-semibold mb-3'>
+                        Account Data
+                      </h4>
+                      <div className='space-y-2'>
+                        <p className='text-slate-700 text-xl font-montserrat'>
+                          Active accounts: Indefinitely while account remains
+                          active
+                        </p>
+                        <p className='text-slate-700 text-xl font-montserrat'>
+                          Closed accounts: 3 years after closure
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className='text-secondary-foreground text-2xl font-montserrat font-semibold mb-3'>
+                        Project Data
+                      </h4>
+                      <div className='space-y-2'>
+                        <p className='text-slate-700 text-xl font-montserrat'>
+                          Completed projects: 7 years for legal compliance
+                        </p>
+                        <p className='text-slate-700 text-xl font-montserrat'>
+                          Cancelled projects: 1 year after cancellation
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className='text-secondary-foreground text-2xl font-montserrat font-semibold mb-3'>
+                        Marketing Data
+                      </h4>
+                      <div className='space-y-2'>
+                        <p className='text-slate-700 text-xl font-montserrat'>
+                          Email preferences: Until consent withdrawn
+                        </p>
+                        <p className='text-slate-700 text-xl font-montserrat'>
+                          Analytics: 26 months maximum
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className='text-secondary-foreground text-2xl font-montserrat font-semibold mb-3'>
+                        Legal Data
+                      </h4>
+                      <div className='space-y-2'>
+                        <p className='text-slate-700 text-xl font-montserrat'>
+                          Dispute records: 10 years
+                        </p>
+                        <p className='text-slate-700 text-xl font-montserrat'>
+                          Financial records: 7 years
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Your Rights (GDPR) Section */}
+              <div className='mt-12'>
+                <h2 className='text-secondary-foreground text-3xl mb-4'>
+                  Your Rights (GDPR)
+                </h2>
+                <p className='text-slate-700 text-xl font-montserrat mb-8'>
+                  Under GDPR, you have the following rights regarding your
+                  personal data:
+                </p>
+                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+                  {gdprRights.map((right, index) => (
+                    <Card key={index} className='border border-gray-200'>
+                      <CardHeader className='pb-4'>
+                        <div className='flex items-center gap-3'>
+                          <Image
+                            src={right.icon}
+                            alt={right.title}
+                            width={24}
+                            height={24}
+                            className='flex-shrink-0'
+                          />
+                          <h3 className='text-secondary-foreground text-2xl font-montserrat font-semibold'>
+                            {right.title}
+                          </h3>
+                        </div>
+                      </CardHeader>
+                      <CardContent className='pt-0'>
+                        <p className='text-slate-700 text-xl font-montserrat'>
+                          {right.description}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+                <div className='mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg'>
+                  <p className='text-blue-900 text-xl font-montserrat'>
+                    To exercise these rights, contact us at{' '}
+                    <a
+                      href='mailto:privacy@bouwmatcher.nl'
+                      className='underline font-semibold'
+                    >
+                      privacy@bouwmatcher.nl
+                    </a>
+                    . We&apos;ll respond within 30 days.
+                  </p>
+                </div>
               </div>
             </div>
           </SectionAccordion>
