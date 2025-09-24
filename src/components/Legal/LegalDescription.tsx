@@ -1,5 +1,7 @@
 'use client'
 import { SectionAccordion } from '@/components/ui/section-accordion';
+import { KeyPoints } from '@/components/ui/key-points';
+import { KeyRound, Check } from 'lucide-react';
 
 export default function LegalDescription() {
   const handleDownloadPDF = () => {
@@ -26,51 +28,30 @@ export default function LegalDescription() {
           >
             <div className='space-y-6'>
               {/* Key Points Section */}
-              <div className='bg-green-50 p-6 rounded-lg'>
-                <div className='flex items-center gap-2 mb-4'>
-                  <div className='w-2 h-2 bg-green-500 rounded-full'></div>
-                  <h3 className='font-semibold text-green-800'>Key Points</h3>
-                </div>
-                <div className='space-y-3 text-sm text-green-700'>
-                  <div className='flex items-start gap-2'>
-                    <div className='w-1 h-1 bg-green-500 rounded-full mt-2 flex-shrink-0'></div>
-                    <span>
-                      We collect data to connect you with trusted building
-                      professionals
-                    </span>
-                  </div>
-                  <div className='flex items-start gap-2'>
-                    <div className='w-1 h-1 bg-green-500 rounded-full mt-2 flex-shrink-0'></div>
-                    <span>
-                      Your data is processed lawfully with appropriate
-                      safeguards
-                    </span>
-                  </div>
-                  <div className='flex items-start gap-2'>
-                    <div className='w-1 h-1 bg-green-500 rounded-full mt-2 flex-shrink-0'></div>
-                    <span>
-                      You have full control over your personal information
-                    </span>
-                  </div>
-                  <div className='flex items-start gap-2'>
-                    <div className='w-1 h-1 bg-green-500 rounded-full mt-2 flex-shrink-0'></div>
-                    <span>
-                      We implement industry-standard security measures
-                    </span>
-                  </div>
-                  <div className='flex items-start gap-2'>
-                    <div className='w-1 h-1 bg-green-500 rounded-full mt-2 flex-shrink-0'></div>
-                    <span>Contact us anytime at privacy@bouwmatcher.nl</span>
-                  </div>
-                </div>
-              </div>
+              <KeyPoints
+                title='Key Points'
+                backgroundColor='bg-accent/5'
+                headingIcon={KeyRound}
+                headingIconClassName='text-emerald-600 w-6 h-6'
+                headingClassName='text-secondary-foreground text-[26px]'
+                listIcon={Check}
+                listIconClassName='text-emerald-600 w-5 h-5'
+                listItemClassName='text-secondary-foreground font-montserrat text-xl'
+                points={[
+                  'We collect data to connect you with trusted building professionals',
+                  'Your data is processed lawfully with appropriate safeguards',
+                  'You have full control over your personal information',
+                  'We implement industry-standard security measures',
+                  'Contact us anytime at privacy@bouwmatcher.nl',
+                ]}
+              />
 
               {/* Introduction Section */}
-              <div>
-                <h3 className='font-semibold text-gray-900 mb-3'>
+              <div className=' mt-11.5'>
+                <h3 className='text-[26px] text-secondary-foreground mb-6 '>
                   Introduction & Controller
                 </h3>
-                <p className='text-gray-700 text-sm leading-relaxed'>
+                <p className='text-muted-foreground text-2xl leading-relaxed'>
                   Bouwmatcher B.V. (&quot;we,&quot; &quot;us,&quot; or
                   &quot;our&quot;) operates the Bouwmatcher platform, connecting
                   homeowners with qualified building professionals across the
