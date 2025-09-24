@@ -1,7 +1,10 @@
 'use client'
 import { SectionAccordion } from '@/components/ui/section-accordion';
 import { KeyPoints } from '@/components/ui/key-points';
-import { KeyRound, Check } from 'lucide-react';
+import { DataCollectionCard } from '@/components/ui/data-collection-card';
+import { AlertCard, AlertCardHeader, AlertCardContent } from '@/components/ui/alert-card';
+import { BorderedCard, BorderedCardHeader, BorderedCardContent } from '@/components/ui/bordered-card';
+import { KeyRound, Check, UserRound, ChartLine, Smartphone, Shield } from 'lucide-react';
 
 export default function LegalDescription() {
   const handleDownloadPDF = () => {
@@ -13,6 +16,93 @@ export default function LegalDescription() {
     // Implement print logic
     window.print();
   };
+
+  const dataCollectionSections = [
+    {
+      icon: UserRound,
+      iconColor: "text-blue-600",
+      title: "Account Information",
+      items: [
+        "Name, email address, phone number",
+        "Profile photo and professional credentials (for professionals)",
+        "Billing and payment information",
+        "Communication preferences"
+      ]
+    },
+    {
+      icon: ChartLine,
+      iconColor: "text-emerald-600",
+      title: "Usage Data",
+      items: [
+        "Project requests and quotes",
+        "Messages and communications",
+        "Reviews and ratings",
+        "Search queries and browsing behavior"
+      ]
+    },
+    {
+      icon: Smartphone,
+      iconColor: "text-purple-600",
+      title: "Device Information",
+      items: [
+        "IP address and location data",
+        "Device type, browser, operating system",
+        "Cookies and similar technologies",
+        "Log files and analytics data"
+      ]
+    }
+  ];
+
+  const legalBasisCards = [
+    {
+      title: "Contract Performance",
+      description: "To provide our matching services and facilitate connections between users and professionals.",
+      cardClass: "bg-blue-50 border border-blue-200",
+      textClass: "text-blue-900"
+    },
+    {
+      title: "Legitimate Interests",
+      description: "To improve our services, prevent fraud, and ensure platform security.",
+      cardClass: "bg-emerald-50 border border-emerald-200",
+      textClass: "text-emerald-900"
+    },
+    {
+      title: "Consent",
+      description: "For marketing communications and optional features you choose to enable.",
+      cardClass: "bg-purple-50 border border-purple-200",
+      textClass: "text-purple-900"
+    },
+    {
+      title: "Legal Obligation",
+      description: "To comply with tax, accounting, and regulatory requirements.",
+      cardClass: "bg-orange-50 border border-orange-200",
+      textClass: "text-orange-900"
+    }
+  ];
+
+  const dataSharingItems = [
+    {
+      title: "Service Providers",
+      description: "Trusted third parties who help us operate our platform, including payment processors, hosting providers, and analytics services.",
+      borderColor: "border-l-5 border-l-blue-500"
+    },
+    {
+      title: "Professionals You Choose",
+      description: "When you request quotes, we share relevant project details with selected professionals to facilitate the matching process.",
+      borderColor: "border-l-5 border-l-emerald-500"
+    },
+    {
+      title: "Legal Requirements",
+      description: "When required by law, court order, or to protect our rights and the safety of our users.",
+      borderColor: "border-l-5 border-l-orange-500"
+    }
+  ];
+
+  const internationalTransferItems = [
+    "Adequacy decisions by the European Commission",
+    "Standard Contractual Clauses (SCCs)",
+    "Certification schemes and codes of conduct"
+  ];
 
   return (
     <section className='pt-12 pb-56 relative'>
@@ -61,42 +151,139 @@ export default function LegalDescription() {
               </div>
 
               {/* Contact Details Section */}
-              <div className='bg-gray-50 p-4 rounded-lg'>
-                <h4 className='font-medium text-gray-900 mb-3'>
+              <div className='bg-slate-50 p-8 rounded-2xl'>
+                <h2 className='text-secondary-foreground text-2xl font-montserrat font-semibold mb-6'>
                   Contact Details:
-                </h4>
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-4 text-sm'>
-                  <div>
-                    <span className='font-medium text-gray-700'>Company:</span>
-                    <span className='text-gray-600 ml-2'>Bouwmatcher B.V.</span>
+                </h2>
+                <div className='flex flex-col md:flex-row gap-8'>
+                  <div className='flex-1 space-y-0.5'>
+                    <div>
+                      <p className='text-slate-700 text-xl font-montserrat'>
+                        <span className='font-semibold'>Company: </span>
+                        Bouwmatcher B.V.
+                      </p>
+                    </div>
+                    <div>
+                      <p className='text-slate-700 text-xl font-montserrat'>
+                        <span className='font-semibold'>Address: </span>
+                        Herengracht 124, 1015 BT Amsterdam
+                      </p>
+                    </div>
+                    <div>
+                      <p className='text-slate-700 text-xl font-montserrat'>
+                        <span className='font-semibold'>KvK: </span>
+                        87654321
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <span className='font-medium text-gray-700'>Email:</span>
-                    <span className='text-gray-600 ml-2'>
-                      privacy@bouwmatcher.nl
-                    </span>
-                  </div>
-                  <div>
-                    <span className='font-medium text-gray-700'>Address:</span>
-                    <span className='text-gray-600 ml-2'>
-                      Herengracht 124, 1015 BT Amsterdam
-                    </span>
-                  </div>
-                  <div>
-                    <span className='font-medium text-gray-700'>Phone:</span>
-                    <span className='text-gray-600 ml-2'>+31 20 123 4567</span>
-                  </div>
-                  <div>
-                    <span className='font-medium text-gray-700'>KvK:</span>
-                    <span className='text-gray-600 ml-2'>87654321</span>
-                  </div>
-                  <div>
-                    <span className='font-medium text-gray-700'>DPO:</span>
-                    <span className='text-gray-600 ml-2'>
-                      dpo@bouwmatcher.nl
-                    </span>
+                  <div className='flex-1 space-y-0.5'>
+                    <div>
+                      <p className='text-slate-700 text-xl font-montserrat'>
+                        <span className='font-semibold'>Email: </span>
+                        privacy@bouwmatcher.nl
+                      </p>
+                    </div>
+                    <div>
+                      <p className='text-slate-700 text-xl font-montserrat'>
+                        <span className='font-semibold'>Phone: </span>
+                        +31 20 123 4567
+                      </p>
+                    </div>
+                    <div>
+                      <p className='text-slate-700 text-xl font-montserrat'>
+                        <span className='font-semibold'>DPO: </span>
+                        dpo@bouwmatcher.nl
+                      </p>
+                    </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Data Collection Section */}
+              <div className='mt-12'>
+                <h2 className='text-secondary-foreground text-3xl  mb-8'>
+                  Data We Collect
+                </h2>
+                <div className='space-y-6'>
+                  {dataCollectionSections.map((section, index) => (
+                    <DataCollectionCard
+                      key={index}
+                      icon={section.icon}
+                      iconColor={section.iconColor}
+                      title={section.title}
+                      items={section.items}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Why & Legal Bases Section */}
+              <div className='mt-12'>
+                <h2 className='text-secondary-foreground text-3xl mb-4'>
+                  Why & Legal Bases
+                </h2>
+                <p className='text-slate-700 text-xl font-montserrat mb-8'>
+                  We process your personal data based on the following legal
+                  grounds:
+                </p>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  {legalBasisCards.map((card, index) => (
+                    <AlertCard key={index} className={card.cardClass}>
+                      <AlertCardHeader className={card.textClass}>
+                        {card.title}
+                      </AlertCardHeader>
+                      <AlertCardContent className={card.textClass}>
+                        {card.description}
+                      </AlertCardContent>
+                    </AlertCard>
+                  ))}
+                </div>
+              </div>
+
+              {/* Data Sharing Section */}
+              <div className='mt-12'>
+                <h2 className='text-secondary-foreground text-3xl mb-4'>
+                  Data Sharing
+                </h2>
+                <p className='text-slate-700 text-xl font-montserrat mb-8'>
+                  We may share your data with the following parties under strict
+                  conditions:
+                </p>
+                <div className='space-y-6'>
+                  {dataSharingItems.map((item, index) => (
+                    <BorderedCard key={index} borderColor={item.borderColor}>
+                      <BorderedCardHeader>{item.title}</BorderedCardHeader>
+                      <BorderedCardContent>
+                        {item.description}
+                      </BorderedCardContent>
+                    </BorderedCard>
+                  ))}
+                </div>
+              </div>
+
+              {/* International Transfers Section */}
+              <div className='mt-12'>
+                <h2 className='text-secondary-foreground text-3xl mb-4'>
+                  International Transfers
+                </h2>
+                <p className='text-slate-700 text-xl font-montserrat mb-8'>
+                  Your data is primarily processed within the European Union.
+                  When we use service providers outside the EU, we ensure
+                  adequate protection through:
+                </p>
+                <ul className='space-y-4 ml-8.5'>
+                  {internationalTransferItems.map((item, index) => (
+                    <li key={index} className='flex items-center gap-4'>
+                      <Shield
+                        className='w-6 h-6 text-emerald-600'
+                        fill='currentColor'
+                      />
+                      <span className='text-slate-700 text-xl font-montserrat'>
+                        {item}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </SectionAccordion>
