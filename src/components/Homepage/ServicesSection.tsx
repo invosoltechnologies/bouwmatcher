@@ -105,15 +105,14 @@ export default function ServicesSection() {
     }
 
     return (
-      <div className="relative">
-        <Carousel setApi={handleSetApi} className="w-full">
-          <CarouselContent>
-            {slides}
-          </CarouselContent>
+      <div className='relative'>
+        <div className='absolute z-20 w-12.5 h-full bg-gradient-to-r from-transparent to-white right-0'></div>
+        <Carousel setApi={handleSetApi} className='w-full'>
+          <CarouselContent>{slides}</CarouselContent>
         </Carousel>
 
         {/* Bullet Pagination */}
-        <div className="flex justify-center items-center gap-2 mt-8">
+        <div className='flex justify-center items-center gap-2 mt-8'>
           {Array.from({ length: totalSlides }).map((_, index) => (
             <button
               key={index}

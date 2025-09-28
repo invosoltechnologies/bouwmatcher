@@ -61,7 +61,13 @@ export default function ProjectForm() {
           {/* Postcode Input */}
           <div className='w-full'>
             <div className='flex items-center gap-2 mb-3'>
-              <MapPin className='w-5 h-5 text-primary' />
+              <Image
+                src='/icons/map.svg'
+                width={18}
+                height={18}
+                alt='Category'
+                className='[filter:brightness(0)_saturate(100%)_invert(14%)_sepia(95%)_saturate(2511%)_hue-rotate(214deg)_brightness(100%)_contrast(105%)]'
+              />
               <label className='text-foreground font-medium text-base'>
                 Postcode
               </label>
