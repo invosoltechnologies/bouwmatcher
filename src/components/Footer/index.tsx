@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Facebook, Instagram, Linkedin, Phone, Mail, MapPin } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -25,23 +24,23 @@ export default function Footer() {
 
           {/* Help Section */}
           <div className='flex-1'>
-            <h3 className='text-white text-xl font-medium mb-6'>Hulp</h3>
+            <h3 className='text-white text-xl font-medium mb-6'>Help</h3>
             <div className='space-y-4'>
               <Link
-                href='/nieuws'
-                className='block text-white font-light hover:text-white transition-colors'
+                href='/blog'
+                className='block text-white font-light hover:text-white hover:underline transition-colors'
               >
                 Nieuws
               </Link>
               <Link
                 href='/veelgestelde-vragen'
-                className='block text-white font-light hover:text-white transition-colors'
+                className='block text-white font-light hover:text-white hover:underline transition-colors'
               >
                 Veelgestelde vragen
               </Link>
               <Link
-                href='/contacteren'
-                className='block text-white font-light hover:text-white transition-colors'
+                href='/contact'
+                className='block text-white font-light hover:text-white hover:underline transition-colors'
               >
                 Contacteren
               </Link>
@@ -50,27 +49,61 @@ export default function Footer() {
 
           {/* Contact Section */}
           <div className='flex-1'>
-            <h3 className='text-white font-medium mb-6'>Contact</h3>
+            <h3 className='text-white text-xl font-medium mb-6'>Contact</h3>
             <div className='space-y-4'>
               <div className='flex items-center gap-3'>
-                <Phone className='w-4 h-4 text-white' />
-                <span className='text-white  font-light'>+32 491 11 59 49</span>
+                <Image
+                  src='/icons/phone.svg'
+                  alt='Phone'
+                  width={16}
+                  height={16}
+                  className='w-4 h-4 brightness-0 invert'
+                />
+                <span className='text-white font-light'>+32 491 11 59 49</span>
               </div>
               <div className='flex items-center gap-3'>
-                <Phone className='w-4 h-4 text-white' />
-                <span className='text-white  font-light'>+32 491 11 59 49</span>
+                <Image
+                  src='/icons/whatsapp.svg'
+                  alt='WhatsApp'
+                  width={16}
+                  height={16}
+                  className='w-4 h-4 brightness-0 invert'
+                />
+                <Link
+                  href='https://wa.me/32491115949'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='text-white font-light hover:text-white hover:underline transition-colors'
+                >
+                  +32 491 11 59 49
+                </Link>
               </div>
               <div className='flex items-center gap-3'>
-                <Mail className='w-4 h-4 text-white' />
-                <span className='text-white  font-light'>
-                  info@bouwmatcher.be
-                </span>
+                <Image
+                  src='/icons/mail.svg'
+                  alt='Email'
+                  width={16}
+                  height={16}
+                  className='w-4 h-4 brightness-0 invert'
+                />
+                <Link
+                  href='mailto:support@bouwmatcher.com'
+                  className='text-white font-light hover:text-white hover:underline transition-colors'
+                >
+                  support@bouwmatcher.com
+                </Link>
               </div>
               <div className='flex items-start gap-3'>
-                <MapPin className='w-4 h-4 text-white mt-1' />
-                <div className='text-white  font-light'>
-                  <div>Praitenboothstraat 12, 3270</div>
-                  <div>Scherpenheuvel</div>
+                <Image
+                  src='/icons/map.svg'
+                  alt='Location'
+                  width={16}
+                  height={16}
+                  className='w-4 h-4 brightness-0 invert mt-1'
+                />
+                <div className='text-white font-light'>
+                  <div>Philips Site 5 bus 1</div>
+                  <div>3001 Leuven, België</div>
                 </div>
               </div>
             </div>
@@ -78,27 +111,45 @@ export default function Footer() {
 
           {/* Socials Section */}
           <div className='flex-1'>
-            <h3 className='text-white font-medium mb-6'>Socials</h3>
+            <h3 className='text-white text-xl font-medium mb-6'>Socials</h3>
             <div className='space-y-4'>
               <Link
                 href='#'
-                className='flex items-center gap-3 text-white  font-light hover:text-white transition-colors'
+                className='flex items-center gap-3 text-white font-light hover:text-white hover:underline transition-colors'
               >
-                <Facebook className='w-4 h-4' />
+                <Image
+                  src='/icons/facebook.svg'
+                  alt='Facebook'
+                  width={16}
+                  height={16}
+                  className='w-4 h-4 brightness-0 invert'
+                />
                 <span>Facebook</span>
               </Link>
               <Link
                 href='#'
-                className='flex items-center gap-3 text-white  font-light hover:text-white transition-colors'
+                className='flex items-center gap-3 text-white font-light hover:text-white hover:underline transition-colors'
               >
-                <Instagram className='w-4 h-4' />
+                <Image
+                  src='/icons/instagram.svg'
+                  alt='Instagram'
+                  width={16}
+                  height={16}
+                  className='w-4 h-4 brightness-0 invert'
+                />
                 <span>Instagram</span>
               </Link>
               <Link
                 href='#'
-                className='flex items-center gap-3 text-white  font-light hover:text-white transition-colors'
+                className='flex items-center gap-3 text-white font-light hover:text-white hover:underline transition-colors'
               >
-                <Linkedin className='w-4 h-4' />
+                <Image
+                  src='/icons/linkdin.svg'
+                  alt='LinkedIn'
+                  width={16}
+                  height={16}
+                  className='w-4 h-4 brightness-0 invert'
+                />
                 <span>LinkedIn</span>
               </Link>
             </div>
@@ -111,22 +162,28 @@ export default function Footer() {
               <div>© 2025 Bouwmatcher | Alle rechten voorbehouden</div>
               <div className='flex items-center gap-6'>
                 <Link
-                  href='/algemene-voorwaarden'
-                  className='hover:text-white transition-colors'
-                >
-                  Algemene voorwaarden
-                </Link>
-                <Link
-                  href='/privacybeleid'
-                  className='hover:text-white transition-colors'
+                  href='/privacy-policy'
+                  className='hover:text-white hover:underline transition-colors'
                 >
                   Privacybeleid
                 </Link>
                 <Link
-                  href='/cookiebeleid'
-                  className='hover:text-white transition-colors'
+                  href='/terms-conditions'
+                  className='hover:text-white hover:underline transition-colors'
+                >
+                  Algemene voorwaarden
+                </Link>
+                <Link
+                  href='/cookie-policy'
+                  className='hover:text-white hover:underline transition-colors'
                 >
                   Cookiebeleid
+                </Link>
+                <Link
+                  href='/disclaimer'
+                  className='hover:text-white hover:underline transition-colors'
+                >
+                  Disclaimer
                 </Link>
                 <span>Ondernemingsnummer - BE 1024.216.268</span>
               </div>
