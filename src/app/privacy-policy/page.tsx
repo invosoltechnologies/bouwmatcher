@@ -1,5 +1,5 @@
-import HeroLegal from "@/components/PrivacyPolicy/HeroLegal";
-import PrivacyDescription from "@/components/PrivacyPolicy/PrivacyDescription";
+import HeroLegal from "@/components/Legal/HeroLegal";
+import PrivacyDescription from "@/components/Legal/PrivacyDescription";
 
 
 export default function PrivacyPolicy() {
