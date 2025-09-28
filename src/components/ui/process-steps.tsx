@@ -30,6 +30,8 @@ export default function ProcessSteps({
   ctaButtons,
 }: ProcessStepsProps) {
   const [visibleSteps, setVisibleSteps] = useState<number[]>([]);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const [checkmarkSteps, setCheckmarkSteps] = useState<number[]>([]);
   const sectionRef = useRef<HTMLDivElement>(null);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -39,13 +41,26 @@ export default function ProcessSteps({
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const stepIndex = stepRefs.current.findIndex(ref => ref === entry.target);
-            if (stepIndex !== -1 && !visibleSteps.includes(stepIndex)) {
-              setVisibleSteps(prev => [...prev, stepIndex].sort((a, b) => a - b));
+            if (stepIndex !== -1) {
+              // Mark as visible when it first enters the viewport
+              if (!visibleSteps.includes(stepIndex)) {
+                setVisibleSteps(prev => [...prev, stepIndex].sort((a, b) => a - b));
+              }
+
+              // Mark as completed when it reaches 50% visibility
+              if (entry.intersectionRatio >= 0.5 && !completedSteps.includes(stepIndex)) {
+                setCompletedSteps(prev => {
+                  const newCompleted = [...prev, stepIndex].sort((a, b) => a - b);
+                  return newCompleted;
+                });
+              }
             }
           }
         });
       },
-      { threshold: 0.3 }
+      {
+        threshold: [0.3, 0.5]
+      }
     );
 
     stepRefs.current.forEach(ref => {
@@ -53,10 +68,27 @@ export default function ProcessSteps({
     });
 
     return () => observer.disconnect();
-  }, [visibleSteps]);
+  }, [visibleSteps, completedSteps]);
 
-  const isStepCompleted = (stepIndex: number) => visibleSteps.includes(stepIndex);
+  // Add delay for checkmark appearance after step completion
+  useEffect(() => {
+    completedSteps.forEach((stepIndex) => {
+      if (!checkmarkSteps.includes(stepIndex)) {
+        setTimeout(() => {
+          setCheckmarkSteps(prev => {
+            if (!prev.includes(stepIndex)) {
+              return [...prev, stepIndex].sort((a, b) => a - b);
+            }
+            return prev;
+          });
+        }, 1000); // 1 second delay to match the progress bar animation
+      }
+    });
+  }, [completedSteps, checkmarkSteps]);
+
+  const isStepCompleted = (stepIndex: number) => completedSteps.includes(stepIndex);
   const isStepVisible = (stepIndex: number) => visibleSteps.includes(stepIndex);
+  const shouldShowCheckmark = (stepIndex: number) => checkmarkSteps.includes(stepIndex);
 
   return (
     <section className={`py-20 bg-white ${className}`} ref={sectionRef}>
@@ -85,7 +117,7 @@ export default function ProcessSteps({
             <div
               className='w-full transition-all duration-1000 ease-out'
               style={{
-                height: `${(visibleSteps.length / steps.length) * 100}%`,
+                height: `${(completedSteps.length / steps.length) * 100}%`,
                 background: 'linear-gradient(180deg, #023AA2 0%, #0AB27E 100%)',
               }}
             />
@@ -111,7 +143,7 @@ export default function ProcessSteps({
                 boxShadow: '0px 0px 0px 0px #0AB27E26',
               }}
             >
-              {isStepCompleted(index) ? <Check /> : step.id}
+              {shouldShowCheckmark(index) ? <Check /> : step.id}
             </div>
           ))}
 
