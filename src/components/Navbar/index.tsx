@@ -21,12 +21,14 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed left-0 right-0 z-50 py-4 px-7 bg-white border-b border-gray-200 max-w-[1326px] mx-auto rounded-[13px] transition-all duration-300 ease-in-out ${
-        isScrolled ? 'top-0' : 'top-21'
+      className={`fixed left-0 right-0 z-50 py-4 px-7 bg-white border-b border-gray-200  rounded-[13px] transition-all duration-300 ease-in-out ${
+        isScrolled
+          ? 'top-0 max-w-full mx-0 shadow-lg'
+          : 'top-21 max-w-[1326px] mx-auto'
       }`}
       style={{ boxShadow: '0px 1px 2px 0px #0000000D' }}
     >
-      <div className='flex items-center justify-between'>
+      <div className='max-w-[1326px] mx-auto flex items-center justify-between'>
         <div className='flex items-center space-x-12'>
           <Link href='/' className='flex items-center'>
             <Image
@@ -69,17 +71,18 @@ export default function Navbar() {
               />
             </div>
           </div>
-          
+
           {/* Login Button */}
-          <Button 
+          <Button
             className='bg-primary hover:bg-primary/90 text-white px-[22px] py-3 border border-gray-200 font-medium text-lg h-auto rounded-[12px]'
-            style={{ 
-              boxShadow: '0px 10px 15px 0px #0000001A, 0px 4px 6px 0px #0000001A'
+            style={{
+              boxShadow:
+                '0px 10px 15px 0px #0000001A, 0px 4px 6px 0px #0000001A',
             }}
           >
             Login
           </Button>
-          
+
           {/* Language Switcher */}
           <LanguageSwitcher />
         </div>
