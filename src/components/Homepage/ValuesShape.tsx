@@ -95,7 +95,7 @@ export default function ValuesShape() {
                     ? 'linear-gradient(90deg, rgba(10, 178, 126, 0.25) 0%, rgba(2, 58, 162, 0.25) 100%)'
                     : 'linear-gradient(90deg, rgba(2, 58, 162, 0.25) 0%, rgba(10, 178, 126, 0.25) 100%)',
                 filter: 'drop-shadow(0px 16px 40px #2929291F)',
-                ...maskStyle
+                ...maskStyle,
               }}
             >
               {/* Content based on position */}
@@ -133,14 +133,13 @@ export default function ValuesShape() {
       {/* Center Circle */}
 
       <div
-        className='absolute inset-0  top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 rounded-full border border-gray-200 '
+        className='absolute inset-0 w-[231px] h-[231px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 rounded-full border border-gray-200 '
         style={{
-          width: '231px',
-          height: '231px',
           background:
             'linear-gradient(90deg, rgba(2, 58, 162, 0.34) 0%, #0AB27E 50%, rgba(2, 58, 162, 0.23) 100%)',
         }}
       ></div>
+      <div className='absolute inset-0 w-[231px] h-[231px] z-10 bg-white/60 backdrop:blur-[100px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full'></div>
       <div
         className='absolute z-30 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-primary rounded-full flex items-center justify-center opacity-100'
         style={{
