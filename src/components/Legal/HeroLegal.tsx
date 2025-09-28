@@ -5,7 +5,7 @@ import { Cookie } from "lucide-react";
 
 export default function HeroLegal() {
   return (
-    <section className='pt-[168px] pb-56 relative'>
+    <section className='pt-[198px] pb-48 relative'>
       {/* Background div with gradient and blur */}
       <div className='absolute inset-0 w-full h-full -z-10 blur-[66.5px] bg-gradient-to-r from-[#EFF6FF] to-[#F0FDF4]' />
 
@@ -79,10 +79,10 @@ export default function HeroLegal() {
 
           {/* Right Content - Image Space */}
           <div className='flex-1 flex justify-end'>
-            <div className='relative right-8'>
+            <div className='relative -right-12'>
               {/* Placeholder for image */}
               <Image
-                src='/images/contact/contact-hero.png'
+                src='/images/legal/legal-banner.png'
                 width={692}
                 height={485}
                 alt='banner img'
@@ -92,8 +92,8 @@ export default function HeroLegal() {
               <div
                 className='absolute w-24 h-24 bg-accent border border-gray-200 rounded-2xl -z-10'
                 style={{
-                  top: '5px',
-                  left: '25px',
+                  top: '-25px',
+                  left: '-25px',
                   boxShadow:
                     '0px 20px 25px 0px #0000001A, 0px 8px 10px 0px #0000001A',
                 }}
@@ -102,17 +102,17 @@ export default function HeroLegal() {
               <div
                 className='absolute w-24 h-24 bg-accent border border-gray-200 rounded-2xl -z-10'
                 style={{
-                  bottom: '45px',
-                  right: '25px',
+                  bottom: '-13px',
+                  right: '-16px',
                   boxShadow:
                     '0px 20px 25px 0px #0000001A, 0px 8px 10px 0px #0000001A',
                 }}
               ></div>
 
               {/* Bottom right pill */}
-              <div className='absolute bottom-10 left-4'>
+              <div className='absolute z-10 -left-5 -bottom-7'>
                 <Pill
-                  className='bg-white/80 p-4 pr-5'
+                  className='bg-white/60 p-4 pr-5'
                   style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
                   text='Privacy First'
                   dotColor='#0AB27E'
