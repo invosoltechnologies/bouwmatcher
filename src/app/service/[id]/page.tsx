@@ -13,7 +13,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
   const { id } = await params;
 
   const service = servicesData.find(s =>
-    s.url === `/service/${id}`
+    s.slug === id
   );
 
   if (!service) {
@@ -32,6 +32,6 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
 export async function generateStaticParams() {
   return servicesData.map((service) => ({
-    id: service.url.replace('/service/', ''),
+    id: service.slug,
   }));
 }
