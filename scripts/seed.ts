@@ -21,8 +21,12 @@ async function runSeed() {
       );
       process.exit(1);
     }
-  } catch (error: any) {
-    console.error('❌ Error running seed:', error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('❌ Error running seed:', error.message);
+    } else {
+      console.error('❌ Error running seed:', error);
+    }
     process.exit(1);
   }
 }
