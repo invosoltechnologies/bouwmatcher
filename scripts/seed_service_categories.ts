@@ -5,7 +5,8 @@ export default async function seedServiceCategories() {
   console.log('🌱 Seeding service_categories...');
 
   const servicesToInsert = servicesData.map((service) => ({
-    name: service.name,
+    name_nl: service.name_nl,
+    name_en: service.name_en,
     slug: service.slug,
   }));
 

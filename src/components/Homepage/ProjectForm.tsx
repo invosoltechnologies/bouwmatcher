@@ -12,7 +12,7 @@ export default function ProjectForm() {
   const [postcode, setPostcode] = useState('');
   const [executionDate, setExecutionDate] = useState('');
 
-  const categories = servicesData.map(service => service.name);
+  const categories = servicesData.map(service => service.name_nl);
 
   const executionDates = [
     'Zo snel mogelijk',

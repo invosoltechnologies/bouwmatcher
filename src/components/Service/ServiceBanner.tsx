@@ -26,13 +26,13 @@ export default function ServiceBanner({ service }: ServiceBannerProps) {
                 <div className='inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-8 py-2 mb-6 border border-[#023AA233]'>
                   <div className='w-2 h-2 bg-accent rounded-full'></div>
                   <span className='text-sm text-primary font-medium'>
-                    Vind een {service.name.toLowerCase()}specialist
+                    Vind een {service.name_nl.toLowerCase()}specialist
                   </span>
                 </div>
 
                 {/* Main Heading */}
                 <h1 className='text-4xl lg:text-[55px] font-normal leading-tight mb-2 text-white'>
-                  Vind en vergelijk {service.name.toLowerCase()}specialisten
+                  Vind en vergelijk {service.name_nl.toLowerCase()}specialisten
                 </h1>
 
                 {/* Description */}

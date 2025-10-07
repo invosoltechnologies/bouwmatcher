@@ -120,7 +120,7 @@ export default function ServiceDetails({ service }: ServiceDetailsProps) {
           <div className='lg:col-span-3'>
             <div className='max-w-4xl'>
               <h2 className='text-3xl font-medium text-foreground mb-8'>
-                Alles over {service.name.toLowerCase()}
+                Alles over {service.name_nl.toLowerCase()}
               </h2>
 
               <Accordion type='single' collapsible className='w-full space-y-4'>
