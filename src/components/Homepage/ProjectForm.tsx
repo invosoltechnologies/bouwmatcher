@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { MapPin, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,20 +9,68 @@ import { servicesData } from '@/data/services';
 import Image from 'next/image';
 
 export default function ProjectForm() {
+  const router = useRouter();
   const [category, setCategory] = useState('');
   const [postcode, setPostcode] = useState('');
   const [executionDate, setExecutionDate] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const categories = servicesData.map(service => service.name_nl);
 
   const executionDates = [
     'Zo snel mogelijk',
     'Binnen 1 maand',
-    'Binnen 3 maanden', 
+    'Binnen 3 maanden',
     'Binnen 6 maanden',
     'Over meer dan 6 maanden',
     'Nog niet beslist'
   ];
+
+  const handleStartProject = async () => {
+    // Validate category selection
+    if (!category) {
+      alert('Selecteer een categorie');
+      return;
+    }
+
+    // Find the service category slug
+    const selectedService = servicesData.find(s => s.name_nl === category);
+    if (!selectedService) return;
+
+    setIsLoading(true);
+
+    try {
+      // Call API to initialize draft project (API will lookup ID by slug)
+      const response = await fetch('/api/project-draft/initialize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          serviceCategorySlug: selectedService.slug,
+          postcode: postcode || null,
+          executionTiming: executionDate || null,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to initialize project');
+      }
+
+      // Store session token in localStorage
+      localStorage.setItem('projectSessionToken', data.sessionToken);
+
+      // Redirect to questionnaire with draft ID
+      router.push(`/create-project?draft=${data.draftId}`);
+    } catch (error) {
+      console.error('Error starting project:', error);
+      alert('Er is een fout opgetreden. Probeer het opnieuw.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div
@@ -115,9 +164,13 @@ export default function ProjectForm() {
 
         {/* Button div */}
         <div className='w-full flex justify-center'>
-          <Button className='bg-accent hover:bg-accent/90 text-white px-14 py-4 min-w-64 h-14 rounded-[12px] font-medium text-base flex items-center gap-3'>
+          <Button
+            onClick={handleStartProject}
+            disabled={isLoading}
+            className='bg-accent hover:bg-accent/90 text-white px-14 py-4 min-w-64 h-14 rounded-[12px] font-medium text-base flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed'
+          >
             <Search className='w-6 h-6' />
-            Project starten
+            {isLoading ? 'Laden...' : 'Project starten'}
           </Button>
         </div>
       </div>
