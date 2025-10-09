@@ -178,7 +178,7 @@ export default function CreateProjectPage() {
               <RadioGroup
                 value={selectedAnswer}
                 onValueChange={(value) => setAnswers({ ...answers, [currentQuestion.id]: value })}
-                className="space-y-4 mb-12"
+                className="gap-4 mb-12"
               >
                 {currentQuestion.options?.map((option) => (
                   <QuestionnaireRadio
@@ -207,7 +207,7 @@ export default function CreateProjectPage() {
                 <Button
                   onClick={handleNext}
                   disabled={!selectedAnswer}
-                  className="bg-primary hover:bg-primary/90 text-white font-medium text-base px-8 py-6 rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-primary hover:bg-primary/90 text-white font-medium text-base px-7 py-4 rounded-xl flex items-center gap-2  disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Volgende
                   <ArrowRight className="w-5 h-5" />
