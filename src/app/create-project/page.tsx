@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import type { QuestionWithOptions } from "@/types/questionnaire";
+import { RadioGroup } from "@/components/ui/radio-group";
 
 export default function CreateProjectPage() {
   const router = useRouter();
@@ -146,15 +147,15 @@ export default function CreateProjectPage() {
       <QuestionnaireNavbar />
 
       {/* Progress Bar */}
-      <div className="w-full px-7 pt-6">
-        <div className="max-w-[680px] mx-auto">
-          <Progress value={progressPercentage} className="h-2" />
+      <div className="w-full px-7 pt-12">
+        <div className="max-w-[720px] mx-auto">
+          <Progress value={progressPercentage} className="h-1.5" />
         </div>
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center px-7 py-12">
-        <div className="w-full max-w-[680px]">
+      <main className="flex-1 flex items-center justify-center px-7 py-10">
+        <div className="w-full max-w-[720px]">
           {isLoading ? (
             <div className="text-center">
               <p className="text-lg text-gray-500">Laden...</p>
@@ -169,12 +170,16 @@ export default function CreateProjectPage() {
               )}
 
               {/* Question */}
-              <h1 className="text-3xl font-semibold text-center text-foreground mb-12">
+              <h2 className="text-4xl font-normal leading-10 text-center text-foreground mb-16">
                 {currentQuestion.question_text_nl}
-              </h1>
+              </h2>
 
               {/* Answer Options */}
-              <div className="space-y-4 mb-12">
+              <RadioGroup
+                value={selectedAnswer}
+                onValueChange={(value) => setAnswers({ ...answers, [currentQuestion.id]: value })}
+                className="space-y-4 mb-12"
+              >
                 {currentQuestion.options?.map((option) => (
                   <QuestionnaireRadio
                     key={option.id}
@@ -183,10 +188,9 @@ export default function CreateProjectPage() {
                     value={option.id}
                     label={option.option_label_nl}
                     checked={selectedAnswer === option.id}
-                    onChange={(value) => setAnswers({ ...answers, [currentQuestion.id]: value })}
                   />
                 ))}
-              </div>
+              </RadioGroup>
 
               {/* Navigation Buttons */}
               <div className="flex items-center justify-between">

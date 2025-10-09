@@ -1,5 +1,7 @@
 'use client';
 import * as React from "react";
+import { RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 interface QuestionnaireRadioProps {
@@ -13,34 +15,40 @@ interface QuestionnaireRadioProps {
 
 export default function QuestionnaireRadio({
   id,
-  name,
   value,
   label,
   checked = false,
-  onChange,
+
 }: QuestionnaireRadioProps) {
   return (
-    <label
-      htmlFor={id}
+    <div
       className={cn(
-        "flex items-center w-full px-6 py-4 rounded-xl border-2 cursor-pointer transition-all",
+        'flex items-center w-full px-3 py-4 rounded-xl border cursor-pointer transition-all',
         checked
-          ? "bg-[#E8F4FD] border-primary"
-          : "bg-white border-gray-200 hover:border-gray-300"
+          ? 'bg-gradient-to-r from-[rgba(10,178,126,0.10)] to-[rgba(2,58,162,0.10)] border-primary/20'
+          : 'bg-white border-neutral-800/20 hover:border-primary/40'
       )}
     >
-      <input
-        type="radio"
-        id={id}
-        name={name}
+      <RadioGroupItem
         value={value}
-        checked={checked}
-        onChange={(e) => onChange?.(e.target.value)}
-        className="w-5 h-5 text-primary border-gray-300 focus:ring-primary focus:ring-2"
+        id={id}
+        circleClassName={'size-3.5'}
+        className={cn(
+          'w-6 h-6 border-2 shrink-0',
+          checked
+            ? 'border-primary'
+            : 'border-neutral-800/20'
+        )}
       />
-      <span className="ml-4 text-base font-medium text-foreground">
+      <Label
+        htmlFor={id}
+        className={cn(
+          'ml-3.5 text-lg font-medium cursor-pointer flex-1',
+          checked ? 'text-primary' : 'text-muted-foreground'
+        )}
+      >
         {label}
-      </span>
-    </label>
+      </Label>
+    </div>
   );
 }
