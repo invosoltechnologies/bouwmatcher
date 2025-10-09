@@ -207,7 +207,7 @@ export default function CreateProjectPage() {
                 <Button
                   onClick={handleNext}
                   disabled={!selectedAnswer}
-                  className="bg-primary hover:bg-primary/90 text-white font-medium text-base px-7 py-4 rounded-xl flex items-center gap-2  disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-primary shadow-2xl hover:bg-primary/90 text-white text-xl px-7 py-4 rounded-xl flex items-center gap-4 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Volgende
                   <ArrowRight className="w-5 h-5" />
