@@ -36,6 +36,7 @@ export interface ProjectFormQuestion {
   help_text_nl?: string;
   help_text_en?: string;
   is_active: boolean;
+  step_number: number;
   created_at: string;
   updated_at: string;
 }
