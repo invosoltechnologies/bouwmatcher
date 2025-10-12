@@ -12,6 +12,7 @@ import { RadioGroup } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import PhotoUploadModal from "@/components/Questionnaire/PhotoUploadModal";
+import OTPVerification from "@/components/Questionnaire/OTPVerification";
 
 export default function CreateProjectPage() {
   const router = useRouter();
@@ -31,6 +32,7 @@ export default function CreateProjectPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
+  const [showOTPVerification, setShowOTPVerification] = useState(false);
   const totalSteps = 8;
 
   const currentQuestion = currentQuestions[currentQuestionIndex] || null;
@@ -407,7 +409,17 @@ export default function CreateProjectPage() {
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center px-7 py-12">
         <div className="w-full max-w-[680px]">
-          {isLoading ? (
+          {showOTPVerification ? (
+            <OTPVerification
+              phoneNumber={allAnswers['q-general-contact-phone'] || allAnswers['q-general-contact-phone-business'] || ''}
+              onVerify={(otp) => {
+                // TODO: Verify OTP and complete project submission
+                console.log('OTP verified:', otp);
+                alert('OTP geverifieerd! Project wordt ingediend...');
+              }}
+              onBack={() => setShowOTPVerification(false)}
+            />
+          ) : isLoading ? (
             <div className="text-center">
               <p className="text-lg text-gray-500">Laden...</p>
             </div>
@@ -490,7 +502,13 @@ export default function CreateProjectPage() {
                           alert('Vul alle velden in');
                           return;
                         }
-                        await moveToNextStep();
+
+                        // Save Step 7 answers
+                        await saveAllCurrentAnswers();
+                        setAllAnswers(prev => ({ ...prev, ...answers }));
+
+                        // Show OTP verification screen
+                        setShowOTPVerification(true);
                       }}
                       disabled={isSaving}
                       className="bg-primary hover:bg-primary/90 text-white font-medium text-base px-8 py-6 rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
