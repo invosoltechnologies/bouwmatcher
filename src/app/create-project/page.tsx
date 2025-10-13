@@ -303,15 +303,17 @@ export default function CreateProjectPage() {
   // Special rendering for Step 6 (all location fields together)
   const renderStep6LocationFields = () => {
     return (
-      <div className="w-full max-w-[680px] mx-auto space-y-4">
+      <div className='w-full max-w-[680px] mx-auto space-y-4'>
         {currentQuestions.map((question) => (
           <Input
             key={question.id}
-            type="text"
+            type='text'
             value={answers[question.id] || ''}
-            onChange={(e) => setAnswers({ ...answers, [question.id]: e.target.value })}
+            onChange={(e) =>
+              setAnswers({ ...answers, [question.id]: e.target.value })
+            }
             placeholder={question.placeholder_nl}
-            className="w-full"
+            className='w-full placeholder:text-neutral-400 text-secondary-foreground font-medium py-4 px-6 rounded-[10px] h-auto md:text-lg'
           />
         ))}
       </div>
@@ -321,15 +323,17 @@ export default function CreateProjectPage() {
   // Special rendering for Step 7 (all contact fields together)
   const renderStep7ContactFields = () => {
     return (
-      <div className="w-full max-w-[680px] mx-auto space-y-4">
+      <div className='w-full max-w-[680px] mx-auto space-y-4'>
         {currentQuestions.map((question) => (
           <Input
             key={question.id}
-            type="text"
+            type='text'
             value={answers[question.id] || ''}
-            onChange={(e) => setAnswers({ ...answers, [question.id]: e.target.value })}
+            onChange={(e) =>
+              setAnswers({ ...answers, [question.id]: e.target.value })
+            }
             placeholder={question.placeholder_nl}
-            className="w-full"
+            className='w-full placeholder:text-neutral-400 text-secondary-foreground font-medium py-4 px-6 rounded-[10px] h-auto md:text-lg'
           />
         ))}
       </div>
@@ -369,7 +373,7 @@ export default function CreateProjectPage() {
             value={selectedAnswer}
             onChange={(e) => setAnswers({ ...answers, [currentQuestion.id]: e.target.value })}
             placeholder={currentQuestion.placeholder_nl}
-            className="w-full max-w-md"
+            className="w-full max-w-md py-4 px-6 placeholder:text-neutral-400 text-secondary-foreground font-medium text-lg"
           />
         );
 
@@ -389,7 +393,7 @@ export default function CreateProjectPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className='min-h-screen flex flex-col bg-white'>
       {/* Top Bar */}
       <TopBar />
 
@@ -397,21 +401,22 @@ export default function CreateProjectPage() {
       <QuestionnaireNavbar />
 
       {/* Progress Bar */}
-      <div className="w-full px-7 pt-6">
-        <div className="max-w-[680px] mx-auto">
-          <Progress value={progressPercentage} className="h-2" />
-          <p className="text-sm text-gray-500 mt-2 text-center">
-            Stap {currentStep} van {totalSteps}
-          </p>
+      <div className='w-full px-7 pt-6'>
+        <div className='max-w-[680px] mx-auto'>
+          <Progress value={progressPercentage} className='h-2' />
         </div>
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center px-7 py-12">
-        <div className="w-full max-w-[680px]">
+      <main className='flex-1 flex items-center justify-center px-7 py-12'>
+        <div className='w-full max-w-[680px]'>
           {showOTPVerification ? (
             <OTPVerification
-              phoneNumber={allAnswers['q-general-contact-phone'] || allAnswers['q-general-contact-phone-business'] || ''}
+              phoneNumber={
+                allAnswers['q-general-contact-phone'] ||
+                allAnswers['q-general-contact-phone-business'] ||
+                ''
+              }
               onVerify={(otp) => {
                 // TODO: Verify OTP and complete project submission
                 console.log('OTP verified:', otp);
@@ -420,39 +425,37 @@ export default function CreateProjectPage() {
               onBack={() => setShowOTPVerification(false)}
             />
           ) : isLoading ? (
-            <div className="text-center">
-              <p className="text-lg text-gray-500">Laden...</p>
+            <div className='text-center'>
+              <p className='text-lg text-gray-500'>Laden...</p>
             </div>
           ) : currentQuestion ? (
             <>
               {/* Step 6: Location fields (all together) */}
               {currentStep === 6 ? (
                 <>
-                  <h2 className="text-4xl font-normal leading-10 text-center text-foreground mb-8">
+                  <h2 className='text-4xl font-normal leading-10 text-center text-foreground mb-8'>
                     Wat is de projectlocatie?
                   </h2>
 
                   {/* All location fields */}
-                  <div className="mb-12">
-                    {renderStep6LocationFields()}
-                  </div>
+                  <div className='mb-12'>{renderStep6LocationFields()}</div>
 
                   {/* Navigation Buttons */}
-                  <div className="flex items-center justify-between">
+                  <div className='flex items-center justify-between'>
                     <Button
-                      variant="ghost"
+                      variant='ghost'
                       onClick={handleBack}
                       disabled={questionHistory.length === 0}
-                      className="text-primary font-medium text-base flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className='text-primary font-medium text-base flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                      <ArrowLeft className="w-5 h-5" />
+                      <ArrowLeft className='w-5 h-5' />
                       Vorige
                     </Button>
 
                     <Button
                       onClick={async () => {
                         // Validate all required fields
-                        const allFilled = currentQuestions.every(q =>
+                        const allFilled = currentQuestions.every((q) =>
                           q.is_required ? answers[q.id]?.trim() : true
                         );
                         if (!allFilled) {
@@ -462,40 +465,39 @@ export default function CreateProjectPage() {
                         await moveToNextStep();
                       }}
                       disabled={isSaving}
-                      className="bg-primary hover:bg-primary/90 text-white font-medium text-base px-8 py-6 rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className='bg-primary hover:bg-primary/90 text-white font-medium text-base px-8 py-4 w-auto rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
+                      size={null}
                     >
                       {isSaving ? 'Opslaan...' : 'Volgende'}
-                      <ArrowRight className="w-5 h-5" />
+                      <ArrowRight className='w-5 h-5' />
                     </Button>
                   </div>
                 </>
               ) : currentStep === 7 ? (
                 <>
-                  <h2 className="text-4xl font-normal leading-10 text-center text-foreground mb-8">
+                  <h2 className='text-4xl font-normal leading-10 text-center text-foreground mb-8'>
                     Vul hier jouw gegevens in
                   </h2>
 
                   {/* All contact fields */}
-                  <div className="mb-12">
-                    {renderStep7ContactFields()}
-                  </div>
+                  <div className='mb-12'>{renderStep7ContactFields()}</div>
 
                   {/* Navigation Buttons */}
-                  <div className="flex items-center justify-between">
+                  <div className='flex items-center justify-between'>
                     <Button
-                      variant="ghost"
+                      variant='ghost'
                       onClick={handleBack}
                       disabled={questionHistory.length === 0}
-                      className="text-primary font-medium text-base flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className='text-primary font-medium text-base flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                      <ArrowLeft className="w-5 h-5" />
+                      <ArrowLeft className='w-5 h-5' />
                       Vorige
                     </Button>
 
                     <Button
                       onClick={async () => {
                         // Validate all required fields
-                        const allFilled = currentQuestions.every(q =>
+                        const allFilled = currentQuestions.every((q) =>
                           q.is_required ? answers[q.id]?.trim() : true
                         );
                         if (!allFilled) {
@@ -505,16 +507,16 @@ export default function CreateProjectPage() {
 
                         // Save Step 7 answers
                         await saveAllCurrentAnswers();
-                        setAllAnswers(prev => ({ ...prev, ...answers }));
+                        setAllAnswers((prev) => ({ ...prev, ...answers }));
 
                         // Show OTP verification screen
                         setShowOTPVerification(true);
                       }}
                       disabled={isSaving}
-                      className="bg-primary hover:bg-primary/90 text-white font-medium text-base px-8 py-6 rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className='bg-primary hover:bg-primary/90 text-white font-medium text-base px-8 py-6 rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
                       {isSaving ? 'Opslaan...' : 'Ontvang offertes'}
-                      <ArrowRight className="w-5 h-5" />
+                      <ArrowRight className='w-5 h-5' />
                     </Button>
                   </div>
                 </>
@@ -523,55 +525,60 @@ export default function CreateProjectPage() {
                   {/* Regular question rendering for other steps */}
                   {/* Question Counter (for multiple questions in same step) */}
                   {currentQuestions.length > 1 && (
-                    <p className="text-center text-sm text-gray-500 mb-4">
-                      Vraag {currentQuestionIndex + 1} van {currentQuestions.length}
+                    <p className='text-center text-sm text-gray-500 mb-4'>
+                      Vraag {currentQuestionIndex + 1} van{' '}
+                      {currentQuestions.length}
                     </p>
                   )}
 
                   {/* Question */}
-                  <h2 className="text-4xl font-normal leading-10 text-center text-foreground mb-4">
+                  <h2 className='text-4xl font-normal leading-10 text-center text-foreground mb-4'>
                     {currentQuestion.question_text_nl}
                   </h2>
 
                   {/* Help Text */}
                   {currentQuestion.help_text_nl && (
-                    <p className="text-center text-sm text-gray-500 mb-8">
+                    <p className='text-center text-base text-slate-500 mb-11'>
                       {currentQuestion.help_text_nl}
                     </p>
                   )}
 
                   {/* Answer Input */}
-                  <div className="mb-12">
-                    {renderQuestion()}
-                  </div>
+                  <div className='mb-12'>{renderQuestion()}</div>
 
                   {/* Navigation Buttons */}
-                  <div className="flex items-center justify-between">
+                  <div className='flex items-center justify-between'>
                     <Button
-                      variant="ghost"
+                      variant='ghost'
                       onClick={handleBack}
-                      disabled={questionHistory.length === 0 && currentQuestionIndex === 0}
-                      className="text-primary font-medium text-base flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={
+                        questionHistory.length === 0 &&
+                        currentQuestionIndex === 0
+                      }
+                      className='text-primary font-medium text-base flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                      <ArrowLeft className="w-5 h-5" />
+                      <ArrowLeft className='w-5 h-5' />
                       Vorige
                     </Button>
-
+                    <p className='text-sm text-gray-500 mt-2 text-center'>
+                      Stap {currentStep} van {totalSteps}
+                    </p>
                     <Button
+                      size={null}
                       onClick={handleNext}
                       disabled={!selectedAnswer || isSaving}
-                      className="bg-primary hover:bg-primary/90 text-white font-medium text-base px-8 py-6 rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className='bg-primary hover:bg-primary/90 text-white font-medium text-base px-8 py-4 w-auto rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
                       {isSaving ? 'Opslaan...' : 'Volgende'}
-                      <ArrowRight className="w-5 h-5" />
+                      <ArrowRight className='w-5 h-5' />
                     </Button>
                   </div>
                 </>
               )}
             </>
           ) : (
-            <div className="text-center">
-              <p className="text-lg text-gray-500">Geen vragen beschikbaar</p>
+            <div className='text-center'>
+              <p className='text-lg text-gray-500'>Geen vragen beschikbaar</p>
             </div>
           )}
         </div>
