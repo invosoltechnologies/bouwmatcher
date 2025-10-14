@@ -236,7 +236,7 @@ export default function PhotoUploadModal({ draftId, onClose, onComplete }: Photo
             />
           </label>
 
-          {/* Uploaded Photos */}
+          {/* Uploaded Photo */}
           {photos.map((photo) => (
             <div key={photo.id} className='relative aspect-square group'>
               <Image
