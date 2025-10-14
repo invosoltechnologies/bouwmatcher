@@ -11,21 +11,21 @@ import Link from 'next/link';
 
 const ServiceCard = ({ service }: { service: typeof servicesData[0] }) => (
   <Link
-    href={service.url}
+    href={`/service/${service.slug}`}
     className="cursor-pointer block"
   >
     <div className="bg-white rounded-[12px] border-2 border-gray-200 pt-6.5 min-w-[133px] h-[152px] min-w flex flex-col items-center justify-start gap-4">
       <div className="w-16 h-16 flex items-center justify-center">
         <Image
           src={service.icon}
-          alt={service.name}
+          alt={service.name_nl}
           width={64}
           height={64}
           className="object-contain"
         />
       </div>
       <p className="font-montserrat block text-sm text-center text-wrap break-all text-foreground">
-        {service.name}
+        {service.name_nl}
       </p>
     </div>
   </Link>
@@ -88,7 +88,7 @@ export default function ServicesSection() {
           rows.push(
             <div key={rowIndex} className="grid grid-cols-8 gap-x-11 mb-6">
               {rowServices.map((service) => (
-                <ServiceCard key={service.name} service={service} />
+                <ServiceCard key={service.name_nl} service={service} />
               ))}
             </div>
           );
@@ -131,7 +131,7 @@ export default function ServicesSection() {
   const GridView = () => (
     <div className="grid grid-cols-8 gap-x-11 gap-y-6">
       {servicesData.map((service) => (
-        <ServiceCard key={service.name} service={service} />
+        <ServiceCard key={service.name_nl} service={service} />
       ))}
     </div>
   );

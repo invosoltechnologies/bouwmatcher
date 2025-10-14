@@ -4,6 +4,7 @@ import CTASection from '@/components/Homepage/CTASection';
 import ServiceBanner from '@/components/Service/ServiceBanner';
 import ServiceDetails from '@/components/Service/ServiceDetails';
 import ProcessSection from '@/components/Homepage/ProcessSection';
+import DefaultLayout from '@/components/DefaultLayout';
 
 interface ServicePageProps {
   params: Promise<{ id: string }>;
@@ -13,7 +14,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
   const { id } = await params;
 
   const service = servicesData.find(s =>
-    s.url === `/service/${id}`
+    s.slug === id
   );
 
   if (!service) {
@@ -21,17 +22,17 @@ export default async function ServicePage({ params }: ServicePageProps) {
   }
 
   return (
-    <>
+    <DefaultLayout>
       <ServiceBanner service={service} />
       <ServiceDetails service={service} />
       <ProcessSection/>
       <CTASection />
-    </>
+    </DefaultLayout>
   );
 }
 
 export async function generateStaticParams() {
   return servicesData.map((service) => ({
-    id: service.url.replace('/service/', ''),
+    id: service.slug,
   }));
 }
