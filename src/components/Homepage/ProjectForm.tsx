@@ -108,8 +108,19 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
                 Categorie
               </label>
             </div>
-            <Select value={category} onValueChange={setCategory} disabled={mode === 'service'}>
-              <SelectTrigger className=' min-w-[253px] font-montserrat cursor-pointer min-h-14 px-3 py-[22px] bg-white border-gray-200 rounded-[12px] text-base disabled:opacity-60 disabled:cursor-not-allowed'>
+            <Select
+              value={category}
+              onValueChange={setCategory}
+              disabled={mode === 'service'}
+            >
+              <SelectTrigger
+                className={`min-w-[253px] font-montserrat min-h-14 px-3 py-[22px] border-gray-200 rounded-[12px] text-base ${
+                  mode === 'service'
+                    ? 'bg-accent text-white cursor-not-allowed'
+                    : 'bg-white text-muted-foreground cursor-pointer'
+                }`}
+                iconClassName={mode === 'service' ? 'hidden' : ''}
+              >
                 <SelectValue placeholder='Selecteer categorie' />
               </SelectTrigger>
               <SelectContent>
