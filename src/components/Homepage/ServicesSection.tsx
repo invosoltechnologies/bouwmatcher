@@ -14,7 +14,7 @@ const ServiceCard = ({ service }: { service: typeof servicesData[0] }) => (
     href={`/service/${service.slug}`}
     className="cursor-pointer block"
   >
-    <div className="bg-white rounded-[12px] border-2 border-gray-200 pt-6.5 min-w-[133px] h-[152px] min-w flex flex-col items-center justify-start gap-4">
+    <div className="bg-white rounded-[12px] border-2 border-gray-200 pt-6.5 min-w-[133px] h-[152px] min-w flex flex-col items-center justify-start gap-4 transition-all hover:shadow-lg hover:border-primary">
       <div className="w-16 h-16 flex items-center justify-center">
         <Image
           src={service.icon}
@@ -107,6 +107,7 @@ export default function ServicesSection() {
     return (
       <div className='relative'>
         <div className='absolute z-20 w-12.5 h-full bg-gradient-to-r from-transparent to-white right-0'></div>
+        <div className='absolute z-20 w-12.5 h-full bg-gradient-to-l from-transparent to-white left-0'></div>
         <Carousel setApi={handleSetApi} className='w-full'>
           <CarouselContent>{slides}</CarouselContent>
         </Carousel>

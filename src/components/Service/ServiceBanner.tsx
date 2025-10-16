@@ -43,7 +43,7 @@ export default function ServiceBanner({ service }: ServiceBannerProps) {
 
                 {/* Project Form */}
                 <div className='w-full mb-16'>
-                  <ProjectForm />
+                  <ProjectForm mode='service' preselectedService={service.slug} />
                 </div>
 
                 {/* Trust Pills */}

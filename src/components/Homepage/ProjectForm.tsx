@@ -1,16 +1,25 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {  Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { servicesData } from '@/data/services';
 import Image from 'next/image';
 
-export default function ProjectForm() {
+interface ProjectFormProps {
+  mode?: 'home' | 'service';
+  preselectedService?: string; // service slug
+}
+
+export default function ProjectForm({ mode = 'home', preselectedService }: ProjectFormProps) {
   const router = useRouter();
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState(
+    preselectedService
+      ? servicesData.find(s => s.slug === preselectedService)?.name_nl || ''
+      : ''
+  );
   const [postcode, setPostcode] = useState('');
   const [executionDate, setExecutionDate] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +49,13 @@ export default function ProjectForm() {
     setIsLoading(true);
 
     try {
-      // Call API to initialize draft project (API will lookup ID by slug)
+      // HOME MODE: Redirect to service detail page
+      if (mode === 'home') {
+        router.push(`/service/${selectedService.slug}`);
+        return;
+      }
+
+      // SERVICE MODE: Initialize draft and redirect to create-project
       const response = await fetch('/api/project-draft/initialize', {
         method: 'POST',
         headers: {
@@ -93,8 +108,19 @@ export default function ProjectForm() {
                 Categorie
               </label>
             </div>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className=' min-w-[253px] font-montserrat cursor-pointer min-h-14 px-3 py-[22px] bg-white border-gray-200 rounded-[12px] text-base'>
+            <Select
+              value={category}
+              onValueChange={setCategory}
+              disabled={mode === 'service'}
+            >
+              <SelectTrigger
+                className={`min-w-[253px] font-montserrat min-h-14 px-3 py-[22px] border-gray-200 rounded-[12px] text-base ${
+                  mode === 'service'
+                    ? 'bg-accent text-white cursor-not-allowed'
+                    : 'bg-white text-muted-foreground cursor-pointer'
+                }`}
+                iconClassName={mode === 'service' ? 'hidden' : ''}
+              >
                 <SelectValue placeholder='Selecteer categorie' />
               </SelectTrigger>
               <SelectContent>
