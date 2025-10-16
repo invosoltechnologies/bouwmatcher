@@ -14,7 +14,7 @@ const ServiceCard = ({ service }: { service: typeof servicesData[0] }) => (
     href={`/service/${service.slug}`}
     className="cursor-pointer block"
   >
-    <div className="bg-white rounded-[12px] border-2 border-gray-200 pt-6.5 min-w-[133px] h-[152px] min-w flex flex-col items-center justify-start gap-4">
+    <div className="bg-white rounded-[12px] border-2 border-gray-200 pt-6.5 min-w-[133px] h-[152px] min-w flex flex-col items-center justify-start gap-4 transition-all hover:shadow-lg hover:border-primary">
       <div className="w-16 h-16 flex items-center justify-center">
         <Image
           src={service.icon}

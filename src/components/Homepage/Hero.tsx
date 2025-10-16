@@ -72,7 +72,7 @@ export default function Hero() {
 
         {/* Project Form */}
         <div className='mt-16'>
-          <ProjectForm />
+          <ProjectForm mode='home' />
         </div>
 
         {/* Trust Pills */}
