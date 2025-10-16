@@ -107,6 +107,7 @@ export default function ServicesSection() {
     return (
       <div className='relative'>
         <div className='absolute z-20 w-12.5 h-full bg-gradient-to-r from-transparent to-white right-0'></div>
+        <div className='absolute z-20 w-12.5 h-full bg-gradient-to-l from-transparent to-white left-0'></div>
         <Carousel setApi={handleSetApi} className='w-full'>
           <CarouselContent>{slides}</CarouselContent>
         </Carousel>
