@@ -1,12 +1,38 @@
 'use client'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, ReactNode } from 'react'
 import { SectionPill } from "@/components/ui/section-pill"
 import { StatCard } from "@/components/ui/stat-card"
 import { Button } from "@/components/ui/button"
-import { statsData } from "@/data/stats"
+import { statsData, Stat } from "@/data/stats"
 import Image from 'next/image'
 
-export default function StatsSection() {
+export interface StatsSectionProps {
+  pillText?: string;
+  pillIcon?: ReactNode;
+  heading?: string;
+  description?: string;
+  stats?: Stat[];
+  showCTA?: boolean;
+  ctaButtons?: ReactNode;
+}
+
+export default function StatsSection({
+  pillText = 'Onze impact',
+  pillIcon = (
+    <Image
+      src='/icons/statsSection-pill-icon.svg'
+      alt='Stats icon'
+      width={14}
+      height={14}
+      className='w-3.5 h-3.5'
+    />
+  ),
+  heading = 'Wat hebben we tot nu toe bereikt?',
+  description = 'Wat we samen hebben opgebouwd',
+  stats = statsData,
+  showCTA = true,
+  ctaButtons,
+}: StatsSectionProps) {
   const [isVisible, setIsVisible] = useState(false)
   const [animatedValues, setAnimatedValues] = useState<{ [key: string]: number }>({})
   const sectionRef = useRef<HTMLElement>(null)
@@ -30,11 +56,11 @@ export default function StatsSection() {
 
   useEffect(() => {
     if (isVisible) {
-      statsData.forEach((stat) => {
+      stats.forEach((stat) => {
         animateValue(stat.id, stat.numericValue, stat.value)
       })
     }
-  }, [isVisible])
+  }, [isVisible, stats])
 
   const animateValue = (id: string, target: number, originalValue: string) => {
     const duration = 2000
@@ -73,6 +99,25 @@ export default function StatsSection() {
     return animatedValue.toString()
   }
 
+  const defaultCTAButtons = (
+    <>
+      <Button
+        variant='default'
+        size='lg'
+        className='bg-primary hover:bg-primary/90 text-white font-medium px-6 py-4 rounded-[12px] text-base'
+      >
+        Word een professional
+      </Button>
+      <Button
+        variant='default'
+        size='lg'
+        className='bg-accent hover:bg-accent/90 text-white font-medium px-6 py-4 rounded-[12px] text-base'
+      >
+        Vind een professional
+      </Button>
+    </>
+  );
+
   return (
     <section
       ref={sectionRef}
@@ -81,30 +126,22 @@ export default function StatsSection() {
       <div className='custom-container'>
         <div className='text-center mb-24'>
           <SectionPill
-            text='Onze impact'
-            icon={
-              <Image
-                src='/icons/statsSection-pill-icon.svg'
-                alt='Stats icon'
-                width={14}
-                height={14}
-                className='w-3.5 h-3.5'
-              />
-            }
+            text={pillText}
+            icon={pillIcon}
             className='bg-white/80 border border-[#023AA233] text-primary py-3.5 px-6 mb-5'
             textClassName='font-montserrat text-sm font-normal'
             iconClassName='text-accent'
           />
           <h2 className='text-5xl font-normal text-foreground mb-5'>
-            Wat hebben we tot nu toe bereikt?
+            {heading}
           </h2>
           <p className='text-muted-foreground text-2xl'>
-            Wat we samen hebben opgebouwd
+            {description}
           </p>
         </div>
 
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-          {statsData.map((stat, index) => {
+          {stats.map((stat, index) => {
             const isBlue = index % 2 === 0;
             return (
               <StatCard
@@ -126,22 +163,11 @@ export default function StatsSection() {
         </div>
 
         {/* CTA Buttons */}
-        <div className='flex justify-center gap-4 mt-16'>
-          <Button
-            variant='default'
-            size='lg'
-            className='bg-primary hover:bg-primary/90 text-white font-medium px-6 py-4 rounded-[12px] text-base'
-          >
-            Word een professional
-          </Button>
-          <Button
-            variant='default'
-            size='lg'
-            className='bg-accent hover:bg-accent/90 text-white font-medium px-6 py-4 rounded-[12px] text-base'
-          >
-            Vind een professional
-          </Button>
-        </div>
+        {showCTA && (
+          <div className='flex justify-center gap-4 mt-16'>
+            {ctaButtons || defaultCTAButtons}
+          </div>
+        )}
       </div>
     </section>
   );

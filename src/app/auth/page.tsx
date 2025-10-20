@@ -4,10 +4,10 @@ import StatsSection from "@/components/Homepage/StatsSection";
 import PartnersSection from "@/components/Homepage/PartnersSection";
 import ServicesSection from "@/components/Homepage/ServicesSection";
 import Values, { ValueItem } from "@/components/Homepage/Values";
+import ProcessSteps, { ProcessStep } from "@/components/ui/process-steps";
 import DefaultLayout from "@/components/DefaultLayout";
 import HeroAuth from "@/components/auth/HeroAuth";
 import { Button } from "@/components/ui/button";
-import ProcessSection from "@/components/Homepage/ProcessSection";
 
 const authValuesData: ValueItem[] = [
   {
@@ -40,6 +40,40 @@ const authValuesData: ValueItem[] = [
   }
 ];
 
+const authProcessSteps: ProcessStep[] = [
+  {
+    id: 1,
+    title: 'Schrijf je in',
+    description: 'Registreer je gratis als specialist en maak een profiel aan.',
+    icon: '/icons/process/step1-icon.svg',
+    image: '/images/homepage/process/step1.png',
+  },
+  {
+    id: 2,
+    title: 'Doorloop de verificatie',
+    description:
+      'Wij controleren je gegevens zodat opdrachtgevers zeker weten dat ze met een betrouwbare specialist werken.',
+    icon: '/icons/process/step2-icon.svg',
+    image: '/images/homepage/process/step2.png',
+  },
+  {
+    id: 3,
+    title: 'Voeg je vakgebieden toe',
+    description:
+      'Geef aan in welke vakgebieden je actief bent en welke projecten bij jou passen.',
+    icon: '/icons/process/step3-icon.svg',
+    image: '/images/homepage/process/step3.png',
+  },
+  {
+    id: 4,
+    title: 'Ontvang en reageer op offertes',
+    description:
+      'Je profiel staat live: ontvang aanvragen en reageer direct op opdrachten die jou aanspreken.',
+    icon: '/icons/process/step4-icon.svg',
+    image: '/images/homepage/process/step4.png',
+  },
+];
+
 export default function AuthPage() {
   return (
     <DefaultLayout>
@@ -47,7 +81,7 @@ export default function AuthPage() {
       <Values
         heading='De matchmaker die jou helpt aan nieuwe opdrachten'
         description='Voor specialisten die zonder zorgen aan mooie projecten willen werken.'
-        centerText='Jouw zekerheid\nin de bouw.'
+        centerText='Jouw zekerheid in de bouw.'
         values={authValuesData}
         ctaButtons={
           <Button
@@ -59,8 +93,32 @@ export default function AuthPage() {
           </Button>
         }
       />
-      <ProcessSection />
-      <StatsSection />
+      <ProcessSteps
+        steps={authProcessSteps}
+        title='Zo werkt het voor specialisten'
+        subtitle='Volg deze eenvoudige stappen en ontdek hoe jij snel aan de slag gaat met nieuwe opdrachten.'
+        showCTA={true}
+        ctaButtons={
+          <Button
+            variant='default'
+            size='lg'
+            className='bg-primary hover:bg-primary/90 text-white font-medium px-6 py-4 rounded-[12px] text-base'
+          >
+            Word een professional
+          </Button>
+        }
+      />
+      <StatsSection
+        ctaButtons={
+          <Button
+            variant='default'
+            size='lg'
+            className='bg-primary hover:bg-primary/90 text-white font-medium px-6 py-4 rounded-[12px] text-base'
+          >
+            Word een professional
+          </Button>
+        }
+      />
       <ReviewsSection />
       <FAQSection />
     </DefaultLayout>
