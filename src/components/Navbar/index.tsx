@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import LanguageSwitcher from "@/components/ui/language-switcher";
+import { redirect } from "next/navigation";
 
 export default function Navbar() {
   const [scrollY, setScrollY] = useState(0);
@@ -99,6 +100,9 @@ export default function Navbar() {
             style={{
               boxShadow:
                 '0px 10px 15px 0px #0000001A, 0px 4px 6px 0px #0000001A',
+            }}
+            onClick={() => {
+              redirect('/auth');
             }}
           >
             Login

@@ -1,6 +1,7 @@
 import Image from 'next/image';
+import { ValueItem } from './Values';
 
-const valuesData = [
+const defaultValuesData: ValueItem[] = [
   {
     id: 1,
     icon: '/icons/values/Betrouwbaarheid.svg',
@@ -31,7 +32,13 @@ const valuesData = [
   }
 ];
 
-export default function ValuesShape() {
+interface ValuesShapeProps {
+  values?: ValueItem[];
+  centerText?: string;
+}
+
+export default function ValuesShape({ values, centerText = 'Jouw zekerheid\nin de bouw.' }: ValuesShapeProps) {
+  const valuesData = values || defaultValuesData;
   const getInvertedRadiusMask = (position: string) => {
     const borderRadius = '10px'; // Corner radius of the cards
     const cutoutDepth = '100px'; // How deep the curved cutout goes into the card
@@ -149,10 +156,8 @@ export default function ValuesShape() {
         }}
       >
         <div className='text-center text-white'>
-          <div className='text-sm font-medium leading-tight'>
-            Jouw zekerheid
-            <br />
-            in de bouw.
+          <div className='text-sm font-medium leading-tight whitespace-pre-line'>
+            {centerText}
           </div>
         </div>
       </div>
