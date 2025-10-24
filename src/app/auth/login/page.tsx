@@ -1,6 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
@@ -8,8 +10,17 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import AuthNavbar from '@/components/auth/AuthNavbar';
 import type { LoginFormData } from '@/types/auth';
+import { signIn, signInWithOAuth } from '@/lib/supabase/auth';
 
 export default function LoginPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Get redirect URL from query params (set by middleware)
+  const redirectUrl = searchParams.get('redirect') || '/dashboard';
+
   const {
     register,
     handleSubmit,
@@ -24,8 +35,36 @@ export default function LoginPage() {
 
   const rememberMe = watch('rememberMe');
 
-  const onSubmit = (data: LoginFormData) => {
-    console.log(data);
+  const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      await signIn({
+        email: data.email,
+        password: data.password,
+      });
+
+      // Redirect to original URL or dashboard
+      router.push(redirectUrl);
+      router.refresh(); // Refresh to update auth state
+    } catch (err) {
+      console.error('Login error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Onjuist e-mailadres of wachtwoord';
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleOAuthLogin = async (provider: 'google' | 'facebook' | 'apple') => {
+    try {
+      await signInWithOAuth(provider);
+    } catch (err) {
+      console.error('OAuth login error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Er is een fout opgetreden bij het inloggen';
+      setError(errorMessage);
+    }
   };
 
   return (
@@ -40,6 +79,12 @@ export default function LoginPage() {
 
       <main className='flex-1 flex items-center justify-center px-4 pt-24 pb-12'>
         <div className='w-full max-w-3xl'>
+          {error && (
+            <div className='mb-6 bg-red-100 border border-red-400 text-red-700 text-center px-4 py-3 rounded'>
+              {error}
+            </div>
+          )}
+
           <h1 className='text-[55px] font-normal text-center mb-12 leading-tight'>
             <span
               style={{
@@ -114,9 +159,10 @@ export default function LoginPage() {
 
             <Button
               type='submit'
+              disabled={isLoading}
               className='w-full text-2xl py-4.5 font-medium rounded-[7px]'
             >
-              Inloggen
+              {isLoading ? 'Bezig met inloggen...' : 'Inloggen'}
             </Button>
 
             <div className='relative'>
@@ -139,6 +185,7 @@ export default function LoginPage() {
             <div className='flex gap-4'>
               <button
                 type='button'
+                onClick={() => handleOAuthLogin('google')}
                 className='flex-1 py-4 cursor-pointer bg-white border border-neutral-300 rounded-lg flex items-center justify-center hover:bg-neutral-50 transition-colors'
                 style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
               >
@@ -152,6 +199,7 @@ export default function LoginPage() {
 
               <button
                 type='button'
+                onClick={() => handleOAuthLogin('facebook')}
                 className='flex-1 py-4 cursor-pointer bg-white border border-neutral-300 rounded-lg flex items-center justify-center hover:bg-neutral-50 transition-colors'
                 style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
               >
@@ -165,6 +213,7 @@ export default function LoginPage() {
 
               <button
                 type='button'
+                onClick={() => handleOAuthLogin('apple')}
                 className='flex-1 py-4 bg-white border border-neutral-300 rounded-lg flex items-center justify-center hover:bg-neutral-50 transition-colors'
                 style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
               >

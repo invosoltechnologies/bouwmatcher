@@ -3,7 +3,8 @@
 import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Eye, EyeOff } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Eye, EyeOff, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 import type { PasswordSetupData } from '@/types/auth';
 
@@ -11,9 +12,10 @@ interface PasswordSetupFormProps {
   email: string;
   onBack: () => void;
   onNext: (data: PasswordSetupData) => void;
+  isLoading?: boolean;
 }
 
-export default function PasswordSetupForm({ email, onBack, onNext }: PasswordSetupFormProps) {
+export default function PasswordSetupForm({ email, onBack, onNext, isLoading = false }: PasswordSetupFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -38,29 +40,30 @@ export default function PasswordSetupForm({ email, onBack, onNext }: PasswordSet
   };
 
   return (
-    <div className='w-full max-w-[640px] mx-auto'>
-      <h1 className='text-[32px] md:text-[40px] font-normal text-center mb-8 md:mb-12'>
+    <div className='w-full max-w-3xl mx-auto'>
+      <h1 className='text-lg text-slate-900 md:text-4xl font-normal text-center mb-8 md:mb-14'>
         Stel een wachtwoord in voor jouw account
       </h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
+      <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
         <div>
-          <label className='block text-sm md:text-base text-neutral-600 mb-2'>
+          <Label className='block text-sm md:text-xl text-muted-foreground mb-3'>
             E-mailadres (Log in met je e-mailadres)
-          </label>
+          </Label>
           <Input
             {...register('email')}
             type='email'
             disabled
+            placeholder={email}
             className='h-[56px] bg-neutral-100 border-neutral-300 rounded-lg px-4 text-base md:text-lg text-neutral-500'
             style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
           />
         </div>
 
         <div>
-          <label className='block text-sm md:text-base text-neutral-600 mb-2'>
+          <Label className='block text-sm md:text-xl text-muted-foreground mb-3'>
             Wachtwoord
-          </label>
+          </Label>
           <div className='relative'>
             <Input
               {...register('password', {
@@ -71,6 +74,7 @@ export default function PasswordSetupForm({ email, onBack, onNext }: PasswordSet
                 },
               })}
               type={showPassword ? 'text' : 'password'}
+              placeholder='Minimaal 8 tekens'
               className='h-[56px] bg-white border-neutral-300 rounded-lg px-4 pr-12 text-base md:text-lg'
               style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
             />
@@ -88,9 +92,9 @@ export default function PasswordSetupForm({ email, onBack, onNext }: PasswordSet
         </div>
 
         <div>
-          <label className='block text-sm md:text-base text-neutral-600 mb-2'>
+          <Label className='block text-sm md:text-xl text-muted-foreground mb-3'>
             Bevestig jouw wachtwoord
-          </label>
+          </Label>
           <div className='relative'>
             <Input
               {...register('confirmPassword', {
@@ -99,6 +103,7 @@ export default function PasswordSetupForm({ email, onBack, onNext }: PasswordSet
                   value === password || 'Wachtwoorden komen niet overeen',
               })}
               type={showConfirmPassword ? 'text' : 'password'}
+              placeholder='Herhaal wachtwoord'
               className='h-[56px] bg-white border-neutral-300 rounded-lg px-4 pr-12 text-base md:text-lg'
               style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
             />
@@ -119,42 +124,19 @@ export default function PasswordSetupForm({ email, onBack, onNext }: PasswordSet
           <button
             type='button'
             onClick={onBack}
-            className='flex items-center text-neutral-700 text-base font-medium hover:text-neutral-900'
+            className='flex items-center text-neutral-700 text-base md:text-lg font-medium hover:text-neutral-900'
           >
-            <svg
-              className='mr-2 w-5 h-5'
-              fill='none'
-              stroke='currentColor'
-              viewBox='0 0 24 24'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M15 19l-7-7 7-7'
-              />
-            </svg>
+            <ArrowLeft className='w-5 h-5 md:h-6 md:w-6 mr-2' />
             Terug
           </button>
 
           <Button
             type='submit'
-            className='h-[56px] px-8 text-base font-semibold rounded-lg'
+            disabled={isLoading}
+            className='px-6 py-4 text-base rounded-2xl md:text-lg font-semibold'
           >
-            Bevestig aanmelding
-            <svg
-              className='ml-2 w-5 h-5'
-              fill='none'
-              stroke='currentColor'
-              viewBox='0 0 24 24'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M9 5l7 7-7 7'
-              />
-            </svg>
+            {isLoading ? 'Bezig met registreren...' : 'Bevestig aanmelding'}
+            <ArrowRight className='w-5 h-5 md:h-7 md:w-7' />
           </Button>
         </div>
       </form>
