@@ -7,12 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import AuthNavbar from '@/components/auth/AuthNavbar';
-
-type LoginFormData = {
-  email: string;
-  password: string;
-  rememberMe?: boolean;
-};
+import type { LoginFormData } from '@/types/auth';
 
 export default function LoginPage() {
   const {
@@ -120,7 +115,6 @@ export default function LoginPage() {
             <Button
               type='submit'
               className='w-full text-2xl py-4.5 font-medium rounded-[7px]'
-              style={{ background: '#023AA2' }}
             >
               Inloggen
             </Button>
