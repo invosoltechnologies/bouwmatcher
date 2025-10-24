@@ -1,4 +1,4 @@
-import { supabase } from './client';
+import { createClient } from './client';
 
 export interface SignUpData {
   email: string;
@@ -18,6 +18,8 @@ export interface SignInData {
  * The professional_profiles entry is auto-created by database trigger
  */
 export async function signUpProfessional(data: SignUpData) {
+  const supabase = createClient();
+
   try {
     // Create auth user - profile will be auto-created by trigger
     const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -58,6 +60,8 @@ export async function signUpProfessional(data: SignUpData) {
  * Sign in an existing user
  */
 export async function signIn(data: SignInData) {
+  const supabase = createClient();
+
   try {
     const { data: authData, error } = await supabase.auth.signInWithPassword({
       email: data.email,
@@ -85,6 +89,8 @@ export async function signIn(data: SignInData) {
  * Sign out the current user
  */
 export async function signOut() {
+  const supabase = createClient();
+
   try {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
@@ -98,6 +104,8 @@ export async function signOut() {
  * Get the current user session
  */
 export async function getSession() {
+  const supabase = createClient();
+
   try {
     const { data: { session }, error } = await supabase.auth.getSession();
     if (error) throw error;
@@ -112,6 +120,8 @@ export async function getSession() {
  * Get the current user
  */
 export async function getCurrentUser() {
+  const supabase = createClient();
+
   try {
     const { data: { user }, error } = await supabase.auth.getUser();
     if (error) throw error;
@@ -126,6 +136,8 @@ export async function getCurrentUser() {
  * Get professional profile by user_id
  */
 export async function getProfessionalProfile(userId: string) {
+  const supabase = createClient();
+
   try {
     const { data, error } = await supabase
       .from('professional_profiles')
@@ -145,6 +157,8 @@ export async function getProfessionalProfile(userId: string) {
  * Sign in with OAuth provider (Google, Facebook, Apple)
  */
 export async function signInWithOAuth(provider: 'google' | 'facebook' | 'apple') {
+  const supabase = createClient();
+
   try {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,

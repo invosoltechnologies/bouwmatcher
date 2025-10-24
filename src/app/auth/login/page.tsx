@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import toast from 'react-hot-toast';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
@@ -13,10 +14,8 @@ import type { LoginFormData } from '@/types/auth';
 import { signIn, signInWithOAuth } from '@/lib/supabase/auth';
 
 export default function LoginPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   // Get redirect URL from query params (set by middleware)
   const redirectUrl = searchParams.get('redirect') || '/dashboard';
@@ -37,22 +36,27 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
-    setError(null);
 
     try {
-      await signIn({
+      const result = await signIn({
         email: data.email,
         password: data.password,
       });
 
-      // Redirect to original URL or dashboard
-      router.push(redirectUrl);
-      router.refresh(); // Refresh to update auth state
+      // Check if login was successful
+      if (result.session) {
+        toast.success('Succesvol ingelogd! Je wordt doorgestuurd...');
+
+        // Wait for auth state to propagate
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Use replace to prevent back button issues
+        window.location.href = redirectUrl;
+      }
     } catch (err) {
       console.error('Login error:', err);
       const errorMessage = err instanceof Error ? err.message : 'Onjuist e-mailadres of wachtwoord';
-      setError(errorMessage);
-    } finally {
+      toast.error(errorMessage);
       setIsLoading(false);
     }
   };
@@ -63,7 +67,7 @@ export default function LoginPage() {
     } catch (err) {
       console.error('OAuth login error:', err);
       const errorMessage = err instanceof Error ? err.message : 'Er is een fout opgetreden bij het inloggen';
-      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
@@ -79,12 +83,6 @@ export default function LoginPage() {
 
       <main className='flex-1 flex items-center justify-center px-4 pt-24 pb-12'>
         <div className='w-full max-w-3xl'>
-          {error && (
-            <div className='mb-6 bg-red-100 border border-red-400 text-red-700 text-center px-4 py-3 rounded'>
-              {error}
-            </div>
-          )}
-
           <h1 className='text-[55px] font-normal text-center mb-12 leading-tight'>
             <span
               style={{

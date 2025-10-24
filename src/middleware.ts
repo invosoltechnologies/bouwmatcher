@@ -1,61 +1,62 @@
+import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 
 export async function middleware(request: NextRequest) {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
-
-  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-    auth: {
-      persistSession: false, // Middleware doesn't need to persist
-    },
+  let supabaseResponse = NextResponse.next({
+    request,
   });
 
-  // Check for Supabase session cookies
-  // Supabase stores tokens in cookies with project-specific names
-  const cookieNames = [
-    `sb-${supabaseUrl.split('//')[1].split('.')[0]}-auth-token`,
-    'sb-access-token',
-    'sb-refresh-token',
-  ];
-
-  let hasValidSession = false;
-
-  // Try to get session from cookies
-  for (const cookieName of cookieNames) {
-    const cookie = request.cookies.get(cookieName);
-    if (cookie) {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          hasValidSession = true;
-          break;
-        }
-      } catch (error) {
-        // Continue checking other cookies
-        continue;
-      }
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            request.cookies.set(name, value)
+          );
+          supabaseResponse = NextResponse.next({
+            request,
+          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          );
+        },
+      },
     }
+  );
+
+  // Refresh session if expired - required for Server Components
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // If user is not signed in and the current path is not /auth/login,
+  // redirect the user to /auth/login
+  if (!user && !request.nextUrl.pathname.startsWith('/auth')) {
+    const redirectUrl = new URL('/auth/login', request.url);
+    redirectUrl.searchParams.set('redirect', request.nextUrl.pathname);
+    return NextResponse.redirect(redirectUrl);
   }
 
-  if (hasValidSession) {
-    // User is authenticated, allow access
-    return NextResponse.next();
+  // If user is signed in and trying to access auth pages, redirect to dashboard
+  if (user && request.nextUrl.pathname.startsWith('/auth')) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  // No valid session, redirect to login with original URL
-  const redirectUrl = new URL('/auth/login', request.url);
-  redirectUrl.searchParams.set('redirect', request.nextUrl.pathname);
-  return NextResponse.redirect(redirectUrl);
+  return supabaseResponse;
 }
 
-// Configure which routes require authentication
+// Configure which routes to run middleware on
 export const config = {
   matcher: [
     '/dashboard/:path*',
     '/profile/:path*',
     '/projects/:path*',
-    // Add more protected routes as needed
+    '/auth/:path*',
   ],
 };

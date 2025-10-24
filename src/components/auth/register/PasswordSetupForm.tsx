@@ -1,12 +1,15 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, ArrowRight, ArrowLeft } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { PasswordSetupData } from '@/types/auth';
+import PasswordStrength from '@/components/ui/password-strength';
+import { validatePasswordStrength } from '@/lib/utils/password-validator';
 
 interface PasswordSetupFormProps {
   email: string;
@@ -32,10 +35,30 @@ export default function PasswordSetupForm({ email, onBack, onNext, isLoading = f
 
   const password = watch('password');
 
+  // Validate password strength in real-time
+  const passwordValidation = useMemo(
+    () => validatePasswordStrength(password || ''),
+    [password]
+  );
+
   const onSubmit = (data: PasswordSetupData) => {
+    // Check password confirmation
     if (data.password !== data.confirmPassword) {
       return;
     }
+
+    // Validate password strength before submitting
+    if (!passwordValidation.isValid) {
+      toast.error(passwordValidation.message);
+      return;
+    }
+
+    // Only allow OK (score 1) or above
+    if (passwordValidation.score < 1) {
+      toast.error('Wachtwoord is te zwak. Gebruik minimaal 8 tekens met letters en cijfers.');
+      return;
+    }
+
     onNext(data);
   };
 
@@ -83,11 +106,17 @@ export default function PasswordSetupForm({ email, onBack, onNext, isLoading = f
               onClick={() => setShowPassword(!showPassword)}
               className='absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600'
             >
-              {showPassword ? <EyeOff className='w-5 h-5' /> : <Eye className='w-5 h-5' />}
+              {showPassword ? (
+                <EyeOff className='w-5 h-5' />
+              ) : (
+                <Eye className='w-5 h-5' />
+              )}
             </button>
           </div>
           {errors.password && (
-            <p className='text-red-500 text-sm mt-1'>{errors.password.message}</p>
+            <p className='text-red-500 text-sm mt-1'>
+              {errors.password.message}
+            </p>
           )}
         </div>
 
@@ -112,14 +141,21 @@ export default function PasswordSetupForm({ email, onBack, onNext, isLoading = f
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               className='absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600'
             >
-              {showConfirmPassword ? <EyeOff className='w-5 h-5' /> : <Eye className='w-5 h-5' />}
+              {showConfirmPassword ? (
+                <EyeOff className='w-5 h-5' />
+              ) : (
+                <Eye className='w-5 h-5' />
+              )}
             </button>
           </div>
           {errors.confirmPassword && (
-            <p className='text-red-500 text-sm mt-1'>{errors.confirmPassword.message}</p>
+            <p className='text-red-500 text-sm mt-1'>
+              {errors.confirmPassword.message}
+            </p>
           )}
         </div>
-
+        {/* Password Strength Indicator */}
+        <PasswordStrength password={password || ''} />
         <div className='flex justify-between items-center pt-4'>
           <button
             type='button'
@@ -132,8 +168,8 @@ export default function PasswordSetupForm({ email, onBack, onNext, isLoading = f
 
           <Button
             type='submit'
-            disabled={isLoading}
-            className='px-6 py-4 text-base rounded-2xl md:text-lg font-semibold'
+            disabled={isLoading || !passwordValidation.isValid}
+            className='px-6 py-4 text-base rounded-2xl md:text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed'
           >
             {isLoading ? 'Bezig met registreren...' : 'Bevestig aanmelding'}
             <ArrowRight className='w-5 h-5 md:h-7 md:w-7' />
