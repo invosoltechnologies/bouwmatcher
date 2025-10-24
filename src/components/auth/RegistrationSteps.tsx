@@ -81,7 +81,7 @@ export default function RegistrationSteps({ currentStep }: RegistrationStepsProp
                     <div
                       className={`h-full transition-all ${
                         step.status === 'completed'
-                          ? 'bg-green-500 w-full'
+                          ? 'bg-accent w-full'
                           : 'w-0'
                       }`}
                     />

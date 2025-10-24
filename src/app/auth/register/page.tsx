@@ -9,11 +9,7 @@ export default function RegisterPage() {
 
   return (
     <div
-      className='min-h-screen pt-26 flex flex-col'
-      style={{
-        background:
-          'linear-gradient(90deg, rgba(10, 178, 126, 0.1) 0%, rgba(2, 58, 162, 0.1) 100%)',
-      }}
+      className='min-h-screen pt-26 bg-white flex flex-col'
     >
       <AuthNavbar />
 
