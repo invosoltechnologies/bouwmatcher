@@ -3,6 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import type { ContactInfoData } from '@/types/auth';
 import { ArrowRight } from 'lucide-react';
@@ -34,13 +35,14 @@ export default function ContactInfoForm({ onNext, defaultValues }: ContactInfoFo
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
         <div className='flex flex-col md:flex-row gap-6'>
           <div className='flex-1'>
-            <label className='block text-sm md:text-xl text-muted-foreground mb-3'>
+            <Label className='block text-sm md:text-xl text-muted-foreground mb-3'>
               Voornaam
-            </label>
+            </Label>
             <Input
               {...register('firstName', { required: 'Voornaam is verplicht' })}
               type='text'
-              className='h-[56px] bg-white border-neutral-300 rounded-lg px-4 text-base md:text-lg'
+              placeholder='Jhon'
+              className='py-7 bg-white border-neutral-300 rounded-lg px-4 text-base md:text-xl placeholder:text-slate-300'
               style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
             />
             {errors.firstName && (
@@ -51,13 +53,14 @@ export default function ContactInfoForm({ onNext, defaultValues }: ContactInfoFo
           </div>
 
           <div className='flex-1'>
-            <label className='block text-sm md:text-xl text-muted-foreground mb-3'>
+            <Label className='block text-sm md:text-xl text-muted-foreground mb-3'>
               Achternaam
-            </label>
+            </Label>
             <Input
               {...register('lastName', { required: 'Achternaam is verplicht' })}
               type='text'
-              className='h-[56px] bg-white border-neutral-300 rounded-lg px-4 text-base md:text-lg'
+              placeholder='Ilya'
+              className='py-7 bg-white border-neutral-300 rounded-lg px-4 text-base md:text-xl placeholder:text-slate-300'
               style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
             />
             {errors.lastName && (
@@ -69,9 +72,9 @@ export default function ContactInfoForm({ onNext, defaultValues }: ContactInfoFo
         </div>
 
         <div>
-          <label className='block text-sm md:text-xl text-muted-foreground mb-3'>
+          <Label className='block text-sm md:text-xl text-muted-foreground mb-3'>
             E-mailadres (zakelijk)
-          </label>
+          </Label>
           <Input
             {...register('email', {
               required: 'E-mailadres is verplicht',
@@ -81,7 +84,8 @@ export default function ContactInfoForm({ onNext, defaultValues }: ContactInfoFo
               },
             })}
             type='email'
-            className='h-[56px] bg-white border-neutral-300 rounded-lg px-4 text-base md:text-lg'
+            placeholder='voorbeeld@bedrijf.nl'
+            className='py-7 bg-white border-neutral-300 rounded-lg px-4 text-base md:text-xl placeholder:text-slate-300'
             style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
           />
           {errors.email && (
@@ -90,13 +94,14 @@ export default function ContactInfoForm({ onNext, defaultValues }: ContactInfoFo
         </div>
 
         <div>
-          <label className='block text-sm md:text-xl text-muted-foreground mb-3'>
+          <Label className='block text-sm md:text-xl text-muted-foreground mb-3'>
             Telefoonnummer
-          </label>
+          </Label>
           <Input
             {...register('phone', { required: 'Telefoonnummer is verplicht' })}
             type='tel'
-            className='h-[56px] bg-white border-neutral-300 rounded-lg px-4 text-base md:text-lg'
+            placeholder='+31 6 12345678'
+            className='py-7 bg-white border-neutral-300 rounded-lg px-4 text-base md:text-xl placeholder:text-slate-300'
             style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
           />
           {errors.phone && (
