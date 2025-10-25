@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import RegistrationSteps from '@/components/auth/RegistrationSteps';
 import ContactInfoForm from '@/components/auth/register/ContactInfoForm';
 import PasswordSetupForm from '@/components/auth/register/PasswordSetupForm';
+import WorkAreaForm, { type WorkAreaData } from '@/components/auth/register/WorkAreaForm';
 import type { ContactInfoData, PasswordSetupData } from '@/types/auth';
 import { signUpProfessional } from '@/lib/supabase/auth';
 
@@ -14,6 +15,7 @@ export default function ProfessionalRegistrationForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [subStep, setSubStep] = useState<'contact' | 'password'>('contact');
   const [contactData, setContactData] = useState<ContactInfoData | null>(null);
+  const [workAreaData, setWorkAreaData] = useState<WorkAreaData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleContactInfoNext = (data: ContactInfoData) => {
@@ -49,14 +51,10 @@ export default function ProfessionalRegistrationForm() {
       }
 
       // Show success message
-      toast.success('Account succesvol aangemaakt! Je wordt doorgestuurd...');
+      toast.success('Account succesvol aangemaakt! Ga verder met stap 2.');
 
-      // Wait a moment for session to be fully saved
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Redirect to dashboard after successful registration
-      router.push('/dashboard');
-      router.refresh(); // Force refresh to update auth state
+      // Move to step 2 (user stays on register page, already authenticated)
+      setCurrentStep(2);
     } catch (err: unknown) {
       console.error('Registration error:', err);
 
@@ -80,6 +78,17 @@ export default function ProfessionalRegistrationForm() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleWorkAreaNext = (data: WorkAreaData) => {
+    setWorkAreaData(data);
+    console.log('Work area data:', data);
+
+    // TODO: Save to database
+    toast.success('Werkgebied opgeslagen!');
+
+    // Move to step 3
+    setCurrentStep(3);
   };
 
   return (
@@ -107,10 +116,7 @@ export default function ProfessionalRegistrationForm() {
         )}
 
         {currentStep === 2 && (
-          <div className='text-center'>
-            <h2 className='text-2xl font-semibold mb-4'>Step 2 - Werkgebied</h2>
-            <p className='text-neutral-600'>Step content coming soon...</p>
-          </div>
+          <WorkAreaForm onNext={handleWorkAreaNext} />
         )}
 
         {/* Add more steps as needed */}

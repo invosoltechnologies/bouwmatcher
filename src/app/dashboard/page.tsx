@@ -3,9 +3,10 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 
 export default function DashboardPage() {
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -33,9 +34,14 @@ export default function DashboardPage() {
     <div className='min-h-screen bg-gray-50 p-8'>
       <div className='max-w-7xl mx-auto'>
         <div className='bg-white rounded-lg shadow p-6'>
-          <h1 className='text-3xl font-bold mb-4'>
-            Welkom, {user.user_metadata?.first_name || user.email}!
-          </h1>
+          <div className='flex justify-between items-center mb-4'>
+            <h1 className='text-3xl font-bold'>
+              Welkom, {user.user_metadata?.first_name || user.email}!
+            </h1>
+            <Button onClick={signOut} variant='outline'>
+              Uitloggen
+            </Button>
+          </div>
 
           <div className='space-y-4'>
             <div className='border-l-4 border-green-500 bg-green-50 p-4'>
