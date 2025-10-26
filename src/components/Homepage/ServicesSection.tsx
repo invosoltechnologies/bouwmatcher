@@ -4,24 +4,24 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { SectionPill } from '@/components/ui/section-pill';
 import { ViewSwitcher } from '@/components/ui/view-switcher';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
-import { servicesData } from '@/data/services';
+import { type Service } from '@/data/services';
 import { MoveHorizontal, Grid3X3 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const ServiceCard = ({ service }: { service: typeof servicesData[0] }) => (
+const ServiceCard = ({ service }: { service: Service }) => (
   <Link
     href={`/service/${service.slug}`}
     className="cursor-pointer block"
   >
-    <div className="bg-white rounded-[12px] border-2 border-gray-200 pt-6.5 min-w-[133px] h-[152px] min-w flex flex-col items-center justify-start gap-4 transition-all hover:shadow-lg hover:border-primary">
-      <div className="w-16 h-16 flex items-center justify-center">
+    <div className="bg-white rounded-[12px] border-2 border-gray-200 pt-6.5 min-w-[133px] h-[152px] flex flex-col items-center justify-start gap-4 transition-all hover:shadow-lg hover:border-primary">
+      <div className="w-16 h-16 flex bg-blue-100 rounded-full items-center justify-center">
         <Image
-          src={service.icon}
+          src={service.icon_url}
           alt={service.name_nl}
-          width={64}
-          height={64}
-          className="object-contain"
+          width={24}
+          height={24}
+          className="object-fit"
         />
       </div>
       <p className="font-montserrat block text-sm text-center text-wrap break-all text-foreground">
@@ -35,9 +35,27 @@ export default function ServicesSection() {
   const [currentView, setCurrentView] = useState('carousel');
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const handleSetApi = useCallback((api: CarouselApi) => {
     setCarouselApi(api);
+  }, []);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch('/api/service-categories');
+        const data = await response.json();
+        setServices(data.serviceCategories || []);
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
   }, []);
 
   useEffect(() => {
@@ -71,12 +89,12 @@ export default function ServicesSection() {
     const servicesPerRow = 8;
     const rowsPerSlide = 3;
     const servicesPerSlide = servicesPerRow * rowsPerSlide; // 24 services per slide
-    const totalSlides = Math.ceil(servicesData.length / servicesPerSlide);
+    const totalSlides = Math.ceil(services.length / servicesPerSlide);
 
     const slides = [];
     for (let slideIndex = 0; slideIndex < totalSlides; slideIndex++) {
       const slideStartIndex = slideIndex * servicesPerSlide;
-      const slideServices = servicesData.slice(slideStartIndex, slideStartIndex + servicesPerSlide);
+      const slideServices = services.slice(slideStartIndex, slideStartIndex + servicesPerSlide);
 
       // Create 3 rows for this slide
       const rows = [];
@@ -87,8 +105,8 @@ export default function ServicesSection() {
         if (rowServices.length > 0) {
           rows.push(
             <div key={rowIndex} className="grid grid-cols-8 gap-x-11 mb-6">
-              {rowServices.map((service) => (
-                <ServiceCard key={service.name_nl} service={service} />
+              {rowServices.map((service: Service) => (
+                <ServiceCard key={service.slug} service={service} />
               ))}
             </div>
           );
@@ -127,15 +145,25 @@ export default function ServicesSection() {
         </div>
       </div>
     );
-  }, [handleSetApi, carouselApi, currentSlide]);
+  }, [handleSetApi, carouselApi, currentSlide, services]);
 
   const GridView = () => (
     <div className="grid grid-cols-8 gap-x-11 gap-y-6">
-      {servicesData.map((service) => (
-        <ServiceCard key={service.name_nl} service={service} />
+      {services.map((service: Service) => (
+        <ServiceCard key={service.slug} service={service} />
       ))}
     </div>
   );
+
+  if (loading) {
+    return (
+      <section className='py-14 bg-white'>
+        <div className='custom-container flex justify-center items-center min-h-[400px]'>
+          <p className='text-muted-foreground'>Loading services...</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className='py-14 bg-white'>
