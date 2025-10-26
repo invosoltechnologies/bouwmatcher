@@ -19,6 +19,8 @@ export interface WorkAreaData {
   latitude: number;
   longitude: number;
   serviceRadius: number;
+  postalCode: string | null;
+  city: string | null;
 }
 
 const RADIUS_OPTIONS = [
@@ -428,17 +430,41 @@ function WorkAreaFormContent({ onNext }: WorkAreaFormProps) {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedLocation || !coordinates) {
       toast.error('Selecteer eerst een werklocatie');
       return;
     }
+
+    // Extract postal code and city from address
+    const extractLocationDetails = (address: string) => {
+      // Dutch postal code pattern: 4 digits followed by 2 letters (e.g., "1234 AB")
+      const postalCodeMatch = address.match(/\b\d{4}\s?[A-Z]{2}\b/i);
+      const postalCode = postalCodeMatch ? postalCodeMatch[0].toUpperCase() : null;
+
+      // Extract city - typically after postal code, before country
+      let city = null;
+      if (postalCode) {
+        const parts = address.split(postalCode);
+        if (parts[1]) {
+          // Get text after postal code, remove country name
+          const afterPostal = parts[1].trim().split(',')[0].trim();
+          city = afterPostal || null;
+        }
+      }
+
+      return { postalCode, city };
+    };
+
+    const { postalCode, city } = extractLocationDetails(selectedLocation);
 
     onNext({
       location: selectedLocation,
       latitude: coordinates.lat,
       longitude: coordinates.lng,
       serviceRadius: selectedRadius,
+      postalCode,
+      city,
     });
   };
 

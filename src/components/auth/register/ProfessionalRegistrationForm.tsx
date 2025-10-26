@@ -80,15 +80,53 @@ export default function ProfessionalRegistrationForm() {
     }
   };
 
-  const handleWorkAreaNext = (data: WorkAreaData) => {
+  const handleWorkAreaNext = async (data: WorkAreaData) => {
     setWorkAreaData(data);
-    console.log('Work area data:', data);
+    setIsLoading(true);
 
-    // TODO: Save to database
-    toast.success('Werkgebied opgeslagen!');
+    try {
+      // Get current user from Supabase
+      const { createClient } = await import('@/lib/supabase/client');
+      const supabase = createClient();
 
-    // Move to step 3
-    setCurrentStep(3);
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        throw new Error('Gebruiker niet gevonden. Log opnieuw in.');
+      }
+
+      // Update professional_profiles with location data
+      const { error: updateError } = await supabase
+        .from('professional_profiles')
+        .update({
+          work_address: data.location,
+          work_postal_code: data.postalCode,
+          work_city: data.city,
+          work_latitude: data.latitude,
+          work_longitude: data.longitude,
+          service_radius_km: data.serviceRadius,
+        })
+        .eq('user_id', user.id);
+
+      if (updateError) {
+        console.error('Database update error:', updateError);
+        throw new Error('Kon werkgebied niet opslaan');
+      }
+
+      toast.success('Werkgebied opgeslagen!');
+      setCurrentStep(3);
+    } catch (err: unknown) {
+      console.error('Work area save error:', err);
+
+      let errorMessage = 'Er is een fout opgetreden bij het opslaan';
+      if (err && typeof err === 'object' && 'message' in err) {
+        errorMessage = (err as { message: string }).message;
+      }
+
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
