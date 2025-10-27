@@ -17,7 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Check, Search, GripVertical, X } from 'lucide-react';
+import { Check, Info, Move, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
@@ -42,7 +42,7 @@ export interface ServiceCategoriesData {
 const MAX_CATEGORIES = 6;
 
 // Popular service categories (these should match your database slugs)
-const POPULAR_SLUGS = ['schilder', 'loodgieter', 'elektricien'];
+const POPULAR_SLUGS = ['schilderwerk', 'loodgieter', 'elektricien'];
 
 export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategoriesFormProps) {
   const [categories, setCategories] = useState<ServiceCategory[]>([]);
@@ -52,26 +52,27 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Fetch categories from database
+  // Fetch categories from API
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { createClient } = await import('@/lib/supabase/client');
-        const supabase = createClient();
+        const response = await fetch('/api/service-categories');
 
-        const { data, error } = await supabase
-          .from('service_categories')
-          .select('*')
-          .order('name_nl');
+        if (!response.ok) {
+          throw new Error('Failed to fetch categories');
+        }
 
-        if (error) throw error;
+        const { serviceCategories } = await response.json();
 
-        setCategories(data || []);
+        setCategories(serviceCategories || []);
 
         // Separate popular and all categories
-        const popular = data?.filter((cat) => POPULAR_SLUGS.includes(cat.slug)) || [];
-        const all = data || [];
+        const popular = serviceCategories?.filter((cat: ServiceCategory) =>
+          POPULAR_SLUGS.includes(cat.slug)
+        ) || [];
+        const all = serviceCategories || [];
 
         setPopularCategories(popular);
         setAllCategories(all);
@@ -142,29 +143,41 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
   const progressPercentage = (selectedCategories.length / MAX_CATEGORIES) * 100;
 
   return (
-    <div className='w-full max-w-[1400px] mx-auto px-4'>
+    <div className='custom-container'>
       {/* Main Card */}
+      <div className='mb-11.5 mt-5.5 text-center'>
+        <h1 className='text-2xl md:text-4xl font-normal text-slate-900 mb-3'>
+          Wat zijn je vakgebieden?
+        </h1>
+        <p className='text-base md:text-lg text-muted-foreground'>
+          Selecteer maximaal {MAX_CATEGORIES} gewenste vakgebieden. Je kunt er
+          later meer toevoegen.
+        </p>
+      </div>
       <div
-        className='bg-white/95 rounded-3xl p-6 lg:p-10'
+        className='bg-white/95 rounded-3xl p-6 lg:p-8'
         style={{ boxShadow: '0px 12px 36px 0px #023AA21F' }}
       >
         <div className='flex flex-col lg:flex-row gap-8'>
           {/* Left Panel - Selection */}
-          <div className='w-full lg:w-[60%] space-y-6'>
-            <div>
-              <h1 className='text-2xl md:text-4xl font-normal text-slate-900 mb-3'>
-                Wat zijn je vakgebieden?
-              </h1>
-              <p className='text-base md:text-lg text-muted-foreground'>
-                Selecteer maximaal {MAX_CATEGORIES} gewenste vakgebieden. Je kunt er later meer toevoegen.
-              </p>
+          <div className='w-full lg:w-[60%] space-y-8'>
+            {/* Search Input */}
+            <div className='space-y-3'>
+              <div className='relative'>
+                <Search className='absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400' />
+                <input
+                  type='text'
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder='Zoek vakgebied...'
+                  className='w-full pl-12 pr-4 py-4 bg-white border border-neutral-300 rounded-lg text-base md:text-lg placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary'
+                  style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
+                />
+              </div>
             </div>
 
-            {/* Search with Combobox */}
-            <div className='space-y-3'>
-              <Label className='text-sm md:text-lg text-slate-900'>
-                Zoek vakgebied...
-              </Label>
+            {/* Combobox - Commented for future use */}
+            {/* <div className='space-y-3'>
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                   <Button
@@ -208,11 +221,15 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
                                     className='shrink-0'
                                   />
                                 )}
-                                <span className='flex-1'>{category.name_nl}</span>
+                                <span className='flex-1'>
+                                  {category.name_nl}
+                                </span>
                                 <Check
                                   className={cn(
                                     'w-5 h-5 shrink-0',
-                                    isSelected ? 'opacity-100 text-primary' : 'opacity-0'
+                                    isSelected
+                                      ? 'opacity-100 text-primary'
+                                      : 'opacity-0'
                                   )}
                                 />
                               </div>
@@ -224,7 +241,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
                   </Command>
                 </PopoverContent>
               </Popover>
-            </div>
+            </div> */}
 
             {/* Popular Categories */}
             {popularCategories.length > 0 && (
@@ -234,14 +251,16 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
                 </Label>
                 <div className='flex flex-wrap gap-3'>
                   {popularCategories.map((category) => {
-                    const isSelected = selectedCategories.some((c) => c.id === category.id);
+                    const isSelected = selectedCategories.some(
+                      (c) => c.id === category.id
+                    );
                     return (
                       <button
                         key={category.id}
                         type='button'
                         onClick={() => toggleCategory(category)}
                         className={cn(
-                          'px-6 py-3 rounded-lg text-base font-medium transition-all flex items-center gap-2',
+                          'px-4.5 py-3 cursor-pointer rounded-full text-base font-medium transition-all flex items-center gap-2',
                           isSelected
                             ? 'bg-primary text-white'
                             : 'bg-white text-slate-900 border border-neutral-300 hover:border-primary'
@@ -258,7 +277,11 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
                             alt={category.name_nl}
                             width={20}
                             height={20}
-                            className={cn(isSelected && 'brightness-0 invert')}
+                            className={cn(
+                              isSelected
+                                ? 'brightness-0 invert'
+                                : '[filter:brightness(0)_saturate(100%)_invert(7%)_sepia(8%)_saturate(6422%)_hue-rotate(187deg)_brightness(98%)_contrast(95%)]'
+                            )}
                           />
                         )}
                         {category.name_nl}
@@ -270,47 +293,69 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
             )}
 
             {/* All Categories List */}
-            <div className='space-y-3'>
+            <div className='space-y-4'>
               <Label className='text-sm md:text-lg text-slate-900'>
                 Alle vakgebieden
               </Label>
-              <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
-                {allCategories.map((category) => {
-                  const isSelected = selectedCategories.some((c) => c.id === category.id);
-                  return (
-                    <button
-                      key={category.id}
-                      type='button'
-                      onClick={() => toggleCategory(category)}
-                      className={cn(
-                        'px-4 py-3 rounded-lg text-base transition-all flex items-center gap-3 text-left',
-                        isSelected
-                          ? 'bg-primary/10 border-2 border-primary'
-                          : 'bg-white border border-neutral-300 hover:border-primary'
-                      )}
-                      style={
-                        !isSelected
-                          ? { boxShadow: '0px 2px 6.5px 0px #0000001A' }
-                          : undefined
-                      }
-                    >
-                      {category.icon_url && (
-                        <Image
-                          src={category.icon_url}
-                          alt={category.name_nl}
-                          width={24}
-                          height={24}
-                          className='shrink-0'
-                        />
-                      )}
-                      <span className='flex-1'>{category.name_nl}</span>
-                      {isSelected && (
+              {allCategories.filter((category) =>
+                category.name_nl
+                  .toLowerCase()
+                  .includes(searchQuery.toLowerCase())
+              ).length === 0 ? (
+                <div className='col-span-2 text-center py-8'>
+                  <p className='text-slate-500'>
+                    Geen vakgebieden gevonden voor &quot;{searchQuery}&quot;
+                  </p>
+                </div>
+              ) : (
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
+                  {allCategories
+                    .filter((category) =>
+                      category.name_nl
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase())
+                    )
+                    .map((category) => {
+                      const isSelected = selectedCategories.some(
+                        (c) => c.id === category.id
+                      );
+                      return (
+                        <button
+                          key={category.id}
+                          type='button'
+                          onClick={() => toggleCategory(category)}
+                          className={cn(
+                            'px-4 py-3 rounded-lg text-base transition-all flex items-center gap-3 text-left',
+                            isSelected
+                              ? 'bg-primary border border-primary text-white'
+                              : 'bg-white border border-neutral-300 hover:border-primary'
+                          )}
+                          style={
+                            !isSelected
+                              ? { boxShadow: '0px 2px 6.5px 0px #0000001A' }
+                              : undefined
+                          }
+                        >
+                          {category.icon_url && (
+                            <Image
+                              src={category.icon_url}
+                              alt={category.name_nl}
+                              width={24}
+                              height={24}
+                              className={cn(
+                                isSelected ? 'brightness-0 invert' : ''
+                              )}
+                            />
+                          )}
+                          <span className='flex-1'>{category.name_nl}</span>
+                          {/* {isSelected && (
                         <Check className='w-5 h-5 text-primary shrink-0' />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
+                      )} */}
+                        </button>
+                      );
+                    })}
+                </div>
+              )}
             </div>
 
             {/* Add custom option */}
@@ -318,7 +363,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
               <button
                 type='button'
                 className='text-primary hover:text-primary/80 text-base font-medium flex items-center gap-2'
-                onClick={() => toast.info('Vak voorstellen functie komt binnenkort')}
+                onClick={() => toast('Vak voorstellen functie komt binnenkort')}
               >
                 + Mis je een vak? → Vak voorstellen
               </button>
@@ -326,22 +371,34 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
           </div>
 
           {/* Right Panel - Selected Categories */}
-          <div className='w-full lg:w-[40%] space-y-6'>
+          <div className='w-full lg:w-[40%] space-y-8'>
             <div>
               <h2 className='text-xl md:text-2xl font-normal text-slate-900 mb-3'>
                 Gekozen vakgebieden
               </h2>
-              <p className='text-sm md:text-base text-muted-foreground mb-4'>
-                {selectedCategories.length} / {MAX_CATEGORIES} gekozen
-              </p>
+              <div className='flex items-center justify-between mb-4'>
+                <p className='text-sm md:text-base text-muted-foreground'>
+                  {selectedCategories.length} / {MAX_CATEGORIES} gekozen
+                </p>
+
+                {selectedCategories.length > 0 && (
+                  <button
+                    type='button'
+                    className='text-primary text-sm font-medium flex items-center gap-1.5 hover:text-primary/80 transition-colors'
+                    onClick={() => toast('Volgorde opnieuw instellen')}
+                  >
+<Move className='w-4 h-4 text-primary' />
+                    Herorden
+                  </button>
+                )}
+              </div>
               <Progress value={progressPercentage} className='h-2' />
             </div>
 
-            {selectedCategories.length > 0 ? (
+            {/* Info Message - Always visible */}
+
+            {selectedCategories.length > 1 ? (
               <div className='space-y-3'>
-                <p className='text-sm text-muted-foreground mb-3'>
-                  Sleep om te herschikken
-                </p>
                 <div className='space-y-2'>
                   {selectedCategories.map((category, index) => (
                     <div
@@ -351,44 +408,72 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
                       onDragOver={(e) => handleDragOver(e, index)}
                       onDragEnd={handleDragEnd}
                       className={cn(
-                        'bg-blue-50 border border-accent rounded-lg p-4 flex items-center gap-3 cursor-move transition-all',
+                        'bg-teal-50 border-2 border-accent border-dashed rounded-xl p-4 flex items-center gap-3 cursor-move transition-all',
                         draggedIndex === index && 'opacity-50'
                       )}
                     >
-                      <GripVertical className='w-5 h-5 text-slate-400 shrink-0' />
-                      {category.icon_url && (
-                        <Image
-                          src={category.icon_url}
-                          alt={category.name_nl}
-                          width={24}
-                          height={24}
-                          className='shrink-0'
-                        />
-                      )}
-                      <span className='flex-1 text-base text-slate-900'>
+                      <div className='w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0'>
+                        {category.icon_url && (
+                          <Image
+                            src={category.icon_url}
+                            alt={category.name_nl}
+                            width={12}
+                            height={12}
+                            className='brightness-0 invert'
+                          />
+                        )}
+                      </div>
+                      <span className='flex-1 text-base font-medium text-slate-900'>
                         {category.name_nl}
+                      </span>
+                      <span className='text-sm font-medium text-slate-400 shrink-0'>
+                        #{index + 1}
                       </span>
                       <button
                         type='button'
                         onClick={() => removeCategory(category.id)}
-                        className='text-slate-400 hover:text-red-500 transition-colors shrink-0'
+                        className='w-8 h-8 cursor-pointer rounded-full bg-red-100 flex items-center justify-center text-red-500 hover:bg-red-200 transition-all group shrink-0'
                       >
-                        <X className='w-5 h-5' />
+                        <X className='w-4 h-4 group-hover:rotate-90 transition-transform duration-200' />
                       </button>
                     </div>
                   ))}
                 </div>
               </div>
             ) : (
-              <div className='bg-blue-50 border border-accent rounded-lg p-6 text-center'>
-                <p className='text-base text-slate-600'>
-                  Volgorde bepaalt prioriteit
+              <div className=' rounded-xl p-8 text-center'>
+                <div className='w-16 h-16 rounded-full bg-slate-200 flex items-center justify-center mx-auto mb-4'>
+                  <Image
+                    src='/icons/services/renovatie.svg'
+                    alt='Nog niets gekozen'
+                    width={32}
+                    height={32}
+                    className='opacity-40'
+                    style={{ filter: 'grayscale(100%)' }}
+                  />
+                </div>
+                <p className='text-base font-medium text-slate-900 mb-1'>
+                  Nog niets gekozen
                 </p>
-                <p className='text-sm text-muted-foreground mt-2'>
-                  Sleep om te herschikken.
+                <p className='text-sm text-slate-600'>
+                  Kies je vakgebieden uit de lijst links
                 </p>
               </div>
             )}
+            <div className='bg-blue-50 border border-blue-200 rounded-xl p-4'>
+              <div className='flex items-start gap-3'>
+                <Info className='w-5 h-5 text-primary' />
+
+                <div>
+                  <p className='text-sm font-medium text-slate-900'>
+                    Volgorde bepaalt prioriteit
+                  </p>
+                  <p className='text-xs text-slate-600 mt-1'>
+                    Sleep om te herschikken.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
