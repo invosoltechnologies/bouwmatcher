@@ -7,6 +7,7 @@ import RegistrationSteps from '@/components/auth/RegistrationSteps';
 import ContactInfoForm from '@/components/auth/register/ContactInfoForm';
 import PasswordSetupForm from '@/components/auth/register/PasswordSetupForm';
 import WorkAreaForm, { type WorkAreaData } from '@/components/auth/register/WorkAreaForm';
+import ServiceCategoriesForm, { type ServiceCategoriesData } from '@/components/auth/register/ServiceCategoriesForm';
 import type { ContactInfoData, PasswordSetupData } from '@/types/auth';
 import { signUpProfessional } from '@/lib/supabase/auth';
 
@@ -16,6 +17,7 @@ export default function ProfessionalRegistrationForm() {
   const [subStep, setSubStep] = useState<'contact' | 'password'>('contact');
   const [contactData, setContactData] = useState<ContactInfoData | null>(null);
   const [workAreaData, setWorkAreaData] = useState<WorkAreaData | null>(null);
+  const [serviceCategoriesData, setServiceCategoriesData] = useState<ServiceCategoriesData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleContactInfoNext = (data: ContactInfoData) => {
@@ -129,6 +131,50 @@ export default function ProfessionalRegistrationForm() {
     }
   };
 
+  const handleServiceCategoriesNext = async (data: ServiceCategoriesData) => {
+    setServiceCategoriesData(data);
+    setIsLoading(true);
+
+    try {
+      // Get current user from Supabase
+      const { createClient } = await import('@/lib/supabase/client');
+      const supabase = createClient();
+
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        throw new Error('Gebruiker niet gevonden. Log opnieuw in.');
+      }
+
+      // Update professional_profiles with specializations
+      const { error: updateError } = await supabase
+        .from('professional_profiles')
+        .update({
+          specializations: data.selectedCategories,
+        })
+        .eq('user_id', user.id);
+
+      if (updateError) {
+        console.error('Database update error:', updateError);
+        throw new Error('Kon vakgebieden niet opslaan');
+      }
+
+      toast.success('Vakgebieden opgeslagen!');
+      setCurrentStep(4);
+    } catch (err: unknown) {
+      console.error('Service categories save error:', err);
+
+      let errorMessage = 'Er is een fout opgetreden bij het opslaan';
+      if (err && typeof err === 'object' && 'message' in err) {
+        errorMessage = (err as { message: string }).message;
+      }
+
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
       <RegistrationSteps currentStep={currentStep} />
@@ -155,6 +201,13 @@ export default function ProfessionalRegistrationForm() {
 
         {currentStep === 2 && (
           <WorkAreaForm onNext={handleWorkAreaNext} />
+        )}
+
+        {currentStep === 3 && (
+          <ServiceCategoriesForm
+            onNext={handleServiceCategoriesNext}
+            onBack={() => setCurrentStep(2)}
+          />
         )}
 
         {/* Add more steps as needed */}
