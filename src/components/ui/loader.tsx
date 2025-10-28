@@ -21,9 +21,9 @@ export function Loader({
   };
 
   const imageSize = {
-    sm: { width: 80, height: 80 },
-    md: { width: 150, height: 150 },
-    lg: { width: 200, height: 200 },
+    sm: { width: 70, height: 70 },
+    md: { width: 120, height: 120 },
+    lg: { width: 150, height: 150 },
   };
 
   const textSize = {
