@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 interface LoaderProps {
   fullScreen?: boolean;
@@ -20,9 +21,9 @@ export function Loader({
   };
 
   const spinnerSize = {
-    sm: 'w-6 h-6 border-2',
-    md: 'w-10 h-10 border-3',
-    lg: 'w-14 h-14 border-4',
+    sm: 'w-6 h-6',
+    md: 'w-10 h-10',
+    lg: 'w-14 h-14',
   };
 
   const textSize = {
@@ -40,29 +41,11 @@ export function Loader({
           {/* Gradient spinning ring */}
           <div
             className={cn(
-              'absolute inset-0 rounded-full animate-spin',
+              'absolute inset-0 rounded-full',
               spinnerSize[size]
             )}
-            style={{
-              background:
-                'conic-gradient(from 0deg, #10b981 0%, #023AA2 50%, #10b981 100%)',
-              WebkitMask: 'radial-gradient(farthest-side, transparent calc(100% - 3px), white 0)',
-              mask: 'radial-gradient(farthest-side, transparent calc(100% - 3px), white 0)',
-            }}
           />
-          {/* Inner glow */}
-          <div
-            className={cn(
-              'absolute inset-0 rounded-full opacity-50 blur-sm animate-spin',
-              spinnerSize[size]
-            )}
-            style={{
-              background:
-                'conic-gradient(from 0deg, #10b981 0%, #023AA2 50%, #10b981 100%)',
-              WebkitMask: 'radial-gradient(farthest-side, transparent calc(100% - 2px), white 0)',
-              mask: 'radial-gradient(farthest-side, transparent calc(100% - 2px), white 0)',
-            }}
-          />
+<Image src='/gifs/loader.gif' width={350} height={350} alt='Loading....'/>
         </div>
       </div>
 
@@ -90,9 +73,7 @@ export function Loader({
           className
         )}
       >
-        <div className='bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/20'>
           <LoaderContent />
-        </div>
       </div>
     );
   }
