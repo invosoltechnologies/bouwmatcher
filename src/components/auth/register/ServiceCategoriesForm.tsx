@@ -613,7 +613,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
         {onBack && (
           <Button
             type='button'
-            variant='outline'
+            variant='ghost'
             onClick={onBack}
             className='px-8 py-5 text-lg rounded-xl font-semibold'
             size={null}
