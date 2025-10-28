@@ -21,6 +21,7 @@ import { Check, Info, Move, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
+import { Loader } from '@/components/ui/loader';
 
 interface ServiceCategory {
   id: number;
@@ -28,6 +29,13 @@ interface ServiceCategory {
   name_nl: string;
   name_en: string;
   icon_url: string | null;
+}
+
+interface ProfessionalSpecialization {
+  id: string;
+  priority: number;
+  service_category_id: number;
+  service_categories: ServiceCategory;
 }
 
 interface ServiceCategoriesFormProps {
@@ -48,11 +56,12 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
   const [categories, setCategories] = useState<ServiceCategory[]>([]);
   const [popularCategories, setPopularCategories] = useState<ServiceCategory[]>([]);
   const [allCategories, setAllCategories] = useState<ServiceCategory[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<ServiceCategory[]>([]);
+  const [selectedSpecializations, setSelectedSpecializations] = useState<ProfessionalSpecialization[]>([]);
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isSaving, setIsSaving] = useState(false);
 
   // Fetch categories from API
   useEffect(() => {
@@ -87,24 +96,122 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
     fetchCategories();
   }, []);
 
-  const toggleCategory = (category: ServiceCategory) => {
-    const isSelected = selectedCategories.some((c) => c.id === category.id);
+  // Fetch existing specializations from database
+  useEffect(() => {
+    const fetchSpecializations = async () => {
+      try {
+        const response = await fetch('/api/professional-specializations');
+
+        if (!response.ok) {
+          // If 404, user hasn't added any specializations yet (this is ok)
+          if (response.status === 404) {
+            console.log('No specializations found yet');
+            return;
+          }
+          throw new Error('Failed to fetch specializations');
+        }
+
+        const { specializations } = await response.json();
+        setSelectedSpecializations(specializations || []);
+      } catch (error) {
+        console.error('Error fetching specializations:', error);
+        toast.error('Kon geselecteerde vakgebieden niet laden');
+      }
+    };
+
+    fetchSpecializations();
+  }, []);
+
+  const toggleCategory = async (category: ServiceCategory) => {
+    const isSelected = selectedSpecializations.some(
+      (s) => s.service_category_id === category.id
+    );
 
     if (isSelected) {
-      // Remove category
-      setSelectedCategories(selectedCategories.filter((c) => c.id !== category.id));
+      // Remove category - delete from database first
+      const spec = selectedSpecializations.find(
+        (s) => s.service_category_id === category.id
+      );
+      if (!spec) return;
+
+      setIsSaving(true);
+      try {
+        const response = await fetch(
+          `/api/professional-specializations?id=${spec.id}`,
+          { method: 'DELETE' }
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to delete specialization');
+        }
+
+        // Update UI after successful deletion
+        setSelectedSpecializations((prev) => prev.filter((s) => s.id !== spec.id));
+        toast.success('Vakgebied verwijderd');
+      } catch (error) {
+        console.error('Error deleting specialization:', error);
+        toast.error('Kon vakgebied niet verwijderen');
+      } finally {
+        setIsSaving(false);
+      }
     } else {
       // Add category (check max limit)
-      if (selectedCategories.length >= MAX_CATEGORIES) {
+      if (selectedSpecializations.length >= MAX_CATEGORIES) {
         toast.error(`Je kunt maximaal ${MAX_CATEGORIES} vakgebieden selecteren`);
         return;
       }
-      setSelectedCategories([...selectedCategories, category]);
+
+      setIsSaving(true);
+      try {
+        const priority = selectedSpecializations.length + 1;
+        const response = await fetch('/api/professional-specializations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            service_category_id: category.id,
+            priority,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to add specialization');
+        }
+
+        const { specialization } = await response.json();
+
+        // Update UI after successful addition
+        setSelectedSpecializations((prev) => [...prev, specialization]);
+        toast.success('Vakgebied toegevoegd');
+      } catch (error) {
+        console.error('Error adding specialization:', error);
+        toast.error('Kon vakgebied niet toevoegen');
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
 
-  const removeCategory = (categoryId: number) => {
-    setSelectedCategories(selectedCategories.filter((c) => c.id !== categoryId));
+  const removeCategory = async (specializationId: string) => {
+    setIsSaving(true);
+    try {
+      const response = await fetch(
+        `/api/professional-specializations?id=${specializationId}`,
+        { method: 'DELETE' }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to delete specialization');
+      }
+
+      // Update UI after successful deletion
+      setSelectedSpecializations((prev) => prev.filter((s) => s.id !== specializationId));
+      toast.success('Vakgebied verwijderd');
+    } catch (error) {
+      console.error('Error deleting specialization:', error);
+      toast.error('Kon vakgebied niet verwijderen');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDragStart = (index: number) => {
@@ -115,35 +222,69 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
     e.preventDefault();
     if (draggedIndex === null || draggedIndex === index) return;
 
-    const newCategories = [...selectedCategories];
-    const draggedItem = newCategories[draggedIndex];
+    const newSpecializations = [...selectedSpecializations];
+    const draggedItem = newSpecializations[draggedIndex];
 
-    newCategories.splice(draggedIndex, 1);
-    newCategories.splice(index, 0, draggedItem);
+    newSpecializations.splice(draggedIndex, 1);
+    newSpecializations.splice(index, 0, draggedItem);
 
-    setSelectedCategories(newCategories);
+    setSelectedSpecializations(newSpecializations);
     setDraggedIndex(index);
   };
 
-  const handleDragEnd = () => {
+  const handleDragEnd = async () => {
     setDraggedIndex(null);
+
+    // After reordering, save new priorities to database
+    setIsSaving(true);
+    try {
+      const order = selectedSpecializations.map((spec, index) => ({
+        id: spec.id,
+        priority: index + 1, // Priority starts from 1
+      }));
+
+      const response = await fetch('/api/professional-specializations/reorder', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update priorities');
+      }
+
+      toast.success('Volgorde bijgewerkt');
+    } catch (error) {
+      console.error('Error updating priorities:', error);
+      toast.error('Kon volgorde niet bijwerken');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleSubmit = () => {
-    if (selectedCategories.length === 0) {
+    if (selectedSpecializations.length === 0) {
       toast.error('Selecteer minimaal 1 vakgebied');
       return;
     }
 
+    // Data is already saved to database, just move to next step
     onNext({
-      selectedCategories: selectedCategories.map((c) => c.id),
+      selectedCategories: selectedSpecializations.map((s) => s.service_category_id),
     });
   };
 
-  const progressPercentage = (selectedCategories.length / MAX_CATEGORIES) * 100;
+  const progressPercentage = (selectedSpecializations.length / MAX_CATEGORIES) * 100;
+
+  // Show loader while fetching initial data
+  if (isLoading) {
+    return <Loader fullScreen text='Vakgebieden laden...' />;
+  }
 
   return (
     <div className='custom-container'>
+      {/* Full Screen Loader for saving operations */}
+      {isSaving && <Loader fullScreen text='Bezig met opslaan...' />}
       {/* Main Card */}
       <div className='mb-11.5 mt-5.5 text-center'>
         <h1 className='text-2xl md:text-4xl font-normal text-slate-900 mb-3'>
@@ -251,16 +392,17 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
                 </Label>
                 <div className='flex flex-wrap gap-3'>
                   {popularCategories.map((category) => {
-                    const isSelected = selectedCategories.some(
-                      (c) => c.id === category.id
+                    const isSelected = selectedSpecializations.some(
+                      (s) => s.service_category_id === category.id
                     );
                     return (
                       <button
                         key={category.id}
                         type='button'
                         onClick={() => toggleCategory(category)}
+                        disabled={isSaving}
                         className={cn(
-                          'px-4.5 py-3 cursor-pointer rounded-full text-base font-medium transition-all flex items-center gap-2',
+                          'px-4.5 py-3 cursor-pointer rounded-full text-base font-medium transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed',
                           isSelected
                             ? 'bg-primary text-white'
                             : 'bg-white text-slate-900 border border-neutral-300 hover:border-primary'
@@ -316,16 +458,17 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
                         .includes(searchQuery.toLowerCase())
                     )
                     .map((category) => {
-                      const isSelected = selectedCategories.some(
-                        (c) => c.id === category.id
+                      const isSelected = selectedSpecializations.some(
+                        (s) => s.service_category_id === category.id
                       );
                       return (
                         <button
                           key={category.id}
                           type='button'
                           onClick={() => toggleCategory(category)}
+                          disabled={isSaving}
                           className={cn(
-                            'px-4 py-3 rounded-lg text-base transition-all flex items-center gap-3 text-left',
+                            'px-4 py-3 rounded-lg text-base transition-all flex items-center gap-3 text-left disabled:opacity-50 disabled:cursor-not-allowed',
                             isSelected
                               ? 'bg-primary border border-primary text-white'
                               : 'bg-white border border-neutral-300 hover:border-primary'
@@ -378,10 +521,10 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
               </h2>
               <div className='flex items-center justify-between mb-4'>
                 <p className='text-sm md:text-base text-muted-foreground'>
-                  {selectedCategories.length} / {MAX_CATEGORIES} gekozen
+                  {selectedSpecializations.length} / {MAX_CATEGORIES} gekozen
                 </p>
 
-                {selectedCategories.length > 0 && (
+                {selectedSpecializations.length > 0 && (
                   <button
                     type='button'
                     className='text-primary text-sm font-medium flex items-center gap-1.5 hover:text-primary/80 transition-colors'
@@ -397,12 +540,12 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
 
             {/* Info Message - Always visible */}
 
-            {selectedCategories.length > 1 ? (
+            {selectedSpecializations.length > 0 ? (
               <div className='space-y-3'>
                 <div className='space-y-2'>
-                  {selectedCategories.map((category, index) => (
+                  {selectedSpecializations.map((spec, index) => (
                     <div
-                      key={category.id}
+                      key={spec.id}
                       draggable
                       onDragStart={() => handleDragStart(index)}
                       onDragOver={(e) => handleDragOver(e, index)}
@@ -412,26 +555,26 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
                         draggedIndex === index && 'opacity-50'
                       )}
                     >
-                      <div className='w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0'>
-                        {category.icon_url && (
+                      <div className='w-12 h-12 rounded-full bg-primary flex items-center justify-center shrink-0'>
+                        {spec.service_categories.icon_url && (
                           <Image
-                            src={category.icon_url}
-                            alt={category.name_nl}
-                            width={12}
-                            height={12}
+                            src={spec.service_categories.icon_url}
+                            alt={spec.service_categories.name_nl}
+                            width={24}
+                            height={24}
                             className='brightness-0 invert'
                           />
                         )}
                       </div>
                       <span className='flex-1 text-base font-medium text-slate-900'>
-                        {category.name_nl}
+                        {spec.service_categories.name_nl}
                       </span>
                       <span className='text-sm font-medium text-slate-400 shrink-0'>
                         #{index + 1}
                       </span>
                       <button
                         type='button'
-                        onClick={() => removeCategory(category.id)}
+                        onClick={() => removeCategory(spec.id)}
                         className='w-8 h-8 cursor-pointer rounded-full bg-red-100 flex items-center justify-center text-red-500 hover:bg-red-200 transition-all group shrink-0'
                       >
                         <X className='w-4 h-4 group-hover:rotate-90 transition-transform duration-200' />
@@ -495,10 +638,10 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
           type='button'
           onClick={handleSubmit}
           className='px-8 py-5 text-lg rounded-xl font-semibold shadow-lg ml-auto'
-          disabled={selectedCategories.length === 0}
+          disabled={selectedSpecializations.length === 0 || isSaving}
           size={null}
         >
-          Naar extra vakgebieden →
+          {isSaving ? 'Opslaan...' : 'Naar extra vakgebieden →'}
         </Button>
       </div>
     </div>
