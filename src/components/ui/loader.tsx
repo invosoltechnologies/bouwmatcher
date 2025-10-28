@@ -15,15 +15,15 @@ export function Loader({
   className,
 }: LoaderProps) {
   const sizeClasses = {
-    sm: 'w-8 h-8',
-    md: 'w-12 h-12',
-    lg: 'w-16 h-16',
+    sm: 'w-20 h-20',
+    md: 'w-32 h-32',
+    lg: 'w-40 h-40',
   };
 
-  const spinnerSize = {
-    sm: 'w-6 h-6',
-    md: 'w-10 h-10',
-    lg: 'w-14 h-14',
+  const imageSize = {
+    sm: { width: 80, height: 80 },
+    md: { width: 150, height: 150 },
+    lg: { width: 200, height: 200 },
   };
 
   const textSize = {
@@ -34,18 +34,16 @@ export function Loader({
 
   const LoaderContent = () => (
     <div className='flex flex-col items-center justify-center gap-4'>
-      {/* Spinning Circle Loader */}
+      {/* GIF Loader */}
       <div className='relative'>
-        {/* Outer ring with gradient */}
-        <div className={cn('relative', sizeClasses[size])}>
-          {/* Gradient spinning ring */}
-          <div
-            className={cn(
-              'absolute inset-0 rounded-full',
-              spinnerSize[size]
-            )}
+        <div className={cn('relative flex items-center justify-center', sizeClasses[size])}>
+          <Image
+            src='/gifs/loader.gif'
+            width={imageSize[size].width}
+            height={imageSize[size].height}
+            alt='Loading....'
+            className='object-contain'
           />
-<Image src='/gifs/loader.gif' width={350} height={350} alt='Loading....'/>
         </div>
       </div>
 
