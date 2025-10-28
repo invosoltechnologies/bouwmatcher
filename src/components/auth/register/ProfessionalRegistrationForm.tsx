@@ -200,7 +200,10 @@ export default function ProfessionalRegistrationForm() {
         )}
 
         {currentStep === 2 && (
-          <WorkAreaForm onNext={handleWorkAreaNext} />
+          <WorkAreaForm
+            onNext={handleWorkAreaNext}
+            initialData={workAreaData}
+          />
         )}
 
         {currentStep === 3 && (

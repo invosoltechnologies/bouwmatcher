@@ -4,20 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Check, Info, Move, Search, X } from 'lucide-react';
+import { Info, Move, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
@@ -417,8 +404,8 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
                           <Image
                             src={category.icon_url}
                             alt={category.name_nl}
-                            width={20}
-                            height={20}
+                            width={14}
+                            height={14}
                             className={cn(
                               isSelected
                                 ? 'brightness-0 invert'
@@ -468,7 +455,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
                           onClick={() => toggleCategory(category)}
                           disabled={isSaving}
                           className={cn(
-                            'px-4 py-3 rounded-lg text-base transition-all flex items-center gap-3 text-left disabled:opacity-50 disabled:cursor-not-allowed',
+                            'px-4 py-3 cursor-pointer rounded-lg text-base transition-all flex items-center gap-3 text-left disabled:opacity-50 disabled:cursor-not-allowed',
                             isSelected
                               ? 'bg-primary border border-primary text-white'
                               : 'bg-white border border-neutral-300 hover:border-primary'
@@ -490,7 +477,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
                               )}
                             />
                           )}
-                          <span className='flex-1'>{category.name_nl}</span>
+                          <span className='flex-1 font-semibold'>{category.name_nl}</span>
                           {/* {isSelected && (
                         <Check className='w-5 h-5 text-primary shrink-0' />
                       )} */}
@@ -555,13 +542,13 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
                         draggedIndex === index && 'opacity-50'
                       )}
                     >
-                      <div className='w-12 h-12 rounded-full bg-primary flex items-center justify-center shrink-0'>
+                      <div className='w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0'>
                         {spec.service_categories.icon_url && (
                           <Image
                             src={spec.service_categories.icon_url}
                             alt={spec.service_categories.name_nl}
-                            width={24}
-                            height={24}
+                            width={14}
+                            height={14}
                             className='brightness-0 invert'
                           />
                         )}

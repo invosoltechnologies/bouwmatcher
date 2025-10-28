@@ -12,6 +12,7 @@ import toast from 'react-hot-toast';
 interface WorkAreaFormProps {
   onNext: (data: WorkAreaData) => void;
   onBack?: () => void;
+  initialData?: WorkAreaData | null;
 }
 
 export interface WorkAreaData {
@@ -251,6 +252,23 @@ function MapComponent({
     }
   }, [map]);
 
+  // Pan map to center when coordinates change
+  useEffect(() => {
+    if (!map || !center.lat || !center.lng) return;
+
+    // Don't pan if it's the default Netherlands center
+    if (center.lat === 52.3676 && center.lng === 4.9041) return;
+
+    // Pan to the new center with smooth animation
+    map.panTo({ lat: center.lat, lng: center.lng });
+
+    // Set appropriate zoom level if user has selected a location
+    const currentZoom = map.getZoom();
+    if (!currentZoom || currentZoom < 11) {
+      map.setZoom(13);
+    }
+  }, [map, center]);
+
   // Draw circle for service radius
   useEffect(() => {
     if (!map || !center.lat || !center.lng) return;
@@ -318,13 +336,16 @@ function MapComponent({
   );
 }
 
-function WorkAreaFormContent({ onNext }: WorkAreaFormProps) {
-  const [selectedLocation, setSelectedLocation] = useState<string>('');
-  const [inputValue, setInputValue] = useState<string>('');
-  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
-  const [selectedRadius, setSelectedRadius] = useState<number>(10);
+function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
+  const [selectedLocation, setSelectedLocation] = useState<string>(initialData?.location || '');
+  const [inputValue, setInputValue] = useState<string>(initialData?.location || '');
+  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(
+    initialData ? { lat: initialData.latitude, lng: initialData.longitude } : null
+  );
+  const [selectedRadius, setSelectedRadius] = useState<number>(initialData?.serviceRadius || 10);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [mapTypeId, setMapTypeId] = useState<'roadmap' | 'satellite' | 'terrain'>('terrain');
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const reverseGeocode = useCallback(
     async (lat: number, lng: number) => {
@@ -351,6 +372,91 @@ function WorkAreaFormContent({ onNext }: WorkAreaFormProps) {
     },
     []
   );
+
+  // Fetch saved location from database or get current location on initial load
+  useEffect(() => {
+    const initializeLocation = async () => {
+      // If we already have initialData (user clicked back), use that
+      if (initialData) {
+        setIsInitialLoad(false);
+        return;
+      }
+
+      // Try to fetch from database first
+      try {
+        const { createClient } = await import('@/lib/supabase/client');
+        const supabase = createClient();
+
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data: profile } = await supabase
+          .from('professional_profiles')
+          .select('work_address, work_latitude, work_longitude, service_radius_km')
+          .eq('user_id', user.id)
+          .single();
+
+        if (profile && profile.work_address && profile.work_latitude && profile.work_longitude) {
+          // User has saved location, use it
+          setSelectedLocation(profile.work_address);
+          setInputValue(profile.work_address);
+          setCoordinates({
+            lat: Number(profile.work_latitude),
+            lng: Number(profile.work_longitude),
+          });
+          setSelectedRadius(profile.service_radius_km || 10);
+          setIsInitialLoad(false);
+          return;
+        }
+      } catch (error) {
+        console.error('Error fetching saved location:', error);
+      }
+
+      // No saved location, automatically get current location
+      if (navigator.geolocation) {
+        setIsLoadingLocation(true);
+        setInputValue('Huidige locatie ophalen...');
+
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+
+            setCoordinates({ lat, lng });
+            setInputValue('Adres ophalen...');
+
+            try {
+              const address = await reverseGeocode(lat, lng);
+              if (address) {
+                setSelectedLocation(address);
+                setInputValue(address);
+                toast.success('Je huidige locatie is ingesteld');
+              }
+            } catch (error) {
+              console.error('Error getting address:', error);
+              setInputValue('');
+            }
+
+            setIsLoadingLocation(false);
+            setIsInitialLoad(false);
+          },
+          (error) => {
+            console.error('Geolocation error:', error);
+            setInputValue('');
+            setIsLoadingLocation(false);
+            setIsInitialLoad(false);
+            // Don't show error toast, let user manually enter location
+          }
+        );
+      } else {
+        setIsInitialLoad(false);
+      }
+    };
+
+    if (isInitialLoad) {
+      initializeLocation();
+    }
+  }, [isInitialLoad, initialData, reverseGeocode]);
 
   const handlePlaceSelect = useCallback(
     (place: { address: string; lat: number; lng: number }) => {
