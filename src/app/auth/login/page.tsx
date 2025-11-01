@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -13,7 +13,7 @@ import AuthNavbar from '@/components/auth/AuthNavbar';
 import type { LoginFormData } from '@/types/auth';
 import { signIn, signInWithOAuth } from '@/lib/supabase/auth';
 
-export default function LoginPage() {
+function LoginForm() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -72,17 +72,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div
-      className='min-h-screen pt-10 flex flex-col'
-      style={{
-        background:
-          'linear-gradient(90deg, rgba(10, 178, 126, 0.1) 0%, rgba(2, 58, 162, 0.1) 100%)',
-      }}
-    >
-      <AuthNavbar />
-
-      <main className='flex-1 flex items-center justify-center px-4 pt-24 pb-12'>
-        <div className='w-full max-w-3xl'>
+    <div className='w-full max-w-3xl'>
           <h1 className='text-[55px] font-normal text-center mb-12 leading-tight'>
             <span
               style={{
@@ -233,7 +223,25 @@ export default function LoginPage() {
               </Link>
             </div>
           </form>
-        </div>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <div
+      className='min-h-screen pt-10 flex flex-col'
+      style={{
+        background:
+          'linear-gradient(90deg, rgba(10, 178, 126, 0.1) 0%, rgba(2, 58, 162, 0.1) 100%)',
+      }}
+    >
+      <AuthNavbar />
+
+      <main className='flex-1 flex items-center justify-center px-4 pt-24 pb-12'>
+        <Suspense fallback={<div className='w-full max-w-3xl text-center'>Loading...</div>}>
+          <LoginForm />
+        </Suspense>
       </main>
     </div>
   );

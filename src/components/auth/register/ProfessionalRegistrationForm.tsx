@@ -8,6 +8,7 @@ import ContactInfoForm from '@/components/auth/register/ContactInfoForm';
 import PasswordSetupForm from '@/components/auth/register/PasswordSetupForm';
 import WorkAreaForm, { type WorkAreaData } from '@/components/auth/register/WorkAreaForm';
 import ServiceCategoriesForm, { type ServiceCategoriesData } from '@/components/auth/register/ServiceCategoriesForm';
+import SubcategoriesForm, { type SubcategoriesData } from '@/components/auth/register/SubcategoriesForm';
 import type { ContactInfoData, PasswordSetupData } from '@/types/auth';
 import { signUpProfessional } from '@/lib/supabase/auth';
 
@@ -17,7 +18,10 @@ export default function ProfessionalRegistrationForm() {
   const [subStep, setSubStep] = useState<'contact' | 'password'>('contact');
   const [contactData, setContactData] = useState<ContactInfoData | null>(null);
   const [workAreaData, setWorkAreaData] = useState<WorkAreaData | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [serviceCategoriesData, setServiceCategoriesData] = useState<ServiceCategoriesData | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [subcategoriesData, setSubcategoriesData] = useState<SubcategoriesData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleContactInfoNext = (data: ContactInfoData) => {
@@ -175,6 +179,53 @@ export default function ProfessionalRegistrationForm() {
     }
   };
 
+  const handleSubcategoriesNext = async (data: SubcategoriesData) => {
+    setSubcategoriesData(data);
+    setIsLoading(true);
+
+    try {
+      // Validate data
+      if (!data.selectedSubcategories || data.selectedSubcategories.length === 0) {
+        throw new Error('Selecteer minimaal 1 onderdeel');
+      }
+
+      if (data.selectedSubcategories.length > 30) {
+        throw new Error('Maximaal 30 onderdelen toegestaan');
+      }
+
+      // Call API to save subcategories
+      const response = await fetch('/api/professional-subcategories', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          subcategoryIds: data.selectedSubcategories,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Kon onderdelen niet opslaan');
+      }
+
+      toast.success('Onderdelen opgeslagen!');
+      setCurrentStep(5);
+    } catch (err: unknown) {
+      console.error('Subcategories save error:', err);
+
+      let errorMessage = 'Er is een fout opgetreden bij het opslaan';
+      if (err && typeof err === 'object' && 'message' in err) {
+        errorMessage = (err as { message: string }).message;
+      }
+
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
       <RegistrationSteps currentStep={currentStep} />
@@ -210,6 +261,13 @@ export default function ProfessionalRegistrationForm() {
           <ServiceCategoriesForm
             onNext={handleServiceCategoriesNext}
             onBack={() => setCurrentStep(2)}
+          />
+        )}
+
+        {currentStep === 4 && (
+          <SubcategoriesForm
+            onNext={handleSubcategoriesNext}
+            onBack={() => setCurrentStep(3)}
           />
         )}
 

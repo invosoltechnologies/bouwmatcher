@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { Loader } from '@/components/ui/loader';
+import { CategoryPill } from '@/components/ui/category-pill';
 
 interface ServiceCategory {
   id: number;
@@ -40,11 +41,11 @@ const MAX_CATEGORIES = 6;
 const POPULAR_SLUGS = ['schilderwerk', 'loodgieter', 'elektricien'];
 
 export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategoriesFormProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [categories, setCategories] = useState<ServiceCategory[]>([]);
   const [popularCategories, setPopularCategories] = useState<ServiceCategory[]>([]);
   const [allCategories, setAllCategories] = useState<ServiceCategory[]>([]);
   const [selectedSpecializations, setSelectedSpecializations] = useState<ProfessionalSpecialization[]>([]);
-  const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -383,38 +384,15 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
                       (s) => s.service_category_id === category.id
                     );
                     return (
-                      <button
+                      <CategoryPill
                         key={category.id}
-                        type='button'
+                        id={category.id}
+                        name={category.name_nl}
+                        icon={category.icon_url}
+                        selected={isSelected}
                         onClick={() => toggleCategory(category)}
                         disabled={isSaving}
-                        className={cn(
-                          'px-4.5 py-3 cursor-pointer rounded-full text-base font-medium transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed',
-                          isSelected
-                            ? 'bg-primary text-white'
-                            : 'bg-white text-slate-900 border border-neutral-300 hover:border-primary'
-                        )}
-                        style={
-                          !isSelected
-                            ? { boxShadow: '0px 2px 6.5px 0px #0000001A' }
-                            : undefined
-                        }
-                      >
-                        {category.icon_url && (
-                          <Image
-                            src={category.icon_url}
-                            alt={category.name_nl}
-                            width={14}
-                            height={14}
-                            className={cn(
-                              isSelected
-                                ? 'brightness-0 invert'
-                                : '[filter:brightness(0)_saturate(100%)_invert(7%)_sepia(8%)_saturate(6422%)_hue-rotate(187deg)_brightness(98%)_contrast(95%)]'
-                            )}
-                          />
-                        )}
-                        {category.name_nl}
-                      </button>
+                      />
                     );
                   })}
                 </div>

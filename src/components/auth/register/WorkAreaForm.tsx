@@ -211,6 +211,7 @@ function PlacesAutocompleteInput({
 
 function MapComponent({
   center,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   mapTypeId,
   onClick,
   radius,
@@ -223,6 +224,7 @@ function MapComponent({
   children?: React.ReactNode;
 }) {
   const map = useMap();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [zoom, setZoom] = useState(6);
   const circleRef = useRef<google.maps.Circle | null>(null);
 
@@ -441,11 +443,20 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
             setIsInitialLoad(false);
           },
           (error) => {
-            console.error('Geolocation error:', error);
+            // Handle geolocation errors gracefully
             setInputValue('');
             setIsLoadingLocation(false);
             setIsInitialLoad(false);
-            // Don't show error toast, let user manually enter location
+
+            // Show user-friendly message based on error code
+            if (error.code === error.PERMISSION_DENIED) {
+              // User denied location access - this is fine, they can enter manually
+              toast('Je kunt je locatie handmatig invoeren', { icon: 'ℹ️' });
+            } else if (error.code === error.POSITION_UNAVAILABLE) {
+              toast.error('Locatie is niet beschikbaar. Voer handmatig in.');
+            } else if (error.code === error.TIMEOUT) {
+              toast.error('Locatie verzoek verlopen. Voer handmatig in.');
+            }
           }
         );
       } else {
