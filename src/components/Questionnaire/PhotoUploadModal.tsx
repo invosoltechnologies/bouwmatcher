@@ -32,6 +32,7 @@ export default function PhotoUploadModal({ draftId, onClose, onComplete }: Photo
   const [step, setStep] = useState<'initial' | 'upload'>('initial');
   const [photos, setPhotos] = useState<UploadedPhoto[]>([]);
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -126,6 +127,7 @@ export default function PhotoUploadModal({ draftId, onClose, onComplete }: Photo
             )
           );
         }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         setUploadingFiles(prev =>
           prev.map(u =>

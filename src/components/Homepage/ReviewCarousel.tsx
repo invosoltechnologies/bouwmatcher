@@ -75,7 +75,7 @@ export function ReviewCarousel() {
         }}
       >
         {/* First set of reviews */}
-        {reviewsData.map((review, index) => (
+        {reviewsData.map((review) => (
           <div
             key={review.id}
             className='flex-shrink-0 w-80 mr-8.5'
@@ -113,7 +113,7 @@ export function ReviewCarousel() {
           </div>
         ))}
         {/* Duplicate set for infinite scroll */}
-        {reviewsData.map((review, index) => (
+        {reviewsData.map((review) => (
           <div
             key={`duplicate-${review.id}`}
             className='flex-shrink-0 w-80 mr-8.5'

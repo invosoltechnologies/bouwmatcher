@@ -1,6 +1,7 @@
 import Image from 'next/image';
+import { ValueItem } from './Values';
 
-const valuesData = [
+const defaultValuesData: ValueItem[] = [
   {
     id: 1,
     icon: '/icons/values/Betrouwbaarheid.svg',
@@ -31,7 +32,13 @@ const valuesData = [
   }
 ];
 
-export default function ValuesShape() {
+interface ValuesShapeProps {
+  values?: ValueItem[];
+  centerText?: string;
+}
+
+export default function ValuesShape({ values, centerText = 'Jouw zekerheid\nin de bouw.' }: ValuesShapeProps) {
+  const valuesData = values || defaultValuesData;
   const getInvertedRadiusMask = (position: string) => {
     const borderRadius = '10px'; // Corner radius of the cards
     const cutoutDepth = '100px'; // How deep the curved cutout goes into the card
@@ -119,7 +126,7 @@ export default function ValuesShape() {
               </div>
               {/* Description */}
               <p
-                className={`text-base text-slate-900 leading-relaxed max-w-44 text-wrap ${
+                className={`text-sm text-slate-900 leading-relaxed max-w-46 text-wrap ${
                   value.id % 2 === 0 ? 'text-right' : 'text-left'
                 }  `}
               >
@@ -141,19 +148,17 @@ export default function ValuesShape() {
       ></div>
       <div className='absolute inset-0 w-[231px] h-[231px] z-10 bg-white/60 backdrop:blur-[100px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full'></div>
       <div
-        className='absolute z-30 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-primary rounded-full flex items-center justify-center opacity-100'
+        className='absolute z-30 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-primary/85 rounded-full flex items-center justify-center opacity-100'
         style={{
           width: '176px',
           height: '176px',
           boxShadow: '0px 10px 15px 0px #0000001A',
         }}
       >
-        <div className='text-center text-white'>
-          <div className='text-sm font-medium leading-tight'>
-            Jouw zekerheid
-            <br />
-            in de bouw.
-          </div>
+        <div className='text-center text-white p-6'>
+          <p className='text-lg font-medium leading-tight whitespace-pre-line'>
+            {centerText}
+          </p>
         </div>
       </div>
     </div>

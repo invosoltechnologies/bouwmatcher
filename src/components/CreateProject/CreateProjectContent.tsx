@@ -274,6 +274,7 @@ export default function CreateProjectContent() {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handlePhotoModalComplete = async (hasPhotos: boolean) => {
     setShowPhotoModal(false);
     await moveToNextStep();
