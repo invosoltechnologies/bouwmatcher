@@ -9,6 +9,7 @@ import PasswordSetupForm from '@/components/auth/register/PasswordSetupForm';
 import WorkAreaForm, { type WorkAreaData } from '@/components/auth/register/WorkAreaForm';
 import ServiceCategoriesForm, { type ServiceCategoriesData } from '@/components/auth/register/ServiceCategoriesForm';
 import SubcategoriesForm, { type SubcategoriesData } from '@/components/auth/register/SubcategoriesForm';
+import CompanyRegistrationForm, { type CompanyData } from '@/components/auth/register/CompanyRegistrationForm';
 import type { ContactInfoData, PasswordSetupData } from '@/types/auth';
 import { signUpProfessional } from '@/lib/supabase/auth';
 
@@ -22,6 +23,7 @@ export default function ProfessionalRegistrationForm() {
   const [serviceCategoriesData, setServiceCategoriesData] = useState<ServiceCategoriesData | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [subcategoriesData, setSubcategoriesData] = useState<SubcategoriesData | null>(null);
+  const [companyData, setCompanyData] = useState<CompanyData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleContactInfoNext = (data: ContactInfoData) => {
@@ -226,6 +228,55 @@ export default function ProfessionalRegistrationForm() {
     }
   };
 
+  const handleCompanyNext = async (data: CompanyData) => {
+    setCompanyData(data);
+    setIsLoading(true);
+
+    try {
+      // Get current user from Supabase
+      const { createClient } = await import('@/lib/supabase/client');
+      const supabase = createClient();
+
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        throw new Error('Gebruiker niet gevonden. Log opnieuw in.');
+      }
+
+      // Update professional_profiles with company data
+      const { error: updateError } = await supabase
+        .from('professional_profiles')
+        .update({
+          company_name: data.companyName,
+          kvk_number: data.kvkNumber,
+          company_address: `${data.street} ${data.houseNumber}`,
+          company_postal_code: data.postalCode,
+          company_city: data.city,
+        })
+        .eq('user_id', user.id);
+
+      if (updateError) {
+        console.error('Database update error:', updateError);
+        throw new Error('Kon bedrijfsgegevens niet opslaan');
+      }
+
+      toast.success('Bedrijfsgegevens opgeslagen!');
+      // Move to next step or complete registration
+      router.push('/dashboard');
+    } catch (err: unknown) {
+      console.error('Company save error:', err);
+
+      let errorMessage = 'Er is een fout opgetreden bij het opslaan';
+      if (err && typeof err === 'object' && 'message' in err) {
+        errorMessage = (err as { message: string }).message;
+      }
+
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
       <RegistrationSteps currentStep={currentStep} />
@@ -271,7 +322,12 @@ export default function ProfessionalRegistrationForm() {
           />
         )}
 
-        {/* Add more steps as needed */}
+        {currentStep === 5 && (
+          <CompanyRegistrationForm
+            onNext={handleCompanyNext}
+            onBack={() => setCurrentStep(4)}
+          />
+        )}
       </main>
     </>
   );
