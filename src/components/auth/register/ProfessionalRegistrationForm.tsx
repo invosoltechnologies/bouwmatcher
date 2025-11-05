@@ -243,15 +243,54 @@ export default function ProfessionalRegistrationForm() {
         throw new Error('Gebruiker niet gevonden. Log opnieuw in.');
       }
 
-      // Update professional_profiles with company data
+      // Step 1: Check if company already exists by business_id (KVK number)
+      const { data: existingCompany } = await supabase
+        .from('professional_companies')
+        .select('id')
+        .eq('business_id', data.kvkNumber)
+        .single();
+
+      let companyId: string;
+
+      if (existingCompany) {
+        // Company exists - use existing company_id
+        companyId = existingCompany.id;
+        console.log('Company already exists, linking to existing company:', companyId);
+      } else {
+        // Company doesn't exist - create new one
+        const { data: newCompany, error: companyError } = await supabase
+          .from('professional_companies')
+          .insert({
+            company_name: data.companyName,
+            business_id: data.kvkNumber,
+            postal_code: data.postalCode,
+            house_number: data.houseNumber,
+            street_name: data.street,
+            city: data.city,
+            full_address: `${data.street} ${data.houseNumber}, ${data.postalCode} ${data.city}`,
+            created_by: user.id,
+            is_active: true,
+            verification_status: 'pending',
+          })
+          .select('id')
+          .single();
+
+        if (companyError || !newCompany) {
+          console.error('Error creating company:', companyError);
+          throw new Error('Kon bedrijf niet aanmaken');
+        }
+
+        companyId = newCompany.id;
+        console.log('New company created:', companyId);
+      }
+
+      // Step 2: Link user to company via company_id in professional_profiles
       const { error: updateError } = await supabase
         .from('professional_profiles')
         .update({
-          company_name: data.companyName,
-          kvk_number: data.kvkNumber,
-          company_address: `${data.street} ${data.houseNumber}`,
-          company_postal_code: data.postalCode,
-          company_city: data.city,
+          company_id: companyId,
+          role_in_company: existingCompany ? 'employee' : 'owner', // First user is owner, others are employees
+          joined_company_at: new Date().toISOString(),
         })
         .eq('user_id', user.id);
 
@@ -261,7 +300,7 @@ export default function ProfessionalRegistrationForm() {
       }
 
       toast.success('Bedrijfsgegevens opgeslagen!');
-      // Move to next step or complete registration
+      // Complete registration
       router.push('/dashboard');
     } catch (err: unknown) {
       console.error('Company save error:', err);
