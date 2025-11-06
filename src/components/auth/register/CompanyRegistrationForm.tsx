@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Search } from 'lucide-react';
+import { useDebounce } from '@/hooks';
 
 interface CompanySearchResult {
   name: string;
@@ -32,23 +33,6 @@ export interface CompanyData {
 }
 
 type FormMode = 'search' | 'manual';
-
-// Custom debounce hook
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-}
 
 export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegistrationFormProps) {
   const [mode, setMode] = useState<FormMode>('search');
