@@ -44,9 +44,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // If user is signed in and trying to access auth pages, redirect to dashboard
+  // If user is signed in and trying to access auth pages, redirect to pro-dashboard
   if (user && request.nextUrl.pathname.startsWith('/auth')) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    return NextResponse.redirect(new URL('/pro-dashboard/account', request.url));
   }
 
   return supabaseResponse;
@@ -56,6 +56,7 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/dashboard/:path*',
+    '/pro-dashboard/:path*',
     '/profile/:path*',
     '/projects/:path*',
     '/auth/:path*',

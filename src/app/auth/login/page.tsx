@@ -18,7 +18,7 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Get redirect URL from query params (set by middleware)
-  const redirectUrl = searchParams.get('redirect') || '/dashboard';
+  const redirectUrl = searchParams.get('redirect') || '/pro-dashboard/account';
 
   const {
     register,
