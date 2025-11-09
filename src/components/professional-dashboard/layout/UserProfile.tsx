@@ -15,28 +15,28 @@ export default function UserProfile({
   avatarUrl,
 }: UserProfileProps) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3">
+    <div className=' bg-slate-50 flex items-center gap-3 p-4 rounded-2xl'>
       {/* Avatar */}
-      <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shrink-0 overflow-hidden">
+      <div className='w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0 overflow-hidden'>
         {avatarUrl ? (
           <Image
             src={avatarUrl}
             alt={userName}
-            width={48}
-            height={48}
-            className="w-full h-full object-cover"
+            width={40}
+            height={40}
+            className='w-full h-full object-cover'
           />
         ) : (
-          <User className="w-6 h-6 text-white" />
+          <User className='w-6 h-6 text-white' />
         )}
       </div>
 
       {/* User Info */}
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-slate-900 truncate">
+      <div className='flex-1 min-w-0'>
+        <p className='text-sm lg:text-base font-semibold text-secondary-foreground truncate'>
           {userName}
         </p>
-        <p className="text-xs text-neutral-600 truncate">
+        <p className='text-xs lg:text-sm text-muted-foreground truncate'>
           {companyName}
         </p>
       </div>

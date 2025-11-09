@@ -25,9 +25,9 @@ export default function DashboardSidebar() {
   };
 
   return (
-    <aside className="w-[280px] bg-white border-r border-neutral-200 flex flex-col h-screen sticky top-0">
+    <aside className="lg:max-w-64 w-full bg-white border-r border-slate-200 flex flex-col h-screen sticky top-0">
       {/* Logo */}
-      <div className="px-6 py-8">
+      <div className="px-6 py-8.5">
         <Link href="/">
           <Image
             src="/images/logo.svg"
@@ -40,8 +40,8 @@ export default function DashboardSidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4">
-        <ul className="space-y-1">
+      <nav className="flex-1 px-6 py-8.5">
+        <ul className="space-y-2.5">
           {dashboardNavigation.map((item) => {
             const isActive = pathname === item.href;
             const isActionItem = item.type === 'action';
@@ -52,16 +52,16 @@ export default function DashboardSidebar() {
                   <button
                     onClick={() => handleNavigation(item)}
                     className={cn(
-                      'w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors',
-                      'hover:bg-neutral-50 text-neutral-700 hover:text-neutral-900'
+                      'w-full flex items-center gap-4 px-4 py-3 rounded-lg lg:text-base font-medium transition-colors cursor-pointer group',
+                      'hover:bg-primary/5 text-muted-foreground hover:text-primary'
                     )}
                   >
                     <Image
                       src={item.icon}
                       alt={item.label}
-                      width={20}
-                      height={20}
-                      className="w-5 h-5"
+                      width={16}
+                      height={16}
+                      className="w-4 h-4 transition-all group-hover:[filter:brightness(0)_saturate(100%)_invert(16%)_sepia(97%)_saturate(2276%)_hue-rotate(213deg)_brightness(93%)_contrast(108%)]"
                     />
                     <span>{item.label}</span>
                   </button>
@@ -74,18 +74,22 @@ export default function DashboardSidebar() {
                 <Link
                   href={item.href}
                   className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors',
+                    'flex items-center gap-4 px-4 py-3 rounded-lg text-sm lg:text-base font-medium transition-colors group',
                     isActive
                       ? 'bg-primary text-white'
-                      : 'hover:bg-neutral-50 text-neutral-700 hover:text-neutral-900'
+                      : 'hover:bg-primary/5 text-muted-foreground hover:text-primary'
                   )}
                 >
                   <Image
                     src={item.icon}
                     alt={item.label}
-                    width={20}
-                    height={20}
-                    className={cn('w-5 h-5', isActive && 'brightness-0 invert')}
+                    width={16}
+                    height={16}
+                    className={cn(
+                      'w-4 h-4 transition-all',
+                      isActive && 'brightness-0 invert',
+                      !isActive && 'group-hover:[filter:brightness(0)_saturate(100%)_invert(16%)_sepia(97%)_saturate(2276%)_hue-rotate(213deg)_brightness(93%)_contrast(108%)]'
+                    )}
                   />
                   <span>{item.label}</span>
                 </Link>
