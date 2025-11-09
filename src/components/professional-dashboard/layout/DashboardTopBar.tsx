@@ -15,11 +15,11 @@ export default function DashboardTopBar() {
   }
 
   return (
-    <div className="bg-white border-b border-neutral-200 px-8 py-6">
-      <h1 className="text-2xl font-semibold text-slate-900 mb-1">
+    <div className="bg-white border-b border-slate-200 px-6 py-4">
+      <h1 className="text-2xl leading-tight text-secondary-foreground">
         {pageConfig.title}
       </h1>
-      <p className="text-base text-neutral-600">
+      <p className="text-base text-muted-foreground leading-normal font-montserrat">
         {pageConfig.description}
       </p>
     </div>
