@@ -8,7 +8,7 @@ export default function SidebarLanguageSwitcher() {
   return (
     <div className="flex items-center justify-center">
       <div
-        className="bg-neutral-50 border border-neutral-200 rounded-full p-1 flex gap-1"
+        className="bg-slate-50 border border-slate-200 rounded-full p-1 flex gap-1"
       >
         <button
           onClick={() => setSelectedLanguage('NL')}
