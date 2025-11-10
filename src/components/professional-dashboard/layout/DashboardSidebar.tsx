@@ -1,8 +1,10 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { toast } from 'react-hot-toast';
 import { dashboardNavigation } from '@/config/professional-dashboard';
 import { cn } from '@/lib/utils';
 import SidebarLanguageSwitcher from './SidebarLanguageSwitcher';
@@ -11,11 +13,32 @@ import UserProfile from './UserProfile';
 export default function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogout = () => {
-    // TODO: Implement logout logic
-    console.log('Logout clicked');
-    router.push('/');
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+
+    try {
+      setIsLoggingOut(true);
+
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to logout');
+      }
+
+      toast.success('Succesvol uitgelogd');
+
+      // Redirect to home page
+      router.push('/');
+      router.refresh();
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Kon niet uitloggen. Probeer het opnieuw.');
+      setIsLoggingOut(false);
+    }
   };
 
   const handleNavigation = (item: typeof dashboardNavigation[0]) => {
@@ -51,9 +74,11 @@ export default function DashboardSidebar() {
                 <li key={item.id}>
                   <button
                     onClick={() => handleNavigation(item)}
+                    disabled={isLoggingOut}
                     className={cn(
                       'w-full flex items-center gap-4 px-4 py-3 rounded-lg lg:text-base font-medium transition-colors cursor-pointer group',
-                      'hover:bg-primary/5 text-muted-foreground hover:text-primary'
+                      'hover:bg-primary/5 text-muted-foreground hover:text-primary',
+                      isLoggingOut && 'opacity-50 cursor-not-allowed'
                     )}
                   >
                     <Image
@@ -63,7 +88,7 @@ export default function DashboardSidebar() {
                       height={16}
                       className="w-4 h-4 transition-all group-hover:[filter:brightness(0)_saturate(100%)_invert(16%)_sepia(97%)_saturate(2276%)_hue-rotate(213deg)_brightness(93%)_contrast(108%)]"
                     />
-                    <span>{item.label}</span>
+                    <span>{isLoggingOut ? 'Uitloggen...' : item.label}</span>
                   </button>
                 </li>
               );

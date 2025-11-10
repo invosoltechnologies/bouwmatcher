@@ -10,11 +10,11 @@ import {
 import { Button } from '@/components/ui/button';
 
 interface ContactInfo {
-  contactpersoon: string;
-  offertesEmail: string;
-  facturenEmail: string;
-  algemeenEmail: string;
-  telefoonnummer: string;
+  contactPerson: string;
+  quotesEmail: string;
+  invoicesEmail: string;
+  generalEmail: string;
+  phoneNumber: string;
 }
 
 interface ContactInfoCardProps {
@@ -27,11 +27,11 @@ export default function ContactInfoCard({
   onEdit,
 }: ContactInfoCardProps) {
   const fields = [
-    { label: 'Contactpersoon', value: contactInfo.contactpersoon },
-    { label: 'E-mailadres (offertesaanvragen)', value: contactInfo.offertesEmail },
-    { label: 'E-mailadres (facturering)', value: contactInfo.facturenEmail },
-    { label: 'E-mailadres (algemeen)', value: contactInfo.algemeenEmail },
-    { label: 'Telefoonnummer', value: contactInfo.telefoonnummer },
+    { label: 'Contactpersoon', value: contactInfo.contactPerson },
+    { label: 'E-mailadres (offertesaanvragen)', value: contactInfo.quotesEmail },
+    { label: 'E-mailadres (facturering)', value: contactInfo.invoicesEmail },
+    { label: 'E-mailadres (algemeen)', value: contactInfo.generalEmail },
+    { label: 'Telefoonnummer', value: contactInfo.phoneNumber },
   ];
 
   return (

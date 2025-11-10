@@ -10,12 +10,12 @@ import {
 import { Button } from '@/components/ui/button';
 
 interface CompanyInfo {
-  bedrijfsnaam: string;
-  adres: string;
-  postcode: string;
-  plaats: string;
+  companyName: string;
+  address: string;
+  postalCode: string;
+  city: string;
   website: string;
-  bedrijfsId: string;
+  businessId: string;
 }
 
 interface CompanyInfoCardProps {
@@ -28,12 +28,12 @@ export default function CompanyInfoCard({
   onEdit,
 }: CompanyInfoCardProps) {
   const fields = [
-    { label: 'Bedrijfsnaam', value: companyInfo.bedrijfsnaam },
-    { label: 'Adres', value: companyInfo.adres },
-    { label: 'Postcode', value: companyInfo.postcode },
-    { label: 'Plaats', value: companyInfo.plaats },
+    { label: 'Bedrijfsnaam', value: companyInfo.companyName },
+    { label: 'Adres', value: companyInfo.address },
+    { label: 'Postcode', value: companyInfo.postalCode },
+    { label: 'Plaats', value: companyInfo.city },
     { label: 'Website', value: companyInfo.website },
-    { label: 'Bedrijfs ID', value: companyInfo.bedrijfsId },
+    { label: 'Bedrijfs ID', value: companyInfo.businessId },
   ];
 
   return (
