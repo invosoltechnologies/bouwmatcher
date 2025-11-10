@@ -19,7 +19,7 @@ export default function ProDashboardLayout({
 
         {/* Page Content with gradient background */}
         <main
-          className="flex-1 p-8"
+          className="flex-1 p-6"
           style={{
             background:
               'linear-gradient(90deg, rgba(10, 178, 126, 0.035) 0%, rgba(2, 58, 162, 0.035) 100%)',
