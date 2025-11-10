@@ -31,7 +31,7 @@ export default function ProfileCompletionCard({
           <CardTitle className='text-base leading-normal font-normal'>
             Maak het bedrijfsprofiel compleet
           </CardTitle>
-          <span className='text-primary text-2xl font-bold'>
+          <span className='text-primary text-base font-bold'>
             {completionPercentage}%
           </span>
         </div>
