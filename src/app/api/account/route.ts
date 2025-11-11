@@ -59,7 +59,7 @@ export async function GET() {
 
     if (profileData.company_id) {
       const { data, error: companyError } = await supabase
-        .from('companies')
+        .from('professional_companies')
         .select('*')
         .eq('id', profileData.company_id)
         .maybeSingle();
