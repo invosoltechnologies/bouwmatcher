@@ -36,7 +36,7 @@ export default function QuotationSidebar({
     <div className='w-full max-w-sm space-y-6'>
       {/* Reviews Section */}
       <div className='bg-blue-50 border border-blue-200 rounded-2xl'>
-        <h3 className='text-lg leading-none font-semibold text-foreground py-4.5 px-5.5'>
+        <h3 className='text-lg leading-none font-medium text-foreground py-4.5 px-5.5'>
           Hoe ontvang ik reviews van tevreden klanten?
         </h3>
 
@@ -101,30 +101,29 @@ export default function QuotationSidebar({
 
       {/* Account Details Section */}
       <div className='bg-white border border-gray-200 rounded-2xl'>
-        <h3 className='text-lg leading-none font-semibold text-foreground py-4.5 px-5.5'>
+        <h3 className='text-lg leading-none font-medium text-foreground py-4.5 px-5.5'>
           Accountdetails
         </h3>
 
-        <div className='space-y-4 py-7 border-t px-5.5 border-gray-200'>
+        <div className='space-y-4 pt-2.5 pb-5 border-t px-5.5 border-gray-200'>
           {/* Account Name and Location */}
           <div>
-            <p className='text-sm font-medium text-foreground mb-1'>
+            <p className='text-sm font-medium leading-normal text-muted-foreground mb-1'>
               {accountName}
             </p>
-            <p className='text-sm text-muted-foreground'>{location}</p>
+            <p className='text-sm text-foreground'>{location}</p>
           </div>
 
           {/* Account Status */}
           <div>
-            <p className='text-xs text-muted-foreground mb-2'>Accountstatus</p>
+            <p className='text-sm text-semibold text-muted-foreground mb-2'>Accountstatus</p>
             <button
               onClick={handleAccountStatusClick}
               className='flex items-center justify-between w-full p-3 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors'
             >
               <div className='flex items-center gap-2'>
-                <div className='w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center'>
-                  <span className='text-white text-xs'>⚠</span>
-                </div>
+                  <span className='text-amber-400 text-lg'>⚠</span>
+                
                 <span className='text-sm font-medium text-orange-700'>
                   {accountStatus}
                 </span>
