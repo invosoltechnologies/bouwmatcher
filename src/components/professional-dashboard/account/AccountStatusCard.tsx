@@ -23,9 +23,9 @@ export default function AccountStatusCard({
   const getPillColor = () => {
     switch (statusCode) {
       case -1:
-        return 'hsl(var(--destructive))'; // destructive for inactive/blocked
+        return '#dc3545'; // destructive for inactive/blocked
       case 1:
-        return 'hsl(var(--accent))'; // accent for verified
+        return '#0AB27E'; // accent for verified
       case 2:
         return '#FF9500'; // orange for in process
       default:
