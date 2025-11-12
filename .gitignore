@@ -43,3 +43,6 @@ next-env.d.ts
 
 #SQLFiles
 *sql
+
+# Documentation (internal architecture docs)
+/docs/PROFESSIONAL_ACCOUNT_ARCHITECTURE.md
