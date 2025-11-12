@@ -66,7 +66,7 @@ export interface PageConfig {
 export const pageConfigs: Record<string, PageConfig> = {
   offerteaanvragen: {
     title: 'Offerteaanvragen',
-    description: 'Bekijk en beheer al je offerteaanvragen',
+    description: 'Beheer je inkomende projectaanvragen',
   },
   bedrijfsprofiel: {
     title: 'Bedrijfsprofiel',
