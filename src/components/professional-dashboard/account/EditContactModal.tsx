@@ -13,13 +13,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import GlassyModal from '@/components/ui/glassy-modal';
+import { useUpdateProfile } from '@/lib/hooks/professional/account';
 import type { ContactInfoData } from '@/lib/types/account';
 
 interface EditContactModalProps {
   isOpen: boolean;
   onClose: () => void;
   contactInfo: ContactInfoData;
-  onSuccess: () => void;
 }
 
 interface ContactFormData {
@@ -35,13 +35,12 @@ export default function EditContactModal({
   isOpen,
   onClose,
   contactInfo,
-  onSuccess,
 }: EditContactModalProps) {
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<ContactFormData>({
     defaultValues: {
       gender: 'prefer_not_to_say',
@@ -53,39 +52,25 @@ export default function EditContactModal({
     },
   });
 
-  const onSubmit = async (data: ContactFormData) => {
-    try {
-      const response = await fetch('/api/account/contact', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstName: data.firstName,
-          lastName: data.lastName,
-          quotesEmail: data.quotesEmail,
-          invoicesEmail: data.invoicesEmail,
-          phoneNumber: data.phoneNumber,
-          gender: data.gender || null,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to update contact info');
-      }
-
+  const updateProfileMutation = useUpdateProfile({
+    onSuccess: () => {
       toast.success('Contactgegevens succesvol bijgewerkt');
-      onSuccess();
       onClose();
-    } catch (error) {
-      console.error('Error updating contact info:', error);
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : 'Kon contactgegevens niet bijwerken'
-      );
-    }
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Kon contactgegevens niet bijwerken');
+    },
+  });
+
+  const onSubmit = async (data: ContactFormData) => {
+    updateProfileMutation.mutate({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      quotesEmail: data.quotesEmail || null,
+      invoicesEmail: data.invoicesEmail || null,
+      phoneNumber: data.phoneNumber,
+      gender: data.gender || null,
+    });
   };
 
   const emailValidation = {
@@ -259,7 +244,7 @@ export default function EditContactModal({
             type='button'
             variant='outline'
             onClick={onClose}
-            disabled={isSubmitting}
+            disabled={updateProfileMutation.isPending}
             className='border-gray-200 rounded-xl shadow-2xl lg:text-xl'
             size='default'
           >
@@ -267,11 +252,11 @@ export default function EditContactModal({
           </Button>
           <Button
             type='submit'
-            disabled={isSubmitting}
+            disabled={updateProfileMutation.isPending}
             className='rounded-xl lg:text-xl'
             size='default'
           >
-            {isSubmitting ? 'Opslaan...' : 'Opslaan'}
+            {updateProfileMutation.isPending ? 'Opslaan...' : 'Opslaan'}
           </Button>
         </div>
       </form>

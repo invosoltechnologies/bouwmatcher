@@ -6,13 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import GlassyModal from '@/components/ui/glassy-modal';
+import { useUpdateCompany } from '@/lib/hooks/professional/account';
 import type { CompanyInfoData } from '@/lib/types/account';
 
 interface EditCompanyModalProps {
   isOpen: boolean;
   onClose: () => void;
   companyInfo: CompanyInfoData;
-  onSuccess: () => void;
 }
 
 interface CompanyFormData {
@@ -28,12 +28,11 @@ export default function EditCompanyModal({
   isOpen,
   onClose,
   companyInfo,
-  onSuccess,
 }: EditCompanyModalProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<CompanyFormData>({
     defaultValues: {
       companyName: companyInfo.companyName,
@@ -45,39 +44,25 @@ export default function EditCompanyModal({
     },
   });
 
-  const onSubmit = async (data: CompanyFormData) => {
-    try {
-      const response = await fetch('/api/account/company', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          companyName: data.companyName,
-          address: data.address,
-          postalCode: data.postalCode,
-          city: data.city,
-          website: data.website || null,
-          businessId: data.businessId || null,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to update company info');
-      }
-
+  const updateCompanyMutation = useUpdateCompany({
+    onSuccess: () => {
       toast.success('Bedrijfsgegevens succesvol bijgewerkt');
-      onSuccess();
       onClose();
-    } catch (error) {
-      console.error('Error updating company info:', error);
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : 'Kon bedrijfsgegevens niet bijwerken'
-      );
-    }
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Kon bedrijfsgegevens niet bijwerken');
+    },
+  });
+
+  const onSubmit = async (data: CompanyFormData) => {
+    updateCompanyMutation.mutate({
+      companyName: data.companyName,
+      address: data.address,
+      postalCode: data.postalCode,
+      city: data.city,
+      website: data.website || null,
+      businessId: data.businessId || null,
+    });
   };
 
   return (
@@ -220,7 +205,7 @@ export default function EditCompanyModal({
             type='button'
             variant='outline'
             onClick={onClose}
-            disabled={isSubmitting}
+            disabled={updateCompanyMutation.isPending}
             className='border-gray-200 rounded-xl shadow-2xl lg:text-xl'
             size='default'
           >
@@ -228,11 +213,11 @@ export default function EditCompanyModal({
           </Button>
           <Button
             type='submit'
-            disabled={isSubmitting}
+            disabled={updateCompanyMutation.isPending}
             className='rounded-xl lg:text-xl'
             size='default'
           >
-            {isSubmitting ? 'Opslaan...' : 'Opslaan'}
+            {updateCompanyMutation.isPending ? 'Opslaan...' : 'Opslaan'}
           </Button>
         </div>
       </form>
