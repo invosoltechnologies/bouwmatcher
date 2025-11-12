@@ -46,7 +46,7 @@ export async function PATCH(request: NextRequest) {
 
     // Update company information
     const { data: updatedCompany, error: updateError } = await supabase
-      .from('companies')
+      .from('professional_companies')
       .update({
         name: companyName,
         address,

@@ -1,16 +1,18 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import GlassyModal from '@/components/ui/glassy-modal';
 import type { ContactInfoData } from '@/lib/types/account';
 
 interface EditContactModalProps {
@@ -21,7 +23,9 @@ interface EditContactModalProps {
 }
 
 interface ContactFormData {
-  contactPerson: string;
+  gender: string;
+  firstName: string;
+  lastName: string;
   quotesEmail: string;
   invoicesEmail: string;
   generalEmail: string;
@@ -37,10 +41,13 @@ export default function EditContactModal({
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<ContactFormData>({
     defaultValues: {
-      contactPerson: contactInfo.contactPerson,
+      gender: '',
+      firstName: contactInfo.contactPerson.split(' ')[0] || '',
+      lastName: contactInfo.contactPerson.split(' ').slice(1).join(' ') || '',
       quotesEmail: contactInfo.quotesEmail,
       invoicesEmail: contactInfo.invoicesEmail,
       generalEmail: contactInfo.generalEmail,
@@ -55,7 +62,13 @@ export default function EditContactModal({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          contactPerson: `${data.firstName} ${data.lastName}`,
+          quotesEmail: data.quotesEmail,
+          invoicesEmail: data.invoicesEmail,
+          generalEmail: data.generalEmail,
+          phoneNumber: data.phoneNumber,
+        }),
       });
 
       if (!response.ok) {
@@ -85,142 +98,188 @@ export default function EditContactModal({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Contactgegevens wijzigen</DialogTitle>
-        </DialogHeader>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Contact Person */}
-          <div>
-            <label
-              htmlFor="contactPerson"
-              className="block text-sm font-medium text-secondary-foreground mb-1.5"
-            >
-              Contactpersoon *
-            </label>
-            <Input
-              id="contactPerson"
-              {...register('contactPerson', {
-                required: 'Contactpersoon is verplicht',
-              })}
-              type="text"
-              className="w-full"
-            />
-            {errors.contactPerson && (
-              <p className="text-destructive text-sm mt-1">
-                {errors.contactPerson.message}
-              </p>
+    <GlassyModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title='Pas contactinformatie aan'
+      className='lg:max-w-3xl'
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+        {/* Gender */}
+        <div>
+          <Label htmlFor='gender' className='text-base font-medium mb-2'>
+            Geslacht
+          </Label>
+          <Controller
+            name='gender'
+            control={control}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value}>
+                <SelectTrigger className='w-full'>
+                  <SelectValue placeholder='Kies een optie' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='male'>Man</SelectItem>
+                  <SelectItem value='female'>Vrouw</SelectItem>
+                  <SelectItem value='other'>Anders</SelectItem>
+                </SelectContent>
+              </Select>
             )}
-          </div>
+          />
+          {errors.gender && (
+            <p className='text-destructive text-sm mt-1'>
+              {errors.gender.message}
+            </p>
+          )}
+        </div>
 
-          {/* Quotes Email */}
-          <div>
-            <label
-              htmlFor="quotesEmail"
-              className="block text-sm font-medium text-secondary-foreground mb-1.5"
-            >
-              E-mailadres (offertesaanvragen) *
-            </label>
-            <Input
-              id="quotesEmail"
-              {...register('quotesEmail', emailValidation)}
-              type="email"
-              className="w-full"
-            />
-            {errors.quotesEmail && (
-              <p className="text-destructive text-sm mt-1">
-                {errors.quotesEmail.message}
-              </p>
-            )}
-          </div>
+        {/* First Name */}
+        <div>
+          <Label htmlFor='firstName' className='text-base font-medium mb-2'>
+            Voornaam
+          </Label>
+          <Input
+            id='firstName'
+            {...register('firstName', {
+              required: 'Voornaam is verplicht',
+            })}
+            type='text'
+            className='w-full'
+            placeholder='John'
+          />
+          {errors.firstName && (
+            <p className='text-destructive text-sm mt-1'>
+              {errors.firstName.message}
+            </p>
+          )}
+        </div>
 
-          {/* Invoices Email */}
-          <div>
-            <label
-              htmlFor="invoicesEmail"
-              className="block text-sm font-medium text-secondary-foreground mb-1.5"
-            >
-              E-mailadres (facturering) *
-            </label>
-            <Input
-              id="invoicesEmail"
-              {...register('invoicesEmail', emailValidation)}
-              type="email"
-              className="w-full"
-            />
-            {errors.invoicesEmail && (
-              <p className="text-destructive text-sm mt-1">
-                {errors.invoicesEmail.message}
-              </p>
-            )}
-          </div>
+        {/* Last Name */}
+        <div>
+          <Label htmlFor='lastName' className='text-base font-medium mb-2'>
+            Achternaam
+          </Label>
+          <Input
+            id='lastName'
+            {...register('lastName', {
+              required: 'Achternaam is verplicht',
+            })}
+            type='text'
+            className='w-full'
+            placeholder='Doe'
+          />
+          {errors.lastName && (
+            <p className='text-destructive text-sm mt-1'>
+              {errors.lastName.message}
+            </p>
+          )}
+        </div>
 
-          {/* General Email */}
-          <div>
-            <label
-              htmlFor="generalEmail"
-              className="block text-sm font-medium text-secondary-foreground mb-1.5"
-            >
-              E-mailadres (algemeen) *
-            </label>
-            <Input
-              id="generalEmail"
-              {...register('generalEmail', emailValidation)}
-              type="email"
-              className="w-full"
-            />
-            {errors.generalEmail && (
-              <p className="text-destructive text-sm mt-1">
-                {errors.generalEmail.message}
-              </p>
-            )}
-          </div>
+        {/* Quotes Email */}
+        <div>
+          <Label htmlFor='quotesEmail' className='text-base font-medium mb-2'>
+            E-mailadres (offertesaanvragen)
+          </Label>
+          <Input
+            id='quotesEmail'
+            {...register('quotesEmail', emailValidation)}
+            type='email'
+            className='w-full'
+            placeholder='johndoe@gmail.com'
+          />
+          {errors.quotesEmail && (
+            <p className='text-destructive text-sm mt-1'>
+              {errors.quotesEmail.message}
+            </p>
+          )}
+        </div>
 
-          {/* Phone Number */}
-          <div>
-            <label
-              htmlFor="phoneNumber"
-              className="block text-sm font-medium text-secondary-foreground mb-1.5"
-            >
-              Telefoonnummer *
-            </label>
-            <Input
-              id="phoneNumber"
-              {...register('phoneNumber', {
-                required: 'Telefoonnummer is verplicht',
-                pattern: {
-                  value: /^[+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/,
-                  message: 'Ongeldig telefoonnummer',
-                },
-              })}
-              type="tel"
-              className="w-full"
-              placeholder="+31 6 12345678"
-            />
-            {errors.phoneNumber && (
-              <p className="text-destructive text-sm mt-1">
-                {errors.phoneNumber.message}
-              </p>
-            )}
-          </div>
+        {/* Invoices Email */}
+        <div>
+          <Label htmlFor='invoicesEmail' className='text-base font-medium mb-2'>
+            E-mailadres (facturering)
+          </Label>
+          <Input
+            id='invoicesEmail'
+            {...register('invoicesEmail', emailValidation)}
+            type='email'
+            className='w-full'
+            placeholder='johndoe@gmail.com'
+          />
+          {errors.invoicesEmail && (
+            <p className='text-destructive text-sm mt-1'>
+              {errors.invoicesEmail.message}
+            </p>
+          )}
+        </div>
 
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={isSubmitting}
-            >
-              Annuleren
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Opslaan...' : 'Opslaan'}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+        {/* General Email */}
+        <div>
+          <Label htmlFor='generalEmail' className='text-base font-medium mb-2'>
+            E-mailadres (algemeen)
+          </Label>
+          <Input
+            id='generalEmail'
+            {...register('generalEmail', emailValidation)}
+            type='email'
+            className='w-full'
+            placeholder='johndoe@gmail.com'
+          />
+          {errors.generalEmail && (
+            <p className='text-destructive text-sm mt-1'>
+              {errors.generalEmail.message}
+            </p>
+          )}
+        </div>
+
+        {/* Phone Number */}
+        <div>
+          <Label htmlFor='phoneNumber' className='text-base font-medium mb-2'>
+            Telefoonnummer
+          </Label>
+          <Input
+            id='phoneNumber'
+            {...register('phoneNumber', {
+              required: 'Telefoonnummer is verplicht',
+              pattern: {
+                value:
+                  /^[+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/,
+                message: 'Ongeldig telefoonnummer',
+              },
+            })}
+            type='tel'
+            className='w-full'
+            placeholder='+31 683 827 367'
+          />
+          {errors.phoneNumber && (
+            <p className='text-destructive text-sm mt-1'>
+              {errors.phoneNumber.message}
+            </p>
+          )}
+        </div>
+
+        {/* Action Buttons */}
+        <div className='flex justify-end gap-3 pt-2'>
+          <Button
+            type='button'
+            variant='outline'
+            onClick={onClose}
+            disabled={isSubmitting}
+            className='border-gray-200 rounded-xl shadow-2xl lg:text-xl'
+            size='default'
+          >
+            Annuleren
+          </Button>
+          <Button
+            type='submit'
+            disabled={isSubmitting}
+            className='rounded-xl lg:text-xl'
+            size='default'
+          >
+            {isSubmitting ? 'Opslaan...' : 'Opslaan'}
+          </Button>
+        </div>
+      </form>
+    </GlassyModal>
   );
 }

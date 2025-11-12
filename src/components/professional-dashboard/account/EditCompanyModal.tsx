@@ -2,15 +2,10 @@
 
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import GlassyModal from '@/components/ui/glassy-modal';
 import type { CompanyInfoData } from '@/lib/types/account';
 
 interface EditCompanyModalProps {
@@ -26,6 +21,7 @@ interface CompanyFormData {
   postalCode: string;
   city: string;
   website: string;
+  businessId: string;
 }
 
 export default function EditCompanyModal({
@@ -45,6 +41,7 @@ export default function EditCompanyModal({
       postalCode: companyInfo.postalCode,
       city: companyInfo.city,
       website: companyInfo.website,
+      businessId: companyInfo.businessId,
     },
   });
 
@@ -77,153 +74,161 @@ export default function EditCompanyModal({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Bedrijfsgegevens wijzigen</DialogTitle>
-        </DialogHeader>
+    <GlassyModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title='Pas bedrijfsinformatie aan'
+      className='lg:max-w-3xl'
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+        {/* Company Name */}
+        <div>
+          <Label htmlFor='companyName' className='text-base font-medium mb-2'>
+            Bedrijfsnaam
+          </Label>
+          <Input
+            id='companyName'
+            {...register('companyName', {
+              required: 'Bedrijfsnaam is verplicht',
+            })}
+            type='text'
+            className='w-full bg-black/10'
+            placeholder='Hotspot Amsterdam Noord'
+            disabled
+          />
+          {errors.companyName && (
+            <p className='text-destructive text-sm mt-1'>
+              {errors.companyName.message}
+            </p>
+          )}
+        </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Company Name */}
-          <div>
-            <label
-              htmlFor="companyName"
-              className="block text-sm font-medium text-secondary-foreground mb-1.5"
-            >
-              Bedrijfsnaam *
-            </label>
-            <Input
-              id="companyName"
-              {...register('companyName', {
-                required: 'Bedrijfsnaam is verplicht',
-              })}
-              type="text"
-              className="w-full"
-            />
-            {errors.companyName && (
-              <p className="text-destructive text-sm mt-1">
-                {errors.companyName.message}
-              </p>
-            )}
-          </div>
+        {/* Address */}
+        <div>
+          <Label htmlFor='address' className='text-base font-medium mb-2'>
+            Adres
+          </Label>
+          <Input
+            id='address'
+            {...register('address', {
+              required: 'Adres is verplicht',
+            })}
+            type='text'
+            className='w-full'
+            placeholder='Klaprozenweg 24'
+          />
+          {errors.address && (
+            <p className='text-destructive text-sm mt-1'>
+              {errors.address.message}
+            </p>
+          )}
+        </div>
 
-          {/* Address */}
-          <div>
-            <label
-              htmlFor="address"
-              className="block text-sm font-medium text-secondary-foreground mb-1.5"
-            >
-              Adres *
-            </label>
-            <Input
-              id="address"
-              {...register('address', {
-                required: 'Adres is verplicht',
-              })}
-              type="text"
-              className="w-full"
-            />
-            {errors.address && (
-              <p className="text-destructive text-sm mt-1">
-                {errors.address.message}
-              </p>
-            )}
-          </div>
+        {/* Postal Code */}
+        <div>
+          <Label htmlFor='postalCode' className='text-base font-medium mb-2'>
+            Postcode
+          </Label>
+          <Input
+            id='postalCode'
+            {...register('postalCode', {
+              required: 'Postcode is verplicht',
+              pattern: {
+                value: /^[1-9][0-9]{3}\s?[A-Z]{2}$/i,
+                message: 'Ongeldig postcode formaat',
+              },
+            })}
+            type='text'
+            className='w-full'
+            placeholder='270475'
+          />
+          {errors.postalCode && (
+            <p className='text-destructive text-sm mt-1'>
+              {errors.postalCode.message}
+            </p>
+          )}
+        </div>
 
-          {/* Postal Code and City */}
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label
-                htmlFor="postalCode"
-                className="block text-sm font-medium text-secondary-foreground mb-1.5"
-              >
-                Postcode *
-              </label>
-              <Input
-                id="postalCode"
-                {...register('postalCode', {
-                  required: 'Postcode is verplicht',
-                  pattern: {
-                    value: /^[1-9][0-9]{3}\s?[A-Z]{2}$/i,
-                    message: 'Ongeldig postcode formaat',
-                  },
-                })}
-                type="text"
-                className="w-full"
-                placeholder="1234 AB"
-              />
-              {errors.postalCode && (
-                <p className="text-destructive text-sm mt-1">
-                  {errors.postalCode.message}
-                </p>
-              )}
-            </div>
+        {/* City */}
+        <div>
+          <Label htmlFor='city' className='text-base font-medium mb-2'>
+            Plaats
+          </Label>
+          <Input
+            id='city'
+            {...register('city', {
+              required: 'Plaats is verplicht',
+            })}
+            type='text'
+            className='w-full'
+            placeholder='Amsterdam'
+          />
+          {errors.city && (
+            <p className='text-destructive text-sm mt-1'>
+              {errors.city.message}
+            </p>
+          )}
+        </div>
 
-            <div className="flex-1">
-              <label
-                htmlFor="city"
-                className="block text-sm font-medium text-secondary-foreground mb-1.5"
-              >
-                Plaats *
-              </label>
-              <Input
-                id="city"
-                {...register('city', {
-                  required: 'Plaats is verplicht',
-                })}
-                type="text"
-                className="w-full"
-              />
-              {errors.city && (
-                <p className="text-destructive text-sm mt-1">
-                  {errors.city.message}
-                </p>
-              )}
-            </div>
-          </div>
+        {/* Website */}
+        <div>
+          <Label htmlFor='website' className='text-base font-medium mb-2'>
+            Website
+          </Label>
+          <Input
+            id='website'
+            {...register('website')}
+            type='text'
+            className='w-full'
+          />
+          {errors.website && (
+            <p className='text-destructive text-sm mt-1'>
+              {errors.website.message}
+            </p>
+          )}
+        </div>
 
-          {/* Website */}
-          <div>
-            <label
-              htmlFor="website"
-              className="block text-sm font-medium text-secondary-foreground mb-1.5"
-            >
-              Website
-            </label>
-            <Input
-              id="website"
-              {...register('website', {
-                pattern: {
-                  value: /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/i,
-                  message: 'Ongeldig website formaat',
-                },
-              })}
-              type="text"
-              className="w-full"
-              placeholder="https://example.com"
-            />
-            {errors.website && (
-              <p className="text-destructive text-sm mt-1">
-                {errors.website.message}
-              </p>
-            )}
-          </div>
+        {/* Business ID (optional) */}
+        <div>
+          <Label htmlFor='businessId' className='text-base font-medium mb-2'>
+            Bedrijfs ID (optioneel)
+          </Label>
+          <Input
+            id='businessId'
+            {...register('businessId')}
+            type='text'
+            className='w-full'
+            placeholder='23726432'
+          />
+          {errors.businessId && (
+            <p className='text-destructive text-sm mt-1'>
+              {errors.businessId.message}
+            </p>
+          )}
+        </div>
 
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={isSubmitting}
-            >
-              Annuleren
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Opslaan...' : 'Opslaan'}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+        {/* Action Buttons */}
+        <div className='flex justify-end gap-3 pt-2'>
+          <Button
+            type='button'
+            variant='outline'
+            onClick={onClose}
+            disabled={isSubmitting}
+            className='border-gray-200 rounded-xl shadow-2xl lg:text-xl'
+            size='default'
+          >
+            Annuleren
+          </Button>
+          <Button
+            type='submit'
+            disabled={isSubmitting}
+            className='rounded-xl lg:text-xl'
+            size='default'
+          >
+            {isSubmitting ? 'Opslaan...' : 'Opslaan'}
+          </Button>
+        </div>
+      </form>
+    </GlassyModal>
   );
 }

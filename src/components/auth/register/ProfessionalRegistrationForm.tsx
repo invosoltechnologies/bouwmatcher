@@ -11,10 +11,13 @@ import ServiceCategoriesForm, { type ServiceCategoriesData } from '@/components/
 import SubcategoriesForm, { type SubcategoriesData } from '@/components/auth/register/SubcategoriesForm';
 import CompanyRegistrationForm, { type CompanyData } from '@/components/auth/register/CompanyRegistrationForm';
 import type { ContactInfoData, PasswordSetupData } from '@/types/auth';
-import { signUpProfessional } from '@/lib/supabase/auth';
+import { useAuth, useUpdateProfile } from '@/hooks/useAuth';
 
 export default function ProfessionalRegistrationForm() {
   const router = useRouter();
+  const { signUp } = useAuth();
+  const updateProfile = useUpdateProfile();
+
   const [currentStep, setCurrentStep] = useState(1);
   const [subStep, setSubStep] = useState<'contact' | 'password'>('contact');
   const [contactData, setContactData] = useState<ContactInfoData | null>(null);
@@ -23,8 +26,8 @@ export default function ProfessionalRegistrationForm() {
   const [serviceCategoriesData, setServiceCategoriesData] = useState<ServiceCategoriesData | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [subcategoriesData, setSubcategoriesData] = useState<SubcategoriesData | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [companyData, setCompanyData] = useState<CompanyData | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleContactInfoNext = (data: ContactInfoData) => {
     setContactData(data);
@@ -38,152 +41,94 @@ export default function ProfessionalRegistrationForm() {
   const handlePasswordNext = async (data: PasswordSetupData) => {
     if (!contactData) return;
 
-    setIsLoading(true);
-
-    try {
-      const result = await signUpProfessional({
+    signUp.mutate(
+      {
         email: contactData.email,
         password: data.password,
         firstName: contactData.firstName,
         lastName: contactData.lastName,
         phone: contactData.phone,
-      });
+      },
+      {
+        onSuccess: (result) => {
+          console.log('Registration successful:', result);
 
-      console.log('Registration successful:', result);
-
-      // Check if user has a session (auto-confirmed)
-      if (!result.session) {
-        toast.error('Registratie voltooid, maar geen sessie ontvangen. Probeer in te loggen.');
-        setTimeout(() => router.push('/auth/login'), 2000);
-        return;
+          if (result.success) {
+            toast.success('Account succesvol aangemaakt! Ga verder met stap 2.');
+            setCurrentStep(2);
+          } else {
+            if (result.error?.includes('already registered')) {
+              toast.error('Dit e-mailadres is al geregistreerd');
+            } else if (result.error?.includes('Password')) {
+              toast.error('Wachtwoord moet minimaal 6 tekens lang zijn');
+            } else if (result.error?.includes('violates row-level security')) {
+              toast.error('Database fout: Controleer of de RLS policies correct zijn ingesteld');
+            } else {
+              toast.error(result.error || 'Er is een fout opgetreden bij het registreren');
+            }
+          }
+        },
+        onError: (err: unknown) => {
+          console.error('Registration error:', err);
+          toast.error('Er is een fout opgetreden bij het registreren');
+        },
       }
-
-      // Show success message
-      toast.success('Account succesvol aangemaakt! Ga verder met stap 2.');
-
-      // Move to step 2 (user stays on register page, already authenticated)
-      setCurrentStep(2);
-    } catch (err: unknown) {
-      console.error('Registration error:', err);
-
-      // Better error messages
-      let errorMessage = 'Er is een fout opgetreden bij het registreren';
-
-      if (err && typeof err === 'object' && 'message' in err) {
-        const message = (err as { message: string }).message;
-        if (message.includes('already registered')) {
-          errorMessage = 'Dit e-mailadres is al geregistreerd';
-        } else if (message.includes('Password')) {
-          errorMessage = 'Wachtwoord moet minimaal 6 tekens lang zijn';
-        } else if (message.includes('violates row-level security')) {
-          errorMessage = 'Database fout: Controleer of de RLS policies correct zijn ingesteld';
-        } else {
-          errorMessage = message;
-        }
-      }
-
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+    );
   };
 
   const handleWorkAreaNext = async (data: WorkAreaData) => {
     setWorkAreaData(data);
-    setIsLoading(true);
 
-    try {
-      // Get current user from Supabase
-      const { createClient } = await import('@/lib/supabase/client');
-      const supabase = createClient();
-
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-      if (userError || !user) {
-        throw new Error('Gebruiker niet gevonden. Log opnieuw in.');
+    updateProfile.mutate(
+      {
+        work_address: data.location,
+        work_postal_code: data.postalCode,
+        work_city: data.city,
+        work_latitude: data.latitude,
+        work_longitude: data.longitude,
+        service_radius_km: data.serviceRadius,
+      },
+      {
+        onSuccess: () => {
+          toast.success('Werkgebied opgeslagen!');
+          setCurrentStep(3);
+        },
+        onError: (err: unknown) => {
+          console.error('Work area save error:', err);
+          const errorMessage = err && typeof err === 'object' && 'message' in err
+            ? (err as { message: string }).message
+            : 'Er is een fout opgetreden bij het opslaan';
+          toast.error(errorMessage);
+        },
       }
-
-      // Update professional_profiles with location data
-      const { error: updateError } = await supabase
-        .from('professional_profiles')
-        .update({
-          work_address: data.location,
-          work_postal_code: data.postalCode,
-          work_city: data.city,
-          work_latitude: data.latitude,
-          work_longitude: data.longitude,
-          service_radius_km: data.serviceRadius,
-        })
-        .eq('user_id', user.id);
-
-      if (updateError) {
-        console.error('Database update error:', updateError);
-        throw new Error('Kon werkgebied niet opslaan');
-      }
-
-      toast.success('Werkgebied opgeslagen!');
-      setCurrentStep(3);
-    } catch (err: unknown) {
-      console.error('Work area save error:', err);
-
-      let errorMessage = 'Er is een fout opgetreden bij het opslaan';
-      if (err && typeof err === 'object' && 'message' in err) {
-        errorMessage = (err as { message: string }).message;
-      }
-
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+    );
   };
 
   const handleServiceCategoriesNext = async (data: ServiceCategoriesData) => {
     setServiceCategoriesData(data);
-    setIsLoading(true);
 
-    try {
-      // Get current user from Supabase
-      const { createClient } = await import('@/lib/supabase/client');
-      const supabase = createClient();
-
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-      if (userError || !user) {
-        throw new Error('Gebruiker niet gevonden. Log opnieuw in.');
+    updateProfile.mutate(
+      {
+        specializations: data.selectedCategories,
+      },
+      {
+        onSuccess: () => {
+          toast.success('Vakgebieden opgeslagen!');
+          setCurrentStep(4);
+        },
+        onError: (err: unknown) => {
+          console.error('Service categories save error:', err);
+          const errorMessage = err && typeof err === 'object' && 'message' in err
+            ? (err as { message: string }).message
+            : 'Er is een fout opgetreden bij het opslaan';
+          toast.error(errorMessage);
+        },
       }
-
-      // Update professional_profiles with specializations
-      const { error: updateError } = await supabase
-        .from('professional_profiles')
-        .update({
-          specializations: data.selectedCategories,
-        })
-        .eq('user_id', user.id);
-
-      if (updateError) {
-        console.error('Database update error:', updateError);
-        throw new Error('Kon vakgebieden niet opslaan');
-      }
-
-      toast.success('Vakgebieden opgeslagen!');
-      setCurrentStep(4);
-    } catch (err: unknown) {
-      console.error('Service categories save error:', err);
-
-      let errorMessage = 'Er is een fout opgetreden bij het opslaan';
-      if (err && typeof err === 'object' && 'message' in err) {
-        errorMessage = (err as { message: string }).message;
-      }
-
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
+    );
   };
 
   const handleSubcategoriesNext = async (data: SubcategoriesData) => {
     setSubcategoriesData(data);
-    setIsLoading(true);
 
     try {
       // Validate data
@@ -223,14 +168,11 @@ export default function ProfessionalRegistrationForm() {
       }
 
       toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const handleCompanyNext = async (data: CompanyData) => {
     setCompanyData(data);
-    setIsLoading(true);
 
     try {
       // Get current user from Supabase
@@ -311,8 +253,6 @@ export default function ProfessionalRegistrationForm() {
       }
 
       toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -334,7 +274,7 @@ export default function ProfessionalRegistrationForm() {
                 email={contactData.email}
                 onBack={handlePasswordBack}
                 onNext={handlePasswordNext}
-                isLoading={isLoading}
+                isLoading={signUp.isPending}
               />
             )}
           </>

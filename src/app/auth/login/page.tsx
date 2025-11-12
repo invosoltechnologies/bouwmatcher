@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { Suspense } from 'react';
 import { useForm } from 'react-hook-form';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -11,11 +11,12 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import AuthNavbar from '@/components/auth/AuthNavbar';
 import type { LoginFormData } from '@/types/auth';
-import { signIn, signInWithOAuth } from '@/lib/supabase/auth';
+import { useAuth } from '@/hooks/useAuth';
 
 function LoginForm() {
   const searchParams = useSearchParams();
-  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const { signIn, signInWithOAuth } = useAuth();
 
   // Get redirect URL from query params (set by middleware)
   const redirectUrl = searchParams.get('redirect') || '/pro-dashboard/account';
@@ -35,40 +36,33 @@ function LoginForm() {
   const rememberMe = watch('rememberMe');
 
   const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true);
-
-    try {
-      const result = await signIn({
+    signIn.mutate(
+      {
         email: data.email,
         password: data.password,
-      });
-
-      // Check if login was successful
-      if (result.session) {
-        toast.success('Succesvol ingelogd! Je wordt doorgestuurd...');
-
-        // Wait for auth state to propagate
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Use replace to prevent back button issues
-        window.location.href = redirectUrl;
+      },
+      {
+        onSuccess: (result) => {
+          if (result.success) {
+            toast.success('Succesvol ingelogd! Je wordt doorgestuurd...');
+            setTimeout(() => {
+              router.push(redirectUrl);
+            }, 1000);
+          } else {
+            toast.error(result.error || 'Onjuist e-mailadres of wachtwoord');
+          }
+        },
+        onError: (err) => {
+          console.error('Login error:', err);
+          const errorMessage = err instanceof Error ? err.message : 'Onjuist e-mailadres of wachtwoord';
+          toast.error(errorMessage);
+        },
       }
-    } catch (err) {
-      console.error('Login error:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Onjuist e-mailadres of wachtwoord';
-      toast.error(errorMessage);
-      setIsLoading(false);
-    }
+    );
   };
 
   const handleOAuthLogin = async (provider: 'google' | 'facebook' | 'apple') => {
-    try {
-      await signInWithOAuth(provider);
-    } catch (err) {
-      console.error('OAuth login error:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Er is een fout opgetreden bij het inloggen';
-      toast.error(errorMessage);
-    }
+    await signInWithOAuth(provider);
   };
 
   return (
@@ -147,10 +141,10 @@ function LoginForm() {
 
             <Button
               type='submit'
-              disabled={isLoading}
+              disabled={signIn.isPending}
               className='w-full text-2xl py-4.5 font-medium rounded-[7px]'
             >
-              {isLoading ? 'Bezig met inloggen...' : 'Inloggen'}
+              {signIn.isPending ? 'Bezig met inloggen...' : 'Inloggen'}
             </Button>
 
             <div className='relative'>
