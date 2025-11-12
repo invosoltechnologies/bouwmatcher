@@ -12,12 +12,13 @@ export interface ProfessionalProfile {
   company_id: string | null;
   role_in_company: string | null;
   is_active: boolean | null;
-  is_verified: boolean | null;
+  is_verified: string | null; // Changed from boolean to varchar: 'unverified' | 'pending' | 'in_review' | 'verified' | 'rejected' | 'suspended'
   profile_completed: boolean | null;
-  // Email fields (to be added to database)
-  quotes_email?: string | null;
-  invoices_email?: string | null;
-  general_email?: string | null;
+  // Email fields
+  quotes_email: string | null;
+  invoices_email: string | null;
+  // Gender field
+  gender: string | null; // 'male' | 'female' | 'other' | 'prefer_not_to_say'
   created_at: string | null;
   updated_at: string | null;
 }

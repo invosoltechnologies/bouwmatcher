@@ -28,7 +28,6 @@ interface ContactFormData {
   lastName: string;
   quotesEmail: string;
   invoicesEmail: string;
-  generalEmail: string;
   phoneNumber: string;
 }
 
@@ -45,12 +44,11 @@ export default function EditContactModal({
     formState: { errors, isSubmitting },
   } = useForm<ContactFormData>({
     defaultValues: {
-      gender: '',
+      gender: 'prefer_not_to_say',
       firstName: contactInfo.contactPerson.split(' ')[0] || '',
       lastName: contactInfo.contactPerson.split(' ').slice(1).join(' ') || '',
       quotesEmail: contactInfo.quotesEmail,
       invoicesEmail: contactInfo.invoicesEmail,
-      generalEmail: contactInfo.generalEmail,
       phoneNumber: contactInfo.phoneNumber,
     },
   });
@@ -63,11 +61,12 @@ export default function EditContactModal({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          contactPerson: `${data.firstName} ${data.lastName}`,
+          firstName: data.firstName,
+          lastName: data.lastName,
           quotesEmail: data.quotesEmail,
           invoicesEmail: data.invoicesEmail,
-          generalEmail: data.generalEmail,
           phoneNumber: data.phoneNumber,
+          gender: data.gender || null,
         }),
       });
 
@@ -90,7 +89,6 @@ export default function EditContactModal({
   };
 
   const emailValidation = {
-    required: 'E-mailadres is verplicht',
     pattern: {
       value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
       message: 'Ongeldig e-mailadres',
@@ -105,34 +103,6 @@ export default function EditContactModal({
       className='lg:max-w-3xl'
     >
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
-        {/* Gender */}
-        <div>
-          <Label htmlFor='gender' className='text-base font-medium mb-2'>
-            Geslacht
-          </Label>
-          <Controller
-            name='gender'
-            control={control}
-            render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger className='w-full'>
-                  <SelectValue placeholder='Kies een optie' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value='male'>Man</SelectItem>
-                  <SelectItem value='female'>Vrouw</SelectItem>
-                  <SelectItem value='other'>Anders</SelectItem>
-                </SelectContent>
-              </Select>
-            )}
-          />
-          {errors.gender && (
-            <p className='text-destructive text-sm mt-1'>
-              {errors.gender.message}
-            </p>
-          )}
-        </div>
-
         {/* First Name */}
         <div>
           <Label htmlFor='firstName' className='text-base font-medium mb-2'>
@@ -153,7 +123,6 @@ export default function EditContactModal({
             </p>
           )}
         </div>
-
         {/* Last Name */}
         <div>
           <Label htmlFor='lastName' className='text-base font-medium mb-2'>
@@ -174,7 +143,49 @@ export default function EditContactModal({
             </p>
           )}
         </div>
-
+        {/* Phone Number */}
+        <div>
+          <Label htmlFor='phoneNumber' className='text-base font-medium mb-2'>
+            Telefoonnummer
+          </Label>
+          <Input
+            id='phoneNumber'
+            {...register('phoneNumber', {
+              required: 'Telefoonnummer is verplicht',
+              pattern: {
+                value:
+                  /^[+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/,
+                message: 'Ongeldig telefoonnummer',
+              },
+            })}
+            type='tel'
+            className='w-full'
+            placeholder='+31 683 827 367'
+          />
+          {errors.phoneNumber && (
+            <p className='text-destructive text-sm mt-1'>
+              {errors.phoneNumber.message}
+            </p>
+          )}
+        </div>
+        {/* General Email (Read-only) */}
+        <div>
+          <Label htmlFor='generalEmail' className='text-base font-medium mb-2'>
+            E-mailadres (algemeen)
+          </Label>
+          <Input
+            id='generalEmail'
+            value={contactInfo.generalEmail}
+            type='email'
+            className='w-full bg-black/10'
+            placeholder='johndoe@gmail.com'
+            disabled
+            readOnly
+          />
+          <p className='text-muted-foreground text-xs mt-1'>
+            Dit is je account e-mailadres en kan niet worden gewijzigd
+          </p>
+        </div>
         {/* Quotes Email */}
         <div>
           <Label htmlFor='quotesEmail' className='text-base font-medium mb-2'>
@@ -212,48 +223,32 @@ export default function EditContactModal({
             </p>
           )}
         </div>
-
-        {/* General Email */}
+        
+        {/* Gender */}
         <div>
-          <Label htmlFor='generalEmail' className='text-base font-medium mb-2'>
-            E-mailadres (algemeen)
+          <Label htmlFor='gender' className='text-base font-medium mb-2'>
+            Geslacht
           </Label>
-          <Input
-            id='generalEmail'
-            {...register('generalEmail', emailValidation)}
-            type='email'
-            className='w-full'
-            placeholder='johndoe@gmail.com'
+          <Controller
+            name='gender'
+            control={control}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value}>
+                <SelectTrigger className='w-full'>
+                  <SelectValue placeholder='Kies een optie' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='male'>Man</SelectItem>
+                  <SelectItem value='female'>Vrouw</SelectItem>
+                  <SelectItem value='other'>Anders</SelectItem>
+                  <SelectItem value='prefer_not_to_say'>Zeg ik liever niet</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
           />
-          {errors.generalEmail && (
+          {errors.gender && (
             <p className='text-destructive text-sm mt-1'>
-              {errors.generalEmail.message}
-            </p>
-          )}
-        </div>
-
-        {/* Phone Number */}
-        <div>
-          <Label htmlFor='phoneNumber' className='text-base font-medium mb-2'>
-            Telefoonnummer
-          </Label>
-          <Input
-            id='phoneNumber'
-            {...register('phoneNumber', {
-              required: 'Telefoonnummer is verplicht',
-              pattern: {
-                value:
-                  /^[+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/,
-                message: 'Ongeldig telefoonnummer',
-              },
-            })}
-            type='tel'
-            className='w-full'
-            placeholder='+31 683 827 367'
-          />
-          {errors.phoneNumber && (
-            <p className='text-destructive text-sm mt-1'>
-              {errors.phoneNumber.message}
+              {errors.gender.message}
             </p>
           )}
         </div>

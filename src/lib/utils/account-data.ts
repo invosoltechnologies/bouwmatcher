@@ -11,7 +11,7 @@ import type {
 
 /**
  * Maps verification_status from database to status code
- * -1: inactive/blocked
+ * -1: inactive/blocked/rejected
  * 1: verified
  * 2: in process/pending
  */
@@ -20,15 +20,13 @@ export function getStatusCode(
 ): -1 | 1 | 2 {
   switch (verificationStatus?.toLowerCase()) {
     case 'verified':
-    case 'active':
       return 1;
     case 'pending':
     case 'in_review':
-    case 'submitted':
+    case 'unverified':
       return 2;
     case 'rejected':
-    case 'blocked':
-    case 'inactive':
+    case 'suspended':
       return -1;
     default:
       return 2; // default to pending
@@ -37,32 +35,60 @@ export function getStatusCode(
 
 /**
  * Transforms database data to AccountStatus format
+ * Uses ONLY profile.is_verified (professional profile status)
  */
 export function transformToAccountStatus(
   profile: ProfessionalProfile,
   company: Company | null
 ): AccountStatusData {
-  const verificationStatus = company?.verification_status || 'pending';
-  const statusCode = getStatusCode(verificationStatus);
+  // Profile verification status
+  const profileStatus = profile.is_verified || 'unverified';
+  const statusCode = getStatusCode(profileStatus);
 
   let status = 'In verificatie';
-  let description =
-    'Je aanmelding wordt geverifieerd. Dit kan 1-2 werkdagen duren.';
+  let description = 'Je aanmelding wordt geverifieerd. Dit kan 1-2 werkdagen duren.';
   let documentRequired = false;
 
-  if (statusCode === 1) {
-    status = 'Geverifieerd';
-    description = 'Je account is geverifieerd en actief.';
-    documentRequired = false;
-  } else if (statusCode === -1) {
-    status = 'Geblokkeerd';
-    description =
-      'Je account is geblokkeerd. Neem contact op met support voor meer informatie.';
-    documentRequired = false;
-  } else {
-    // Check if documents are needed
-    const hasDocuments = company?.verification_documents;
-    documentRequired = !hasDocuments;
+  // Determine status based on profile.is_verified
+  switch (profileStatus) {
+    case 'verified':
+      status = 'Geverifieerd';
+      description = 'Je account is geverifieerd en actief.';
+      documentRequired = false;
+      break;
+
+    case 'in_review':
+      status = 'In beoordeling';
+      description = 'Je aanmelding wordt beoordeeld door ons team.';
+      documentRequired = false;
+      break;
+
+    case 'pending':
+      status = 'In afwachting';
+      description = 'Je aanmelding is ontvangen en wacht op verificatie.';
+      documentRequired = false;
+      break;
+
+    case 'rejected':
+      status = 'Afgewezen';
+      description = 'Je aanvraag is afgewezen. Neem contact op met support voor meer informatie.';
+      documentRequired = false;
+      break;
+
+    case 'suspended':
+      status = 'Geschorst';
+      description = 'Je account is tijdelijk geschorst. Neem contact op met support.';
+      documentRequired = false;
+      break;
+
+    case 'unverified':
+    default:
+      status = 'In verificatie';
+      description = 'Je aanmelding wordt geverifieerd. Dit kan 1-2 werkdagen duren.';
+      // Check if documents are needed
+      const hasDocuments = company?.verification_documents;
+      documentRequired = !hasDocuments;
+      break;
   }
 
   return {
@@ -116,10 +142,10 @@ export function transformToContactInfo(
 
   return {
     contactPerson: fullName || '-',
-    // These will use the new email fields once added to database
+    // Use new email fields, fallback to main email if not set
     quotesEmail: profile.quotes_email || profile.email || '-',
     invoicesEmail: profile.invoices_email || profile.email || '-',
-    generalEmail: profile.general_email || profile.email || '-',
+    generalEmail: profile.email || '-', // Main email is the general email
     phoneNumber: profile.phone || '-',
   };
 }

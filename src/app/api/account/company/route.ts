@@ -20,7 +20,7 @@ export async function PATCH(request: NextRequest) {
 
     // Get the request body
     const body = await request.json();
-    const { companyName, address, postalCode, city, website } = body;
+    const { companyName, address, postalCode, city, website, businessId } = body;
 
     // Validate required fields
     if (!companyName || !address || !postalCode || !city) {
@@ -44,15 +44,23 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    if (!profileData.company_id) {
+      return NextResponse.json(
+        { error: 'No company linked to this profile' },
+        { status: 404 }
+      );
+    }
+
     // Update company information
     const { data: updatedCompany, error: updateError } = await supabase
       .from('professional_companies')
       .update({
-        name: companyName,
-        address,
+        company_name: companyName,
+        full_address: address,
         postal_code: postalCode,
         city,
         website: website || null,
+        business_id: businessId || null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', profileData.company_id)

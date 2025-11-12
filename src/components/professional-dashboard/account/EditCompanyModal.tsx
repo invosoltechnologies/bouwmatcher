@@ -52,7 +52,14 @@ export default function EditCompanyModal({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          companyName: data.companyName,
+          address: data.address,
+          postalCode: data.postalCode,
+          city: data.city,
+          website: data.website || null,
+          businessId: data.businessId || null,
+        }),
       });
 
       if (!response.ok) {

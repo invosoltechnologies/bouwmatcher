@@ -20,36 +20,57 @@ export async function PATCH(request: NextRequest) {
 
     // Get the request body
     const body = await request.json();
-    const { contactPerson, quotesEmail, invoicesEmail, generalEmail, phoneNumber } = body;
+    const { firstName, lastName, quotesEmail, invoicesEmail, phoneNumber, gender } = body;
 
-    // Validate required fields
-    if (!contactPerson || !quotesEmail || !invoicesEmail || !generalEmail || !phoneNumber) {
+    // Validate required fields (only name and phone are required)
+    if (!firstName || !lastName || !phoneNumber) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
     }
 
-    // Validate email format
+    // Validate email format if provided (emails are optional)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(quotesEmail) || !emailRegex.test(invoicesEmail) || !emailRegex.test(generalEmail)) {
+    if (quotesEmail && !emailRegex.test(quotesEmail)) {
       return NextResponse.json(
-        { error: 'Invalid email format' },
+        { error: 'Invalid quotes email format' },
+        { status: 400 }
+      );
+    }
+    if (invoicesEmail && !emailRegex.test(invoicesEmail)) {
+      return NextResponse.json(
+        { error: 'Invalid invoices email format' },
+        { status: 400 }
+      );
+    }
+
+    // Validate gender if provided
+    if (gender && !['male', 'female', 'other', 'prefer_not_to_say'].includes(gender)) {
+      return NextResponse.json(
+        { error: 'Invalid gender value' },
         { status: 400 }
       );
     }
 
     // Update professional profile contact information
+    const updateData: any = {
+      first_name: firstName,
+      last_name: lastName,
+      quotes_email: quotesEmail || null,
+      invoices_email: invoicesEmail || null,
+      phone: phoneNumber,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Add gender only if provided (optional field)
+    if (gender) {
+      updateData.gender = gender;
+    }
+
     const { data: updatedProfile, error: updateError } = await supabase
       .from('professional_profiles')
-      .update({
-        contact_person: contactPerson,
-        quotes_email: quotesEmail,
-        invoices_email: invoicesEmail,
-        general_email: generalEmail,
-        phone_number: phoneNumber,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq('user_id', user.id)
       .select()
       .single();
