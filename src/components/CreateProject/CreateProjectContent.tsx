@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import QuestionnaireNavbar from "@/components/Questionnaire/QuestionnaireNavbar";
 import QuestionnaireRadio from "@/components/Questionnaire/QuestionnaireRadio";
+import { getQuestionsForStep } from '@/data/generalQuestions';
+import type { Question } from '@/data/generalQuestions';
 import TopBar from "@/components/TopBar";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -51,25 +53,15 @@ export default function CreateProjectContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draftId]);
 
-  const loadQuestionsForStep = async (step: number, parentOptionId?: string) => {
-    setIsLoading(true);
-    try {
-      const params = new URLSearchParams({
-        draftId: draftId!,
-      });
-
-      if (step === 1) {
-        // Step 1: Category-specific questions
-        // No additional params needed, API defaults to root questions
-      } else if (step === 7 && parentOptionId) {
-        // Step 7: Conditional contact fields based on request type
-        params.append('stepNumber', step.toString());
-        params.append('parentOptionId', parentOptionId);
-      } else if (step >= 2 && step <= 8) {
-        // Steps 2-8: General questions
-        params.append('stepNumber', step.toString());
-      }
-
+const loadQuestionsForStep = async (
+  step: number,
+  requestType?: 'private' | 'business'
+) => {
+  setIsLoading(true);
+  try {
+    if (step === 1) {
+      // Step 1: Load category-specific questions from API
+      const params = new URLSearchParams({ draftId: draftId! });
       const response = await fetch(`/api/project-draft/questions?${params}`);
       const data = await response.json();
 
@@ -80,22 +72,49 @@ export default function CreateProjectContent() {
       if (data.questions && data.questions.length > 0) {
         setCurrentQuestions(data.questions);
         setCurrentQuestionIndex(0);
-        setAnswers({}); // Reset answers for new step
-      } else {
-        // No questions for this step, move to next
-        console.log(`No questions for step ${step}, moving to next`);
-        if (step < totalSteps) {
-          setCurrentStep(step + 1);
-          loadQuestionsForStep(step + 1);
-        }
+        setAnswers({});
       }
-    } catch (error) {
-      console.error('Error loading questions:', error);
-      alert('Er is een fout opgetreden bij het laden van de vragen.');
-    } finally {
-      setIsLoading(false);
+    } else if (step >= 2 && step <= 7) {
+      // Steps 2-7: Load from frontend (no API call!)
+      const questions = getQuestionsForStep(step, requestType);
+
+      if (questions && questions.length > 0) {
+        // Convert Question[] to QuestionWithOptions[] format
+        const convertedQuestions = questions.map((q) => ({
+          id: q.id,
+          question_text_nl: q.labelNl,
+          question_text_en: q.labelEn,
+          question_type: q.type,
+          is_required: q.required,
+          placeholder_nl: q.placeholderNl,
+          placeholder_en: q.placeholderEn,
+          help_text_nl: q.helpNl,
+          help_text_en: q.helpEn,
+          fieldName: q.fieldName, // Add fieldName for saving
+          options:
+            q.options?.map((opt) => ({
+              id: opt.value, // Use value as ID
+              option_value: opt.value,
+              option_label_nl: opt.labelNl,
+              option_label_en: opt.labelEn,
+            })) || [],
+        }));
+
+        setCurrentQuestions(convertedQuestions);
+        setCurrentQuestionIndex(0);
+        setAnswers({});
+      }
+    } else if (step === 8) {
+      // Step 8: Verification step
+      setShowOTPVerification(true);
     }
-  };
+  } catch (error) {
+    console.error('Error loading questions:', error);
+    alert('Er is een fout opgetreden bij het laden van de vragen.');
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const loadFollowUpQuestions = async (parentQuestionId: string, parentOptionId: string) => {
     setIsLoading(true);
@@ -129,89 +148,89 @@ export default function CreateProjectContent() {
     }
   };
 
-  const saveAnswer = async (questionId: string, optionId?: string, textAnswer?: string) => {
-    try {
-      const response = await fetch('/api/project-draft/save-answer', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          draftId,
-          questionId,
-          selectedOptionId: optionId,
-          answerText: textAnswer,
-        }),
-      });
+const saveAnswer = async (
+  questionId: string,
+  selectedOptionId?: string,
+  answerText?: string
+) => {
+  try {
+    // Find the current question to get fieldName
+    const question = currentQuestions.find((q) => q.id === questionId);
 
-      if (!response.ok) {
-        throw new Error('Failed to save answer');
-      }
-    } catch (error) {
-      console.error('Error saving answer:', error);
-      // Don't block user, just log the error
-    }
-  };
+    await fetch('/api/project-draft/save-answer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        draftId,
+        questionId,
+        answerText,
+        currentStep, // Add current step
+        fieldName: question?.fieldName, // Add fieldName from question
+      }),
+    });
+  } catch (error) {
+    console.error('Error saving answer:', error);
+  }
+};
 
-  const saveAllCurrentAnswers = async () => {
-    setIsSaving(true);
-    try {
-      await Promise.all(
-        Object.entries(answers).map(([questionId, answer]) => {
-          const question = currentQuestions.find(q => q.id === questionId);
-          if (!question) return Promise.resolve();
+const saveAllCurrentAnswers = async () => {
+  setIsSaving(true);
+  try {
+    await Promise.all(
+      Object.entries(answers).map(([questionId, answer]) => {
+        const question = currentQuestions.find((q) => q.id === questionId);
+        if (!question) return Promise.resolve();
 
-          // Determine if answer is option ID or text
-          if (question.question_type === 'radio' || question.question_type === 'checkbox') {
-            return saveAnswer(questionId, answer);
-          } else {
-            return saveAnswer(questionId, undefined, answer);
-          }
-        })
-      );
-    } catch (error) {
-      console.error('Error saving answers:', error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
+        // For all question types, just pass the answer as answerText
+        // Frontend questions have values like 'private', 'within_1_month', etc.
+        return saveAnswer(questionId, undefined, answer);
+      })
+    );
+  } catch (error) {
+    console.error('Error saving answers:', error);
+  } finally {
+    setIsSaving(false);
+  }
+};
 
-  const moveToNextStep = async () => {
-    // Save all answers from current step
-    await saveAllCurrentAnswers();
+const moveToNextStep = async () => {
+  // Save all answers from current step
+  await saveAllCurrentAnswers();
 
-    // Merge current answers into all answers
-    setAllAnswers(prev => ({ ...prev, ...answers }));
+  // Merge current answers into all answers
+  setAllAnswers((prev) => ({ ...prev, ...answers }));
 
-    // Save to history
-    setQuestionHistory(prev => [...prev, {
+  // Save to history
+  setQuestionHistory((prev) => [
+    ...prev,
+    {
       step: currentStep,
       questions: currentQuestions,
       answers,
-    }]);
+    },
+  ]);
 
-    const nextStep = currentStep + 1;
+  const nextStep = currentStep + 1;
 
-    if (nextStep > totalSteps) {
-      // All steps completed
-      alert('Formulier voltooid!');
-      return;
-    }
+  if (nextStep > totalSteps) {
+    // All steps completed
+    alert('Formulier voltooid!');
+    return;
+  }
 
-    setCurrentStep(nextStep);
+  setCurrentStep(nextStep);
 
-    // Special handling for Step 7 (conditional based on Step 2)
-    if (nextStep === 7) {
-      const requestTypeAnswer = allAnswers['q-general-request-type'];
-      if (requestTypeAnswer) {
-        await loadQuestionsForStep(7, requestTypeAnswer);
-      } else {
-        await loadQuestionsForStep(7);
-      }
-    } else {
-      await loadQuestionsForStep(nextStep);
-    }
-  };
+  // Special handling for Step 7 (conditional based on Step 2)
+  if (nextStep === 7) {
+    // Get request type from Step 2 answer (new ID: lead_request_type)
+    const requestTypeAnswer = allAnswers['lead_request_type'];
+    const requestType =
+      requestTypeAnswer === 'business' ? 'business' : 'private';
+    await loadQuestionsForStep(7, requestType);
+  } else {
+    await loadQuestionsForStep(nextStep);
+  }
+};
 
   const handleNext = async () => {
     if (!currentQuestion) return;

@@ -64,8 +64,34 @@ export interface ProjectFormAnswer {
 }
 
 // Extended types with relationships
-export interface QuestionWithOptions extends ProjectFormQuestion {
-  options?: ProjectFormQuestionOption[];
+export interface QuestionWithOptions {
+  id: string;
+  question_text_nl: string;
+  question_text_en: string;
+  question_type: string;
+  is_required: boolean;
+  placeholder_nl?: string;
+  placeholder_en?: string;
+  help_text_nl?: string;
+  help_text_en?: string;
+  fieldName?: string; // ← Add this for frontend questions
+  options?: Array<{
+    id: string;
+    option_value: string;
+    option_label_nl: string;
+    option_label_en: string;
+    has_follow_up?: boolean;
+  }>;
+  // Database-specific fields (optional - only for step 1 questions)
+  service_category_id?: number;
+  is_root_question?: boolean;
+  parent_question_id?: string;
+  parent_option_id?: string;
+  order_index?: number;
+  is_active?: boolean;
+  step_number?: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 // Request/Response types for API
@@ -97,3 +123,21 @@ export interface GetQuestionsRequest {
 export interface GetQuestionsResponse {
   questions: QuestionWithOptions[];
 }
+// interface QuestionWithOptions {
+//   id: string;
+//   question_text_nl: string;
+//   question_text_en: string;
+//   question_type: string;
+//   is_required: boolean;
+//   placeholder_nl?: string;
+//   placeholder_en?: string;
+//   help_text_nl?: string;
+//   help_text_en?: string;
+//   fieldName?: string; // Add this line
+//   options?: Array<{
+//     id: string;
+//     option_value: string;
+//     option_label_nl: string;
+//     option_label_en: string;
+//   }>;
+// }
