@@ -275,8 +275,8 @@ const moveToNextStep = async () => {
       }
     } else if (currentStep === 4) {
       // Step 4: Check if user wants to upload photos
-      const photosAnswer = newAnswers['q-general-photos'];
-      const wantsPhotos = photosAnswer === 'opt-photos-yes';
+      const photosAnswer = newAnswers['project_photos'];
+      const wantsPhotos = photosAnswer === 'yes';
 
       if (wantsPhotos) {
         // Show photo upload modal
