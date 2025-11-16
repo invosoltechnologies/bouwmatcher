@@ -4,7 +4,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import QuestionnaireNavbar from "@/components/Questionnaire/QuestionnaireNavbar";
 import QuestionnaireRadio from "@/components/Questionnaire/QuestionnaireRadio";
 import { getQuestionsForStep } from '@/data/generalQuestions';
-import type { Question } from '@/data/generalQuestions';
 import TopBar from "@/components/TopBar";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -433,14 +432,14 @@ const moveToNextStep = async () => {
           {showOTPVerification ? (
             <OTPVerification
               phoneNumber={
-                allAnswers['q-general-contact-phone'] ||
-                allAnswers['q-general-contact-phone-business'] ||
-                ''
+                allAnswers['lead_phone'] || ''
               }
-              onVerify={(otp) => {
-                // TODO: Verify OTP and complete project submission
-                console.log('OTP verified:', otp);
-                alert('OTP geverifieerd! Project wordt ingediend...');
+              draftId={draftId!}
+              onVerify={(projectId) => {
+                // Project created successfully!
+                console.log('Project created:', projectId);
+                alert('Project succesvol ingediend! U ontvangt binnenkort offertes.');
+                router.push('/dashboard');
               }}
               onBack={() => setShowOTPVerification(false)}
             />
