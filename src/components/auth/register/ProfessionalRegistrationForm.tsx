@@ -243,7 +243,7 @@ export default function ProfessionalRegistrationForm() {
       }
 
       toast.success('Registratie voltooid!');
-      router.push('/pro-dashboard');
+      router.push('/pro-dashboard/account');
     } catch (err: unknown) {
       console.error('Company save error:', err);
 
