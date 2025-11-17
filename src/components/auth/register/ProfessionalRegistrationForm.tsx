@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import RegistrationSteps from '@/components/auth/RegistrationSteps';
@@ -11,15 +11,15 @@ import ServiceCategoriesForm, { type ServiceCategoriesData } from '@/components/
 import SubcategoriesForm, { type SubcategoriesData } from '@/components/auth/register/SubcategoriesForm';
 import CompanyRegistrationForm, { type CompanyData } from '@/components/auth/register/CompanyRegistrationForm';
 import type { ContactInfoData, PasswordSetupData } from '@/types/auth';
-import { useAuth, useUpdateProfile } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function ProfessionalRegistrationForm() {
   const router = useRouter();
   const { signUp } = useAuth();
-  const updateProfile = useUpdateProfile();
 
   const [currentStep, setCurrentStep] = useState(1);
   const [subStep, setSubStep] = useState<'contact' | 'password'>('contact');
+  const [isLoadingStep, setIsLoadingStep] = useState(true);
   const [contactData, setContactData] = useState<ContactInfoData | null>(null);
   const [workAreaData, setWorkAreaData] = useState<WorkAreaData | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -28,6 +28,36 @@ export default function ProfessionalRegistrationForm() {
   const [subcategoriesData, setSubcategoriesData] = useState<SubcategoriesData | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [companyData, setCompanyData] = useState<CompanyData | null>(null);
+
+  // Load current step on component mount
+  useEffect(() => {
+    const loadCurrentStep = async () => {
+      try {
+        const response = await fetch('/api/registration/current-step');
+
+        if (response.ok) {
+          const data = await response.json();
+
+          // If profile is completed, redirect to dashboard
+          if (data.profile_completed) {
+            router.push('/pro-dashboard');
+            return;
+          }
+
+          // Set the current step from API
+          if (data.current_step && data.current_step > 1) {
+            setCurrentStep(data.current_step);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading current step:', error);
+      } finally {
+        setIsLoadingStep(false);
+      }
+    };
+
+    loadCurrentStep();
+  }, [router]);
 
   const handleContactInfoNext = (data: ContactInfoData) => {
     setContactData(data);
@@ -79,52 +109,68 @@ export default function ProfessionalRegistrationForm() {
   const handleWorkAreaNext = async (data: WorkAreaData) => {
     setWorkAreaData(data);
 
-    updateProfile.mutate(
-      {
-        work_address: data.location,
-        work_postal_code: data.postalCode,
-        work_city: data.city,
-        work_latitude: data.latitude,
-        work_longitude: data.longitude,
-        service_radius_km: data.serviceRadius,
-      },
-      {
-        onSuccess: () => {
-          toast.success('Werkgebied opgeslagen!');
-          setCurrentStep(3);
+    try {
+      const response = await fetch('/api/registration/work-area', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        onError: (err: unknown) => {
-          console.error('Work area save error:', err);
-          const errorMessage = err && typeof err === 'object' && 'message' in err
-            ? (err as { message: string }).message
-            : 'Er is een fout opgetreden bij het opslaan';
-          toast.error(errorMessage);
-        },
+        body: JSON.stringify({
+          work_address: data.location,
+          work_postal_code: data.postalCode,
+          work_city: data.city,
+          work_latitude: data.latitude,
+          work_longitude: data.longitude,
+          service_radius_km: data.serviceRadius,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Kon werkgebied niet opslaan');
       }
-    );
+
+      toast.success('Werkgebied opgeslagen!');
+      setCurrentStep(3);
+    } catch (err: unknown) {
+      console.error('Work area save error:', err);
+      const errorMessage = err && typeof err === 'object' && 'message' in err
+        ? (err as { message: string }).message
+        : 'Er is een fout opgetreden bij het opslaan';
+      toast.error(errorMessage);
+    }
   };
 
   const handleServiceCategoriesNext = async (data: ServiceCategoriesData) => {
     setServiceCategoriesData(data);
 
-    updateProfile.mutate(
-      {
-        specializations: data.selectedCategories,
-      },
-      {
-        onSuccess: () => {
-          toast.success('Vakgebieden opgeslagen!');
-          setCurrentStep(4);
+    try {
+      const response = await fetch('/api/registration/service-categories', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        onError: (err: unknown) => {
-          console.error('Service categories save error:', err);
-          const errorMessage = err && typeof err === 'object' && 'message' in err
-            ? (err as { message: string }).message
-            : 'Er is een fout opgetreden bij het opslaan';
-          toast.error(errorMessage);
-        },
+        body: JSON.stringify({
+          categoryIds: data.selectedCategories,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Kon vakgebieden niet opslaan');
       }
-    );
+
+      toast.success('Vakgebieden opgeslagen!');
+      setCurrentStep(4);
+    } catch (err: unknown) {
+      console.error('Service categories save error:', err);
+      const errorMessage = err && typeof err === 'object' && 'message' in err
+        ? (err as { message: string }).message
+        : 'Er is een fout opgetreden bij het opslaan';
+      toast.error(errorMessage);
+    }
   };
 
   const handleSubcategoriesNext = async (data: SubcategoriesData) => {
@@ -175,75 +221,29 @@ export default function ProfessionalRegistrationForm() {
     setCompanyData(data);
 
     try {
-      // Get current user from Supabase
-      const { createClient } = await import('@/lib/supabase/client');
-      const supabase = createClient();
+      const response = await fetch('/api/registration/company', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          companyName: data.companyName,
+          kvkNumber: data.kvkNumber,
+          postalCode: data.postalCode,
+          houseNumber: data.houseNumber,
+          street: data.street,
+          city: data.city,
+        }),
+      });
 
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      const result = await response.json();
 
-      if (userError || !user) {
-        throw new Error('Gebruiker niet gevonden. Log opnieuw in.');
+      if (!response.ok) {
+        throw new Error(result.error || 'Kon bedrijfsgegevens niet opslaan');
       }
 
-      // Step 1: Check if company already exists by business_id (KVK number)
-      const { data: existingCompany } = await supabase
-        .from('professional_companies')
-        .select('id')
-        .eq('business_id', data.kvkNumber)
-        .single();
-
-      let companyId: string;
-
-      if (existingCompany) {
-        // Company exists - use existing company_id
-        companyId = existingCompany.id;
-        console.log('Company already exists, linking to existing company:', companyId);
-      } else {
-        // Company doesn't exist - create new one
-        const { data: newCompany, error: companyError } = await supabase
-          .from('professional_companies')
-          .insert({
-            company_name: data.companyName,
-            business_id: data.kvkNumber,
-            postal_code: data.postalCode,
-            house_number: data.houseNumber,
-            street_name: data.street,
-            city: data.city,
-            full_address: `${data.street} ${data.houseNumber}, ${data.postalCode} ${data.city}`,
-            created_by: user.id,
-            is_active: true,
-            verification_status: 'pending',
-          })
-          .select('id')
-          .single();
-
-        if (companyError || !newCompany) {
-          console.error('Error creating company:', companyError);
-          throw new Error('Kon bedrijf niet aanmaken');
-        }
-
-        companyId = newCompany.id;
-        console.log('New company created:', companyId);
-      }
-
-      // Step 2: Link user to company via company_id in professional_profiles
-      const { error: updateError } = await supabase
-        .from('professional_profiles')
-        .update({
-          company_id: companyId,
-          role_in_company: existingCompany ? 'employee' : 'owner', // First user is owner, others are employees
-          joined_company_at: new Date().toISOString(),
-        })
-        .eq('user_id', user.id);
-
-      if (updateError) {
-        console.error('Database update error:', updateError);
-        throw new Error('Kon bedrijfsgegevens niet opslaan');
-      }
-
-      toast.success('Bedrijfsgegevens opgeslagen!');
-      // Complete registration
-      router.push('/dashboard');
+      toast.success('Registratie voltooid!');
+      router.push('/pro-dashboard');
     } catch (err: unknown) {
       console.error('Company save error:', err);
 
@@ -255,6 +255,21 @@ export default function ProfessionalRegistrationForm() {
       toast.error(errorMessage);
     }
   };
+
+  // Show loading state while checking current step
+  if (isLoadingStep) {
+    return (
+      <>
+        <RegistrationSteps currentStep={currentStep} />
+        <main className='flex-1 flex items-center justify-center px-4 py-12'>
+          <div className='flex flex-col items-center gap-4'>
+            <div className='w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin' />
+            <p className='text-muted-foreground'>Laden...</p>
+          </div>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>

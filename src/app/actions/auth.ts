@@ -68,6 +68,12 @@ export async function signUpProfessionalAction(data: SignUpData): Promise<AuthRe
       // User is auto-confirmed, wait briefly and fetch profile
       await new Promise(resolve => setTimeout(resolve, 500));
 
+      // Update current_step to 2 since step 1 (account creation) is complete
+      await supabase
+        .from('professional_profiles')
+        .update({ current_step: 2 })
+        .eq('user_id', authData.user.id);
+
       const { data: profileData } = await supabase
         .from('professional_profiles')
         .select('*')

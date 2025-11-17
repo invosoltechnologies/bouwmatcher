@@ -44,8 +44,24 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // If user is signed in and trying to access auth pages, redirect to pro-dashboard
+  // If user is signed in and trying to access auth pages
   if (user && request.nextUrl.pathname.startsWith('/auth')) {
+    // Allow access to /auth/register if profile is not completed
+    if (request.nextUrl.pathname.startsWith('/auth/register')) {
+      // Check if profile is completed
+      const { data: profiles } = await supabase
+        .from('professional_profiles')
+        .select('profile_completed')
+        .eq('user_id', user.id)
+        .limit(1);
+
+      // If profile not completed, allow access to registration
+      if (profiles && profiles.length > 0 && !profiles[0].profile_completed) {
+        return supabaseResponse;
+      }
+    }
+
+    // Otherwise, redirect to pro-dashboard
     return NextResponse.redirect(new URL('/pro-dashboard/account', request.url));
   }
 

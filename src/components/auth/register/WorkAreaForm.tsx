@@ -386,29 +386,23 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
 
       // Try to fetch from database first
       try {
-        const { createClient } = await import('@/lib/supabase/client');
-        const supabase = createClient();
+        const response = await fetch('/api/registration/work-area');
 
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        if (response.ok) {
+          const result = await response.json();
 
-        const { data: profile } = await supabase
-          .from('professional_profiles')
-          .select('work_address, work_latitude, work_longitude, service_radius_km')
-          .eq('user_id', user.id)
-          .single();
-
-        if (profile && profile.work_address && profile.work_latitude && profile.work_longitude) {
-          // User has saved location, use it
-          setSelectedLocation(profile.work_address);
-          setInputValue(profile.work_address);
-          setCoordinates({
-            lat: Number(profile.work_latitude),
-            lng: Number(profile.work_longitude),
-          });
-          setSelectedRadius(profile.service_radius_km || 10);
-          setIsInitialLoad(false);
-          return;
+          if (result.saved && result.data) {
+            // User has saved location, use it
+            setSelectedLocation(result.data.work_address);
+            setInputValue(result.data.work_address);
+            setCoordinates({
+              lat: Number(result.data.work_latitude),
+              lng: Number(result.data.work_longitude),
+            });
+            setSelectedRadius(result.data.service_radius_km || 10);
+            setIsInitialLoad(false);
+            return;
+          }
         }
       } catch (error) {
         console.error('Error fetching saved location:', error);

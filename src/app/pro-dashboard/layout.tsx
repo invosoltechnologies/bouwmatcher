@@ -23,7 +23,6 @@ export default function ProDashboardLayout({
           style={{
             background:
               'linear-gradient(90deg, rgba(10, 178, 126, 0.035) 0%, rgba(2, 58, 162, 0.035) 100%)',
-            backdropFilter: 'blur(66.5px)',
           }}
         >
           {children}
