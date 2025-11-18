@@ -95,8 +95,8 @@ export async function POST(request: NextRequest) {
 
     // Convert draft to project
     try {
-      const { data: projectId, error: conversionError } = await supabase
-        .rpc('convert_draft_to_project', { draft_id: draftId });
+      const { data: result, error: conversionError } = await supabase
+        .rpc('convert_draft_to_project', { p_draft_id: draftId });
 
       if (conversionError) {
         console.error('Error converting draft to project:', conversionError);
@@ -106,7 +106,25 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      // Parse result JSON
+      const { project_id: projectId, access_token: accessToken } = result;
+
       console.log(`✅ Draft ${draftId} converted to project ${projectId}`);
+
+      // Send confirmation email with status link
+      const { sendProjectCreatedEmail } = await import('@/lib/emailService');
+
+      const emailResult = await sendProjectCreatedEmail({
+        projectId,
+        accessToken,
+        email: draft.email,
+        firstName: draft.first_name || 'daar',
+      });
+
+      if (!emailResult.success) {
+        console.error('❌ Failed to send email:', emailResult.error);
+        // Don't fail the request if email fails, just log it
+      }
 
       return NextResponse.json({
         success: true,

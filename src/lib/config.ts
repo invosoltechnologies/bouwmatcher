@@ -27,3 +27,11 @@ export const SUPABASE_CONFIG = {
   publishableKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
   serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
 } as const;
+
+// Email Configuration (server-side only)
+export const EMAIL_CONFIG = {
+  apiKey: process.env.RESEND_API_KEY,
+  fromEmail: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
+  fromName: 'Bouwmatcher',
+  baseUrl: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
+} as const;
