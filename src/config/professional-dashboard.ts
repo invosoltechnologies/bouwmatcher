@@ -70,11 +70,11 @@ export const pageConfigs: Record<string, PageConfig> = {
   },
   bedrijfsprofiel: {
     title: 'Bedrijfsprofiel',
-    description: 'Beheer je bedrijfsinformatie en instellingen',
+    description: 'Beheer je bedrijfsinformatie, foto’s en reviews',
   },
   werkgebied: {
     title: 'Werkgebied',
-    description: 'Stel je werkgebied en beschikbaarheid in',
+    description: 'Beheer je regio’s, straal en rubrieken',
   },
   faq: {
     title: 'FAQ',
