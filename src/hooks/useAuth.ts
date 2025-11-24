@@ -11,8 +11,6 @@ import {
   getProfessionalProfileAction,
   updateProfessionalProfileAction,
   getOAuthUrlAction,
-  type SignUpData,
-  type SignInData,
 } from '@/app/actions/auth';
 
 /**

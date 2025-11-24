@@ -54,7 +54,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Update professional profile contact information
-    const updateData: any = {
+    const updateData: Record<string, string | null> = {
       first_name: firstName,
       last_name: lastName,
       quotes_email: quotesEmail || null,

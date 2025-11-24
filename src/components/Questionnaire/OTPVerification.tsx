@@ -13,7 +13,7 @@ interface OTPVerificationProps {
 
 export default function OTPVerification({ phoneNumber, draftId, onVerify, onBack }: OTPVerificationProps) {
   const [otp, setOtp] = useState('');
-  const [countdown, setCountdown] = useState(SMS_CONFIG.otpDisplayCountdownSeconds);
+  const [countdown, setCountdown] = useState<number>(SMS_CONFIG.otpDisplayCountdownSeconds);
   const [canResend, setCanResend] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState('');

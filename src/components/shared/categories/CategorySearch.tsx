@@ -36,7 +36,6 @@ export default function CategorySearch({
   onChange,
   placeholder = 'Zoek vakgebied...',
   isDropdown = false,
-  isListFiltered = true,
   categories = [],
   selectedIds = [],
   onCategorySelect,

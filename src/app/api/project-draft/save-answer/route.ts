@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Prepare update data
-      const updateData: Record<string, any> = {
+      const updateData: Record<string, string | boolean | null | number> = {
         [fieldName]: value,
         updated_at: new Date().toISOString(),
       };

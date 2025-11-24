@@ -35,12 +35,6 @@ export default function AccountPageClient() {
     setIsContactModalOpen(true);
   };
 
-  const handleProfileEdit = () => {
-    // TODO: Navigate to profile edit page
-    console.log('Edit profile');
-    toast('Profiel bewerken komt binnenkort');
-  };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -91,7 +85,6 @@ export default function AccountPageClient() {
         <ProfileCompletionCard
           completionPercentage={accountData.profileCompletion.percentage}
           tasks={accountData.profileCompletion.tasks}
-          onEditClick={handleProfileEdit}
         />
       </aside>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle, CardAction } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MapPin, Pencil, Phone, Mail } from 'lucide-react';
 import type { CompanyInfoData, ContactInfoData } from '@/lib/types/account';

@@ -22,8 +22,8 @@ export interface ProfessionalProfile {
   bio: string | null;
   years_of_experience: number | null;
   specializations: string[] | null;
-  certifications: any | null;
-  notification_preferences: any | null;
+  certifications: unknown | null;
+  notification_preferences: unknown | null;
   availability_status: string | null;
   auth_provider: string | null;
   created_at: string | null;

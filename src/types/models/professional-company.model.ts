@@ -17,7 +17,7 @@ export interface ProfessionalCompany {
   vat_number: string | null;
   is_verified: boolean | null;
   verification_status: string | null;
-  verification_documents: any | null;
+  verification_documents: unknown | null;
   verified_at: string | null;
   verified_by: string | null;
   business_description: string | null;

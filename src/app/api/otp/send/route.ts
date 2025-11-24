@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
         success: true,
         message: 'OTP sent successfully',
       });
-    } catch (twilioError: any) {
+    } catch (twilioError: unknown) {
       console.error('Twilio error:', twilioError);
 
       // Return generic error (don't leak OTP in production!)

@@ -1,7 +1,6 @@
 'use client';
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -16,13 +15,11 @@ interface ProfileTask {
 interface ProfileCompletionCardProps {
   completionPercentage: number;
   tasks: ProfileTask[];
-  onEditClick?: () => void;
 }
 
 export default function ProfileCompletionCard({
   completionPercentage,
   tasks,
-  onEditClick,
 }: ProfileCompletionCardProps) {
   return (
     <Card className='px-5 gap-4'>

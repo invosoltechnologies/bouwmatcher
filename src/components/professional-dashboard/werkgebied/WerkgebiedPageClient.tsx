@@ -24,7 +24,6 @@ export default function WerkgebiedPageClient() {
   const [categories, setCategories] = useState<ServiceCategoryWithSubcategories[]>([]);
   const [selectedSpecializations, setSelectedSpecializations] = useState<ProfessionalSpecialization[]>([]);
   const [selectedSubcategories, setSelectedSubcategories] = useState<Set<number>>(new Set());
-  const [selectedCategoryFilters, setSelectedCategoryFilters] = useState<Set<number>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -249,17 +248,17 @@ export default function WerkgebiedPageClient() {
     }
   };
 
-  const toggleCategoryFilter = (categoryId: number) => {
-    setSelectedCategoryFilters((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(categoryId)) {
-        newSet.delete(categoryId);
-      } else {
-        newSet.add(categoryId);
-      }
-      return newSet;
-    });
-  };
+  // const toggleCategoryFilter = (categoryId: number) => {
+  //   setSelectedCategoryFilters((prev) => {
+  //     const newSet = new Set(prev);
+  //     if (newSet.has(categoryId)) {
+  //       newSet.delete(categoryId);
+  //     } else {
+  //       newSet.add(categoryId);
+  //     }
+  //     return newSet;
+  //   });
+  // };
 
   const deselectAllSubcategories = () => {
     setSelectedSubcategories(new Set());
@@ -325,14 +324,8 @@ export default function WerkgebiedPageClient() {
     }
   };
 
-  // Filter categories based on category filter pills and search
+  // Filter categories based on search
   const filteredCategories = categories
-    .filter((category) => {
-      // If no category filters selected, show all categories
-      if (selectedCategoryFilters.size === 0) return true;
-      // Otherwise, only show selected categories
-      return selectedCategoryFilters.has(category.id);
-    })
     .map((category) => ({
       ...category,
       subcategories: category.subcategories.filter((sub) =>
