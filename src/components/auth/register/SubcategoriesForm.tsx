@@ -2,41 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Search, Check, Circle } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { Loader } from '@/components/ui/loader';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
-import { PricePill } from '@/components/ui/price-pill';
-import { CategoryPill } from '@/components/ui/category-pill';
-
-interface ServiceSubcategory {
-  id: number;
-  slug: string;
-  name_nl: string;
-  name_en: string | null;
-  service_category_id: number;
-  service_category_name: string;
-  price_particulier: number | null;
-  price_zakelijk: number | null;
-  icon_url: string | null;
-}
-
-interface ServiceCategory {
-  id: number;
-  slug: string;
-  name_nl: string;
-  icon_url: string | null;
-  subcategories: ServiceSubcategory[];
-}
+import CategoryFilterBar from '@/components/shared/categories/CategoryFilterBar';
+import GradientCountBar from '@/components/shared/categories/GradientCountBar';
+import SubcategoryAccordion from '@/components/shared/categories/SubcategoryAccordion';
+import type { ServiceCategoryWithSubcategories, ServiceSubcategory } from '@/types/categories';
 
 interface SubcategoriesFormProps {
   onNext: (data: SubcategoriesData) => void;
@@ -48,7 +19,7 @@ export interface SubcategoriesData {
 }
 
 export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormProps) {
-  const [categories, setCategories] = useState<ServiceCategory[]>([]);
+  const [categories, setCategories] = useState<ServiceCategoryWithSubcategories[]>([]);
   const [selectedSubcategories, setSelectedSubcategories] = useState<Set<number>>(new Set());
   const [selectedCategoryFilters, setSelectedCategoryFilters] = useState<Set<number>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
@@ -103,7 +74,7 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
         }
 
         // Group subcategories by category
-        const categoriesMap = new Map<number, ServiceCategory>();
+        const categoriesMap = new Map<number, ServiceCategoryWithSubcategories>();
 
         specializations.forEach((spec: {
           service_category_id: number;
@@ -263,199 +234,41 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
         className='bg-white/95 rounded-3xl overflow-hidden'
         style={{ boxShadow: '0px 12px 36px 0px #023AA21F' }}
       >
-        {/* Category Filter Pills and Search - Same Line */}
-        <div className='p-6 lg:p-8 pb-0'>
-          <Label className='text-base text-slate-900 mb-3 block'>
-            Jouw vakgebieden:
-          </Label>
-          <div className='flex items-center gap-4 mb-6'>
-            {/* Category Pills */}
-            <div className='flex flex-wrap gap-3 flex-1'>
-              {categories.map((category) => (
-                <CategoryPill
-                  key={category.id}
-                  id={category.id}
-                  name={category.name_nl}
-                  icon={category.icon_url}
-                  selected={selectedCategoryFilters.has(category.id)}
-                  onClick={() => toggleCategoryFilter(category.id)}
-                />
-              ))}
-            </div>
+        {/* Category Filter Pills and Search */}
+        <CategoryFilterBar
+          categories={categories}
+          selectedFilters={selectedCategoryFilters}
+          onToggleFilter={toggleCategoryFilter}
+          showSearch={true}
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          searchPlaceholder='Zoek opdrachttypes...'
+          label='Jouw vakgebieden:'
+          showLabel={true}
+        />
 
-            {/* Search Input */}
-            <div className='relative w-full max-w-xs'>
-              <Search className='absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none z-10' />
-              <Input
-                type='text'
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder='Zoek opdrachttypes...'
-                className='pl-12 pr-4 h-12 bg-white border-neutral-300 rounded-lg text-base'
-              />
-            </div>
-          </div>
-        </div>
+        {/* Gradient Bar with Selected Count */}
+        <GradientCountBar
+          selectedCount={selectedSubcategories.size}
+          maxLimit={30}
+          onDeselectAll={deselectAllSubcategories}
+          showLimit={true}
+          showDeselectButton={true}
+          label='geselecteerd'
+        />
 
-        {/* Gradient Bar with Selected Count - Full Width */}
-        <div
-          className='px-6 lg:px-8 py-3 flex items-center justify-between'
-          style={{ background: 'linear-gradient(90deg, rgba(2, 58, 162, 0.1) 0%, rgba(10, 178, 126, 0.1) 100%)' }}
-        >
-          <p className='text-sm font-medium text-slate-900'>
-            {selectedSubcategories.size} geselecteerd
-          </p>
-          <div className='flex items-center gap-4'>
-            <button
-              type='button'
-              onClick={deselectAllSubcategories}
-              className='text-primary text-sm font-medium hover:text-primary/80'
-            >
-              Deselecteer alle
-            </button>
-            <p className='text-sm font-medium text-slate-900'>
-              Limiet: {selectedSubcategories.size}/30
-            </p>
-          </div>
-        </div>
-
-        {/* Accordion Section */}
+        {/* Accordion Section with Subcategories */}
         <div className='p-6 lg:p-8 pt-6'>
-
-        {/* Categories Accordion */}
-        {filteredCategories.length === 0 ? (
-          <div className='text-center py-12'>
-            <p className='text-slate-500'>
-              Geen resultaten gevonden voor &quot;{searchQuery}&quot;
-            </p>
-          </div>
-        ) : (
-          <Accordion
-            type='multiple'
-            value={openAccordions}
-            onValueChange={setOpenAccordions}
-            className='space-y-4'
-          >
-            {filteredCategories.map((category) => {
-              return (
-                <AccordionItem
-                  key={category.id}
-                  value={category.id.toString()}
-                  className='border-2 rounded-xl px-4 transition-all border-neutral-300 bg-white'
-                  style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
-                >
-                  <AccordionTrigger
-                    className='hover:no-underline py-4'
-                    chevronClassName='w-5 h-5 text-slate-900'
-                  >
-                    <div className='flex items-center justify-between flex-1 pr-4'>
-                      <div className='flex items-center gap-3'>
-                        {category.icon_url && (
-                          <Image
-                            src={category.icon_url}
-                            alt={category.name_nl}
-                            width={24}
-                            height={24}
-                            className='[filter:brightness(0)_saturate(100%)_invert(7%)_sepia(8%)_saturate(6422%)_hue-rotate(187deg)_brightness(98%)_contrast(95%)]'
-                          />
-                        )}
-                        <span className='text-base font-semibold text-slate-900'>
-                          {category.name_nl}
-                        </span>
-                        <span className='text-sm text-slate-500'>
-                          {category.subcategories.filter((sub) =>
-                            selectedSubcategories.has(sub.id)
-                          ).length}/{category.subcategories.length}
-                        </span>
-                      </div>
-                      <span
-                        role='button'
-                        tabIndex={0}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          selectAllInCategory(category.id);
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            selectAllInCategory(category.id);
-                          }
-                        }}
-                        className='text-primary text-sm font-medium hover:text-primary/80 cursor-pointer'
-                      >
-                        Alles selecteren
-                      </span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className='space-y-3 pt-2'>
-                      {category.subcategories.map((subcategory) => {
-                        const isSelected = selectedSubcategories.has(subcategory.id);
-                        return (
-                          <div
-                            key={subcategory.id}
-                            className={cn(
-                              'flex items-center justify-between p-4 rounded-lg border-2 transition-all cursor-pointer',
-                              isSelected
-                                ? 'border-primary bg-primary/10'
-                                : 'border-neutral-200 bg-white hover:border-primary'
-                            )}
-                            onClick={() => toggleSubcategory(subcategory.id)}
-                            style={
-                              !isSelected
-                                ? { boxShadow: '0px 2px 6.5px 0px #0000001A' }
-                                : undefined
-                            }
-                          >
-                            <div className='flex items-center gap-3'>
-                              <div className='w-6 h-6 rounded-full flex items-center justify-center shrink-0'>
-                                {isSelected ? (
-                                  <div className='w-6 h-6 rounded-full bg-accent flex items-center justify-center'>
-                                    <Check className='w-4 h-4 text-white' />
-                                  </div>
-                                ) : (
-                                  <Circle className='w-6 h-6 text-slate-300 fill-slate-300' />
-                                )}
-                              </div>
-                              {subcategory.icon_url && (
-                                <Image
-                                  src={subcategory.icon_url}
-                                  alt={subcategory.name_nl}
-                                  width={20}
-                                  height={20}
-                                />
-                              )}
-                              <span className='text-base font-medium text-slate-900'>
-                                {subcategory.name_nl}
-                              </span>
-                            </div>
-                            {isSelected && (
-                              <div className='flex items-center gap-2'>
-                                {subcategory.price_particulier && (
-                                  <PricePill
-                                    price={subcategory.price_particulier}
-                                    type='particulier'
-                                  />
-                                )}
-                                {subcategory.price_zakelijk && (
-                                  <PricePill
-                                    price={subcategory.price_zakelijk}
-                                    type='zakelijk'
-                                  />
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              );
-            })}
-          </Accordion>
-        )}
+          <SubcategoryAccordion
+            categories={filteredCategories}
+            selectedSubcategoryIds={selectedSubcategories}
+            onToggleSubcategory={toggleSubcategory}
+            onSelectAllInCategory={selectAllInCategory}
+            openAccordions={openAccordions}
+            onAccordionChange={setOpenAccordions}
+            showPrices={true}
+            searchQuery={searchQuery}
+          />
         </div>
       </div>
 
