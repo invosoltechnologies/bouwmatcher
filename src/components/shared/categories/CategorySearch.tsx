@@ -53,7 +53,7 @@ export default function CategorySearch({
               variant='outline'
               role='combobox'
               aria-expanded={open}
-              className='w-full justify-between h-auto py-4 px-4 text-base md:text-lg font-normal border-neutral-300'
+              className='w-full justify-between h-auto py-4 px-4 text-base md:text-lg font-normal border-neutral-300 hover:border-primary hover:bg-white focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary data-[state=open]:border-primary data-[state=open]:ring-2 data-[state=open]:ring-primary/20'
               style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
             >
               <div className='flex items-center gap-2 text-slate-400'>
@@ -63,8 +63,12 @@ export default function CategorySearch({
             </Button>
           </PopoverTrigger>
           <PopoverContent className='w-[var(--radix-popover-trigger-width)] p-0' align='start'>
-            <Command>
-              <CommandInput placeholder={placeholder} />
+            <Command shouldFilter={true}>
+              <CommandInput
+                placeholder={placeholder}
+                value={value}
+                onValueChange={onChange}
+              />
               <CommandList>
                 <CommandEmpty>Geen resultaten gevonden.</CommandEmpty>
                 <CommandGroup>
@@ -76,6 +80,7 @@ export default function CategorySearch({
                         value={category.name_nl}
                         onSelect={() => {
                           onCategorySelect?.(category);
+                          onChange(''); // Clear search after selection
                           setOpen(false);
                         }}
                       >

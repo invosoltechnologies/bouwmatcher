@@ -40,7 +40,7 @@ export default function SelectedCategoriesSidebar({
   const progressPercentage = (selectedSpecializations.length / maxCategories) * 100;
 
   return (
-    <div className='w-full lg:w-[40%] space-y-8'>
+    <div className='w-full space-y-8'>
       <div>
         <h2 className='text-xl md:text-2xl font-normal text-slate-900 mb-3'>{title}</h2>
         <div className='flex items-center justify-between mb-4'>

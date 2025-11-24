@@ -321,21 +321,23 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
           </div>
 
           {/* Right Panel - Selected Categories Sidebar */}
-          <SelectedCategoriesSidebar
-            title='Gekozen vakgebieden'
-            selectedSpecializations={selectedSpecializations}
-            maxCategories={MAX_CATEGORIES}
-            onRemove={removeCategory}
-            onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
-            onDragEnd={handleDragEnd}
-            draggedIndex={draggedIndex}
-            isDraggable={true}
-            showReorderButton={true}
-            onReorderClick={() => toast('Volgorde opnieuw instellen')}
-            showInfoCard={true}
-            emptyStateIcon='/icons/services/renovatie.svg'
-          />
+          <div className='w-full lg:w-[40%]'>
+            <SelectedCategoriesSidebar
+              title='Gekozen vakgebieden'
+              selectedSpecializations={selectedSpecializations}
+              maxCategories={MAX_CATEGORIES}
+              onRemove={removeCategory}
+              onDragStart={handleDragStart}
+              onDragOver={handleDragOver}
+              onDragEnd={handleDragEnd}
+              draggedIndex={draggedIndex}
+              isDraggable={true}
+              showReorderButton={true}
+              onReorderClick={() => toast('Volgorde opnieuw instellen')}
+              showInfoCard={true}
+              emptyStateIcon='/icons/services/renovatie.svg'
+            />
+          </div>
         </div>
       </div>
 
