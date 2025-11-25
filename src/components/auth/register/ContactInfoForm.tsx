@@ -115,7 +115,7 @@ export default function ContactInfoForm({ onNext, defaultValues }: ContactInfoFo
                 {...field}
                 placeholder='6 12345678'
                 className=' bg-white border-neutral-300 rounded-lg text-base md:text-xl placeholder:text-slate-300'
-                classInput='py-7 px-4 text-base md:text-xl placeholder:text-slate-300'
+                classInput='py-7 px-4 text-base border-neutral-300 md:text-xl placeholder:text-slate-300'
                 style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
                 error={errors.phone?.message}
               />
