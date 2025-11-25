@@ -19,7 +19,7 @@ export async function GET() {
 
     const { data: profiles } = await supabase
       .from('professional_profiles')
-      .select('work_address, work_latitude, work_longitude, service_radius_km')
+      .select('work_address, work_postal_code, work_city, work_latitude, work_longitude, service_radius_km')
       .eq('user_id', user.id)
       .limit(1);
 
@@ -43,6 +43,8 @@ export async function GET() {
       saved: true,
       data: {
         work_address: profile.work_address,
+        work_postal_code: profile.work_postal_code,
+        work_city: profile.work_city,
         work_latitude: profile.work_latitude,
         work_longitude: profile.work_longitude,
         service_radius_km: profile.service_radius_km || 10,

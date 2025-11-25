@@ -8,13 +8,18 @@ import ContactInfoCard from '@/components/professional-dashboard/account/Contact
 import ProfileCompletionCard from '@/components/professional-dashboard/account/ProfileCompletionCard';
 import EditCompanyModal from '@/components/professional-dashboard/account/EditCompanyModal';
 import EditContactModal from '@/components/professional-dashboard/account/EditContactModal';
+import WorkAreaCard from '@/components/professional-dashboard/account/WorkAreaCard';
+import EditWorkAreaModal from '@/components/professional-dashboard/account/EditWorkAreaModal';
 import { useAccount } from '@/lib/hooks/professional/account';
+import { useWorkArea } from '@/lib/hooks/professional/account/useWorkArea';
 
 export default function AccountPageClient() {
   const [isCompanyModalOpen, setIsCompanyModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isWorkAreaModalOpen, setIsWorkAreaModalOpen] = useState(false);
 
   const { data, isLoading, isError } = useAccount();
+  const { data: workAreaData } = useWorkArea();
 
   // Show error toast if fetch fails
   if (isError) {
@@ -33,6 +38,10 @@ export default function AccountPageClient() {
 
   const handleContactEdit = () => {
     setIsContactModalOpen(true);
+  };
+
+  const handleWorkAreaEdit = () => {
+    setIsWorkAreaModalOpen(true);
   };
 
   if (isLoading) {
@@ -66,10 +75,14 @@ export default function AccountPageClient() {
         />
 
         <div className="mt-6">
-          <CompanyInfoCard
+          {/* <CompanyInfoCard
             companyInfo={accountData.companyInfo}
             onEdit={handleCompanyEdit}
-          />
+          /> */}
+        </div>
+
+        <div className="mt-6">
+          <WorkAreaCard onEdit={handleWorkAreaEdit} />
         </div>
 
         <div className="mt-6">
@@ -98,6 +111,11 @@ export default function AccountPageClient() {
         isOpen={isContactModalOpen}
         onClose={() => setIsContactModalOpen(false)}
         contactInfo={accountData.contactInfo}
+      />
+      <EditWorkAreaModal
+        isOpen={isWorkAreaModalOpen}
+        onClose={() => setIsWorkAreaModalOpen(false)}
+        initialData={workAreaData?.data}
       />
     </div>
   );

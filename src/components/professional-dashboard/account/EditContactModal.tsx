@@ -172,7 +172,7 @@ export default function EditContactModal({
           </p>
         </div>
         {/* Quotes Email */}
-        <div>
+        {/* <div>
           <Label htmlFor='quotesEmail' className='text-base font-medium mb-2'>
             E-mailadres (offertesaanvragen)
           </Label>
@@ -188,7 +188,7 @@ export default function EditContactModal({
               {errors.quotesEmail.message}
             </p>
           )}
-        </div>
+        </div> */}
 
         {/* Invoices Email */}
         <div>
@@ -219,13 +219,13 @@ export default function EditContactModal({
             control={control}
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger className='w-full'>
+                <SelectTrigger className='w-full' iconWidth={20} iconHeight={20}>
                   <SelectValue placeholder='Kies een optie' />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value='male'>Man</SelectItem>
                   <SelectItem value='female'>Vrouw</SelectItem>
-                  <SelectItem value='other'>Anders</SelectItem>
+                  {/* <SelectItem value='other'>Anders</SelectItem> */}
                   <SelectItem value='prefer_not_to_say'>Zeg ik liever niet</SelectItem>
                 </SelectContent>
               </Select>

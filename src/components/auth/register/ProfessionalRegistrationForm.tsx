@@ -12,6 +12,7 @@ import SubcategoriesForm, { type SubcategoriesData } from '@/components/auth/reg
 import CompanyRegistrationForm, { type CompanyData } from '@/components/auth/register/CompanyRegistrationForm';
 import type { ContactInfoData, PasswordSetupData } from '@/types/auth';
 import { useAuth } from '@/hooks/useAuth';
+import { Loader } from '@/components/ui/loader';
 
 export default function ProfessionalRegistrationForm() {
   const router = useRouter();
@@ -233,6 +234,9 @@ export default function ProfessionalRegistrationForm() {
           houseNumber: data.houseNumber,
           street: data.street,
           city: data.city,
+          country: data.country,
+          businessIdType: data.businessIdType,
+          businessIdFormatted: data.businessIdFormatted,
         }),
       });
 
@@ -262,10 +266,7 @@ export default function ProfessionalRegistrationForm() {
       <>
         <RegistrationSteps currentStep={currentStep} />
         <main className='flex-1 flex items-center justify-center px-4 py-12'>
-          <div className='flex flex-col items-center gap-4'>
-            <div className='w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin' />
-            <p className='text-muted-foreground'>Laden...</p>
-          </div>
+<Loader text='Laden...' />
         </main>
       </>
     );

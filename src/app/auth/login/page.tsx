@@ -179,7 +179,7 @@ function LoginForm() {
                 />
               </button>
 
-              <button
+              {/* <button
                 type='button'
                 onClick={() => handleOAuthLogin('facebook')}
                 className='flex-1 py-4 cursor-pointer bg-white border border-neutral-300 rounded-lg flex items-center justify-center hover:bg-neutral-50 transition-colors'
@@ -205,7 +205,7 @@ function LoginForm() {
                   width={24}
                   height={24}
                 />
-              </button>
+              </button> */}
             </div>
 
             <div className='text-center'>
