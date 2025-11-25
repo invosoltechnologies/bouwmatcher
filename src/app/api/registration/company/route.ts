@@ -18,20 +18,31 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { companyName, kvkNumber, postalCode, houseNumber, street, city } = body;
+    const {
+      companyName,
+      kvkNumber,
+      postalCode,
+      houseNumber,
+      street,
+      city,
+      country,
+      businessIdType,
+      businessIdFormatted,
+    } = body;
 
-    if (!companyName || !kvkNumber || !postalCode || !houseNumber || !street || !city) {
+    if (!companyName || !kvkNumber || !postalCode || !houseNumber || !street || !city || !country || !businessIdType) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
     }
 
-    // Check if company already exists by business_id (KVK number)
+    // Check if company already exists by business_id and country
     const { data: existingCompany } = await supabase
       .from('professional_companies')
       .select('id')
       .eq('business_id', kvkNumber)
+      .eq('country', country)
       .single();
 
     let companyId: string;
@@ -47,6 +58,9 @@ export async function POST(request: NextRequest) {
         .insert({
           company_name: companyName,
           business_id: kvkNumber,
+          business_id_type: businessIdType,
+          business_id_formatted: businessIdFormatted || kvkNumber,
+          country: country,
           postal_code: postalCode,
           house_number: houseNumber,
           street_name: street,

@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Search } from 'lucide-react';
 import { useDebounce } from '@/hooks';
 
@@ -16,6 +17,9 @@ interface CompanySearchResult {
   postalCode: string;
   houseNumber: string;
   street: string;
+  country?: 'NL' | 'BE';
+  businessIdType?: 'KVK' | 'KBO';
+  businessIdFormatted?: string;
 }
 
 interface CompanyRegistrationFormProps {
@@ -30,6 +34,9 @@ export interface CompanyData {
   houseNumber: string;
   street: string;
   city: string;
+  country: 'NL' | 'BE';
+  businessIdType: 'KVK' | 'KBO';
+  businessIdFormatted?: string;
 }
 
 type FormMode = 'search' | 'manual';
@@ -39,6 +46,7 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<CompanySearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [country, setCountry] = useState<'NL' | 'BE'>('NL');
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
@@ -47,10 +55,15 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
     handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm<CompanyData>();
+  } = useForm<CompanyData>({
+    defaultValues: {
+      country: 'NL',
+      businessIdType: 'KVK',
+    },
+  });
 
   // Auto-search when user types (debounced)
-  const performSearch = useCallback(async (query: string) => {
+  const performSearch = useCallback(async (query: string, selectedCountry: 'NL' | 'BE') => {
     if (!query || query.trim().length < 2) {
       setSearchResults([]);
       return;
@@ -59,7 +72,9 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
     setIsSearching(true);
 
     try {
-      const response = await fetch(`/api/company-search?query=${encodeURIComponent(query)}`);
+      const response = await fetch(
+        `/api/company-search?query=${encodeURIComponent(query)}&country=${selectedCountry}`
+      );
 
       if (!response.ok) {
         throw new Error('Failed to search companies');
@@ -77,9 +92,9 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
 
   useEffect(() => {
     if (mode === 'search') {
-      performSearch(debouncedSearchQuery);
+      performSearch(debouncedSearchQuery, country);
     }
-  }, [debouncedSearchQuery, mode, performSearch]);
+  }, [debouncedSearchQuery, country, mode, performSearch]);
 
   // Handle company selection from results
   const handleSelectCompany = (company: CompanySearchResult) => {
@@ -89,6 +104,11 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
     setValue('houseNumber', company.houseNumber);
     setValue('street', company.street);
     setValue('city', company.city);
+    setValue('country', company.country || country);
+    setValue('businessIdType', company.businessIdType || (country === 'BE' ? 'KBO' : 'KVK'));
+    if (company.businessIdFormatted) {
+      setValue('businessIdFormatted', company.businessIdFormatted);
+    }
     setMode('manual');
   };
 
@@ -96,6 +116,18 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
   const handleManualEntry = () => {
     setMode('manual');
     setValue('companyName', searchQuery);
+    setValue('country', country);
+    setValue('businessIdType', country === 'BE' ? 'KBO' : 'KVK');
+  };
+
+  // Handle country change
+  const handleCountryChange = (newCountry: 'NL' | 'BE') => {
+    setCountry(newCountry);
+    setValue('country', newCountry);
+    setValue('businessIdType', newCountry === 'BE' ? 'KBO' : 'KVK');
+    // Clear search results when country changes
+    setSearchResults([]);
+    setSearchQuery('');
   };
 
   // Handle back button
@@ -126,6 +158,28 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
         <p className='text-base md:text-lg text-muted-foreground'>
           Zoek op bedrijfsnaam of Bedrijfs ID
         </p>
+      </div>
+
+      {/* Country Selector */}
+      <div className='mb-8 flex justify-center'>
+        <RadioGroup
+          value={country}
+          onValueChange={(value) => handleCountryChange(value as 'NL' | 'BE')}
+          className='flex gap-4'
+        >
+          <div className='flex items-center space-x-2'>
+            <RadioGroupItem value='NL' id='nl' />
+            <Label htmlFor='nl' className='text-base font-medium cursor-pointer'>
+              Nederland
+            </Label>
+          </div>
+          <div className='flex items-center space-x-2'>
+            <RadioGroupItem value='BE' id='be' />
+            <Label htmlFor='be' className='text-base font-medium cursor-pointer'>
+              België
+            </Label>
+          </div>
+        </RadioGroup>
       </div>
 
       {/* Search Mode */}
@@ -163,7 +217,8 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
                       {company.address}, {company.city}
                     </p>
                     <p className='text-sm text-slate-500'>
-                      Bedrijfs ID {company.kvkNumber}
+                      {company.businessIdType === 'KBO' ? 'KBO' : 'Bedrijfs ID'}{' '}
+                      {company.businessIdFormatted || company.kvkNumber}
                     </p>
                   </div>
                   <Button
@@ -228,31 +283,41 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
               )}
             </div>
 
-            {/* KVK Number */}
+            {/* Business ID (KVK/KBO Number) */}
             <div>
               <Label
                 htmlFor='kvkNumber'
                 className='text-base text-slate-900 mb-2 block'
               >
-                Bedrijfs ID
+                {country === 'BE' ? 'Ondernemingsnummer (KBO)' : 'Bedrijfs ID (KVK)'}
               </Label>
               <Input
                 id='kvkNumber'
                 {...register('kvkNumber', {
-                  required: 'Bedrijfs ID is verplicht',
-                  pattern: {
-                    value: /^\d{8}$/,
-                    message: 'Bedrijfs ID moet 8 cijfers zijn',
-                  },
+                  required: `${country === 'BE' ? 'Ondernemingsnummer' : 'Bedrijfs ID'} is verplicht`,
+                  pattern: country === 'BE'
+                    ? {
+                        value: /^\d{10}$/,
+                        message: 'Ondernemingsnummer moet 10 cijfers zijn',
+                      }
+                    : {
+                        value: /^\d{8}$/,
+                        message: 'Bedrijfs ID moet 8 cijfers zijn',
+                      },
                 })}
                 type='text'
-                placeholder='12345678'
-                maxLength={8}
+                placeholder={country === 'BE' ? '0123456789' : '12345678'}
+                maxLength={country === 'BE' ? 10 : 8}
                 className='h-14 bg-white border-neutral-300 rounded-lg text-base'
               />
               {errors.kvkNumber && (
                 <p className='text-red-500 text-sm mt-1'>
                   {errors.kvkNumber.message}
+                </p>
+              )}
+              {country === 'BE' && (
+                <p className='text-sm text-slate-500 mt-1'>
+                  Formaat: 0123456789 (10 cijfers)
                 </p>
               )}
             </div>

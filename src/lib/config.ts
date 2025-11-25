@@ -35,3 +35,10 @@ export const EMAIL_CONFIG = {
   fromName: 'Bouwmatcher',
   baseUrl: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
 } as const;
+
+// Belgian KBO API Configuration (server-side only)
+export const KBO_CONFIG = {
+  apiKey: process.env.KBO_API_KEY,
+  apiUrl: process.env.KBO_API_URL || 'https://api.kbodata.app/v2',
+  mockApiUrl: 'https://mock.api.kbodata.app/v2', // For development/testing
+} as const;
