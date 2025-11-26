@@ -89,7 +89,7 @@ export default function CompanyHeaderCard({
         >
           <h3 className='text-base font-medium mb-3'>Contactgegevens</h3>
           <div className='flex flex-col gap-2'>
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center gap-3'>
               <Phone className='w-4.5 h-5.5 text-primary' />
               <a
                 href={`tel:${contactInfo.phoneNumber}`}
@@ -98,7 +98,7 @@ export default function CompanyHeaderCard({
                 {contactInfo.phoneNumber}
               </a>
             </div>
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center gap-3'>
               <Mail className='w-4.5 h-5.5 text-primary' />
               <a
                 href={`mailto:${contactInfo.quotesEmail}`}
@@ -109,7 +109,7 @@ export default function CompanyHeaderCard({
             </div>
             {/* Share Profile Button */}
             <Button
-              className='w-full rounded-xl py-4 px-13.5 text-base mt-3.5'
+              className='w-full rounded-xl py-4 px-13.5 text-base mt-3'
               size='lg'
               onClick={handleShareClick}
             >
