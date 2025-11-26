@@ -9,6 +9,7 @@ export interface WorkAreaData {
   work_address: string;
   work_postal_code: string | null;
   work_city: string | null;
+  work_country: string | null;
   work_latitude: number;
   work_longitude: number;
   service_radius_km: number;

@@ -120,6 +120,7 @@ export default function ProfessionalRegistrationForm() {
           work_address: data.location,
           work_postal_code: data.postalCode,
           work_city: data.city,
+          work_country: data.country,
           work_latitude: data.latitude,
           work_longitude: data.longitude,
           service_radius_km: data.serviceRadius,

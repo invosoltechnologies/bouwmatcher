@@ -10,6 +10,7 @@ import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { useUpdateWorkArea } from '@/lib/hooks/professional/account/useUpdateWorkArea';
 import type { WorkAreaData } from '@/lib/hooks/professional/account/useWorkArea';
+import { extractLocationDetails, type GoogleAddressComponent } from '@/lib/utils/address-parser';
 
 interface EditWorkAreaModalProps {
   isOpen: boolean;
@@ -29,7 +30,7 @@ function PlacesAutocompleteInput({
   inputValue,
   setInputValue,
 }: {
-  onPlaceSelect: (place: { address: string; lat: number; lng: number }) => void;
+  onPlaceSelect: (place: { address: string; lat: number; lng: number; addressComponents?: GoogleAddressComponent[] }) => void;
   inputValue: string;
   setInputValue: (value: string) => void;
 }) {
@@ -59,7 +60,7 @@ function PlacesAutocompleteInput({
     autocompleteService.getPlacePredictions(
       {
         input: value,
-        componentRestrictions: { country: 'nl' },
+        componentRestrictions: { country: ['nl', 'be'] },
       },
       (predictions, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
@@ -77,17 +78,18 @@ function PlacesAutocompleteInput({
     placesService.getDetails(
       {
         placeId: placeId,
-        fields: ['geometry', 'formatted_address'],
+        fields: ['geometry', 'formatted_address', 'address_components'],
       },
       (place, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && place?.geometry?.location) {
           const lat = place.geometry.location.lat();
           const lng = place.geometry.location.lng();
           const address = place.formatted_address || description;
+          const addressComponents = place.address_components as GoogleAddressComponent[] | undefined;
 
           setInputValue(address);
           setSuggestions([]);
-          onPlaceSelect({ address, lat, lng });
+          onPlaceSelect({ address, lat, lng, addressComponents });
         }
       }
     );
@@ -106,7 +108,7 @@ function PlacesAutocompleteInput({
     autocompleteService.getPlacePredictions(
       {
         input: inputValue,
-        componentRestrictions: { country: 'nl' },
+        componentRestrictions: { country: ['nl', 'be'] },
       },
       (predictions, status) => {
         setIsSearching(false);
@@ -303,6 +305,7 @@ function EditWorkAreaModalContent({ isOpen, onClose, initialData }: EditWorkArea
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(
     initialData ? { lat: Number(initialData.work_latitude), lng: Number(initialData.work_longitude) } : null
   );
+  const [addressComponents, setAddressComponents] = useState<GoogleAddressComponent[]>([]);
   const [selectedRadius, setSelectedRadius] = useState<number>(initialData?.service_radius_km || 10);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
 
@@ -314,7 +317,10 @@ function EditWorkAreaModalContent({ isOpen, onClose, initialData }: EditWorkArea
       const data = await response.json();
 
       if (response.ok && data.address) {
-        return data.address;
+        return {
+          address: data.address,
+          addressComponents: data.addressComponents || [],
+        };
       }
     } catch (error) {
       console.error('Error reverse geocoding:', error);
@@ -323,10 +329,13 @@ function EditWorkAreaModalContent({ isOpen, onClose, initialData }: EditWorkArea
     return null;
   }, []);
 
-  const handlePlaceSelect = useCallback((place: { address: string; lat: number; lng: number }) => {
+  const handlePlaceSelect = useCallback((place: { address: string; lat: number; lng: number; addressComponents?: GoogleAddressComponent[] }) => {
     setSelectedLocation(place.address);
     setInputValue(place.address);
     setCoordinates({ lat: place.lat, lng: place.lng });
+    if (place.addressComponents) {
+      setAddressComponents(place.addressComponents);
+    }
   }, []);
 
   const handleMapClick = useCallback(
@@ -334,10 +343,11 @@ function EditWorkAreaModalContent({ isOpen, onClose, initialData }: EditWorkArea
       setCoordinates({ lat, lng });
       setInputValue('Adres ophalen...');
 
-      const address = await reverseGeocode(lat, lng);
-      if (address) {
-        setSelectedLocation(address);
-        setInputValue(address);
+      const result = await reverseGeocode(lat, lng);
+      if (result) {
+        setSelectedLocation(result.address);
+        setInputValue(result.address);
+        setAddressComponents(result.addressComponents);
       } else {
         setInputValue('');
         toast.error('Kon adres niet ophalen voor deze locatie');
@@ -360,10 +370,11 @@ function EditWorkAreaModalContent({ isOpen, onClose, initialData }: EditWorkArea
           setInputValue('Adres ophalen...');
 
           try {
-            const address = await reverseGeocode(lat, lng);
-            if (address) {
-              setSelectedLocation(address);
-              setInputValue(address);
+            const result = await reverseGeocode(lat, lng);
+            if (result) {
+              setSelectedLocation(result.address);
+              setInputValue(result.address);
+              setAddressComponents(result.addressComponents);
               toast.success('Locatie gevonden!');
             } else {
               setInputValue('');
@@ -397,29 +408,15 @@ function EditWorkAreaModalContent({ isOpen, onClose, initialData }: EditWorkArea
       return;
     }
 
-    const extractLocationDetails = (address: string) => {
-      const postalCodeMatch = address.match(/\b\d{4}\s?[A-Z]{2}\b/i);
-      const postalCode = postalCodeMatch ? postalCodeMatch[0].toUpperCase() : null;
-
-      let city = null;
-      if (postalCode) {
-        const parts = address.split(postalCode);
-        if (parts[1]) {
-          const afterPostal = parts[1].trim().split(',')[0].trim();
-          city = afterPostal || null;
-        }
-      }
-
-      return { postalCode, city };
-    };
-
-    const { postalCode, city } = extractLocationDetails(selectedLocation);
+    // Extract postal code, city, and country using the utility function
+    const { postalCode, city, country } = extractLocationDetails(selectedLocation, addressComponents);
 
     updateWorkAreaMutation.mutate(
       {
         work_address: selectedLocation,
         work_postal_code: postalCode,
         work_city: city,
+        work_country: country,
         work_latitude: coordinates.lat,
         work_longitude: coordinates.lng,
         service_radius_km: selectedRadius,

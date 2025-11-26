@@ -32,6 +32,7 @@ export interface ProfessionalProfile {
   work_address: string | null;
   work_postal_code: string | null;
   work_city: string | null;
+  work_country: 'NL' | 'BE' | null;
   work_latitude: number | null;
   work_longitude: number | null;
   service_radius_km: number | null;

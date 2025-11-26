@@ -8,6 +8,7 @@ import { LocateFixed, Compass, Search, Plus, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
+import { extractLocationDetails, type GoogleAddressComponent } from '@/lib/utils/address-parser';
 
 interface WorkAreaFormProps {
   onNext: (data: WorkAreaData) => void;
@@ -22,6 +23,7 @@ export interface WorkAreaData {
   serviceRadius: number;
   postalCode: string | null;
   city: string | null;
+  country: string | null;
 }
 
 const RADIUS_OPTIONS = [
@@ -36,7 +38,7 @@ function PlacesAutocompleteInput({
   inputValue,
   setInputValue,
 }: {
-  onPlaceSelect: (place: { address: string; lat: number; lng: number }) => void;
+  onPlaceSelect: (place: { address: string; lat: number; lng: number; addressComponents?: GoogleAddressComponent[] }) => void;
   inputValue: string;
   setInputValue: (value: string) => void;
 }) {
@@ -68,7 +70,7 @@ function PlacesAutocompleteInput({
     autocompleteService.getPlacePredictions(
       {
         input: value,
-        componentRestrictions: { country: 'nl' }, // Netherlands only
+        componentRestrictions: { country: ['nl', 'be'] }, // Netherlands and Belgium
       },
       (predictions, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
@@ -83,21 +85,22 @@ function PlacesAutocompleteInput({
   const handleSelectSuggestion = (placeId: string, description: string) => {
     if (!placesService) return;
 
-    // Get place details including coordinates
+    // Get place details including coordinates and address components
     placesService.getDetails(
       {
         placeId: placeId,
-        fields: ['geometry', 'formatted_address'],
+        fields: ['geometry', 'formatted_address', 'address_components'],
       },
       (place, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && place?.geometry?.location) {
           const lat = place.geometry.location.lat();
           const lng = place.geometry.location.lng();
           const address = place.formatted_address || description;
+          const addressComponents = place.address_components as GoogleAddressComponent[] | undefined;
 
           setInputValue(address);
           setSuggestions([]);
-          onPlaceSelect({ address, lat, lng });
+          onPlaceSelect({ address, lat, lng, addressComponents });
         }
       }
     );
@@ -116,7 +119,7 @@ function PlacesAutocompleteInput({
     autocompleteService.getPlacePredictions(
       {
         input: inputValue,
-        componentRestrictions: { country: 'nl' },
+        componentRestrictions: { country: ['nl', 'be'] },
       },
       (predictions, status) => {
         setIsSearching(false);
@@ -344,6 +347,7 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(
     initialData ? { lat: initialData.latitude, lng: initialData.longitude } : null
   );
+  const [addressComponents, setAddressComponents] = useState<GoogleAddressComponent[]>([]);
   const [selectedRadius, setSelectedRadius] = useState<number>(initialData?.serviceRadius || 10);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [mapTypeId, setMapTypeId] = useState<'roadmap' | 'satellite' | 'terrain'>('terrain');
@@ -361,7 +365,10 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
 
         if (response.ok && data.address) {
           console.log('Successfully got address:', data.address);
-          return data.address;
+          return {
+            address: data.address,
+            addressComponents: data.addressComponents || [],
+          };
         } else {
           console.error('No results in geocoding response. Status:', data.status);
           console.error('Full response:', data);
@@ -422,10 +429,11 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
             setInputValue('Adres ophalen...');
 
             try {
-              const address = await reverseGeocode(lat, lng);
-              if (address) {
-                setSelectedLocation(address);
-                setInputValue(address);
+              const result = await reverseGeocode(lat, lng);
+              if (result) {
+                setSelectedLocation(result.address);
+                setInputValue(result.address);
+                setAddressComponents(result.addressComponents);
                 toast.success('Je huidige locatie is ingesteld');
               }
             } catch (error) {
@@ -464,10 +472,13 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
   }, [isInitialLoad, initialData, reverseGeocode]);
 
   const handlePlaceSelect = useCallback(
-    (place: { address: string; lat: number; lng: number }) => {
+    (place: { address: string; lat: number; lng: number; addressComponents?: GoogleAddressComponent[] }) => {
       setSelectedLocation(place.address);
       setInputValue(place.address);
       setCoordinates({ lat: place.lat, lng: place.lng });
+      if (place.addressComponents) {
+        setAddressComponents(place.addressComponents);
+      }
     },
     []
   );
@@ -479,10 +490,11 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
       // Show loading state
       setInputValue('Adres ophalen...');
 
-      const address = await reverseGeocode(lat, lng);
-      if (address) {
-        setSelectedLocation(address);
-        setInputValue(address);
+      const result = await reverseGeocode(lat, lng);
+      if (result) {
+        setSelectedLocation(result.address);
+        setInputValue(result.address);
+        setAddressComponents(result.addressComponents);
       } else {
         setInputValue('');
         toast.error('Kon adres niet ophalen voor deze locatie');
@@ -508,12 +520,13 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
           setInputValue('Adres ophalen...');
 
           try {
-            const address = await reverseGeocode(lat, lng);
-            console.log('Got address:', address);
+            const result = await reverseGeocode(lat, lng);
+            console.log('Got address:', result);
 
-            if (address) {
-              setSelectedLocation(address);
-              setInputValue(address);
+            if (result) {
+              setSelectedLocation(result.address);
+              setInputValue(result.address);
+              setAddressComponents(result.addressComponents);
               toast.success('Locatie gevonden!');
             } else {
               setInputValue('');
@@ -547,27 +560,8 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
       return;
     }
 
-    // Extract postal code and city from address
-    const extractLocationDetails = (address: string) => {
-      // Dutch postal code pattern: 4 digits followed by 2 letters (e.g., "1234 AB")
-      const postalCodeMatch = address.match(/\b\d{4}\s?[A-Z]{2}\b/i);
-      const postalCode = postalCodeMatch ? postalCodeMatch[0].toUpperCase() : null;
-
-      // Extract city - typically after postal code, before country
-      let city = null;
-      if (postalCode) {
-        const parts = address.split(postalCode);
-        if (parts[1]) {
-          // Get text after postal code, remove country name
-          const afterPostal = parts[1].trim().split(',')[0].trim();
-          city = afterPostal || null;
-        }
-      }
-
-      return { postalCode, city };
-    };
-
-    const { postalCode, city } = extractLocationDetails(selectedLocation);
+    // Extract postal code, city, and country using the utility function
+    const { postalCode, city, country } = extractLocationDetails(selectedLocation, addressComponents);
 
     onNext({
       location: selectedLocation,
@@ -576,6 +570,7 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
       serviceRadius: selectedRadius,
       postalCode,
       city,
+      country,
     });
   };
 

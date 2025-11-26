@@ -19,7 +19,7 @@ export async function GET() {
 
     const { data: profiles } = await supabase
       .from('professional_profiles')
-      .select('work_address, work_postal_code, work_city, work_latitude, work_longitude, service_radius_km')
+      .select('work_address, work_postal_code, work_city, work_country, work_latitude, work_longitude, service_radius_km')
       .eq('user_id', user.id)
       .limit(1);
 
@@ -45,6 +45,7 @@ export async function GET() {
         work_address: profile.work_address,
         work_postal_code: profile.work_postal_code,
         work_city: profile.work_city,
+        work_country: profile.work_country,
         work_latitude: profile.work_latitude,
         work_longitude: profile.work_longitude,
         service_radius_km: profile.service_radius_km || 10,
@@ -82,6 +83,7 @@ export async function POST(request: NextRequest) {
       work_address,
       work_postal_code,
       work_city,
+      work_country,
       work_latitude,
       work_longitude,
       service_radius_km,
@@ -118,11 +120,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate country if provided
+    if (work_country && work_country !== 'NL' && work_country !== 'BE') {
+      return NextResponse.json(
+        { error: 'Invalid country code. Must be NL or BE' },
+        { status: 400 }
+      );
+    }
+
     // Update professional profile with work area data
     const updateData = {
       work_address,
       work_postal_code: work_postal_code || null,
       work_city: work_city || null,
+      work_country: work_country || null,
       work_latitude,
       work_longitude,
       service_radius_km: service_radius_km || 10,
