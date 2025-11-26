@@ -44,7 +44,7 @@ export default function WorkAreaCard({ onEdit }: WorkAreaCardProps) {
             variant='outline'
             size='default'
             onClick={onEdit}
-            className='text-primary border-primary font-normal text-base rounded-xl'
+            className='text-primary border-primary font-normal text-sm rounded-xl'
           >
             Wijzig
           </Button>
@@ -77,7 +77,7 @@ export default function WorkAreaCard({ onEdit }: WorkAreaCardProps) {
         {/* Work Address */}
         <div className='flex items-center justify-between py-3 border-b border-neutral-200'>
           <span className='text-sm text-muted-foreground'>Werklocatie</span>
-          <span className='text-base text-slate-900 text-right'>
+          <span className='text-sm text-slate-900 text-right'>
             {workArea.work_address}
           </span>
         </div>
@@ -86,7 +86,7 @@ export default function WorkAreaCard({ onEdit }: WorkAreaCardProps) {
         {workArea.work_postal_code && (
           <div className='flex items-center justify-between py-3 border-b border-neutral-200'>
             <span className='text-sm text-muted-foreground'>Postcode</span>
-            <span className='text-base text-slate-900'>{workArea.work_postal_code}</span>
+            <span className='text-sm text-slate-900'>{workArea.work_postal_code}</span>
           </div>
         )}
 
@@ -94,14 +94,14 @@ export default function WorkAreaCard({ onEdit }: WorkAreaCardProps) {
         {workArea.work_city && (
           <div className='flex items-center justify-between py-3 border-b border-neutral-200'>
             <span className='text-sm text-muted-foreground'>Stad</span>
-            <span className='text-base text-slate-900'>{workArea.work_city}</span>
+            <span className='text-sm text-slate-900'>{workArea.work_city}</span>
           </div>
         )}
 
         {/* Service Radius */}
         <div className='flex items-center justify-between py-3 border-b border-neutral-200'>
           <span className='text-sm text-muted-foreground'>Service straal</span>
-          <span className='text-base text-slate-900'>
+          <span className='text-sm text-slate-900'>
             {workArea.service_radius_km === 50
               ? '+50 km'
               : `${workArea.service_radius_km} km`}
@@ -111,7 +111,7 @@ export default function WorkAreaCard({ onEdit }: WorkAreaCardProps) {
         {/* Coordinates */}
         <div className='flex items-center justify-between py-3'>
           <span className='text-sm text-muted-foreground'>Coördinaten</span>
-          <span className='text-base text-slate-900 text-right'>
+          <span className='text-sm text-slate-900 text-right'>
             {Number(workArea.work_latitude).toFixed(6)}, {Number(workArea.work_longitude).toFixed(6)}
           </span>
         </div>
