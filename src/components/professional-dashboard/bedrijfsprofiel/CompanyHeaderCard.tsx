@@ -1,9 +1,11 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MapPin, Pencil, Phone, Mail } from 'lucide-react';
+import { Rating, RatingButton } from '@/components/ui/shadcn-io/rating';
+import { MapPin, Pencil, Phone, Mail, Building2 } from 'lucide-react';
 import type { CompanyInfoData, ContactInfoData } from '@/lib/types/account';
+import Image from 'next/image';
 
 interface CompanyHeaderCardProps {
   companyInfo: CompanyInfoData;
@@ -16,61 +18,79 @@ export default function CompanyHeaderCard({
   contactInfo,
   onEditClick,
 }: CompanyHeaderCardProps) {
+  const handleShareClick = () => {
+    console.log('Share profile link:', {
+      companyName: companyInfo.companyName,
+      businessId: companyInfo.businessId,
+      url: `${window.location.origin}/professional/${companyInfo.businessId}`,
+    });
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <div className='flex items-start justify-between'>
+    <Card className='px-5 gap-4'>
+      <CardContent className='p-0 flex justify-between items-center'>
+        <div className='flex items-center gap-6.5'>
+          <div className='flex items-center justify-center px-14 py-9.5 bg-slate-100 rounded-lg flex-shrink-0'>
+            <Building2 className='w-7 h-9 text-gray-500' />
+          </div>
+
           <div className='flex-1'>
-            <div className='flex items-center gap-2 mb-1'>
-              <CardTitle className='text-2xl font-semibold'>
+            <div className='flex items-center gap-2 mb-2'>
+              <h2 className='text-xl font-normal leading-normal'>
                 {companyInfo.companyName}
-              </CardTitle>
+              </h2>
               <button
                 onClick={onEditClick}
-                className='text-muted-foreground hover:text-primary transition-colors'
+                className='text-muted-foreground cursor-pointer transition-all group'
                 aria-label='Bewerken'
               >
-                <Pencil className='w-5 h-5' />
+                <Image
+                  src='/icons/edit-pencil.svg'
+                  className='mb-1 transition-all group-hover:[filter:brightness(0)_saturate(100%)_invert(15%)_sepia(91%)_saturate(2528%)_hue-rotate(214deg)_brightness(94%)_contrast(107%)]'
+                  alt='Bewerken'
+                  width={16}
+                  height={16}
+                />
               </button>
             </div>
             <div className='flex items-center gap-1 text-muted-foreground mb-2'>
-              <MapPin className='w-4 h-4' />
-              <span className='text-sm'>{companyInfo.city}</span>
+              <MapPin className='w-auto h-4' />
+              <span className='text-sm leading-snug'>{companyInfo.city}</span>
             </div>
-            <div className='flex items-center gap-1'>
+            <div className='flex items-center gap-1 mb-3'>
               {/* Empty star ratings */}
-              {[...Array(5)].map((_, i) => (
-                <svg
-                  key={i}
-                  className='w-4 h-4 text-gray-300'
-                  fill='currentColor'
-                  viewBox='0 0 20 20'
-                >
-                  <path d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z' />
-                </svg>
-              ))}
-              <span className='text-sm text-muted-foreground ml-2'>Geen reviews</span>
+              <Rating defaultValue={3}>
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <RatingButton
+                    className='text-yellow-500'
+                    key={index}
+                    size={21}
+                  />
+                ))}
+              </Rating>
+
+              <span className='text-sm text-muted-foreground ml-2'>
+                Geen reviews
+              </span>
             </div>
-            <p className='text-xs text-muted-foreground mt-1'>
+            <p className='text-xs text-muted-foreground bg-slate-50 rounded-full p-2'>
               Dit bedrijf heeft zich recent bij Bouwmatcher aangesloten!
             </p>
           </div>
         </div>
-      </CardHeader>
 
-      <CardContent>
         {/* Contact Details with Gradient Background */}
         <div
-          className='rounded-xl p-5 mb-4'
+          className='rounded-xl p-5.5 mb-4'
           style={{
             background:
               'linear-gradient(90deg, rgba(10, 178, 126, 0.1) 0%, rgba(2, 58, 162, 0.1) 100%)',
           }}
         >
-          <h3 className='text-sm font-semibold mb-3'>Contactgegevens</h3>
-          <div className='space-y-2'>
+          <h3 className='text-base font-medium mb-3'>Contactgegevens</h3>
+          <div className='flex flex-col gap-2'>
             <div className='flex items-center gap-2'>
-              <Phone className='w-4 h-4 text-primary' />
+              <Phone className='w-4.5 h-5.5 text-primary' />
               <a
                 href={`tel:${contactInfo.phoneNumber}`}
                 className='text-sm text-primary hover:underline'
@@ -79,7 +99,7 @@ export default function CompanyHeaderCard({
               </a>
             </div>
             <div className='flex items-center gap-2'>
-              <Mail className='w-4 h-4 text-primary' />
+              <Mail className='w-4.5 h-5.5 text-primary' />
               <a
                 href={`mailto:${contactInfo.quotesEmail}`}
                 className='text-sm text-primary hover:underline'
@@ -87,13 +107,16 @@ export default function CompanyHeaderCard({
                 {contactInfo.quotesEmail}
               </a>
             </div>
+            {/* Share Profile Button */}
+            <Button
+              className='w-full rounded-xl py-4 px-13.5 text-base mt-3.5'
+              size='lg'
+              onClick={handleShareClick}
+            >
+              Bedrijfsprofiel delen
+            </Button>
           </div>
         </div>
-
-        {/* Share Profile Button */}
-        <Button className='w-full rounded-xl' size='lg'>
-          Bedrijfsprofiel delen
-        </Button>
       </CardContent>
     </Card>
   );
