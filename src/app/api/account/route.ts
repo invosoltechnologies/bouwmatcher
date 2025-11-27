@@ -74,9 +74,22 @@ export async function GET() {
 
     console.log('Company data:', companyData ? 'Found' : 'Not found, using defaults');
 
+    // Fetch certificates for the professional profile
+    const { data: certificatesData } = await supabase
+      .from('professional_certificates')
+      .select('*')
+      .eq('professional_profile_id', profileData.id)
+      .order('created_at', { ascending: false });
+
+    // Add certificates to profile data
+    const profileWithCertificates = {
+      ...profileData,
+      certificates: certificatesData || [],
+    };
+
     // Transform database data to frontend format
     const accountData = transformAccountData({
-      profile: profileData as ProfessionalProfile,
+      profile: profileWithCertificates as ProfessionalProfile,
       company: companyData as Company,
     });
 

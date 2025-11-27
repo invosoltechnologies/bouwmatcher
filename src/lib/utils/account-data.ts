@@ -221,5 +221,6 @@ export function transformAccountData(rawData: AccountDataRaw): AccountData {
     ),
     roleInCompany: rawData.profile.role_in_company,
     portfolioPhotos: rawData.profile.portfolio_photos || [],
+    certificates: rawData.profile.certificates || [],
   };
 }

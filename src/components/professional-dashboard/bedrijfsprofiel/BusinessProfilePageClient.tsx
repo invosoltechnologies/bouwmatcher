@@ -86,7 +86,7 @@ export default function BusinessProfilePageClient() {
           <ProjectPhotosCard photos={accountData.portfolioPhotos} />
           <ReviewsSection />
           <LocationMapCard />
-          <CertificatesCard />
+          <CertificatesCard certificates={accountData.certificates} />
         </div>
 
         {/* Right Column - Sidebar */}

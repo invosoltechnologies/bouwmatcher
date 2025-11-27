@@ -39,7 +39,20 @@ export interface GetAccountResponse {
     };
     roleInCompany: string | null;
     portfolioPhotos: string[];
+    certificates: Certificate[];
   };
+}
+
+export interface Certificate {
+  id: string;
+  professional_profile_id: string;
+  title: string;
+  issuing_organization: string;
+  issue_date: string;
+  expiry_date: string;
+  file_url: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ProfileTask {

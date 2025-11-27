@@ -21,8 +21,22 @@ export interface ProfessionalProfile {
   gender: string | null; // 'male' | 'female' | 'other' | 'prefer_not_to_say'
   // Portfolio photos
   portfolio_photos: string[] | null;
+  // Certificates
+  certificates: Certificate[] | null;
   created_at: string | null;
   updated_at: string | null;
+}
+
+export interface Certificate {
+  id: string;
+  professional_profile_id: string;
+  title: string;
+  issuing_organization: string;
+  issue_date: string;
+  expiry_date: string;
+  file_url: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Company {
@@ -69,6 +83,7 @@ export interface AccountData {
   profileCompletion: ProfileCompletionData;
   roleInCompany: string | null;
   portfolioPhotos: string[];
+  certificates: Certificate[];
 }
 
 // Frontend display types
