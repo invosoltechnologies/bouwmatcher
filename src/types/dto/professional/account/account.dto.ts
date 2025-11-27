@@ -20,6 +20,11 @@ export interface GetAccountResponse {
       city: string;
       website: string;
       businessId: string;
+      businessEmail: string;
+      businessPhone: string;
+      businessDescription: string;
+      logoUrl: string;
+      companyId: string;
     };
     contactInfo: {
       contactPerson: string;
@@ -32,6 +37,7 @@ export interface GetAccountResponse {
       percentage: number;
       tasks: ProfileTask[];
     };
+    roleInCompany: string | null;
   };
 }
 

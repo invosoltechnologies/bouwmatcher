@@ -20,20 +20,28 @@ export async function PATCH(request: NextRequest) {
 
     // Get the request body
     const body = await request.json();
-    const { companyName, address, postalCode, city, website, businessId, businessEmail, businessPhone } = body;
+    const { description } = body;
 
     // Validate required fields
-    if (!companyName || !address || !postalCode || !city) {
+    if (description === undefined || description === null) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Description is required' },
         { status: 400 }
       );
     }
 
-    // Get the user's professional profile to find company_id
+    // Validate description length
+    if (description.length > 360) {
+      return NextResponse.json(
+        { error: 'Description must be 360 characters or less' },
+        { status: 400 }
+      );
+    }
+
+    // Get the user's professional profile to find company_id and role
     const { data: profileData, error: profileError } = await supabase
       .from('professional_profiles')
-      .select('company_id')
+      .select('company_id, role_in_company')
       .eq('user_id', user.id)
       .single();
 
@@ -51,18 +59,19 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    // Update company information
+    // Check if user is owner
+    if (profileData.role_in_company !== 'owner') {
+      return NextResponse.json(
+        { error: 'Only company owners can update the description' },
+        { status: 403 }
+      );
+    }
+
+    // Update company description
     const { data: updatedCompany, error: updateError } = await supabase
       .from('professional_companies')
       .update({
-        company_name: companyName,
-        full_address: address,
-        postal_code: postalCode,
-        city,
-        website: website || null,
-        business_id: businessId || null,
-        business_email: businessEmail || null,
-        business_phone: businessPhone || null,
+        business_description: description.trim(),
         updated_at: new Date().toISOString(),
       })
       .eq('id', profileData.company_id)
@@ -70,9 +79,9 @@ export async function PATCH(request: NextRequest) {
       .single();
 
     if (updateError) {
-      console.error('Error updating company:', updateError);
+      console.error('Error updating company description:', updateError);
       return NextResponse.json(
-        { error: 'Failed to update company information' },
+        { error: 'Failed to update company description' },
         { status: 500 }
       );
     }
@@ -82,7 +91,7 @@ export async function PATCH(request: NextRequest) {
       company: updatedCompany
     });
   } catch (error) {
-    console.error('Error in company update API:', error);
+    console.error('Error in company description update API:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

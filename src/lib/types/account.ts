@@ -45,6 +45,7 @@ export interface Company {
   employee_count: string | null;
   service_categories: string[] | null;
   service_areas: string[] | null;
+  logo_url: string | null;
   is_active: boolean | null;
   created_at: string | null;
   updated_at: string | null;
@@ -62,6 +63,7 @@ export interface AccountData {
   companyInfo: CompanyInfoData;
   contactInfo: ContactInfoData;
   profileCompletion: ProfileCompletionData;
+  roleInCompany: string | null;
 }
 
 // Frontend display types
@@ -79,6 +81,11 @@ export interface CompanyInfoData {
   city: string;
   website: string;
   businessId: string;
+  businessEmail: string;
+  businessPhone: string;
+  businessDescription: string;
+  logoUrl: string;
+  companyId: string;
 }
 
 export interface ContactInfoData {
@@ -99,4 +106,20 @@ export interface ProfileTask {
 export interface ProfileCompletionData {
   percentage: number;
   tasks: ProfileTask[];
+}
+
+// Company rating types
+export interface CompanyRating {
+  id: string;
+  company_id: string;
+  rated_by_profile_id: string;
+  rating: number;
+  review_text: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CompanyRatingSummary {
+  averageRating: number;
+  totalRatings: number;
 }

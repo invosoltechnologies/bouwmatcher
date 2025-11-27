@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useAccount } from '@/lib/hooks/professional/account';
+import { useCompanyRatings } from '@/lib/hooks/professional/ratings';
 import CompanyHeaderCard from './CompanyHeaderCard';
 import CompanyDescriptionCard from './CompanyDescriptionCard';
 import ProjectPhotosCard from './ProjectPhotosCard';
@@ -11,10 +12,33 @@ import CertificatesCard from './CertificatesCard';
 import ProfileCompletionCard from '../account/ProfileCompletionCard';
 import MoreInfoCard from './MoreInfoCard';
 import EditCompanyModal from '../account/EditCompanyModal';
+import EditCompanyDescriptionModal from './EditCompanyDescriptionModal';
+import CompanyLogoUploadModal from './CompanyLogoUploadModal';
+import CompanyRatingModal from './CompanyRatingModal';
 
 export default function BusinessProfilePageClient() {
   const { data, isLoading } = useAccount();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
+  const [isLogoModalOpen, setIsLogoModalOpen] = useState(false);
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+
+  // Fetch company ratings (using optional company ID)
+  const companyId = data?.accountData?.companyInfo?.companyId || '';
+  const {
+    data: ratingsData,
+    isLoading: ratingsLoading,
+  } = useCompanyRatings(companyId);
+
+  // Find user's existing rating
+  const userRating = useMemo(() => {
+    if (!ratingsData?.ratings) return null;
+    return (
+      ratingsData.ratings.find(
+        (r) => r.rated_by_profile_id === companyId
+      ) || null
+    );
+  }, [ratingsData, companyId]);
 
   if (isLoading) {
     return (
@@ -41,13 +65,21 @@ export default function BusinessProfilePageClient() {
         companyInfo={accountData.companyInfo}
         contactInfo={accountData.contactInfo}
         onEditClick={() => setIsEditModalOpen(true)}
+        roleInCompany={accountData.roleInCompany}
+        onLogoClick={() => setIsLogoModalOpen(true)}
+        onRatingClick={() => setIsRatingModalOpen(true)}
+        ratingSummary={ratingsLoading ? undefined : ratingsData?.summary}
       />
 
       {/* Two Column Layout */}
       <div className='flex flex-col lg:flex-row gap-6'>
         {/* Left Column - Main Content */}
         <div className='flex-1 space-y-6'>
-          <CompanyDescriptionCard />
+          <CompanyDescriptionCard
+            description={accountData.companyInfo.businessDescription}
+            roleInCompany={accountData.roleInCompany}
+            onEditClick={() => setIsDescriptionModalOpen(true)}
+          />
           <ProjectPhotosCard />
           <ReviewsSection />
           <LocationMapCard />
@@ -72,6 +104,29 @@ export default function BusinessProfilePageClient() {
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         companyInfo={accountData.companyInfo}
+        roleInCompany={accountData.roleInCompany}
+      />
+
+      {/* Edit Company Description Modal */}
+      <EditCompanyDescriptionModal
+        isOpen={isDescriptionModalOpen}
+        onClose={() => setIsDescriptionModalOpen(false)}
+        currentDescription={accountData.companyInfo.businessDescription}
+      />
+
+      {/* Company Logo Upload Modal */}
+      <CompanyLogoUploadModal
+        isOpen={isLogoModalOpen}
+        onClose={() => setIsLogoModalOpen(false)}
+        currentLogoUrl={accountData.companyInfo.logoUrl}
+      />
+
+      {/* Company Rating Modal */}
+      <CompanyRatingModal
+        isOpen={isRatingModalOpen}
+        onClose={() => setIsRatingModalOpen(false)}
+        companyId={accountData.companyInfo.companyId}
+        existingRating={userRating}
       />
     </div>
   );

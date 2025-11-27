@@ -13,6 +13,7 @@ interface EditCompanyModalProps {
   isOpen: boolean;
   onClose: () => void;
   companyInfo: CompanyInfoData;
+  roleInCompany?: string | null;
 }
 
 interface CompanyFormData {
@@ -22,13 +23,18 @@ interface CompanyFormData {
   city: string;
   website: string;
   businessId: string;
+  businessEmail: string;
+  businessPhone: string;
 }
 
 export default function EditCompanyModal({
   isOpen,
   onClose,
   companyInfo,
+  roleInCompany,
 }: EditCompanyModalProps) {
+  const isOwner = roleInCompany === 'owner';
+
   const {
     register,
     handleSubmit,
@@ -41,6 +47,8 @@ export default function EditCompanyModal({
       city: companyInfo.city,
       website: companyInfo.website,
       businessId: companyInfo.businessId,
+      businessEmail: companyInfo.businessEmail,
+      businessPhone: companyInfo.businessPhone,
     },
   });
 
@@ -62,6 +70,8 @@ export default function EditCompanyModal({
       city: data.city,
       website: data.website || null,
       businessId: data.businessId || null,
+      businessEmail: data.businessEmail || null,
+      businessPhone: data.businessPhone || null,
     });
   };
 
@@ -172,10 +182,56 @@ export default function EditCompanyModal({
             {...register('website')}
             type='text'
             className='w-full'
+            disabled={!isOwner}
           />
           {errors.website && (
             <p className='text-destructive text-sm mt-1'>
               {errors.website.message}
+            </p>
+          )}
+        </div>
+
+        {/* Business Email (owner only) */}
+        <div>
+          <Label htmlFor='businessEmail' className='text-base font-medium mb-2'>
+            Bedrijfs E-mail {!isOwner && '(alleen eigenaar kan bewerken)'}
+          </Label>
+          <Input
+            id='businessEmail'
+            {...register('businessEmail', {
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: 'Ongeldig e-mailadres',
+              },
+            })}
+            type='email'
+            className='w-full'
+            placeholder='info@bedrijf.nl'
+            disabled={!isOwner}
+          />
+          {errors.businessEmail && (
+            <p className='text-destructive text-sm mt-1'>
+              {errors.businessEmail.message}
+            </p>
+          )}
+        </div>
+
+        {/* Business Phone (owner only) */}
+        <div>
+          <Label htmlFor='businessPhone' className='text-base font-medium mb-2'>
+            Bedrijfs Telefoon {!isOwner && '(alleen eigenaar kan bewerken)'}
+          </Label>
+          <Input
+            id='businessPhone'
+            {...register('businessPhone')}
+            type='tel'
+            className='w-full'
+            placeholder='+31 6 12345678'
+            disabled={!isOwner}
+          />
+          {errors.businessPhone && (
+            <p className='text-destructive text-sm mt-1'>
+              {errors.businessPhone.message}
             </p>
           )}
         </div>

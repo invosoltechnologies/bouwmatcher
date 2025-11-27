@@ -113,6 +113,11 @@ export function transformToCompanyInfo(
       city: '-',
       website: '-',
       businessId: '-',
+      businessEmail: '-',
+      businessPhone: '-',
+      businessDescription: '-',
+      logoUrl: '',
+      companyId: '',
     };
   }
 
@@ -129,6 +134,11 @@ export function transformToCompanyInfo(
     city: company.city || '-',
     website: company.website || '-',
     businessId: company.business_id || '-',
+    businessEmail: company.business_email || '-',
+    businessPhone: company.business_phone || '-',
+    businessDescription: company.business_description || '-',
+    logoUrl: company.logo_url || '',
+    companyId: company.id || '',
   };
 }
 
@@ -209,5 +219,6 @@ export function transformAccountData(rawData: AccountDataRaw): AccountData {
       rawData.profile,
       rawData.company
     ),
+    roleInCompany: rawData.profile.role_in_company,
   };
 }

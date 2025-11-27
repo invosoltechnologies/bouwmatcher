@@ -12,6 +12,10 @@ import type {
 import type {
   UpdateCompanyRequest,
   UpdateCompanyResponse,
+  UpdateCompanyDescriptionRequest,
+  UpdateCompanyDescriptionResponse,
+  UpdateCompanyLogoResponse,
+  DeleteCompanyLogoResponse,
 } from '@/types/dto/professional/account/company.dto';
 
 /**
@@ -42,4 +46,48 @@ export async function updateCompany(
   data: UpdateCompanyRequest
 ): Promise<UpdateCompanyResponse> {
   return apiClient.patch<UpdateCompanyResponse>('/api/account/company', data);
+}
+
+/**
+ * Updates company description
+ * @param data Company description update data
+ * @returns Updated company data
+ */
+export async function updateCompanyDescription(
+  data: UpdateCompanyDescriptionRequest
+): Promise<UpdateCompanyDescriptionResponse> {
+  return apiClient.patch<UpdateCompanyDescriptionResponse>(
+    '/api/account/company/description',
+    data
+  );
+}
+
+/**
+ * Uploads company logo
+ * @param file Logo file to upload
+ * @returns Logo URL
+ */
+export async function updateCompanyLogo(
+  file: File
+): Promise<UpdateCompanyLogoResponse> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  return apiClient.post<UpdateCompanyLogoResponse>(
+    '/api/account/company/logo',
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }
+  );
+}
+
+/**
+ * Deletes company logo
+ * @returns Success response
+ */
+export async function deleteCompanyLogo(): Promise<DeleteCompanyLogoResponse> {
+  return apiClient.delete<DeleteCompanyLogoResponse>('/api/account/company/logo');
 }
