@@ -19,7 +19,7 @@ export default function LocationMapCard() {
             variant='outline'
             size='sm'
             onClick={handleEditLocation}
-            className='rounded-xl'
+            className='rounded-xl px-5 py-2.5'
           >
             Bewerk
           </Button>

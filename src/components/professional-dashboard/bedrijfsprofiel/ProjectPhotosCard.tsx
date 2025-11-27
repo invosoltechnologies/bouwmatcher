@@ -1,7 +1,17 @@
 'use client';
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Plus, Image as ImageIcon, X } from 'lucide-react';
+import { Plus, Image as ImageIcon, Download, Trash2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
@@ -22,7 +32,8 @@ export default function ProjectPhotosCard({
   photos = [],
 }: ProjectPhotosCardProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [photoToDelete, setPhotoToDelete] = useState<string | null>(null);
 
   const uploadMutation = useUploadPortfolioPhoto({
     onSuccess: () => {
@@ -36,6 +47,8 @@ export default function ProjectPhotosCard({
   const deleteMutation = useDeletePortfolioPhoto({
     onSuccess: () => {
       toast.success('Foto succesvol verwijderd');
+      setDeleteDialogOpen(false);
+      setPhotoToDelete(null);
     },
     onError: (error) => {
       toast.error(error.message || 'Kon foto niet verwijderen');
@@ -76,8 +89,15 @@ export default function ProjectPhotosCard({
     event.target.value = '';
   };
 
-  const handleRemovePhoto = (photoUrl: string) => {
-    deleteMutation.mutate({ photoUrl });
+  const handleDeleteClick = (photoUrl: string) => {
+    setPhotoToDelete(photoUrl);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (photoToDelete) {
+      deleteMutation.mutate({ photoUrl: photoToDelete });
+    }
   };
 
   const showUploadButton = photos.length < MAX_PHOTOS;
@@ -111,8 +131,6 @@ export default function ProjectPhotosCard({
             <div
               key={index}
               className='relative aspect-square rounded-xl overflow-hidden group'
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
             >
               <Image
                 src={photoUrl}
@@ -120,17 +138,29 @@ export default function ProjectPhotosCard({
                 fill
                 className='object-cover'
               />
-              {/* Remove overlay on hover */}
-              {hoveredIndex === index && (
-                <div className='absolute inset-0 bg-black/50 flex items-center justify-center transition-all'>
-                  <button
-                    onClick={() => handleRemovePhoto(photoUrl)}
-                    className='bg-white rounded-full p-2 hover:bg-red-50 transition-colors'
-                  >
-                    <X className='w-5 h-5 text-red-600' />
-                  </button>
+
+              {/* Blue Download Overlay */}
+              <a
+                href={photoUrl}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='absolute inset-0 flex items-center justify-center bg-blue-600/0 hover:bg-blue-600/80 transition-all opacity-0 hover:opacity-100'
+              >
+                <div className='text-white text-center'>
+                  <Download className='w-6 h-6 mx-auto mb-1' />
+                  <span className='text-sm font-medium'>Download</span>
                 </div>
-              )}
+              </a>
+
+              {/* Delete Button Overlay */}
+              <button
+                onClick={() => handleDeleteClick(photoUrl)}
+                disabled={deleteMutation.isPending}
+                className='absolute top-2 right-2 p-2 bg-white rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 disabled:opacity-50 z-10'
+                title='Verwijder foto'
+              >
+                <Trash2 className='w-4 h-4 text-red-600' />
+              </button>
             </div>
           ))}
 

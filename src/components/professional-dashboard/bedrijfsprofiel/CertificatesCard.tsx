@@ -5,6 +5,16 @@ import Image from 'next/image';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, Award, Download, Trash2, FileText } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import AddCertificateModal from './AddCertificateModal';
 import { useDeleteCertificate } from '@/lib/hooks/professional/account/useCertificates';
 import { toast } from 'react-hot-toast';
@@ -18,19 +28,28 @@ export default function CertificatesCard({
   certificates = [],
 }: CertificatesCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [certificateToDelete, setCertificateToDelete] = useState<string | null>(null);
 
   const deleteMutation = useDeleteCertificate({
     onSuccess: () => {
       toast.success('Certificaat succesvol verwijderd');
+      setDeleteDialogOpen(false);
+      setCertificateToDelete(null);
     },
     onError: (error) => {
       toast.error(error.message || 'Kon certificaat niet verwijderen');
     },
   });
 
-  const handleDelete = (certificateId: string) => {
-    if (confirm('Weet je zeker dat je dit certificaat wilt verwijderen?')) {
-      deleteMutation.mutate(certificateId);
+  const handleDeleteClick = (certificateId: string) => {
+    setCertificateToDelete(certificateId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (certificateToDelete) {
+      deleteMutation.mutate(certificateToDelete);
     }
   };
 
@@ -128,7 +147,7 @@ export default function CertificatesCard({
                       </p>
                       {/* Delete Button Overlay */}
                       <button
-                        onClick={() => handleDelete(certificate.id)}
+                        onClick={() => handleDeleteClick(certificate.id)}
                         disabled={deleteMutation.isPending}
                         className='absolute top-2 right-2 p-2 bg-white rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 disabled:opacity-50'
                         title='Verwijder certificaat'
@@ -143,6 +162,30 @@ export default function CertificatesCard({
           )}
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Certificaat verwijderen</AlertDialogTitle>
+            <AlertDialogDescription>
+              Weet je zeker dat je dit certificaat wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>
+              Annuleren
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              disabled={deleteMutation.isPending}
+              className='bg-red-600 hover:bg-red-700'
+            >
+              {deleteMutation.isPending ? 'Verwijderen...' : 'Verwijderen'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AddCertificateModal
         isOpen={isModalOpen}
