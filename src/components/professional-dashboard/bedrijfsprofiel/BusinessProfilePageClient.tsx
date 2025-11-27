@@ -32,13 +32,15 @@ export default function BusinessProfilePageClient() {
 
   // Find user's existing rating
   const userRating = useMemo(() => {
-    if (!ratingsData?.ratings) return null;
+    if (!ratingsData?.ratings || !data?.accountData) return null;
+    // Find rating by matching the professional profile ID (not company ID)
+    const profileId = data.accountData.companyInfo.companyId;
     return (
       ratingsData.ratings.find(
-        (r) => r.rated_by_profile_id === companyId
+        (r) => r.rated_by_profile_id === profileId
       ) || null
     );
-  }, [ratingsData, companyId]);
+  }, [ratingsData, data]);
 
   if (isLoading) {
     return (
@@ -69,6 +71,7 @@ export default function BusinessProfilePageClient() {
         onLogoClick={() => setIsLogoModalOpen(true)}
         onRatingClick={() => setIsRatingModalOpen(true)}
         ratingSummary={ratingsLoading ? undefined : ratingsData?.summary}
+        userRating={userRating?.rating || null}
       />
 
       {/* Two Column Layout */}

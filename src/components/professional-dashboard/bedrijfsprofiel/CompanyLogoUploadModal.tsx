@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 import GlassyModal from '@/components/ui/glassy-modal';
-import { Upload, X, Loader2 } from 'lucide-react';
+import { Upload, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import {
   useUpdateCompanyLogo,
@@ -25,8 +25,6 @@ export default function CompanyLogoUploadModal({
   onClose,
   currentLogoUrl,
 }: CompanyLogoUploadModalProps) {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string>(currentLogoUrl);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const updateLogoMutation = useUpdateCompanyLogo({
@@ -42,8 +40,6 @@ export default function CompanyLogoUploadModal({
   const deleteLogoMutation = useDeleteCompanyLogo({
     onSuccess: () => {
       toast.success('Logo succesvol verwijderd');
-      setPreviewUrl('');
-      setSelectedFile(null);
       onClose();
     },
     onError: (error) => {
@@ -51,7 +47,11 @@ export default function CompanyLogoUploadModal({
     },
   });
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePlaceholderClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -67,36 +67,25 @@ export default function CompanyLogoUploadModal({
       return;
     }
 
-    setSelectedFile(file);
-
-    // Create preview
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviewUrl(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      toast.error('Selecteer eerst een bestand');
-      return;
+    // If there's a current logo, delete it first, then upload new one
+    if (currentLogoUrl && currentLogoUrl !== '') {
+      deleteLogoMutation.mutate(undefined, {
+        onSuccess: () => {
+          // After deletion, upload new logo
+          updateLogoMutation.mutate(file);
+        },
+        onError: () => {
+          // If deletion fails, still try to upload (will replace)
+          updateLogoMutation.mutate(file);
+        },
+      });
+    } else {
+      // No existing logo, just upload
+      updateLogoMutation.mutate(file);
     }
 
-    updateLogoMutation.mutate(selectedFile);
-  };
-
-  const handleRemove = () => {
-    if (!currentLogoUrl) {
-      toast.error('Geen logo om te verwijderen');
-      return;
-    }
-
-    deleteLogoMutation.mutate();
-  };
-
-  const handleBrowseClick = () => {
-    fileInputRef.current?.click();
+    // Reset input
+    event.target.value = '';
   };
 
   const isLoading = updateLogoMutation.isPending || deleteLogoMutation.isPending;
@@ -109,37 +98,47 @@ export default function CompanyLogoUploadModal({
       className='lg:max-w-2xl'
     >
       <div className='space-y-6'>
-        {/* Preview Section */}
+        {/* Preview Section - Clickable */}
         <div className='flex flex-col items-center gap-4'>
-          <div className='relative w-48 h-48 bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden border-2 border-dashed border-gray-300'>
-            {previewUrl ? (
-              <Image
-                src={previewUrl}
-                alt='Logo preview'
-                width={192}
-                height={192}
-                className='object-contain'
-              />
+          <div
+            onClick={!isLoading ? handlePlaceholderClick : undefined}
+            className={`relative w-48 h-48 bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden border-2 border-dashed border-gray-300 ${
+              !isLoading ? 'cursor-pointer hover:border-primary hover:bg-slate-50 transition-all' : 'opacity-50'
+            }`}
+          >
+            {isLoading ? (
+              <div className='text-center'>
+                <Loader2 className='w-12 h-12 text-primary mx-auto mb-2 animate-spin' />
+                <p className='text-sm text-gray-500'>
+                  {deleteLogoMutation.isPending ? 'Verwijderen...' : 'Uploaden...'}
+                </p>
+              </div>
+            ) : currentLogoUrl ? (
+              <>
+                <Image
+                  src={currentLogoUrl}
+                  alt='Company logo'
+                  width={192}
+                  height={192}
+                  className='object-contain'
+                />
+                <div className='absolute inset-0 bg-black/0 hover:bg-black/50 flex items-center justify-center transition-all opacity-0 hover:opacity-100'>
+                  <Upload className='w-8 h-8 text-white' />
+                </div>
+              </>
             ) : (
               <div className='text-center p-4'>
                 <Upload className='w-12 h-12 text-gray-400 mx-auto mb-2' />
-                <p className='text-sm text-gray-500'>Geen logo</p>
+                <p className='text-sm text-gray-500'>Klik om logo te uploaden</p>
               </div>
             )}
           </div>
 
-          {previewUrl && (
-            <button
-              onClick={() => {
-                setPreviewUrl('');
-                setSelectedFile(null);
-              }}
-              className='text-sm text-muted-foreground hover:text-destructive flex items-center gap-1'
-            >
-              <X className='w-4 h-4' />
-              Selectie wissen
-            </button>
-          )}
+          <p className='text-sm text-muted-foreground text-center'>
+            {currentLogoUrl
+              ? 'Klik op het logo om een nieuw te uploaden'
+              : 'Klik op de placeholder om een logo te uploaden'}
+          </p>
         </div>
 
         {/* File Input */}
@@ -149,6 +148,7 @@ export default function CompanyLogoUploadModal({
           accept='.png,.jpg,.jpeg,.svg'
           onChange={handleFileSelect}
           className='hidden'
+          disabled={isLoading}
         />
 
         {/* Instructions */}
@@ -164,64 +164,16 @@ export default function CompanyLogoUploadModal({
         </div>
 
         {/* Action Buttons */}
-        <div className='flex justify-between gap-3 pt-2'>
-          <div className='flex gap-3'>
-            <Button
-              type='button'
-              variant='outline'
-              onClick={handleBrowseClick}
-              disabled={isLoading}
-              className='border-gray-200 rounded-xl'
-            >
-              {selectedFile ? 'Ander bestand kiezen' : 'Bestand kiezen'}
-            </Button>
-
-            {currentLogoUrl && (
-              <Button
-                type='button'
-                variant='destructive'
-                onClick={handleRemove}
-                disabled={isLoading}
-                className='rounded-xl'
-              >
-                {deleteLogoMutation.isPending ? (
-                  <>
-                    <Loader2 className='w-4 h-4 mr-2 animate-spin' />
-                    Verwijderen...
-                  </>
-                ) : (
-                  'Logo verwijderen'
-                )}
-              </Button>
-            )}
-          </div>
-
-          <div className='flex gap-3'>
-            <Button
-              type='button'
-              variant='outline'
-              onClick={onClose}
-              disabled={isLoading}
-              className='border-gray-200 rounded-xl'
-            >
-              Annuleren
-            </Button>
-            <Button
-              type='button'
-              onClick={handleUpload}
-              disabled={!selectedFile || isLoading}
-              className='rounded-xl'
-            >
-              {updateLogoMutation.isPending ? (
-                <>
-                  <Loader2 className='w-4 h-4 mr-2 animate-spin' />
-                  Uploaden...
-                </>
-              ) : (
-                'Logo uploaden'
-              )}
-            </Button>
-          </div>
+        <div className='flex justify-end gap-3 pt-2'>
+          <Button
+            type='button'
+            variant='outline'
+            onClick={onClose}
+            disabled={isLoading}
+            className='border-gray-200 rounded-xl'
+          >
+            Sluiten
+          </Button>
         </div>
       </div>
     </GlassyModal>

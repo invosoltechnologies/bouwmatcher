@@ -40,7 +40,8 @@ class ApiClient {
 
     // Set default headers
     const headers = new Headers(fetchConfig.headers);
-    if (!headers.has('Content-Type') && fetchConfig.body) {
+    // Only set Content-Type for non-FormData bodies
+    if (!headers.has('Content-Type') && fetchConfig.body && !(fetchConfig.body instanceof FormData)) {
       headers.set('Content-Type', 'application/json');
     }
 
@@ -90,7 +91,7 @@ class ApiClient {
     return this.request<T>(endpoint, {
       ...config,
       method: 'POST',
-      body: body ? JSON.stringify(body) : undefined,
+      body: body instanceof FormData ? body : (body ? JSON.stringify(body) : undefined),
     });
   }
 

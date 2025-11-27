@@ -46,6 +46,8 @@ export interface Company {
   service_categories: string[] | null;
   service_areas: string[] | null;
   logo_url: string | null;
+  aggregate_rating: number | null;
+  total_ratings: number | null;
   is_active: boolean | null;
   created_at: string | null;
   updated_at: string | null;

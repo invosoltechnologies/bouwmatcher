@@ -82,13 +82,13 @@ export async function POST(request: NextRequest) {
 
     // Generate unique filename
     const fileExtension = file.name.split('.').pop();
-    const uniqueFileName = `${profileData.company_id}_${randomUUID()}.${fileExtension}`;
-    const storagePath = `company-logos/${uniqueFileName}`;
+    const uniqueFileName = `logos/${profileData.company_id}_${randomUUID()}.${fileExtension}`;
+    const storagePath = uniqueFileName;
 
     // Upload to Supabase Storage
     const fileBuffer = await file.arrayBuffer();
     const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('company-logos')
+      .from('company-files')
       .upload(storagePath, fileBuffer, {
         contentType: file.type,
         upsert: false,
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     // Get public URL
     const {
       data: { publicUrl },
-    } = supabase.storage.from('company-logos').getPublicUrl(uploadData.path);
+    } = supabase.storage.from('company-files').getPublicUrl(uploadData.path);
 
     // Update company with new logo URL
     const { error: updateError } = await supabase
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
     if (updateError) {
       console.error('Error updating company logo:', updateError);
       // Try to delete the uploaded file
-      await supabase.storage.from('company-logos').remove([storagePath]);
+      await supabase.storage.from('company-files').remove([storagePath]);
       return NextResponse.json(
         { error: 'Failed to update company logo' },
         { status: 500 }
@@ -195,10 +195,10 @@ export async function DELETE() {
 
     // Extract path from URL and delete from storage
     if (companyData.logo_url) {
-      const urlParts = companyData.logo_url.split('/company-logos/');
+      const urlParts = companyData.logo_url.split('/company-files/');
       if (urlParts.length > 1) {
-        const filePath = `company-logos/${urlParts[1]}`;
-        await supabase.storage.from('company-logos').remove([filePath]);
+        const filePath = urlParts[1];
+        await supabase.storage.from('company-files').remove([filePath]);
       }
     }
 

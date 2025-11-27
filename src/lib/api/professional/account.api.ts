@@ -73,14 +73,10 @@ export async function updateCompanyLogo(
   const formData = new FormData();
   formData.append('file', file);
 
+  // Don't set Content-Type header - let browser set it automatically with boundary
   return apiClient.post<UpdateCompanyLogoResponse>(
     '/api/account/company/logo',
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }
+    formData
   );
 }
 

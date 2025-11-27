@@ -14,6 +14,7 @@ interface CompanyHeaderCardProps {
   onEditClick: () => void;
   roleInCompany: string | null;
   ratingSummary?: CompanyRatingSummary;
+  userRating?: number | null;
   onLogoClick?: () => void;
   onRatingClick?: () => void;
 }
@@ -24,6 +25,7 @@ export default function CompanyHeaderCard({
   onEditClick,
   roleInCompany,
   ratingSummary,
+  userRating,
   onLogoClick,
   onRatingClick,
 }: CompanyHeaderCardProps) {
@@ -50,7 +52,13 @@ export default function CompanyHeaderCard({
         <div className='flex items-center gap-6.5'>
           {/* Company Logo with Hover Effect */}
           <div
-            className='relative flex items-center justify-center px-14 py-9.5 bg-slate-100 rounded-lg flex-shrink-0 overflow-hidden group cursor-pointer'
+            className={`relative flex items-center justify-center rounded-lg flex-shrink-0 overflow-hidden group ${
+              isOwner ? 'cursor-pointer' : ''
+            } ${
+              companyInfo.logoUrl
+                ? 'w-[100px] h-[100px]'
+                : 'px-14 py-9.5 bg-slate-100'
+            }`}
             onMouseEnter={() => setIsLogoHovered(true)}
             onMouseLeave={() => setIsLogoHovered(false)}
             onClick={handleLogoClick}
@@ -61,7 +69,7 @@ export default function CompanyHeaderCard({
                 alt={companyInfo.companyName}
                 width={100}
                 height={100}
-                className='object-contain'
+                className='object-contain w-full h-full'
               />
             ) : (
               <Building2 className='w-7 h-9 text-gray-500' />
@@ -86,21 +94,19 @@ export default function CompanyHeaderCard({
               <h2 className='text-xl font-normal leading-normal'>
                 {companyInfo.companyName}
               </h2>
-              {isOwner && (
-                <button
-                  onClick={onEditClick}
-                  className='text-muted-foreground cursor-pointer transition-all group'
-                  aria-label='Bewerken'
-                >
-                  <Image
-                    src='/icons/edit-pencil.svg'
-                    className='mb-1 transition-all group-hover:[filter:brightness(0)_saturate(100%)_invert(15%)_sepia(91%)_saturate(2528%)_hue-rotate(214deg)_brightness(94%)_contrast(107%)]'
-                    alt='Bewerken'
-                    width={16}
-                    height={16}
-                  />
-                </button>
-              )}
+              <button
+                onClick={onEditClick}
+                className='text-muted-foreground cursor-pointer transition-all group'
+                aria-label='Bewerken'
+              >
+                <Image
+                  src='/icons/edit-pencil.svg'
+                  className='mb-1 transition-all group-hover:[filter:brightness(0)_saturate(100%)_invert(15%)_sepia(91%)_saturate(2528%)_hue-rotate(214deg)_brightness(94%)_contrast(107%)]'
+                  alt='Bewerken'
+                  width={16}
+                  height={16}
+                />
+              </button>
             </div>
             <div className='flex items-center gap-1 text-muted-foreground mb-2'>
               <MapPin className='w-auto h-4' />
@@ -108,7 +114,7 @@ export default function CompanyHeaderCard({
             </div>
             <div className='flex items-center gap-1 mb-3'>
               <div onClick={onRatingClick} className='cursor-pointer'>
-                <Rating defaultValue={ratingSummary?.averageRating || 0}>
+                <Rating value={ratingSummary?.averageRating || 0} readOnly>
                   {Array.from({ length: 5 }).map((_, index) => (
                     <RatingButton
                       className='text-yellow-500'
@@ -125,6 +131,23 @@ export default function CompanyHeaderCard({
                   : 'Geen reviews'}
               </span>
             </div>
+
+            {/* Show user's own rating if they have rated */}
+            {userRating && userRating > 0 && (
+              <div className='flex items-center gap-2 mb-3 bg-blue-50 rounded-lg p-2'>
+                <span className='text-xs text-primary font-medium'>Jouw beoordeling:</span>
+                <Rating value={userRating} readOnly>
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <RatingButton
+                      className='text-yellow-500'
+                      key={index}
+                      size={16}
+                    />
+                  ))}
+                </Rating>
+              </div>
+            )}
+
             {(!ratingSummary || ratingSummary.totalRatings === 0) && (
               <p className='text-xs text-muted-foreground bg-slate-50 rounded-full p-2'>
                 Dit bedrijf heeft zich recent bij Bouwmatcher aangesloten!

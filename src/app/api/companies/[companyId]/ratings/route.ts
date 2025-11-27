@@ -3,11 +3,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { companyId: string } }
+  { params }: { params: Promise<{ companyId: string }> }
 ) {
   try {
     const supabase = await createClient();
-    const { companyId } = params;
+    const { companyId } = await params;
 
     // Fetch all ratings for the company
     const { data: ratings, error: ratingsError } = await supabase
@@ -24,18 +24,26 @@ export async function GET(
       );
     }
 
-    // Calculate average rating
-    const totalRatings = ratings?.length || 0;
-    const averageRating =
-      totalRatings > 0
-        ? ratings.reduce((sum, r) => sum + r.rating, 0) / totalRatings
-        : 0;
+    // Fetch aggregate rating from company table (calculated by database trigger)
+    const { data: companyData, error: companyError } = await supabase
+      .from('professional_companies')
+      .select('aggregate_rating, total_ratings')
+      .eq('id', companyId)
+      .single();
+
+    if (companyError) {
+      console.error('Error fetching company data:', companyError);
+      return NextResponse.json(
+        { error: 'Failed to fetch company data' },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       ratings: ratings || [],
       summary: {
-        averageRating: Math.round(averageRating * 10) / 10,
-        totalRatings,
+        averageRating: companyData?.aggregate_rating || 0,
+        totalRatings: companyData?.total_ratings || 0,
       },
     });
   } catch (error) {
@@ -49,7 +57,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { companyId: string } }
+  { params }: { params: Promise<{ companyId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -64,7 +72,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { companyId } = params;
+    const { companyId } = await params;
     const body = await request.json();
     const { rating, reviewText, ratingId } = body;
 
@@ -142,6 +150,8 @@ export async function POST(
         rated_by_profile_id: profileData.id,
         rating,
         review_text: reviewText || null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       })
       .select()
       .single();
@@ -169,7 +179,7 @@ export async function POST(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { companyId: string } }
+  { params }: { params: Promise<{ companyId: string }> }
 ) {
   try {
     const supabase = await createClient();
@@ -184,7 +194,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { companyId } = params;
+    const { companyId } = await params;
     const { searchParams } = new URL(request.url);
     const ratingId = searchParams.get('ratingId');
 

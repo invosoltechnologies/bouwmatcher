@@ -34,6 +34,7 @@ export default function GlassyModal({
           className={cn(
             'fixed top-[50%] left-[50%] z-50 translate-x-[-50%] translate-y-[-50%]',
             'w-full max-w-[calc(100%-2rem)] sm:max-w-lg',
+            'max-h-[580px] flex flex-col',
             'bg-white rounded-2xl shadow-lg',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
             'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
@@ -43,7 +44,7 @@ export default function GlassyModal({
           )}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-200">
+          <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-200 flex-shrink-0">
             <DialogPrimitive.Title className="text-xl font-semibold text-secondary-foreground">
               {title}
             </DialogPrimitive.Title>
@@ -56,8 +57,8 @@ export default function GlassyModal({
             </DialogPrimitive.Close>
           </div>
 
-          {/* Body */}
-          <div className="px-6 py-5">{children}</div>
+          {/* Body - Scrollable */}
+          <div className="px-6 py-5 overflow-y-auto flex-1">{children}</div>
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
     </DialogPrimitive.Root>
