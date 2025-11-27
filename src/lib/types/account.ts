@@ -19,6 +19,8 @@ export interface ProfessionalProfile {
   invoices_email: string | null;
   // Gender field
   gender: string | null; // 'male' | 'female' | 'other' | 'prefer_not_to_say'
+  // Portfolio photos
+  portfolio_photos: string[] | null;
   created_at: string | null;
   updated_at: string | null;
 }
@@ -66,6 +68,7 @@ export interface AccountData {
   contactInfo: ContactInfoData;
   profileCompletion: ProfileCompletionData;
   roleInCompany: string | null;
+  portfolioPhotos: string[];
 }
 
 // Frontend display types

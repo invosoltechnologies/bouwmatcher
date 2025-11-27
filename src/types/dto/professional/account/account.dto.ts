@@ -38,6 +38,7 @@ export interface GetAccountResponse {
       tasks: ProfileTask[];
     };
     roleInCompany: string | null;
+    portfolioPhotos: string[];
   };
 }
 

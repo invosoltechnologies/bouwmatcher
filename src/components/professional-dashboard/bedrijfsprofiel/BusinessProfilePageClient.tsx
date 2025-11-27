@@ -83,7 +83,7 @@ export default function BusinessProfilePageClient() {
             roleInCompany={accountData.roleInCompany}
             onEditClick={() => setIsDescriptionModalOpen(true)}
           />
-          <ProjectPhotosCard />
+          <ProjectPhotosCard photos={accountData.portfolioPhotos} />
           <ReviewsSection />
           <LocationMapCard />
           <CertificatesCard />
