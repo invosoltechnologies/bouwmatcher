@@ -122,7 +122,7 @@ export default function CompanyLogoUploadModal({
                   height={192}
                   className='object-contain'
                 />
-                <div className='absolute inset-0 bg-black/0 hover:bg-black/50 flex items-center justify-center transition-all opacity-0 hover:opacity-100'>
+                <div className='absolute inset-0 bg-black/0 hover:bg-blue-600/80 flex items-center justify-center transition-all opacity-0 hover:opacity-100'>
                   <Upload className='w-8 h-8 text-white' />
                 </div>
               </>

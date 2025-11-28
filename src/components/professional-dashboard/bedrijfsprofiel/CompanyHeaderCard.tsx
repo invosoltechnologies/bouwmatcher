@@ -74,10 +74,10 @@ export default function CompanyHeaderCard({
             ) : (
               <Building2 className='w-7 h-9 text-gray-500' />
             )}
-
+    
             {/* Hover Overlay - Only show for owners */}
             {isOwner && isLogoHovered && (
-              <div className='absolute inset-0 bg-black/50 flex items-center justify-center transition-all'>
+              <div className='absolute inset-0 bg-blue-600/80 flex items-center justify-center transition-all'>
                 <Image
                   src='/icons/edit-pencil.svg'
                   alt='Edit logo'
@@ -110,11 +110,13 @@ export default function CompanyHeaderCard({
             </div>
             <div className='flex items-center gap-1 text-muted-foreground mb-2'>
               <MapPin className='w-auto h-4' />
-              <span className='text-sm leading-snug'>{companyInfo.address}</span>
+              <span className='text-sm leading-snug'>
+                {companyInfo.address}
+              </span>
             </div>
             <div className='flex items-center gap-1 mb-3'>
               <div onClick={onRatingClick} className='cursor-pointer'>
-                <Rating value={ratingSummary?.averageRating || 0} readOnly>
+                <Rating defaultValue={ratingSummary?.averageRating || 0}>
                   {Array.from({ length: 5 }).map((_, index) => (
                     <RatingButton
                       className='text-yellow-500'
@@ -127,7 +129,9 @@ export default function CompanyHeaderCard({
 
               <span className='text-sm text-muted-foreground ml-2'>
                 {ratingSummary && ratingSummary.totalRatings > 0
-                  ? `${ratingSummary.totalRatings} ${ratingSummary.totalRatings === 1 ? 'review' : 'reviews'}`
+                  ? `${ratingSummary.totalRatings} ${
+                      ratingSummary.totalRatings === 1 ? 'review' : 'reviews'
+                    }`
                   : 'Geen reviews'}
               </span>
             </div>
@@ -135,11 +139,13 @@ export default function CompanyHeaderCard({
             {/* Show user's own rating if they have rated */}
             {userRating && userRating > 0 && (
               <div className='flex items-center gap-2 mb-3 bg-blue-50 rounded-lg p-2'>
-                <span className='text-xs text-primary font-medium'>Jouw beoordeling:</span>
-                <Rating value={userRating} readOnly>
+                <span className='text-xs text-primary font-medium'>
+                  Jouw beoordeling:
+                </span>
+                <Rating defaultValue={userRating}>
                   {Array.from({ length: 5 }).map((_, index) => (
                     <RatingButton
-                      className='text-yellow-500'
+                      className='text-yellow-500 pointer-events-none'
                       key={index}
                       size={16}
                     />

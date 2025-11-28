@@ -103,88 +103,114 @@ export default function ProjectPhotosCard({
   const showUploadButton = photos.length < MAX_PHOTOS;
 
   return (
-    <Card>
-      <CardHeader>
-        <div className='flex items-center justify-between'>
-          <CardTitle className='text-lg font-semibold'>Projectfoto&apos;s</CardTitle>
-          <span className='text-sm text-muted-foreground'>
-            {photos.length}/{MAX_PHOTOS}
-          </span>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className='grid grid-cols-3 gap-4'>
-          {/* Upload Button - Show only if less than 6 photos */}
-          {showUploadButton && (
-            <button
-              onClick={handleAddPhoto}
-              disabled={isLoading}
-              className='aspect-square rounded-xl border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed'
-            >
-              <Plus className='w-8 h-8' />
-              <span className='text-sm'>Foto toevoegen</span>
-            </button>
-          )}
-
-          {/* Uploaded Photos */}
-          {photos.map((photoUrl, index) => (
-            <div
-              key={index}
-              className='relative aspect-square rounded-xl overflow-hidden group'
-            >
-              <Image
-                src={photoUrl}
-                alt={`Project photo ${index + 1}`}
-                fill
-                className='object-cover'
-              />
-
-              {/* Blue Download Overlay */}
-              <a
-                href={photoUrl}
-                target='_blank'
-                rel='noopener noreferrer'
-                className='absolute inset-0 flex items-center justify-center bg-blue-600/0 hover:bg-blue-600/80 transition-all opacity-0 hover:opacity-100'
-              >
-                <div className='text-white text-center'>
-                  <Download className='w-6 h-6 mx-auto mb-1' />
-                  <span className='text-sm font-medium'>Download</span>
-                </div>
-              </a>
-
-              {/* Delete Button Overlay */}
+    <>
+      <Card>
+        <CardHeader>
+          <div className='flex items-center justify-between'>
+            <CardTitle className='text-lg font-semibold'>Projectfoto&apos;s</CardTitle>
+            <span className='text-sm text-muted-foreground'>
+              {photos.length}/{MAX_PHOTOS}
+            </span>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className='grid grid-cols-3 gap-4'>
+            {/* Upload Button - Show only if less than 6 photos */}
+            {showUploadButton && (
               <button
-                onClick={() => handleDeleteClick(photoUrl)}
-                disabled={deleteMutation.isPending}
-                className='absolute top-2 right-2 p-2 bg-white rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 disabled:opacity-50 z-10'
-                title='Verwijder foto'
+                onClick={handleAddPhoto}
+                disabled={isLoading}
+                className='aspect-square rounded-xl border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed'
               >
-                <Trash2 className='w-4 h-4 text-red-600' />
+                <Plus className='w-8 h-8' />
+                <span className='text-sm'>Foto toevoegen</span>
               </button>
-            </div>
-          ))}
+            )}
 
-          {/* Empty Placeholder Slots - Show remaining slots up to 6 total */}
-          {Array.from({ length: MAX_PHOTOS - photos.length - (showUploadButton ? 1 : 0) }).map((_, index) => (
-            <div
-              key={`empty-${index}`}
-              className='aspect-square rounded-xl bg-slate-100 flex items-center justify-center'
+            {/* Uploaded Photos */}
+            {photos.map((photoUrl, index) => (
+              <div
+                key={index}
+                className='relative aspect-square rounded-xl overflow-hidden group'
+              >
+                <Image
+                  src={photoUrl}
+                  alt={`Project photo ${index + 1}`}
+                  fill
+                  className='object-cover'
+                />
+
+                {/* Blue Download Overlay */}
+                <a
+                  href={photoUrl}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='absolute inset-0 flex items-center justify-center bg-blue-600/0 hover:bg-blue-600/80 transition-all opacity-0 hover:opacity-100'
+                >
+                  <div className='text-white text-center'>
+                    <Download className='w-6 h-6 mx-auto mb-1' />
+                    <span className='text-sm font-medium'>Download</span>
+                  </div>
+                </a>
+
+                {/* Delete Button Overlay */}
+                <button
+                  onClick={() => handleDeleteClick(photoUrl)}
+                  disabled={deleteMutation.isPending}
+                  className='absolute top-2 right-2 p-2 bg-white rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 disabled:opacity-50 z-10'
+                  title='Verwijder foto'
+                >
+                  <Trash2 className='w-4 h-4 text-red-600' />
+                </button>
+              </div>
+            ))}
+
+            {/* Empty Placeholder Slots - Show remaining slots up to 6 total */}
+            {Array.from({ length: MAX_PHOTOS - photos.length - (showUploadButton ? 1 : 0) }).map((_, index) => (
+              <div
+                key={`empty-${index}`}
+                className='aspect-square rounded-xl bg-slate-100 flex items-center justify-center'
+              >
+                <ImageIcon className='w-12 h-12 text-slate-300' />
+              </div>
+            ))}
+          </div>
+
+          {/* Hidden file input */}
+          <input
+            ref={fileInputRef}
+            type='file'
+            accept='image/png,image/jpeg,image/jpg'
+            onChange={handleFileSelect}
+            className='hidden'
+            disabled={isLoading}
+          />
+        </CardContent>
+      </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Foto verwijderen</AlertDialogTitle>
+            <AlertDialogDescription>
+              Weet je zeker dat je deze foto wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>
+              Annuleren
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              disabled={deleteMutation.isPending}
+              className='bg-red-600 hover:bg-red-700'
             >
-              <ImageIcon className='w-12 h-12 text-slate-300' />
-            </div>
-          ))}
-        </div>
-
-        {/* Hidden file input */}
-        <input
-          ref={fileInputRef}
-          type='file'
-          accept='image/png,image/jpeg,image/jpg'
-          onChange={handleFileSelect}
-          className='hidden'
-          disabled={isLoading}
-        />
-      </CardContent>
-    </Card>
+              {deleteMutation.isPending ? 'Verwijderen...' : 'Verwijderen'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
