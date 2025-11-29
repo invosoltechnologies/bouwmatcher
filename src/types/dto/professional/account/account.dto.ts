@@ -40,6 +40,7 @@ export interface GetAccountResponse {
     roleInCompany: string | null;
     portfolioPhotos: string[];
     certificates: Certificate[];
+    profilePictureUrl: string | null;
   };
 }
 

@@ -23,6 +23,8 @@ export interface ProfessionalProfile {
   portfolio_photos: string[] | null;
   // Certificates
   certificates: Certificate[] | null;
+  // Profile picture
+  profile_picture_url: string | null;
   created_at: string | null;
   updated_at: string | null;
 }
@@ -84,6 +86,7 @@ export interface AccountData {
   roleInCompany: string | null;
   portfolioPhotos: string[];
   certificates: Certificate[];
+  profilePictureUrl: string | null;
 }
 
 // Frontend display types

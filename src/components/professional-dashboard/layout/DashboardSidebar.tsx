@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import { dashboardNavigation } from '@/config/professional-dashboard';
 import { cn } from '@/lib/utils';
+import { useAccount } from '@/lib/hooks/professional/account/useAccount';
 import SidebarLanguageSwitcher from './SidebarLanguageSwitcher';
 import UserProfile from './UserProfile';
 
@@ -14,6 +15,7 @@ export default function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { data, isLoading } = useAccount();
 
   const handleLogout = async () => {
     if (isLoggingOut) return;
@@ -130,7 +132,22 @@ export default function DashboardSidebar() {
         <SidebarLanguageSwitcher />
 
         {/* User Profile */}
-        <UserProfile />
+        <UserProfile
+          userName={
+            data?.accountData
+              ? `${data.accountData.contactInfo.contactPerson || ''}`
+              : undefined
+          }
+          companyName={
+            data?.accountData ? data.accountData.companyInfo.companyName : undefined
+          }
+          avatarUrl={
+            data?.accountData && data.accountData.profilePictureUrl
+              ? data.accountData.profilePictureUrl
+              : undefined
+          }
+          isLoading={isLoading}
+        />
       </div>
     </aside>
   );
