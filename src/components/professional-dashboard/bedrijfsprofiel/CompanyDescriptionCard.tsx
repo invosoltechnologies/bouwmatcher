@@ -17,8 +17,8 @@ export default function CompanyDescriptionCard({
   const isOwner = roleInCompany === 'owner';
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className='px-5 gap-4'>
+      <CardHeader className='p-0'>
         <div className='flex items-center justify-between'>
           <CardTitle className='text-lg font-semibold'>
             Bedrijfsomschrijving
@@ -40,7 +40,7 @@ export default function CompanyDescriptionCard({
           )}
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className='p-0'>
         <p className='text-sm text-secondary-foreground leading-relaxed'>
           {description && description !== '-'
             ? description

@@ -104,16 +104,18 @@ export default function ProjectPhotosCard({
 
   return (
     <>
-      <Card>
-        <CardHeader>
+      <Card className='px-5 gap-4'>
+        <CardHeader className='p-0'>
           <div className='flex items-center justify-between'>
-            <CardTitle className='text-lg font-semibold'>Projectfoto&apos;s</CardTitle>
+            <CardTitle className='text-lg font-semibold'>
+              Projectfoto&apos;s
+            </CardTitle>
             <span className='text-sm text-muted-foreground'>
               {photos.length}/{MAX_PHOTOS}
             </span>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent  className='p-0'>
           <div className='grid grid-cols-3 gap-4'>
             {/* Upload Button - Show only if less than 6 photos */}
             {showUploadButton && (
@@ -166,7 +168,9 @@ export default function ProjectPhotosCard({
             ))}
 
             {/* Empty Placeholder Slots - Show remaining slots up to 6 total */}
-            {Array.from({ length: MAX_PHOTOS - photos.length - (showUploadButton ? 1 : 0) }).map((_, index) => (
+            {Array.from({
+              length: MAX_PHOTOS - photos.length - (showUploadButton ? 1 : 0),
+            }).map((_, index) => (
               <div
                 key={`empty-${index}`}
                 className='aspect-square rounded-xl bg-slate-100 flex items-center justify-center'
@@ -194,7 +198,8 @@ export default function ProjectPhotosCard({
           <AlertDialogHeader>
             <AlertDialogTitle>Foto verwijderen</AlertDialogTitle>
             <AlertDialogDescription>
-              Weet je zeker dat je deze foto wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.
+              Weet je zeker dat je deze foto wilt verwijderen? Deze actie kan
+              niet ongedaan worden gemaakt.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
