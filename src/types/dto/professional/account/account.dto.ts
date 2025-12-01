@@ -41,6 +41,7 @@ export interface GetAccountResponse {
     portfolioPhotos: string[];
     certificates: Certificate[];
     profilePictureUrl: string | null;
+    profileAnswers: Record<string, string> | null;
   };
 }
 

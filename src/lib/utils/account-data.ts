@@ -223,5 +223,6 @@ export function transformAccountData(rawData: AccountDataRaw): AccountData {
     portfolioPhotos: rawData.profile.portfolio_photos || [],
     certificates: rawData.profile.certificates || [],
     profilePictureUrl: rawData.profile.profile_picture_url || null,
+    profileAnswers: rawData.profile.profile_answers || null,
   };
 }

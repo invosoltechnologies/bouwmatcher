@@ -7,6 +7,7 @@ import CompanyHeaderCard from './CompanyHeaderCard';
 import CompanyDescriptionCard from './CompanyDescriptionCard';
 import ProjectPhotosCard from './ProjectPhotosCard';
 import ReviewsSection from './ReviewsSection';
+import QuestionsAnswersCard from './QuestionsAnswersCard';
 import LocationMapCard from './LocationMapCard';
 import CertificatesCard from './CertificatesCard';
 import ProfileCompletionCard from '../account/ProfileCompletionCard';
@@ -85,6 +86,25 @@ export default function BusinessProfilePageClient() {
           />
           <ProjectPhotosCard photos={accountData.portfolioPhotos} />
           <ReviewsSection />
+          <QuestionsAnswersCard
+            questions={[
+              {
+                id: 'company_start',
+                question: 'Hoe bent u begonnen met het bedrijf?',
+                answer: accountData.profileAnswers?.company_start || null,
+              },
+              {
+                id: 'team_strengths',
+                question: 'Wat zijn de pluspunten van uw team?',
+                answer: accountData.profileAnswers?.team_strengths || null,
+              },
+              {
+                id: 'customer_advice',
+                question: 'Wat is de beste advies voor klanten?',
+                answer: accountData.profileAnswers?.customer_advice || null,
+              },
+            ]}
+          />
           {/* <LocationMapCard /> */}
           <CertificatesCard certificates={accountData.certificates} />
         </div>
