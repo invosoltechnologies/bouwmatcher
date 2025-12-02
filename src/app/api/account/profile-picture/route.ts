@@ -91,7 +91,7 @@ export async function POST(request: Request) {
     }
 
     // Upload new file
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('professional-files')
       .upload(uniqueFileName, fileBuffer, {
         contentType: file.type,

@@ -13,7 +13,7 @@ import {
   useReverseGeocode,
   useCurrentLocation,
 } from '@/components/shared/map';
-import { useWorkAreaForm, workAreaDataToFormData, formDataToWorkAreaPayload } from '@/lib/hooks/professional/account/useWorkAreaForm';
+import { useWorkAreaForm, workAreaDataToFormData } from '@/lib/hooks/professional/account/useWorkAreaForm';
 import { useUpdateWorkArea } from '@/lib/hooks/professional/account/useUpdateWorkArea';
 import type { WorkAreaData } from '@/lib/hooks/professional/account/useWorkArea';
 import type { PlaceSelection, GoogleAddressComponent } from '@/types/map';
@@ -29,7 +29,7 @@ export function EditWorkAreaModal({ isOpen, onClose, initialData }: EditWorkArea
 
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
-      <EditWorkAreaModalContent isOpen={isOpen} onClose={onClose} initialData={initialData} />
+      <EditWorkAreaModalContent onClose={onClose} initialData={initialData} />
     </APIProvider>
   );
 }

@@ -21,7 +21,6 @@ interface CompanyHeaderCardProps {
 
 export default function CompanyHeaderCard({
   companyInfo,
-  contactInfo,
   onEditClick,
   roleInCompany,
   ratingSummary,

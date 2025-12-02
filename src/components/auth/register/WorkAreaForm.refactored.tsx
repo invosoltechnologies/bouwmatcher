@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { APIProvider } from '@vis.gl/react-google-maps';
 import { Button } from '@/components/ui/button';
 import { LocateFixed, Compass } from 'lucide-react';
@@ -76,6 +76,18 @@ function WorkAreaFormContent({ onNext, onBack, initialData }: WorkAreaFormProps)
   const longitude = watch('longitude');
   const serviceRadius = watch('serviceRadius');
 
+  // Handlers
+  const handlePlaceSelect = useCallback((place: PlaceSelection) => {
+    setValue('location', place.address);
+    setValue('latitude', place.lat);
+    setValue('longitude', place.lng);
+    setInputValue(place.address);
+
+    if (place.addressComponents) {
+      setAddressComponents(place.addressComponents);
+    }
+  }, [setValue]);
+
   // Auto-load saved data or current location on mount
   useEffect(() => {
     const initializeLocation = async () => {
@@ -119,19 +131,7 @@ function WorkAreaFormContent({ onNext, onBack, initialData }: WorkAreaFormProps)
     if (isInitialLoad) {
       initializeLocation();
     }
-  }, [isInitialLoad, initialData, savedData, setValue, getCurrentLocation, reverseGeocode]);
-
-  // Handlers
-  const handlePlaceSelect = (place: PlaceSelection) => {
-    setValue('location', place.address);
-    setValue('latitude', place.lat);
-    setValue('longitude', place.lng);
-    setInputValue(place.address);
-
-    if (place.addressComponents) {
-      setAddressComponents(place.addressComponents);
-    }
-  };
+  }, [isInitialLoad, initialData, savedData, setValue, getCurrentLocation, reverseGeocode, handlePlaceSelect]);
 
   const handleMapClick = async (lat: number, lng: number) => {
     setInputValue('Adres ophalen...');

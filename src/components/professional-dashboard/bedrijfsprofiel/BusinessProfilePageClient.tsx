@@ -8,7 +8,6 @@ import CompanyDescriptionCard from './CompanyDescriptionCard';
 import ProjectPhotosCard from './ProjectPhotosCard';
 import ReviewsSection from './ReviewsSection';
 import QuestionsAnswersCard from './QuestionsAnswersCard';
-import LocationMapCard from './LocationMapCard';
 import CertificatesCard from './CertificatesCard';
 import ProfileCompletionCard from '../account/ProfileCompletionCard';
 import MoreInfoCard from './MoreInfoCard';

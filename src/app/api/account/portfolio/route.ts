@@ -190,7 +190,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Update profile to remove photo URL
-    const updatedPhotos = currentPhotos.filter((url) => url !== photoUrl);
+    const updatedPhotos = currentPhotos.filter((url: string) => url !== photoUrl);
     const { error: updateError } = await supabase
       .from('professional_profiles')
       .update({

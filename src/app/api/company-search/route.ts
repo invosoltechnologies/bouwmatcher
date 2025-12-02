@@ -102,7 +102,7 @@ async function searchBelgianCompanies(query: string) {
 
     // Fetch full details for each company (including address)
     const companies = await Promise.all(
-      (searchData.data || []).slice(0, 10).map(async (result: any) => {
+      (searchData.data || []).slice(0, 10).map(async (result: { entityNumber: string; value: string; entityNumberFormatted?: string }) => {
         try {
           // Get address for this enterprise
           const addressResponse = await fetch(
@@ -115,14 +115,14 @@ async function searchBelgianCompanies(query: string) {
             }
           );
 
-          let addressData: any = {};
+          let addressData: { data?: Array<{ type?: string; street?: string; houseNumber?: string; postalCode?: string; city?: string; municipality?: string; zipCode?: string }> } = {};
           if (addressResponse.ok) {
             addressData = await addressResponse.json();
           }
 
           // Find the main address
           const mainAddress = addressData.data?.find(
-            (addr: any) => addr.type === 'main' || addr.type === 'registered'
+            (addr) => addr.type === 'main' || addr.type === 'registered'
           ) || addressData.data?.[0];
 
           return {

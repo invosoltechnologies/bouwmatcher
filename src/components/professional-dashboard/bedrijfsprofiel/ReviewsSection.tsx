@@ -2,7 +2,7 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Star, Shield } from 'lucide-react';
+import { Star } from 'lucide-react';
 import Image from 'next/image';
 
 export default function ReviewsSection() {

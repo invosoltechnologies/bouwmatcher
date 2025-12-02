@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import AccountStatusCard from '@/components/professional-dashboard/account/AccountStatusCard';
-import CompanyInfoCard from '@/components/professional-dashboard/account/CompanyInfoCard';
 import ContactInfoCard from '@/components/professional-dashboard/account/ContactInfoCard';
 import ProfileCompletionCard from '@/components/professional-dashboard/account/ProfileCompletionCard';
 import EditCompanyModal from '@/components/professional-dashboard/account/EditCompanyModal';
@@ -30,10 +29,6 @@ export default function AccountPageClient() {
     // TODO: Implement document upload
     console.log('Document upload clicked');
     toast('Document upload functionaliteit komt binnenkort');
-  };
-
-  const handleCompanyEdit = () => {
-    setIsCompanyModalOpen(true);
   };
 
   const handleContactEdit = () => {
