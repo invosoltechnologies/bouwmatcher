@@ -2,18 +2,29 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SMS_CONFIG } from "@/lib/config";
 
 interface OTPVerificationProps {
   phoneNumber: string;
-  onVerify: (otp: string) => void;
+  draftId: string;
+  onVerify: (projectId: string) => void;
   onBack: () => void;
 }
 
-export default function OTPVerification({ phoneNumber, onVerify, onBack }: OTPVerificationProps) {
+export default function OTPVerification({ phoneNumber, draftId, onVerify, onBack }: OTPVerificationProps) {
   const [otp, setOtp] = useState('');
-  const [countdown, setCountdown] = useState(59);
+  const [countdown, setCountdown] = useState<number>(SMS_CONFIG.otpDisplayCountdownSeconds);
   const [canResend, setCanResend] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [error, setError] = useState('');
+  const [developmentOtp, setDevelopmentOtp] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Send initial OTP when component mounts
+  useEffect(() => {
+    sendOtp();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Countdown timer
   useEffect(() => {
@@ -30,23 +41,84 @@ export default function OTPVerification({ phoneNumber, onVerify, onBack }: OTPVe
     inputRef.current?.focus();
   }, []);
 
-  const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, ''); // Only digits
-    if (value.length <= 4) {
-      setOtp(value);
+  const sendOtp = async () => {
+    try {
+      const response = await fetch('/api/otp/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          draftId,
+          phoneNumber,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Failed to send OTP');
+        return;
+      }
+
+      // Development mode: Show OTP in console and UI
+      if (data.developmentOtp && !SMS_CONFIG.enableSMS) {
+        console.log('🔐 Development OTP:', data.developmentOtp);
+        setDevelopmentOtp(data.developmentOtp);
+      }
+
+      setError('');
+    } catch (err) {
+      console.error('Error sending OTP:', err);
+      setError('Failed to send OTP');
     }
   };
 
-  const handleResend = () => {
-    // TODO: Implement resend OTP logic
-    setCountdown(59);
-    setCanResend(false);
-    setOtp('');
+  const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, ''); // Only digits
+    if (value.length <= SMS_CONFIG.otpLength) {
+      setOtp(value);
+      setError(''); // Clear error when user types
+    }
   };
 
-  const handleSubmit = () => {
-    if (otp.length === 4) {
-      onVerify(otp);
+  const handleResend = async () => {
+    setCountdown(SMS_CONFIG.otpDisplayCountdownSeconds);
+    setCanResend(false);
+    setOtp('');
+    setError('');
+    await sendOtp();
+  };
+
+  const handleSubmit = async () => {
+    if (otp.length !== SMS_CONFIG.otpLength) return;
+
+    setIsVerifying(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/otp/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          draftId,
+          phoneNumber,
+          otp,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Invalid OTP');
+        setIsVerifying(false);
+        return;
+      }
+
+      // Success! Call onVerify with project ID
+      onVerify(data.projectId);
+    } catch (err) {
+      console.error('Error verifying OTP:', err);
+      setError('Failed to verify OTP');
+      setIsVerifying(false);
     }
   };
 
@@ -63,11 +135,11 @@ export default function OTPVerification({ phoneNumber, onVerify, onBack }: OTPVe
       {/* OTP Card */}
       <div className="rounded-2xl p-8 mb-8" style={{ background: 'linear-gradient(90deg, rgba(10, 178, 126, 0.10) 0%, rgba(2, 58, 162, 0.10) 100%)' }}>
         <h3 className="text-2xl font-semibold text-foreground mb-3.5">
-          Voer de 4-cijferige code in
+          Voer de {SMS_CONFIG.otpLength}-cijferige code in
         </h3>
 
         <p className="text-base text-gray-600 mb-9">
-          Er is zojuist een <span className="font-semibold">SMS</span> met een 4-cijferige code verzonden naar{' '}
+          Er is zojuist een <span className="font-semibold">SMS</span> met een {SMS_CONFIG.otpLength}-cijferige code verzonden naar{' '}
           <span className="font-semibold">{maskedPhone}</span>.{' '}
           <button
             onClick={onBack}
@@ -86,9 +158,17 @@ export default function OTPVerification({ phoneNumber, onVerify, onBack }: OTPVe
             value={otp}
             onChange={handleOtpChange}
             placeholder="Voer de code in"
-            className="max-w-36 bg-white text-center text-2xl tracking-widest font-semibold placeholder:font-light"
-            maxLength={4}
+            className="max-w-48 bg-white text-center text-2xl tracking-widest font-semibold placeholder:font-light"
+            maxLength={SMS_CONFIG.otpLength}
           />
+          {error && (
+            <p className="text-red-600 text-sm mt-2">{error}</p>
+          )}
+          {developmentOtp && (
+            <p className="text-blue-600 text-sm mt-2 font-mono">
+              Dev OTP: {developmentOtp}
+            </p>
+          )}
         </div>
 
         {/* Resend/Countdown */}
@@ -123,10 +203,10 @@ export default function OTPVerification({ phoneNumber, onVerify, onBack }: OTPVe
 
         <Button
           onClick={handleSubmit}
-          disabled={otp.length !== 4}
+          disabled={otp.length !== SMS_CONFIG.otpLength || isVerifying}
           className="bg-primary hover:bg-primary/90 text-white font-medium text-base px-8 py-6 rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Ontvang offertes
+          {isVerifying ? 'Verifiëren...' : 'Ontvang offertes'}
         </Button>
       </div>
     </div>

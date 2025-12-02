@@ -56,8 +56,7 @@ export async function POST(request: NextRequest) {
 
     // Upload to Supabase Storage
     const fileBuffer = await file.arrayBuffer();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('project-photos')
       .upload(storagePath, fileBuffer, {
         contentType: file.type,

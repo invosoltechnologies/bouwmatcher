@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { PhoneInput } from '@/components/ui/phone-input';
+import { isValidPhoneNumber } from 'react-phone-number-input';
 import Link from 'next/link';
 import type { ContactInfoData } from '@/types/auth';
 import { ArrowRight } from 'lucide-react';
@@ -106,29 +107,15 @@ export default function ContactInfoForm({ onNext, defaultValues }: ContactInfoFo
               required: 'Telefoonnummer is verplicht',
               validate: (value) => {
                 if (!value) return 'Telefoonnummer is verplicht';
-
-                // Remove all non-digits
-                const digits = value.replace(/\D/g, '');
-
-                // Dutch mobile numbers: +31 6 XXXXXXXX (11 digits total)
-                // Dutch landline: +31 XX XXXXXXX (varies, but typically 10-11 digits)
-                if (digits.length < 11 || digits.length > 12) {
-                  return 'Ongeldig Nederlands telefoonnummer';
-                }
-
-                // Must start with 31 (Netherlands country code)
-                if (!digits.startsWith('31')) {
-                  return 'Telefoonnummer moet beginnen met +31';
-                }
-
-                return true;
+                return isValidPhoneNumber(value) || 'Ongeldig telefoonnummer';
               },
             }}
             render={({ field }) => (
               <PhoneInput
                 {...field}
-                placeholder='+31 (6XX) XXX-XXXX'
-                className='py-7 bg-white border-neutral-300 rounded-lg px-4 pl-14 text-base md:text-xl placeholder:text-slate-300'
+                placeholder='6 12345678'
+                className=' bg-white border-neutral-300 rounded-lg text-base md:text-xl placeholder:text-slate-300'
+                classInput='py-7 px-4 text-base border-neutral-300 md:text-xl placeholder:text-slate-300'
                 style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
                 error={errors.phone?.message}
               />

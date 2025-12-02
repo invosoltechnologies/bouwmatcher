@@ -172,6 +172,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Update current_step to 5 after completing step 4
+    const { error: stepUpdateError } = await supabase
+      .from('professional_profiles')
+      .update({ current_step: 5, updated_at: new Date().toISOString() })
+      .eq('user_id', user.id);
+
+    if (stepUpdateError) {
+      console.error('Error updating current_step:', stepUpdateError);
+      // Don't fail the request, just log the error
+    }
+
     return NextResponse.json({
       message: 'Subcategories saved successfully',
       subcategories: insertedData,

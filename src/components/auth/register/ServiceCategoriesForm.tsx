@@ -2,29 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
-import { Info, Move, Search, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { Loader } from '@/components/ui/loader';
-import { CategoryPill } from '@/components/ui/category-pill';
-
-interface ServiceCategory {
-  id: number;
-  slug: string;
-  name_nl: string;
-  name_en: string;
-  icon_url: string | null;
-}
-
-interface ProfessionalSpecialization {
-  id: string;
-  priority: number;
-  service_category_id: number;
-  service_categories: ServiceCategory;
-}
+import CategorySearch from '@/components/shared/categories/CategorySearch';
+import PopularCategoriesSection from '@/components/shared/categories/PopularCategoriesSection';
+import AllCategoriesGrid from '@/components/shared/categories/AllCategoriesGrid';
+import SelectedCategoriesSidebar from '@/components/shared/categories/SelectedCategoriesSidebar';
+import type { ServiceCategory, ProfessionalSpecialization } from '@/types/categories';
 
 interface ServiceCategoriesFormProps {
   onNext: (data: ServiceCategoriesData) => void;
@@ -110,15 +94,15 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
     fetchSpecializations();
   }, []);
 
-  const toggleCategory = async (category: ServiceCategory) => {
+  const toggleCategory = async (categoryId: number) => {
     const isSelected = selectedSpecializations.some(
-      (s) => s.service_category_id === category.id
+      (s) => s.service_category_id === categoryId
     );
 
     if (isSelected) {
       // Remove category - delete from database first
       const spec = selectedSpecializations.find(
-        (s) => s.service_category_id === category.id
+        (s) => s.service_category_id === categoryId
       );
       if (!spec) return;
 
@@ -156,7 +140,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            service_category_id: category.id,
+            service_category_id: categoryId,
             priority,
           }),
         });
@@ -262,8 +246,6 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
     });
   };
 
-  const progressPercentage = (selectedSpecializations.length / MAX_CATEGORIES) * 100;
-
   // Show loader while fetching initial data
   if (isLoading) {
     return <Loader fullScreen text='Vakgebieden laden...' />;
@@ -273,7 +255,8 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
     <div className='custom-container'>
       {/* Full Screen Loader for saving operations */}
       {isSaving && <Loader fullScreen text='Bezig met opslaan...' />}
-      {/* Main Card */}
+
+      {/* Header */}
       <div className='mb-11.5 mt-5.5 text-center'>
         <h1 className='text-2xl md:text-4xl font-normal text-slate-900 mb-3'>
           Wat zijn je vakgebieden?
@@ -283,6 +266,8 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
           later meer toevoegen.
         </p>
       </div>
+
+      {/* Main Card */}
       <div
         className='bg-white/95 rounded-3xl p-6 lg:p-8'
         style={{ boxShadow: '0px 12px 36px 0px #023AA21F' }}
@@ -290,181 +275,38 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
         <div className='flex flex-col lg:flex-row gap-8'>
           {/* Left Panel - Selection */}
           <div className='w-full lg:w-[60%] space-y-8'>
-            {/* Search Input */}
-            <div className='space-y-3'>
-              <div className='relative'>
-                <Search className='absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400' />
-                <input
-                  type='text'
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder='Zoek vakgebied...'
-                  className='w-full pl-12 pr-4 py-4 bg-white border border-neutral-300 rounded-lg text-base md:text-lg placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary'
-                  style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
-                />
-              </div>
-            </div>
-
-            {/* Combobox - Commented for future use */}
-            {/* <div className='space-y-3'>
-              <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant='outline'
-                    role='combobox'
-                    aria-expanded={open}
-                    className='w-full justify-between h-auto py-4 px-4 text-base md:text-lg font-normal border-neutral-300'
-                    style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
-                  >
-                    <div className='flex items-center gap-2 text-slate-400'>
-                      <Search className='w-5 h-5' />
-                      <span>Zoek vakgebied...</span>
-                    </div>
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className='w-full p-0' align='start'>
-                  <Command>
-                    <CommandInput placeholder='Zoek vakgebied...' />
-                    <CommandList>
-                      <CommandEmpty>Geen resultaten gevonden.</CommandEmpty>
-                      <CommandGroup>
-                        {allCategories.map((category) => {
-                          const isSelected = selectedCategories.some(
-                            (c) => c.id === category.id
-                          );
-                          return (
-                            <CommandItem
-                              key={category.id}
-                              value={category.name_nl}
-                              onSelect={() => {
-                                toggleCategory(category);
-                              }}
-                            >
-                              <div className='flex items-center gap-3 flex-1'>
-                                {category.icon_url && (
-                                  <Image
-                                    src={category.icon_url}
-                                    alt={category.name_nl}
-                                    width={24}
-                                    height={24}
-                                    className='shrink-0'
-                                  />
-                                )}
-                                <span className='flex-1'>
-                                  {category.name_nl}
-                                </span>
-                                <Check
-                                  className={cn(
-                                    'w-5 h-5 shrink-0',
-                                    isSelected
-                                      ? 'opacity-100 text-primary'
-                                      : 'opacity-0'
-                                  )}
-                                />
-                              </div>
-                            </CommandItem>
-                          );
-                        })}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            </div> */}
+            {/* Search Input - filters the list below */}
+            <CategorySearch
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder='Zoek vakgebied...'
+              isDropdown={false}
+              isListFiltered={true}
+            />
 
             {/* Popular Categories */}
             {popularCategories.length > 0 && (
-              <div className='space-y-3'>
-                <Label className='text-sm md:text-lg text-slate-900'>
-                  Populaire keuzes
-                </Label>
-                <div className='flex flex-wrap gap-3'>
-                  {popularCategories.map((category) => {
-                    const isSelected = selectedSpecializations.some(
-                      (s) => s.service_category_id === category.id
-                    );
-                    return (
-                      <CategoryPill
-                        key={category.id}
-                        id={category.id}
-                        name={category.name_nl}
-                        icon={category.icon_url}
-                        selected={isSelected}
-                        onClick={() => toggleCategory(category)}
-                        disabled={isSaving}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
+              <PopularCategoriesSection
+                categories={popularCategories}
+                selectedIds={selectedSpecializations.map((s) => s.service_category_id)}
+                onToggle={toggleCategory}
+                disabled={isSaving}
+                showLabel={true}
+                label='Populaire keuzes'
+              />
             )}
 
-            {/* All Categories List */}
-            <div className='space-y-4'>
-              <Label className='text-sm md:text-lg text-slate-900'>
-                Alle vakgebieden
-              </Label>
-              {allCategories.filter((category) =>
-                category.name_nl
-                  .toLowerCase()
-                  .includes(searchQuery.toLowerCase())
-              ).length === 0 ? (
-                <div className='col-span-2 text-center py-8'>
-                  <p className='text-slate-500'>
-                    Geen vakgebieden gevonden voor &quot;{searchQuery}&quot;
-                  </p>
-                </div>
-              ) : (
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
-                  {allCategories
-                    .filter((category) =>
-                      category.name_nl
-                        .toLowerCase()
-                        .includes(searchQuery.toLowerCase())
-                    )
-                    .map((category) => {
-                      const isSelected = selectedSpecializations.some(
-                        (s) => s.service_category_id === category.id
-                      );
-                      return (
-                        <button
-                          key={category.id}
-                          type='button'
-                          onClick={() => toggleCategory(category)}
-                          disabled={isSaving}
-                          className={cn(
-                            'px-4 py-3 cursor-pointer rounded-lg text-base transition-all flex items-center gap-3 text-left disabled:opacity-50 disabled:cursor-not-allowed',
-                            isSelected
-                              ? 'bg-primary border border-primary text-white'
-                              : 'bg-white border border-neutral-300 hover:border-primary'
-                          )}
-                          style={
-                            !isSelected
-                              ? { boxShadow: '0px 2px 6.5px 0px #0000001A' }
-                              : undefined
-                          }
-                        >
-                          {category.icon_url && (
-                            <Image
-                              src={category.icon_url}
-                              alt={category.name_nl}
-                              width={24}
-                              height={24}
-                              className={cn(
-                                isSelected ? 'brightness-0 invert' : ''
-                              )}
-                            />
-                          )}
-                          <span className='flex-1 font-semibold'>{category.name_nl}</span>
-                          {/* {isSelected && (
-                        <Check className='w-5 h-5 text-primary shrink-0' />
-                      )} */}
-                        </button>
-                      );
-                    })}
-                </div>
-              )}
-            </div>
+            {/* All Categories Grid */}
+            <AllCategoriesGrid
+              categories={allCategories}
+              selectedIds={selectedSpecializations.map((s) => s.service_category_id)}
+              onToggle={toggleCategory}
+              searchQuery={searchQuery}
+              disabled={isSaving}
+              showLabel={true}
+              label='Alle vakgebieden'
+              columns={2}
+            />
 
             {/* Add custom option */}
             <div className='pt-4'>
@@ -478,110 +320,23 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
             </div>
           </div>
 
-          {/* Right Panel - Selected Categories */}
-          <div className='w-full lg:w-[40%] space-y-8'>
-            <div>
-              <h2 className='text-xl md:text-2xl font-normal text-slate-900 mb-3'>
-                Gekozen vakgebieden
-              </h2>
-              <div className='flex items-center justify-between mb-4'>
-                <p className='text-sm md:text-base text-muted-foreground'>
-                  {selectedSpecializations.length} / {MAX_CATEGORIES} gekozen
-                </p>
-
-                {selectedSpecializations.length > 0 && (
-                  <button
-                    type='button'
-                    className='text-primary text-sm font-medium flex items-center gap-1.5 hover:text-primary/80 transition-colors'
-                    onClick={() => toast('Volgorde opnieuw instellen')}
-                  >
-<Move className='w-4 h-4 text-primary' />
-                    Herorden
-                  </button>
-                )}
-              </div>
-              <Progress value={progressPercentage} className='h-2' />
-            </div>
-
-            {/* Info Message - Always visible */}
-
-            {selectedSpecializations.length > 0 ? (
-              <div className='space-y-3'>
-                <div className='space-y-2'>
-                  {selectedSpecializations.map((spec, index) => (
-                    <div
-                      key={spec.id}
-                      draggable
-                      onDragStart={() => handleDragStart(index)}
-                      onDragOver={(e) => handleDragOver(e, index)}
-                      onDragEnd={handleDragEnd}
-                      className={cn(
-                        'bg-teal-50 border-2 border-accent border-dashed rounded-xl p-4 flex items-center gap-3 cursor-move transition-all',
-                        draggedIndex === index && 'opacity-50'
-                      )}
-                    >
-                      <div className='w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0'>
-                        {spec.service_categories.icon_url && (
-                          <Image
-                            src={spec.service_categories.icon_url}
-                            alt={spec.service_categories.name_nl}
-                            width={14}
-                            height={14}
-                            className='brightness-0 invert'
-                          />
-                        )}
-                      </div>
-                      <span className='flex-1 text-base font-medium text-slate-900'>
-                        {spec.service_categories.name_nl}
-                      </span>
-                      <span className='text-sm font-medium text-slate-400 shrink-0'>
-                        #{index + 1}
-                      </span>
-                      <button
-                        type='button'
-                        onClick={() => removeCategory(spec.id)}
-                        className='w-8 h-8 cursor-pointer rounded-full bg-red-100 flex items-center justify-center text-red-500 hover:bg-red-200 transition-all group shrink-0'
-                      >
-                        <X className='w-4 h-4 group-hover:rotate-90 transition-transform duration-200' />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className=' rounded-xl p-8 text-center'>
-                <div className='w-16 h-16 rounded-full bg-slate-200 flex items-center justify-center mx-auto mb-4'>
-                  <Image
-                    src='/icons/services/renovatie.svg'
-                    alt='Nog niets gekozen'
-                    width={32}
-                    height={32}
-                    className='opacity-40'
-                    style={{ filter: 'grayscale(100%)' }}
-                  />
-                </div>
-                <p className='text-base font-medium text-slate-900 mb-1'>
-                  Nog niets gekozen
-                </p>
-                <p className='text-sm text-slate-600'>
-                  Kies je vakgebieden uit de lijst links
-                </p>
-              </div>
-            )}
-            <div className='bg-blue-50 border border-blue-200 rounded-xl p-4'>
-              <div className='flex items-start gap-3'>
-                <Info className='w-5 h-5 text-primary' />
-
-                <div>
-                  <p className='text-sm font-medium text-slate-900'>
-                    Volgorde bepaalt prioriteit
-                  </p>
-                  <p className='text-xs text-slate-600 mt-1'>
-                    Sleep om te herschikken.
-                  </p>
-                </div>
-              </div>
-            </div>
+          {/* Right Panel - Selected Categories Sidebar */}
+          <div className='w-full lg:w-[40%]'>
+            <SelectedCategoriesSidebar
+              title='Gekozen vakgebieden'
+              selectedSpecializations={selectedSpecializations}
+              maxCategories={MAX_CATEGORIES}
+              onRemove={removeCategory}
+              onDragStart={handleDragStart}
+              onDragOver={handleDragOver}
+              onDragEnd={handleDragEnd}
+              draggedIndex={draggedIndex}
+              isDraggable={true}
+              showReorderButton={true}
+              onReorderClick={() => toast('Volgorde opnieuw instellen')}
+              showInfoCard={true}
+              emptyStateIcon='/icons/services/renovatie.svg'
+            />
           </div>
         </div>
       </div>

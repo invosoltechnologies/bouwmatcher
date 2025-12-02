@@ -17,6 +17,8 @@ interface UploadedPhoto {
   file_name: string;
   file_size: number;
   is_primary: boolean;
+  width?: number;
+  height?: number;
 }
 
 interface UploadingFile {
@@ -244,6 +246,8 @@ export default function PhotoUploadModal({ draftId, onClose, onComplete }: Photo
               <Image
                 src={photo.url}
                 alt={photo.file_name}
+                width={photo.width || 400}
+                height={photo.height || 400}
                 className='w-full h-full object-cover rounded-lg'
               />
               <button

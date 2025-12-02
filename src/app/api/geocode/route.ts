@@ -34,6 +34,7 @@ export async function GET(request: NextRequest) {
     if (data.results && data.results[0]) {
       return NextResponse.json({
         address: data.results[0].formatted_address,
+        addressComponents: data.results[0].address_components || [],
         status: 'OK',
       });
     } else {
