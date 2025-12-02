@@ -30,7 +30,7 @@ export default function ProfessionalRegistrationForm() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [companyData, setCompanyData] = useState<CompanyData | null>(null);
 
-  // Load current step on component mount
+  // Load current step and profile data on component mount
   useEffect(() => {
     const loadCurrentStep = async () => {
       try {
@@ -49,6 +49,28 @@ export default function ProfessionalRegistrationForm() {
           if (data.current_step && data.current_step > 1) {
             setCurrentStep(data.current_step);
           }
+
+          // Load profile data to pre-fill form (for OAuth users)
+          if (data.current_step >= 2) {
+            try {
+              const profileResponse = await fetch('/api/registration/profile-data');
+              if (profileResponse.ok) {
+                const profileData = await profileResponse.json();
+
+                // Pre-fill contact data if available (from OAuth or previous form submission)
+                if (profileData.first_name && profileData.last_name && profileData.email) {
+                  setContactData({
+                    firstName: profileData.first_name,
+                    lastName: profileData.last_name,
+                    email: profileData.email,
+                    phone: profileData.phone || '',
+                  });
+                }
+              }
+            } catch (error) {
+              console.error('Error loading profile data:', error);
+            }
+          }
         }
       } catch (error) {
         console.error('Error loading current step:', error);
@@ -60,9 +82,41 @@ export default function ProfessionalRegistrationForm() {
     loadCurrentStep();
   }, [router]);
 
-  const handleContactInfoNext = (data: ContactInfoData) => {
+  const handleContactInfoNext = async (data: ContactInfoData) => {
     setContactData(data);
-    setSubStep('password');
+
+    // Check if user already has an account (OAuth user on step 2)
+    if (currentStep >= 2) {
+      // User already registered via OAuth, update their info and move to step 2
+      try {
+        const response = await fetch('/api/registration/update-contact-info', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            phone: data.phone,
+          }),
+        });
+
+        if (response.ok) {
+          toast.success('Contactgegevens bijgewerkt!');
+          setCurrentStep(2);
+        } else {
+          const result = await response.json();
+          toast.error(result.error || 'Kon gegevens niet opslaan');
+        }
+      } catch (error) {
+        console.error('Error updating contact info:', error);
+        toast.error('Er is een fout opgetreden');
+      }
+    } else {
+      // New user, show password setup
+      setSubStep('password');
+    }
   };
 
   const handlePasswordBack = () => {
