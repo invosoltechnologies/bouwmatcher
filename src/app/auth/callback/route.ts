@@ -42,47 +42,42 @@ export async function GET(request: Request) {
       }
     }
 
-    // Profile doesn't exist - create it from OAuth data
+    // Profile was created by database trigger with minimal data
+    // Update it with OAuth metadata
     const userMetadata = user.user_metadata || {};
     const email = user.email || '';
 
     // Extract name from metadata (Google provides full_name, given_name, family_name)
     const fullName = userMetadata.full_name || userMetadata.name || '';
-    const firstName = userMetadata.given_name || userMetadata.first_name || fullName.split(' ')[0] || 'User';
+    const firstName = userMetadata.given_name || userMetadata.first_name || fullName.split(' ')[0] || '';
     const lastName = userMetadata.family_name || userMetadata.last_name || fullName.split(' ').slice(1).join(' ') || '';
 
     // Get profile picture from OAuth provider
     const profilePictureUrl = userMetadata.avatar_url || userMetadata.picture || null;
 
     // Get phone if available (not typically provided by Google)
-    const phone = userMetadata.phone || userMetadata.phone_number || null;
+    const phone = userMetadata.phone || userMetadata.phone_number || '';
 
-    // Create professional profile
-    const { error: insertError } = await supabase
+    // Update professional profile with OAuth data (only if values are not empty)
+    const updateData: Record<string, unknown> = {
+      email: email,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Only update non-empty values
+    if (firstName) updateData.first_name = firstName;
+    if (lastName) updateData.last_name = lastName;
+    if (profilePictureUrl) updateData.profile_picture_url = profilePictureUrl;
+    if (phone) updateData.phone = phone;
+
+    const { error: updateError } = await supabase
       .from('professional_profiles')
-      .insert({
-        user_id: user.id,
-        first_name: firstName,
-        last_name: lastName,
-        email: email,
-        phone: phone,
-        profile_picture_url: profilePictureUrl,
-        current_step: 2, // Mark as completed step 1 (account creation)
-        profile_completed: false,
-        is_active: true,
-        is_verified: 'unverified',
-      });
+      .update(updateData)
+      .eq('user_id', user.id);
 
-    if (insertError) {
-      console.error('Error creating professional profile:', insertError);
-
-      // Check if it's a duplicate key error (profile might have been created by trigger)
-      if (insertError.code === '23505') {
-        // Profile was created by trigger, redirect to registration
-        return NextResponse.redirect(new URL('/auth/register', origin));
-      }
-
-      return NextResponse.redirect(new URL('/auth/login?error=profile_creation_failed', origin));
+    if (updateError) {
+      console.error('Error updating professional profile with OAuth data:', updateError);
+      return NextResponse.redirect(new URL('/auth/login?error=profile_update_failed', origin));
     }
 
     // Redirect to registration to complete profile (step 2 onwards)
