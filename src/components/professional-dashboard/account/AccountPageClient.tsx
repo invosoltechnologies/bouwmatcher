@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import AccountStatusCard from '@/components/professional-dashboard/account/AccountStatusCard';
 import ContactInfoCard from '@/components/professional-dashboard/account/ContactInfoCard';
@@ -19,7 +19,9 @@ export default function AccountPageClient() {
 
   const { data, isLoading, isError } = useAccount();
   const { data: workAreaData } = useWorkArea();
-
+useEffect(() => {
+  console.log('AccountData', data?.accountData);
+}, []);
   // Show error toast if fetch fails
   if (isError) {
     toast.error('Kon accountgegevens niet laden');
@@ -56,6 +58,8 @@ export default function AccountPageClient() {
   }
 
   const accountData = data.accountData;
+
+
 
   return (
     <div className="flex gap-6 w-full">
