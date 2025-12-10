@@ -7,12 +7,15 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import LanguageSwitcher from "@/components/ui/language-switcher";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import UserAvatarDropdown from "./UserAvatarDropdown";
 
 export default function Navbar() {
   const [scrollY, setScrollY] = useState(0);
   const [windowWidth, setWindowWidth] = useState(0);
   const pathname = usePathname();
   const isAuthRoute = pathname?.includes('/auth');
+  const { user, loading } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -96,19 +99,29 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Login Button - Hidden on auth routes */}
-          {!isAuthRoute && (
-            <Link href='/auth/login'>
-              <Button
-                className='bg-primary hover:bg-primary/90 text-white px-[22px] py-3 border border-gray-200 font-medium text-lg h-auto rounded-[12px]'
-                style={{
-                  boxShadow:
-                    '0px 10px 15px 0px #0000001A, 0px 4px 6px 0px #0000001A',
-                }}
-              >
-                Login
-              </Button>
-            </Link>
+          {/* User Avatar or Login Button */}
+          {!loading && (
+            <>
+              {user ? (
+                // Show avatar dropdown for logged-in users
+                <UserAvatarDropdown />
+              ) : (
+                // Show login button for non-authenticated users (except on auth routes)
+                !isAuthRoute && (
+                  <Link href='/auth/login'>
+                    <Button
+                      className='bg-primary hover:bg-primary/90 text-white px-[22px] py-3 border border-gray-200 font-medium text-lg h-auto rounded-[12px]'
+                      style={{
+                        boxShadow:
+                          '0px 10px 15px 0px #0000001A, 0px 4px 6px 0px #0000001A',
+                      }}
+                    >
+                      Login
+                    </Button>
+                  </Link>
+                )
+              )}
+            </>
           )}
 
           {/* Language Switcher */}
