@@ -55,7 +55,7 @@ export default function AccountStatusCard({
             </p>
           </div>
         </div>
-        {documentRequired && (
+        {/* {documentRequired && (
           <button
             onClick={onDocumentClick}
             className='flex items-end gap-2 cursor-pointer text-primary text-sm font-medium hover:underline'
@@ -63,7 +63,7 @@ export default function AccountStatusCard({
             <HardDriveUpload className='w-4.5 h-4.5' />
             <span className='leading-2.5'>Documentatie aanleveren</span>
           </button>
-        )}
+        )} */}
       </CardContent>
     </Card>
   );
