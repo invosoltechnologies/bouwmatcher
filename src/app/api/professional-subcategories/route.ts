@@ -32,7 +32,6 @@ export async function GET() {
           name_nl,
           name_en,
           service_category_id,
-          service_category_name,
           price_particulier,
           price_zakelijk,
           icon_url
@@ -148,7 +147,6 @@ export async function POST(request: NextRequest) {
           name_nl,
           name_en,
           service_category_id,
-          service_category_name,
           price_particulier,
           price_zakelijk,
           icon_url
