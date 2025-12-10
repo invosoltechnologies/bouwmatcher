@@ -96,14 +96,21 @@ export async function GET(request: NextRequest) {
         })
         .eq('id', draftId);
 
-      // Fetch questions for this subcategory
-      const { data: questions, error: questionsError } = await supabase
+      // Fetch questions for this subcategory (with parent_question_id filter if provided)
+      let query = supabase
         .from('project_form_questions')
         .select('*')
         .eq('service_subcategory_id', subcategoryId)
-        .eq('is_root_question', true)
+        .eq('is_root_question', false)
         .eq('is_active', true)
         .order('order_index', { ascending: true });
+
+      // If parentQuestionId is provided, filter by it as well
+      if (parentQuestionId) {
+        query = query.eq('parent_question_id', parentQuestionId);
+      }
+
+      const { data: questions, error: questionsError } = await query;
 
       if (questionsError) {
         return NextResponse.json(
