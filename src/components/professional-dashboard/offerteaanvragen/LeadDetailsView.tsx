@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Lock, Image as ImageIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { nl } from 'date-fns/locale';
@@ -7,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardAction } from '@/components/ui/card';
 import { useLeadDetails } from '@/lib/hooks/professional/leads';
+import PurchaseLeadDialog from './PurchaseLeadDialog';
+import { PurchaseLeadDialogData } from '@/types/models/payment.model';
 
 interface LeadDetailsViewProps {
   leadId: string;
@@ -15,6 +18,8 @@ interface LeadDetailsViewProps {
 
 export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProps) {
   const { data, isLoading, error } = useLeadDetails(leadId);
+  const [showPurchaseDialog, setShowPurchaseDialog] = useState(false);
+  const [purchaseDialogData, setPurchaseDialogData] = useState<PurchaseLeadDialogData | null>(null);
 
   if (isLoading) {
     return (
@@ -49,6 +54,20 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
     ? `€ ${lead.lead_price.toFixed(2).replace('.', '.')}`
     : 'Contact Support';
 
+  // Handle unlock button click
+  const handleUnlockClick = () => {
+    if (!lead.lead_price) return;
+
+    setPurchaseDialogData({
+      leadId: lead.id,
+      leadPrice: lead.lead_price,
+      categoryName,
+      city,
+      customerName: `${lead.first_name} ${lead.last_name}`,
+    });
+    setShowPurchaseDialog(true);
+  };
+
   return (
     <div className="space-y-4">
       {/* Full Width Unlock Warning Card */}
@@ -76,7 +95,10 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
               </li>
             </ul>
             <div className="flex gap-3">
-              <Button className="bg-accent text-accent-foreground hover:bg-accent/90 px-6 rounded-lg">
+              <Button
+                className="bg-accent text-accent-foreground hover:bg-accent/90 px-6 rounded-lg"
+                onClick={handleUnlockClick}
+              >
                 Ontgrendel contactgegevens
               </Button>
               <Button variant="outline" className="px-6 rounded-lg text-primary">
@@ -301,6 +323,13 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
           {/* Placeholder for future sidebar content */}
         </div>
       </div>
+
+      {/* Purchase Lead Dialog */}
+      <PurchaseLeadDialog
+        open={showPurchaseDialog}
+        onOpenChange={setShowPurchaseDialog}
+        data={purchaseDialogData}
+      />
     </div>
   );
 }
