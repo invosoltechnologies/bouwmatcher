@@ -26,13 +26,17 @@ function getSupabaseAdmin() {
  * POST /api/payments/webhook
  */
 export async function POST(request: NextRequest) {
+  console.log('🔔 Webhook received');
   const supabaseAdmin = getSupabaseAdmin();
   try {
     const body = await request.text();
     const signature = request.headers.get('stripe-signature');
 
+    console.log('Webhook signature present:', !!signature);
+    console.log('Webhook body length:', body.length);
+
     if (!signature) {
-      console.error('Missing Stripe signature');
+      console.error('❌ Missing Stripe signature');
       return NextResponse.json(
         { error: 'Missing signature' },
         { status: 400 }
@@ -40,7 +44,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!process.env.STRIPE_WEBHOOK_SECRET) {
-      console.error('STRIPE_WEBHOOK_SECRET not configured');
+      console.error('❌ STRIPE_WEBHOOK_SECRET not configured');
       return NextResponse.json(
         { error: 'Webhook secret not configured' },
         { status: 500 }
@@ -55,10 +59,11 @@ export async function POST(request: NextRequest) {
         signature,
         process.env.STRIPE_WEBHOOK_SECRET
       );
+      console.log('✅ Webhook signature verified. Event type:', event.type);
     } catch (err) {
-      console.error('Webhook signature verification failed:', err);
+      console.error('❌ Webhook signature verification failed:', err);
       return NextResponse.json(
-        { error: 'Invalid signature' },
+        { error: 'Invalid signature', details: err instanceof Error ? err.message : String(err) },
         { status: 400 }
       );
     }
@@ -67,16 +72,17 @@ export async function POST(request: NextRequest) {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
 
-      console.log('Payment successful:', session.id);
+      console.log('💳 Payment successful! Session ID:', session.id);
+      console.log('📦 Metadata:', session.metadata);
 
       const professionalId = session.metadata?.professional_id;
       const projectId = session.metadata?.project_id;
       const leadPrice = session.metadata?.lead_price;
 
       if (!professionalId || !projectId || !leadPrice) {
-        console.error('Missing metadata in webhook:', session.metadata);
+        console.error('❌ Missing metadata in webhook:', session.metadata);
         return NextResponse.json(
-          { error: 'Missing required metadata' },
+          { error: 'Missing required metadata', received_metadata: session.metadata },
           { status: 400 }
         );
       }
@@ -95,6 +101,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Create purchase record
+      console.log('💾 Creating purchase record...');
       const { data: purchase, error: purchaseError } = await supabaseAdmin
         .from('professional_lead_purchases')
         .insert({
@@ -109,14 +116,18 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (purchaseError) {
-        console.error('Error creating purchase record:', purchaseError);
+        console.error('❌ Error creating purchase record:', purchaseError);
         return NextResponse.json(
-          { error: 'Failed to create purchase record' },
+          {
+            error: 'Failed to create purchase record',
+            details: purchaseError.message,
+            code: purchaseError.code
+          },
           { status: 500 }
         );
       }
 
-      console.log('Purchase record created:', purchase.id);
+      console.log('✅ Purchase record created successfully:', purchase.id);
     }
 
     // Handle failed payment
