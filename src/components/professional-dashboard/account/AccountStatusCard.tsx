@@ -2,22 +2,17 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import PulsingDot from '@/components/ui/pulsing-dot';
-import { HardDriveUpload } from 'lucide-react';
 
 interface AccountStatusCardProps {
   status: string;
   description: string;
   statusCode: -1 | 1 | 2; // -1: inactive/blocked, 1: verified, 2: in process
-  documentRequired?: boolean;
-  onDocumentClick?: () => void;
 }
 
 export default function AccountStatusCard({
   status,
   description,
   statusCode,
-  documentRequired = false,
-  onDocumentClick,
 }: AccountStatusCardProps) {
   // Determine pill color based on status code
   const getPillColor = () => {
@@ -55,7 +50,7 @@ export default function AccountStatusCard({
             </p>
           </div>
         </div>
-        {documentRequired && (
+        {/* {documentRequired && (
           <button
             onClick={onDocumentClick}
             className='flex items-end gap-2 cursor-pointer text-primary text-sm font-medium hover:underline'
@@ -63,7 +58,7 @@ export default function AccountStatusCard({
             <HardDriveUpload className='w-4.5 h-4.5' />
             <span className='leading-2.5'>Documentatie aanleveren</span>
           </button>
-        )}
+        )} */}
       </CardContent>
     </Card>
   );

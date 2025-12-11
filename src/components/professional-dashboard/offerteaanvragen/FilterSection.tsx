@@ -39,7 +39,7 @@ export default function FilterSection({
 
   return (
     <div
-      className="bg-white rounded-xl p-4 mb-6"
+      className="bg-white rounded-lg p-4 mb-6"
       style={{ boxShadow: '0px 5.5px 16.5px 0px #023AA214' }}
     >
       <div className="flex items-end gap-3">
@@ -52,7 +52,7 @@ export default function FilterSection({
             <PopoverTrigger asChild>
               <button
                 className={cn(
-                  'w-full px-4 py-2 flex items-center justify-start gap-2 text-left font-normal border border-gray-300 rounded-xl bg-white hover:ring-2 hover:ring-primary hover:border-primary transition-all outline-none',
+                  'w-full px-4 py-2 flex items-center justify-start gap-2 text-left font-normal border border-gray-300 rounded-lg bg-white hover:ring-2 hover:ring-primary hover:border-primary transition-all outline-none',
                   !date && 'text-muted-foreground'
                 )}
               >
@@ -103,7 +103,7 @@ export default function FilterSection({
           </Label>
           <Select value={projectType} onValueChange={onProjectTypeChange}>
             <SelectTrigger
-              className="w-full px-4 py-2 bg-white border-gray-300 rounded-xl text-sm"
+              className="w-full px-4 py-2 bg-white border-gray-300 rounded-lg text-sm"
               iconWidth={10}
               iconHeight={10}
             >
@@ -131,14 +131,14 @@ export default function FilterSection({
               placeholder="Bijv. Peter"
               value={searchQuery}
               onChange={(e) => onSearchQueryChange(e.target.value)}
-              className="w-full pl-10 px-4 py-2 border-gray-300 rounded-xl text-sm"
+              className="w-full pl-10 py-2 border-gray-300 rounded-lg text-sm"
             />
           </div>
         </div>
 
         {/* Search Button */}
         <div className="flex-shrink-0">
-          <Button onClick={onSearch} className="px-8 rounded-xl font-medium">
+          <Button onClick={onSearch} className="px-8 rounded-lg font-medium">
             Zoek
           </Button>
         </div>

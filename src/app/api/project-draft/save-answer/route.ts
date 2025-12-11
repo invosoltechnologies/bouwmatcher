@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { randomUUID } from 'crypto';
+import { geocodeAddress } from '@/lib/utils/geocode-address';
 
 export async function POST(request: NextRequest) {
   try {
@@ -62,6 +63,53 @@ export async function POST(request: NextRequest) {
           { error: 'Failed to save answer to draft' },
           { status: 500 }
         );
+      }
+
+      // After saving a location field, check if all location fields are complete
+      // If yes, geocode the address and save coordinates
+      const locationFields = ['postcode', 'city', 'street_name', 'street_number'];
+      if (locationFields.includes(fieldName)) {
+        // Fetch current draft to check if all location fields are filled
+        const { data: currentDraft } = await supabase
+          .from('project_drafts')
+          .select('postcode, city, street_name, street_number, latitude, longitude')
+          .eq('id', draftId)
+          .single();
+
+        if (currentDraft) {
+          const hasAllLocationFields =
+            currentDraft.postcode &&
+            currentDraft.city &&
+            currentDraft.street_name &&
+            currentDraft.street_number;
+
+          // Only geocode if all fields are present and coordinates are not already set
+          if (hasAllLocationFields && !currentDraft.latitude) {
+            console.log('[SaveAnswer] All location fields present, geocoding address...');
+
+            const geocodeResult = await geocodeAddress({
+              postcode: currentDraft.postcode,
+              city: currentDraft.city,
+              streetName: currentDraft.street_name,
+              streetNumber: currentDraft.street_number,
+            });
+
+            if (geocodeResult) {
+              console.log('[SaveAnswer] Geocoding successful:', geocodeResult);
+
+              // Save coordinates to draft
+              await supabase
+                .from('project_drafts')
+                .update({
+                  latitude: geocodeResult.latitude,
+                  longitude: geocodeResult.longitude,
+                })
+                .eq('id', draftId);
+            } else {
+              console.warn('[SaveAnswer] Geocoding failed for draft:', draftId);
+            }
+          }
+        }
       }
 
       return NextResponse.json({

@@ -336,7 +336,6 @@ CREATE TABLE public.service_categories (
 );
 CREATE TABLE public.service_subcategories (
   id bigint NOT NULL DEFAULT nextval('service_subcategories_id_seq'::regclass),
-  service_category_name character varying,
   slug character varying NOT NULL UNIQUE,
   name_nl character varying NOT NULL,
   name_en character varying,

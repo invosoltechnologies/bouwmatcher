@@ -19,7 +19,7 @@ export interface ServiceSubcategory {
   name_nl: string;
   name_en: string | null;
   service_category_id: number;
-  service_category_name: string;
+  // service_category_name: string;
   price_particulier: number | null;
   price_zakelijk: number | null;
   icon_url: string | null;

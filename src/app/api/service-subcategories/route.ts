@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
       .select('*')
       .in('service_category_id', categoryIds)
       .eq('is_active', true)
-      .order('service_category_name', { ascending: true })
+      // .order('service_category_name', { ascending: true })
       .order('sort_order', { ascending: true })
       .order('name_nl', { ascending: true });
 

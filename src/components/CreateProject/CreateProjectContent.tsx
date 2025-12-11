@@ -7,7 +7,7 @@ import { getQuestionsForStep } from '@/data/generalQuestions';
 import TopBar from "@/components/TopBar";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, MapPin } from "lucide-react";
 import type { QuestionWithOptions } from "@/types/questionnaire";
 import { RadioGroup } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
@@ -34,6 +34,7 @@ export default function CreateProjectContent() {
   const [isSaving, setIsSaving] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const [showOTPVerification, setShowOTPVerification] = useState(false);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const totalSteps = 8;
 
   const currentQuestion = currentQuestions[currentQuestionIndex] || null;
@@ -175,16 +176,42 @@ const saveAnswer = async (
 const saveAllCurrentAnswers = async () => {
   setIsSaving(true);
   try {
-    await Promise.all(
-      Object.entries(answers).map(([questionId, answer]) => {
-        const question = currentQuestions.find((q) => q.id === questionId);
-        if (!question) return Promise.resolve();
+    // For steps with multiple fields (Step 6, 7), use batch save
+    if (currentStep === 6 || currentStep === 7) {
+      // Build answers object with fieldName
+      const answersWithFields: Record<string, { answerText: string; fieldName?: string }> = {};
 
-        // For all question types, just pass the answer as answerText
-        // Frontend questions have values like 'private', 'within_1_month', etc.
-        return saveAnswer(questionId, undefined, answer);
-      })
-    );
+      Object.entries(answers).forEach(([questionId, answer]) => {
+        const question = currentQuestions.find((q) => q.id === questionId);
+        if (question) {
+          answersWithFields[questionId] = {
+            answerText: answer,
+            fieldName: question.fieldName,
+          };
+        }
+      });
+
+      // Single batch API call
+      await fetch('/api/project-draft/save-answers-batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          draftId,
+          answers: answersWithFields,
+          currentStep,
+        }),
+      });
+    } else {
+      // For other steps, save individually
+      await Promise.all(
+        Object.entries(answers).map(([questionId, answer]) => {
+          const question = currentQuestions.find((q) => q.id === questionId);
+          if (!question) return Promise.resolve();
+
+          return saveAnswer(questionId, undefined, answer);
+        })
+      );
+    }
   } catch (error) {
     console.error('Error saving answers:', error);
   } finally {
@@ -319,10 +346,96 @@ const moveToNextStep = async () => {
     }
   };
 
+  // Get user's current location and reverse geocode to address
+  const handleUseCurrentLocation = async () => {
+    if (!navigator.geolocation) {
+      alert('Geolocatie wordt niet ondersteund door uw browser');
+      return;
+    }
+
+    setIsLoadingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+
+          // Call our geocode API to get address from coordinates
+          const response = await fetch(
+            `/api/geocode?lat=${latitude}&lng=${longitude}`
+          );
+
+          if (!response.ok) {
+            throw new Error('Geocoding failed');
+          }
+
+          const data = await response.json();
+
+          if (data.addressComponents) {
+            // Parse address components
+            const components = data.addressComponents;
+
+            let postcode = '';
+            let city = '';
+            let streetName = '';
+            let streetNumber = '';
+
+            components.forEach((component: { types: string[]; long_name: string; short_name: string }) => {
+              if (component.types.includes('postal_code')) {
+                postcode = component.long_name;
+              }
+              if (component.types.includes('locality')) {
+                city = component.long_name;
+              }
+              if (component.types.includes('route')) {
+                streetName = component.long_name;
+              }
+              if (component.types.includes('street_number')) {
+                streetNumber = component.long_name;
+              }
+            });
+
+            // Auto-fill the location fields
+            setAnswers({
+              ...answers,
+              'project_postcode': postcode,
+              'project_city': city,
+              'project_street_name': streetName,
+              'project_street_number': streetNumber,
+            });
+          }
+        } catch (error) {
+          console.error('Error geocoding location:', error);
+          alert('Kon adres niet ophalen van uw locatie');
+        } finally {
+          setIsLoadingLocation(false);
+        }
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        alert('Kon uw locatie niet ophalen. Controleer uw browser-instellingen.');
+        setIsLoadingLocation(false);
+      }
+    );
+  };
+
   // Special rendering for Step 6 (all location fields together)
   const renderStep6LocationFields = () => {
     return (
       <div className='w-full max-w-[680px] mx-auto space-y-4'>
+        {/* Use Current Location Button */}
+        <Button
+          type='button'
+          variant='outline'
+          onClick={handleUseCurrentLocation}
+          disabled={isLoadingLocation}
+          className='w-full flex items-center justify-center gap-2 py-4 px-6 rounded-[10px] border-2 border-primary text-primary hover:bg-primary/5 font-medium'
+        >
+          <MapPin className='w-5 h-5' />
+          {isLoadingLocation ? 'Locatie ophalen...' : 'Gebruik mijn huidige locatie'}
+        </Button>
+
+        {/* Location input fields */}
         {currentQuestions.map((question) => (
           <Input
             key={question.id}
@@ -471,10 +584,14 @@ const moveToNextStep = async () => {
                       Vorige
                     </Button>
 
+                    <p className='text-sm text-gray-500 text-center'>
+                      Stap {currentStep} van {totalSteps}
+                    </p>
+
                     <Button
                       onClick={async () => {
                         // Validate all required fields
-                        const allFilled = currentQuestions.every((q) =>
+                        const allFilled = currentQuestions.every ((q) =>
                           q.is_required ? answers[q.id]?.trim() : true
                         );
                         if (!allFilled) {
@@ -512,6 +629,10 @@ const moveToNextStep = async () => {
                       <ArrowLeft className='w-5 h-5' />
                       Vorige
                     </Button>
+
+                    <p className='text-sm text-gray-500 text-center'>
+                      Stap {currentStep} van {totalSteps}
+                    </p>
 
                     <Button
                       onClick={async () => {

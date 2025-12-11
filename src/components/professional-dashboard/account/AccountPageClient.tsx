@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import AccountStatusCard from '@/components/professional-dashboard/account/AccountStatusCard';
 import ContactInfoCard from '@/components/professional-dashboard/account/ContactInfoCard';
@@ -19,17 +19,13 @@ export default function AccountPageClient() {
 
   const { data, isLoading, isError } = useAccount();
   const { data: workAreaData } = useWorkArea();
-
+useEffect(() => {
+  console.log('AccountData', data?.accountData);
+}, [data?.accountData]);
   // Show error toast if fetch fails
   if (isError) {
     toast.error('Kon accountgegevens niet laden');
   }
-
-  const handleDocumentClick = () => {
-    // TODO: Implement document upload
-    console.log('Document upload clicked');
-    toast('Document upload functionaliteit komt binnenkort');
-  };
 
   const handleContactEdit = () => {
     setIsContactModalOpen(true);
@@ -57,6 +53,8 @@ export default function AccountPageClient() {
 
   const accountData = data.accountData;
 
+
+
   return (
     <div className="flex gap-6 w-full">
       {/* Main Content */}
@@ -65,8 +63,6 @@ export default function AccountPageClient() {
           status={accountData.accountStatus.status}
           description={accountData.accountStatus.description}
           statusCode={accountData.accountStatus.statusCode}
-          documentRequired={accountData.accountStatus.documentRequired}
-          onDocumentClick={handleDocumentClick}
         />
 
         <div className="mt-6">
