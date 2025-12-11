@@ -151,7 +151,12 @@ export async function POST(request: NextRequest) {
     if (updateError) {
       console.error('Error updating work area:', updateError);
       return NextResponse.json(
-        { error: 'Failed to update work area' },
+        {
+          error: 'Failed to update work area',
+          details: updateError.message,
+          code: updateError.code,
+          hint: updateError.hint
+        },
         { status: 500 }
       );
     }
@@ -168,7 +173,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error in work area update API:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      {
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : String(error)
+      },
       { status: 500 }
     );
   }

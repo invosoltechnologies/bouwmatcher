@@ -29,10 +29,10 @@ export async function GET(
       );
     }
 
-    // Get professional profile
+    // Get professional profile with verification status
     const { data: profile, error: profileError } = await supabase
       .from('professional_profiles')
-      .select('id')
+      .select('id, is_verified')
       .eq('user_id', user.id)
       .single();
 
@@ -40,6 +40,18 @@ export async function GET(
       return NextResponse.json(
         { error: 'Professional profile not found' },
         { status: 404 }
+      );
+    }
+
+    // Check if professional is verified
+    if (profile.is_verified !== 'verified') {
+      return NextResponse.json(
+        {
+          error: 'Verification required',
+          message: 'Je moet geverifieerd zijn om lead details te bekijken. Voltooi de verificatie om toegang te krijgen.',
+          verification_status: profile.is_verified
+        },
+        { status: 403 }
       );
     }
 

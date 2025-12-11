@@ -33,13 +33,43 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
   }
 
   if (error || !data) {
+    // Check if it's a verification error (403)
+    const isVerificationError = error?.message?.includes('Verification required') ||
+                                 error?.message?.includes('geverifieerd');
+
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-center">
-          <p className="text-destructive mb-2">Er is een fout opgetreden</p>
-          <Button onClick={onClose} variant="outline">
-            Terug naar overzicht
-          </Button>
+        <div className="text-center max-w-md">
+          {isVerificationError ? (
+            <>
+              <div className="mb-4">
+                <div className="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4">
+                  <Lock className="w-8 h-8 text-yellow-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">
+                  Verificatie vereist
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  Je moet geverifieerd zijn om lead details te bekijken. Voltooi de verificatie om toegang te krijgen tot interessante aanvragen.
+                </p>
+              </div>
+              <div className="flex gap-3 justify-center">
+                <Button onClick={onClose} variant="outline">
+                  Terug naar overzicht
+                </Button>
+                <Button onClick={() => window.location.href = '/pro-dashboard/profiel'}>
+                  Verificatie voltooien
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-destructive mb-2">Er is een fout opgetreden</p>
+              <Button onClick={onClose} variant="outline">
+                Terug naar overzicht
+              </Button>
+            </>
+          )}
         </div>
       </div>
     );
