@@ -27,3 +27,42 @@ export interface Lead {
 export interface LeadsResponse {
   leads: Lead[];
 }
+
+export interface LeadDetails extends Lead {
+  company_name: string | null;
+  email: string | null;
+  phone: string | null;
+  is_locked: boolean;
+}
+
+export interface ProjectPhoto {
+  id: string;
+  storage_path: string;
+  file_name: string;
+  display_order: number;
+}
+
+export interface ProjectAnswer {
+  id: string;
+  answer_text: string | null;
+  selected_option_id: string | null;
+  question_id: string;
+  project_form_questions: {
+    id: string;
+    question_text_nl: string;
+    question_text_en: string;
+    question_type: string;
+  };
+  project_form_question_options: {
+    id: string;
+    option_label_nl: string;
+    option_label_en: string;
+  } | null;
+}
+
+export interface LeadDetailsResponse {
+  lead: LeadDetails;
+  photos: ProjectPhoto[];
+  answers: ProjectAnswer[];
+  is_locked: boolean;
+}

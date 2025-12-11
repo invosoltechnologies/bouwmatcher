@@ -9,14 +9,18 @@ import FilterSection from './FilterSection';
 import FilterTabs from './FilterTabs';
 import QuotationRequestCard from './QuotationRequestCard';
 import QuotationSidebar from './QuotationSidebar';
+import LeadDetailsView from './LeadDetailsView';
 import { useLeads } from '@/lib/hooks/professional/leads';
 import { Lead } from '@/types/models/lead.model';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft } from 'lucide-react';
 
 export default function OfferteaanvragenPageClient() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [projectType, setProjectType] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'vergrendeld' | 'ontgrendeld' | 'laatste10'>('vergrendeld');
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
 
   // Fetch leads with real-time updates
   const { data, isLoading, error } = useLeads();
@@ -106,6 +110,29 @@ export default function OfferteaanvragenPageClient() {
     }
   }, [quotationRequests, activeTab]);
 
+  // If a lead is selected, show detail view
+  if (selectedLeadId) {
+    return (
+      <div className="w-full">
+        {/* Back Button */}
+        <Button
+          variant="ghost"
+          onClick={() => setSelectedLeadId(null)}
+          className="mb-4 hover:bg-transparent hover:text-primary p-0"
+        >
+          <ChevronLeft className="h-5 w-5 mr-1" />
+          Terug naar overzicht
+        </Button>
+
+        {/* Lead Details - Full Width, No Sidebar */}
+        <LeadDetailsView
+          leadId={selectedLeadId}
+          onClose={() => setSelectedLeadId(null)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full">
       <div className="flex gap-6">
@@ -170,16 +197,21 @@ export default function OfferteaanvragenPageClient() {
             {!isLoading && !error && displayedRequests.length > 0 && (
               <div className="space-y-3">
                 {displayedRequests.map((request) => (
-                  <QuotationRequestCard
+                  <div
                     key={request.id}
-                    title={request.title}
-                    author={request.author}
-                    date={request.date}
-                    isLocked={request.isLocked}
-                    hasPhotos={request.hasPhotos}
-                    photoCount={request.photoCount}
-                    isAvailable={request.isAvailable}
-                  />
+                    onClick={() => setSelectedLeadId(request.id)}
+                    className="cursor-pointer"
+                  >
+                    <QuotationRequestCard
+                      title={request.title}
+                      author={request.author}
+                      date={request.date}
+                      isLocked={request.isLocked}
+                      hasPhotos={request.hasPhotos}
+                      photoCount={request.photoCount}
+                      isAvailable={request.isAvailable}
+                    />
+                  </div>
                 ))}
               </div>
             )}
