@@ -277,6 +277,7 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
                       key={photo.id}
                       className="aspect-square rounded-lg overflow-hidden bg-muted"
                     >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={photo.storage_path}
                         alt={photo.file_name}

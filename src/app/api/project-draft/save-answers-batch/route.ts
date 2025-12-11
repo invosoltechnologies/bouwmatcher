@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Process each answer
-    for (const [questionId, answerValue] of Object.entries(answers)) {
+    for (const [, answerValue] of Object.entries(answers)) {
       const { answerText, fieldName } = answerValue as {
         answerText: string;
         fieldName?: string;

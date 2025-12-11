@@ -2,22 +2,17 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import PulsingDot from '@/components/ui/pulsing-dot';
-import { HardDriveUpload } from 'lucide-react';
 
 interface AccountStatusCardProps {
   status: string;
   description: string;
   statusCode: -1 | 1 | 2; // -1: inactive/blocked, 1: verified, 2: in process
-  documentRequired?: boolean;
-  onDocumentClick?: () => void;
 }
 
 export default function AccountStatusCard({
   status,
   description,
   statusCode,
-  documentRequired = false,
-  onDocumentClick,
 }: AccountStatusCardProps) {
   // Determine pill color based on status code
   const getPillColor = () => {

@@ -188,7 +188,7 @@ function maskEmail(email: string | null): string {
   const [username, domain] = email.split('@');
   if (!domain) return '•••••••••@••.••';
   const maskedUsername = username.charAt(0) + '•'.repeat(Math.min(username.length - 1, 8));
-  const [domainName, tld] = domain.split('.');
+  const [, tld] = domain.split('.');
   const maskedDomain = '••';
   return `${maskedUsername}@${maskedDomain}.${tld || '••'}`;
 }

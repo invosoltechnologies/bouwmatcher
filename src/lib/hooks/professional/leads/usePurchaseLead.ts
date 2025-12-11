@@ -15,10 +15,11 @@ export function usePurchaseLead() {
 
   return useMutation({
     mutationFn: async (leadId: string) => {
-      const response = await apiClient.post<
-        CreateCheckoutSessionRequest,
-        CreateCheckoutSessionResponse
-      >('/api/payments/create-checkout-session', { leadId });
+      const requestBody: CreateCheckoutSessionRequest = { leadId };
+      const response = await apiClient.post<CreateCheckoutSessionResponse>(
+        '/api/payments/create-checkout-session',
+        requestBody
+      );
       return response;
     },
     onSuccess: (data) => {

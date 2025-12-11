@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -76,7 +75,7 @@ export default function PurchaseLeadDialog({
           {/* Payment Information */}
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">
-              Door op "Doorgaan naar betaling" te klikken, wordt je doorgestuurd naar een beveiligde Stripe-betaalpagina.
+              Door op &ldquo;Doorgaan naar betaling&rdquo; te klikken, wordt je doorgestuurd naar een beveiligde Stripe-betaalpagina.
             </p>
             <ul className="space-y-1.5 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">

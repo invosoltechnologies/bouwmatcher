@@ -21,17 +21,11 @@ export default function AccountPageClient() {
   const { data: workAreaData } = useWorkArea();
 useEffect(() => {
   console.log('AccountData', data?.accountData);
-}, []);
+}, [data?.accountData]);
   // Show error toast if fetch fails
   if (isError) {
     toast.error('Kon accountgegevens niet laden');
   }
-
-  const handleDocumentClick = () => {
-    // TODO: Implement document upload
-    console.log('Document upload clicked');
-    toast('Document upload functionaliteit komt binnenkort');
-  };
 
   const handleContactEdit = () => {
     setIsContactModalOpen(true);
@@ -69,8 +63,6 @@ useEffect(() => {
           status={accountData.accountStatus.status}
           description={accountData.accountStatus.description}
           statusCode={accountData.accountStatus.statusCode}
-          documentRequired={accountData.accountStatus.documentRequired}
-          onDocumentClick={handleDocumentClick}
         />
 
         <div className="mt-6">
