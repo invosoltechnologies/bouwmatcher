@@ -22,6 +22,13 @@ export interface Lead {
     name_nl: string;
     name_en: string;
   };
+  service_subcategories?: {
+    id: number;
+    name_nl: string;
+    name_en: string;
+    price_particulier: number;
+    price_zakelijk: number;
+  };
 }
 
 export interface LeadsResponse {
@@ -33,6 +40,7 @@ export interface LeadDetails extends Lead {
   email: string | null;
   phone: string | null;
   is_locked: boolean;
+  lead_price?: number;
 }
 
 export interface ProjectPhoto {

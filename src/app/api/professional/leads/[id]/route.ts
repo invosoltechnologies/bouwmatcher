@@ -43,7 +43,7 @@ export async function GET(
       );
     }
 
-    // Fetch the project with all details
+    // Fetch the project with all details including subcategory pricing
     const { data: project, error: projectError } = await supabase
       .from('projects')
       .select(`
@@ -71,6 +71,13 @@ export async function GET(
           id,
           name_nl,
           name_en
+        ),
+        service_subcategories (
+          id,
+          name_nl,
+          name_en,
+          price_particulier,
+          price_zakelijk
         )
       `)
       .eq('id', id)
@@ -95,11 +102,23 @@ export async function GET(
 
     const isPaid = !!purchase;
 
+    // Calculate the price based on request type
+    // Note: service_subcategories might be null if no subcategory is set
+    const subcategory = Array.isArray(project.service_subcategories)
+      ? project.service_subcategories[0]
+      : project.service_subcategories;
+
+    const leadPrice = project.request_type === 'private'
+      ? subcategory?.price_particulier
+      : subcategory?.price_zakelijk;
+
     // Mask contact information if not paid
     const maskedProject = {
       ...project,
-      first_name: isPaid ? project.first_name : maskString(project.first_name),
-      last_name: isPaid ? project.last_name : maskString(project.last_name),
+      // Name is always visible
+      first_name: project.first_name,
+      last_name: project.last_name,
+      // Hide contact details if not paid
       email: isPaid ? project.email : maskEmail(project.email),
       phone: isPaid ? project.phone : maskPhone(project.phone),
       street_name: isPaid ? project.street_name : maskString(project.street_name),
@@ -107,6 +126,8 @@ export async function GET(
       postcode: isPaid ? project.postcode : maskPostcode(project.postcode),
       company_name: isPaid && project.company_name ? project.company_name : maskString(project.company_name),
       is_locked: !isPaid,
+      lead_price: leadPrice, // Send only the relevant price
+      service_subcategories: undefined, // Don't send full subcategory data
     };
 
     // Fetch project photos
