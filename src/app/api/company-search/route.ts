@@ -62,8 +62,22 @@ async function searchBelgianCompanies(query: string) {
   console.log('KBO API Key (first 10 chars):', apiKey?.substring(0, 10));
 
   try {
-    // Search by company name using denominations endpoint
-    const url = `${apiUrl}/denominations?query=${encodeURIComponent(query)}&entityType=enterprise&language=nl&limit=20`;
+    // Check if query looks like an enterprise number (10 digits)
+    const cleanQuery = query.replace(/\D/g, '');
+    const isEnterpriseNumber = /^\d{10}$/.test(cleanQuery);
+
+    let url: string;
+
+    if (isEnterpriseNumber) {
+      // Search by enterprise number directly using the enterprise endpoint
+      url = `${apiUrl}/enterprise/${cleanQuery}`;
+      console.log('Searching by enterprise number:', cleanQuery);
+    } else {
+      // Search by company name using denominations endpoint with filters
+      url = `${apiUrl}/denominations?query=${encodeURIComponent(query)}&entityType=enterprise&type=commercial&active=active&language=nl&limit=20`;
+      console.log('Searching by company name:', query);
+    }
+
     console.log('Requesting URL:', url);
 
     const searchResponse = await fetch(url, {
@@ -99,10 +113,28 @@ async function searchBelgianCompanies(query: string) {
     }
 
     const searchData = await searchResponse.json();
+    console.log('Search data:', JSON.stringify(searchData, null, 2));
+
+    // Normalize response: enterprise endpoint returns single object, denominations returns array
+    let results: Array<{ entityNumber: string; value: string; entityNumberFormatted?: string }> = [];
+
+    if (isEnterpriseNumber) {
+      // Single enterprise result
+      if (searchData.enterpriseNumber) {
+        results = [{
+          entityNumber: searchData.enterpriseNumber,
+          value: searchData.denomination || '',
+          entityNumberFormatted: searchData.enterpriseNumberFormatted
+        }];
+      }
+    } else {
+      // Denominations search results
+      results = searchData.data || [];
+    }
 
     // Fetch full details for each company (including address)
     const companies = await Promise.all(
-      (searchData.data || []).slice(0, 10).map(async (result: { entityNumber: string; value: string; entityNumberFormatted?: string }) => {
+      results.slice(0, 10).map(async (result: { entityNumber: string; value: string; entityNumberFormatted?: string }) => {
         try {
           // Get address for this enterprise
           const addressResponse = await fetch(
