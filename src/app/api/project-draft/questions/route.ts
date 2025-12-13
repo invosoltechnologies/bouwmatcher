@@ -45,8 +45,17 @@ export async function GET(request: NextRequest) {
         .single();
 
       if (questionError || !rootQuestion) {
+        console.error('Root question error:', {
+          categoryId: draft.service_category_id,
+          error: questionError,
+          message: 'No root question found'
+        });
         return NextResponse.json(
-          { error: 'No root question found for this category' },
+          {
+            error: 'No root question found for this category',
+            details: `Category ID: ${draft.service_category_id}`,
+            errorMessage: questionError?.message
+          },
           { status: 404 }
         );
       }
