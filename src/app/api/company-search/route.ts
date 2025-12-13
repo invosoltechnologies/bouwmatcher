@@ -119,12 +119,18 @@ async function searchBelgianCompanies(query: string) {
     let results: Array<{ entityNumber: string; value: string; entityNumberFormatted?: string }> = [];
 
     if (isEnterpriseNumber) {
-      // Single enterprise result
-      if (searchData.enterpriseNumber) {
+      // Single enterprise result - data is nested under "Enterprise" key
+      const enterprise = searchData.Enterprise;
+      if (enterprise && enterprise.enterpriseNumber) {
+        // Get denomination from typeDescription
+        const denomination = enterprise.typeDescription?.nl ||
+                           enterprise.JuridicalForm?.description?.nl ||
+                           'Bedrijf';
+
         results = [{
-          entityNumber: searchData.enterpriseNumber,
-          value: searchData.denomination || '',
-          entityNumberFormatted: searchData.enterpriseNumberFormatted
+          entityNumber: enterprise.enterpriseNumber,
+          value: denomination,
+          entityNumberFormatted: enterprise.enterpriseNumberFormatted
         }];
       }
     } else {
