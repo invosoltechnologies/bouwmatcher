@@ -18,10 +18,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get professional profile
+    // Get professional profile with status
     const { data: profile, error: profileError } = await supabase
       .from('professional_profiles')
-      .select('id')
+      .select('id, profile_completed, current_step')
       .eq('user_id', user.id)
       .single();
 
@@ -86,15 +86,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Update current_step to 4 after completing step 3
-    const { error: stepUpdateError } = await supabase
-      .from('professional_profiles')
-      .update({ current_step: 4, updated_at: new Date().toISOString() })
-      .eq('user_id', user.id);
+    // Only update current_step if profile is not completed and current_step is not already 6
+    if (!profile.profile_completed && (profile.current_step || 0) < 6) {
+      const { error: stepUpdateError } = await supabase
+        .from('professional_profiles')
+        .update({ current_step: 4, updated_at: new Date().toISOString() })
+        .eq('user_id', user.id);
 
-    if (stepUpdateError) {
-      console.error('Error updating current_step:', stepUpdateError);
-      // Don't fail the request, just log the error
+      if (stepUpdateError) {
+        console.error('Error updating current_step:', stepUpdateError);
+        // Don't fail the request, just log the error
+      }
     }
 
     return NextResponse.json({

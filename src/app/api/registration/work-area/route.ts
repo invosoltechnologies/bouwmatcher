@@ -128,8 +128,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // First, check current profile status
+    const { data: currentProfile } = await supabase
+      .from('professional_profiles')
+      .select('profile_completed, current_step')
+      .eq('user_id', user.id)
+      .single();
+
     // Update professional profile with work area data
-    const updateData = {
+    const updateData: {
+      work_address: string;
+      work_postal_code: string | null;
+      work_city: string | null;
+      work_country: string | null;
+      work_latitude: number;
+      work_longitude: number;
+      service_radius_km: number;
+      current_step?: number;
+      updated_at: string;
+    } = {
       work_address,
       work_postal_code: work_postal_code || null,
       work_city: work_city || null,
@@ -137,9 +154,13 @@ export async function POST(request: NextRequest) {
       work_latitude,
       work_longitude,
       service_radius_km: service_radius_km || 10,
-      current_step: 3, // Move to step 3 after completing step 2
       updated_at: new Date().toISOString(),
     };
+
+    // Only update current_step if profile is not completed and current_step is not already 6
+    if (!currentProfile?.profile_completed && (currentProfile?.current_step || 0) < 6) {
+      updateData.current_step = 3; // Move to step 3 after completing step 2
+    }
 
     // Use update without .single() to avoid the "more than one row" error
     const { data: updatedProfiles, error: updateError } = await supabase

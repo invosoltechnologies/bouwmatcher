@@ -134,8 +134,26 @@ async function searchBelgianCompanies(query: string) {
         }];
       }
     } else {
-      // Denominations search results
-      results = searchData.data || [];
+      // Denominations search results - KBO API returns data under "Denominations" array
+      const denominations = searchData.Denominations || [];
+      const mappedResults = denominations.map((item: { Denomination: { entityNumber: string; value: string; entityNumberFormatted?: string; type?: string } }) => ({
+        entityNumber: item.Denomination.entityNumber,
+        value: item.Denomination.value,
+        entityNumberFormatted: item.Denomination.entityNumberFormatted,
+        type: item.Denomination.type
+      }));
+
+      // Deduplicate by entityNumber and prefer social/commercial names over abbreviations
+      const uniqueCompanies = new Map<string, typeof mappedResults[0]>();
+      for (const result of mappedResults) {
+        const existing = uniqueCompanies.get(result.entityNumber);
+        if (!existing ||
+            (result.type === 'social' && existing.type !== 'social') ||
+            (result.type === 'commercial' && existing.type === 'abbreviation')) {
+          uniqueCompanies.set(result.entityNumber, result);
+        }
+      }
+      results = Array.from(uniqueCompanies.values());
     }
 
     // Fetch full details for each company (including address)
@@ -153,27 +171,34 @@ async function searchBelgianCompanies(query: string) {
             }
           );
 
-          let addressData: { data?: Array<{ type?: string; street?: string; houseNumber?: string; postalCode?: string; city?: string; municipality?: string; zipCode?: string }> } = {};
+          let addressData: { Addresses?: Array<{ Address: { type?: string; street?: { nl?: string }; houseNumber?: string; box?: string; zipCode?: string; municipality?: { nl?: string }; country?: { nl?: string } } }> } = {};
           if (addressResponse.ok) {
             addressData = await addressResponse.json();
           }
 
-          // Find the main address
-          const mainAddress = addressData.data?.find(
-            (addr) => addr.type === 'main' || addr.type === 'registered'
-          ) || addressData.data?.[0];
+          // Find the main address - KBO API returns under "Addresses" array
+          const addresses = addressData.Addresses || [];
+          const mainAddressItem = addresses.find(
+            (item) => item.Address.type === 'REGO' || item.Address.type === 'BAET'
+          ) || addresses[0];
+          const mainAddress = mainAddressItem?.Address;
+
+          const street = mainAddress?.street?.nl || '';
+          const houseNumber = mainAddress?.houseNumber || '';
+          const box = mainAddress?.box ? ` bus ${mainAddress.box}` : '';
+          const fullAddress = mainAddress
+            ? `${street} ${houseNumber}${box}`.trim()
+            : '';
 
           return {
             name: result.value,
             kvkNumber: result.entityNumber,
             businessIdFormatted: result.entityNumberFormatted,
-            address: mainAddress
-              ? `${mainAddress.street || ''} ${mainAddress.houseNumber || ''}`.trim()
-              : '',
-            city: mainAddress?.municipality || '',
+            address: fullAddress,
+            city: mainAddress?.municipality?.nl || '',
             postalCode: mainAddress?.zipCode || '',
-            houseNumber: mainAddress?.houseNumber || '',
-            street: mainAddress?.street || '',
+            houseNumber: houseNumber,
+            street: street,
             country: 'BE' as const,
             businessIdType: 'KBO' as const,
           };
