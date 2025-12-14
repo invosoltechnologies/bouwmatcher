@@ -427,7 +427,7 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
               variant='ghost'
               onClick={handleBack}
               className='text-lg rounded-xl font-semibold'
-              size={null}
+
             >
               ← Terug
             </Button>
@@ -449,8 +449,7 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
             type='button'
             variant='ghost'
             onClick={handleBack}
-            className=' text-lg rounded-xl font-semibold'
-            size={null}
+            className='text-lg rounded-xl font-semibold'
           >
             ← Terug
           </Button>

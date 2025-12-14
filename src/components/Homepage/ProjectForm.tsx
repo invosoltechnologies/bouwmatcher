@@ -1,11 +1,11 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { servicesData } from '@/data/services';
+import { type Service } from '@/data/services';
 import Image from 'next/image';
 
 interface ProjectFormProps {
@@ -15,16 +15,37 @@ interface ProjectFormProps {
 
 export default function ProjectForm({ mode = 'home', preselectedService }: ProjectFormProps) {
   const router = useRouter();
-  const [category, setCategory] = useState(
-    preselectedService
-      ? servicesData.find(s => s.slug === preselectedService)?.name_nl || ''
-      : ''
-  );
+  const [services, setServices] = useState<Service[]>([]);
+  const [category, setCategory] = useState('');
   const [postcode, setPostcode] = useState('');
   const [executionDate, setExecutionDate] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const categories = servicesData.map(service => service.name_nl);
+  // Fetch services from backend
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch('/api/service-categories');
+        const data = await response.json();
+        const fetchedServices = data.serviceCategories || [];
+        setServices(fetchedServices);
+
+        // Set preselected service if provided
+        if (preselectedService) {
+          const preselected = fetchedServices.find((s: Service) => s.slug === preselectedService);
+          if (preselected) {
+            setCategory(preselected.name_nl);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      }
+    };
+
+    fetchServices();
+  }, [preselectedService]);
+
+  const categories = services.map(service => service.name_nl);
 
   const executionDates = [
     'Zo snel mogelijk',
@@ -43,7 +64,7 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
     }
 
     // Find the service category slug
-    const selectedService = servicesData.find(s => s.name_nl === category);
+    const selectedService = services.find((s: Service) => s.name_nl === category);
     if (!selectedService) return;
 
     setIsLoading(true);

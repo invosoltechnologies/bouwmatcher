@@ -119,26 +119,54 @@ async function searchBelgianCompanies(query: string) {
     let results: Array<{ entityNumber: string; value: string; entityNumberFormatted?: string }> = [];
 
     if (isEnterpriseNumber) {
-      // Single enterprise result
-      if (searchData.enterpriseNumber) {
+      // Single enterprise result - data is nested under "Enterprise" key
+      const enterprise = searchData.Enterprise;
+      if (enterprise && enterprise.enterpriseNumber) {
+        // Get denomination from typeDescription
+        const denomination = enterprise.typeDescription?.nl ||
+                           enterprise.JuridicalForm?.description?.nl ||
+                           'Bedrijf';
+
         results = [{
-          entityNumber: searchData.enterpriseNumber,
-          value: searchData.denomination || '',
-          entityNumberFormatted: searchData.enterpriseNumberFormatted
+          entityNumber: enterprise.enterpriseNumber,
+          value: denomination,
+          entityNumberFormatted: enterprise.enterpriseNumberFormatted
         }];
       }
     } else {
-      // Denominations search results
-      results = searchData.data || [];
+      // Denominations search results - KBO API returns data under "Denominations" array
+      const denominations = searchData.Denominations || [];
+      const mappedResults = denominations.map((item: { Denomination: { entityNumber: string; value: string; entityNumberFormatted?: string; type?: string } }) => ({
+        entityNumber: item.Denomination.entityNumber,
+        value: item.Denomination.value,
+        entityNumberFormatted: item.Denomination.entityNumberFormatted,
+        type: item.Denomination.type
+      }));
+
+      // Deduplicate by entityNumber and prefer social/commercial names over abbreviations
+      const uniqueCompanies = new Map<string, typeof mappedResults[0]>();
+      for (const result of mappedResults) {
+        const existing = uniqueCompanies.get(result.entityNumber);
+        if (!existing ||
+            (result.type === 'social' && existing.type !== 'social') ||
+            (result.type === 'commercial' && existing.type === 'abbreviation')) {
+          uniqueCompanies.set(result.entityNumber, result);
+        }
+      }
+      results = Array.from(uniqueCompanies.values());
     }
 
     // Fetch full details for each company (including address)
+    console.log(`Fetching addresses for ${results.length} companies...`);
     const companies = await Promise.all(
       results.slice(0, 10).map(async (result: { entityNumber: string; value: string; entityNumberFormatted?: string }) => {
         try {
           // Get address for this enterprise
+          const addressUrl = `${apiUrl}/enterprise/${result.entityNumber}/address`;
+          console.log(`Fetching address for ${result.entityNumber} (${result.value}):`, addressUrl);
+
           const addressResponse = await fetch(
-            `${apiUrl}/enterprise/${result.entityNumber}/address`,
+            addressUrl,
             {
               headers: {
                 'Authorization': `Bearer ${apiKey}`,
@@ -147,27 +175,49 @@ async function searchBelgianCompanies(query: string) {
             }
           );
 
-          let addressData: { data?: Array<{ type?: string; street?: string; houseNumber?: string; postalCode?: string; city?: string; municipality?: string; zipCode?: string }> } = {};
+          console.log(`Address response status for ${result.entityNumber}:`, addressResponse.status);
+
+          let addressData: {
+            Address?: {
+              type?: string;
+              street?: { nl?: string; fr?: string };
+              addressNumber?: string;
+              addressAdditional?: string;
+              postOfficeBox?: string;
+              zipcode?: string;
+              city?: { nl?: string; fr?: string };
+              country?: { nl?: string; fr?: string };
+            }
+          } = {};
+
           if (addressResponse.ok) {
             addressData = await addressResponse.json();
+            console.log(`Address data for ${result.entityNumber}:`, JSON.stringify(addressData, null, 2));
+          } else {
+            const errorText = await addressResponse.text();
+            console.error(`Failed to fetch address for ${result.entityNumber}:`, addressResponse.status, errorText);
           }
 
-          // Find the main address
-          const mainAddress = addressData.data?.find(
-            (addr) => addr.type === 'main' || addr.type === 'registered'
-          ) || addressData.data?.[0];
+          // KBO API returns a single Address object (not an array)
+          const address = addressData.Address;
+          console.log(`Address object for ${result.entityNumber}:`, address);
+
+          const street = address?.street?.nl || address?.street?.fr || '';
+          const addressNumber = address?.addressNumber || '';
+          const box = address?.postOfficeBox ? ` bus ${address.postOfficeBox}` : '';
+          const fullAddress = address
+            ? `${street} ${addressNumber}${box}`.trim()
+            : '';
 
           return {
             name: result.value,
             kvkNumber: result.entityNumber,
             businessIdFormatted: result.entityNumberFormatted,
-            address: mainAddress
-              ? `${mainAddress.street || ''} ${mainAddress.houseNumber || ''}`.trim()
-              : '',
-            city: mainAddress?.municipality || '',
-            postalCode: mainAddress?.zipCode || '',
-            houseNumber: mainAddress?.houseNumber || '',
-            street: mainAddress?.street || '',
+            address: fullAddress,
+            city: address?.city?.nl || address?.city?.fr || '',
+            postalCode: address?.zipcode || '',
+            houseNumber: addressNumber,
+            street: street,
             country: 'BE' as const,
             businessIdType: 'KBO' as const,
           };
@@ -189,6 +239,9 @@ async function searchBelgianCompanies(query: string) {
         }
       })
     );
+
+    console.log(`Returning ${companies.length} companies with full details`);
+    console.log('Final companies data:', JSON.stringify(companies, null, 2));
 
     return NextResponse.json({
       companies,

@@ -1,10 +1,10 @@
 import { notFound } from 'next/navigation';
-import { servicesData } from '@/data/services';
 import CTASection from '@/components/Homepage/CTASection';
 import ServiceBanner from '@/components/Service/ServiceBanner';
 import ServiceDetails from '@/components/Service/ServiceDetails';
 import ProcessSection from '@/components/Homepage/ProcessSection';
 import DefaultLayout from '@/components/DefaultLayout';
+import { createClient } from '@/lib/supabase/server';
 
 interface ServicePageProps {
   params: Promise<{ id: string }>;
@@ -13,11 +13,15 @@ interface ServicePageProps {
 export default async function ServicePage({ params }: ServicePageProps) {
   const { id } = await params;
 
-  const service = servicesData.find(s =>
-    s.slug === id
-  );
+  const supabase = await createClient();
 
-  if (!service) {
+  const { data: service, error } = await supabase
+    .from('service_categories')
+    .select('*')
+    .eq('slug', id)
+    .single();
+
+  if (error || !service) {
     notFound();
   }
 
@@ -32,7 +36,22 @@ export default async function ServicePage({ params }: ServicePageProps) {
 }
 
 export async function generateStaticParams() {
-  return servicesData.map((service) => ({
+  // Use environment variables directly for build-time data fetching
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
+
+  const { createClient: createBrowserClient } = await import('@supabase/supabase-js');
+  const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
+
+  const { data: services } = await supabase
+    .from('service_categories')
+    .select('slug');
+
+  if (!services) {
+    return [];
+  }
+
+  return services.map((service) => ({
     id: service.slug,
   }));
 }
