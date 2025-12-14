@@ -157,12 +157,16 @@ async function searchBelgianCompanies(query: string) {
     }
 
     // Fetch full details for each company (including address)
+    console.log(`Fetching addresses for ${results.length} companies...`);
     const companies = await Promise.all(
       results.slice(0, 10).map(async (result: { entityNumber: string; value: string; entityNumberFormatted?: string }) => {
         try {
           // Get address for this enterprise
+          const addressUrl = `${apiUrl}/enterprise/${result.entityNumber}/address`;
+          console.log(`Fetching address for ${result.entityNumber} (${result.value}):`, addressUrl);
+
           const addressResponse = await fetch(
-            `${apiUrl}/enterprise/${result.entityNumber}/address`,
+            addressUrl,
             {
               headers: {
                 'Authorization': `Bearer ${apiKey}`,
@@ -171,23 +175,38 @@ async function searchBelgianCompanies(query: string) {
             }
           );
 
-          let addressData: { Addresses?: Array<{ Address: { type?: string; street?: { nl?: string }; houseNumber?: string; box?: string; zipCode?: string; municipality?: { nl?: string }; country?: { nl?: string } } }> } = {};
+          console.log(`Address response status for ${result.entityNumber}:`, addressResponse.status);
+
+          let addressData: {
+            Address?: {
+              type?: string;
+              street?: { nl?: string; fr?: string };
+              addressNumber?: string;
+              addressAdditional?: string;
+              postOfficeBox?: string;
+              zipcode?: string;
+              city?: { nl?: string; fr?: string };
+              country?: { nl?: string; fr?: string };
+            }
+          } = {};
+
           if (addressResponse.ok) {
             addressData = await addressResponse.json();
+            console.log(`Address data for ${result.entityNumber}:`, JSON.stringify(addressData, null, 2));
+          } else {
+            const errorText = await addressResponse.text();
+            console.error(`Failed to fetch address for ${result.entityNumber}:`, addressResponse.status, errorText);
           }
 
-          // Find the main address - KBO API returns under "Addresses" array
-          const addresses = addressData.Addresses || [];
-          const mainAddressItem = addresses.find(
-            (item) => item.Address.type === 'REGO' || item.Address.type === 'BAET'
-          ) || addresses[0];
-          const mainAddress = mainAddressItem?.Address;
+          // KBO API returns a single Address object (not an array)
+          const address = addressData.Address;
+          console.log(`Address object for ${result.entityNumber}:`, address);
 
-          const street = mainAddress?.street?.nl || '';
-          const houseNumber = mainAddress?.houseNumber || '';
-          const box = mainAddress?.box ? ` bus ${mainAddress.box}` : '';
-          const fullAddress = mainAddress
-            ? `${street} ${houseNumber}${box}`.trim()
+          const street = address?.street?.nl || address?.street?.fr || '';
+          const addressNumber = address?.addressNumber || '';
+          const box = address?.postOfficeBox ? ` bus ${address.postOfficeBox}` : '';
+          const fullAddress = address
+            ? `${street} ${addressNumber}${box}`.trim()
             : '';
 
           return {
@@ -195,9 +214,9 @@ async function searchBelgianCompanies(query: string) {
             kvkNumber: result.entityNumber,
             businessIdFormatted: result.entityNumberFormatted,
             address: fullAddress,
-            city: mainAddress?.municipality?.nl || '',
-            postalCode: mainAddress?.zipCode || '',
-            houseNumber: houseNumber,
+            city: address?.city?.nl || address?.city?.fr || '',
+            postalCode: address?.zipcode || '',
+            houseNumber: addressNumber,
             street: street,
             country: 'BE' as const,
             businessIdType: 'KBO' as const,
@@ -220,6 +239,9 @@ async function searchBelgianCompanies(query: string) {
         }
       })
     );
+
+    console.log(`Returning ${companies.length} companies with full details`);
+    console.log('Final companies data:', JSON.stringify(companies, null, 2));
 
     return NextResponse.json({
       companies,
