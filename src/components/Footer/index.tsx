@@ -159,7 +159,7 @@ export default function Footer() {
         <div className='border-t border-gray-800 pt-6'>
           <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-xs md:text-sm text-white'>
             <div className='text-center md:text-left w-full md:w-auto'>© 2025 Bouwmatcher | Alle rechten voorbehouden</div>
-            <div className='flex flex-col md:flex-row md:items-center gap-3 md:gap-6 w-full md:w-auto text-center md:text-left'>
+            <div className='flex md:flex-row justify-center items-center gap-3 md:gap-6 w-full md:w-auto text-center md:text-left'>
               <Link
                 href='/privacy-policy'
                 className='hover:text-white hover:underline transition-colors'
