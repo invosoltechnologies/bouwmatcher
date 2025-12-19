@@ -5,8 +5,8 @@ export default function LanguageSwitcher() {
   const [selectedLanguage, setSelectedLanguage] = useState('NL');
 
   return (
-    <div className='hidden sm:flex items-center'>
-      <div 
+    <div className='flex items-center'>
+      <div
         className='bg-[#F8F8F8] border border-gray-200 rounded-lg p-1 flex'
         style={{ borderRadius: '8px' }}
       >

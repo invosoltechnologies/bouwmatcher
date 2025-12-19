@@ -9,14 +9,49 @@ import LanguageSwitcher from "@/components/ui/language-switcher";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import UserAvatarDropdown from "./UserAvatarDropdown";
+import { dashboardNavigation } from "@/config/professional-dashboard";
+import { LogOut } from "lucide-react";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [scrollY, setScrollY] = useState(0);
   const [windowWidth, setWindowWidth] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const pathname = usePathname();
   const isAuthRoute = pathname?.includes('/auth');
   const { user, loading } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+
+    try {
+      setIsLoggingOut(true);
+
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to logout');
+      }
+
+      toast.success('Succesvol uitgelogd');
+      setIsMobileMenuOpen(false);
+      setIsAccountMenuOpen(false);
+
+      // Redirect to home page
+      router.push('/');
+      router.refresh();
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Kon niet uitloggen. Probeer het opnieuw.');
+      setIsLoggingOut(false);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,13 +78,16 @@ export default function Navbar() {
   const scrollProgress = Math.min(scrollY / 200, 1); // Complete transition over 200px
   const isScrolled = scrollY > 50;
 
+  // Calculate mobile top position - starts at 36px and goes to 0 when scrolled
+  const mobileTopPosition = windowWidth < 768 ? `${Math.max(0, 36 - scrollY)}px` : `${84 - (scrollProgress * 84)}px`;
+
   return (
     <>
       <nav
         className="fixed left-0 right-0 z-50 py-3 md:py-4 px-4 md:px-7 bg-white border-b border-gray-200 md:rounded-[13px] transition-all duration-500 ease-out"
         style={{
           boxShadow: isScrolled ? '0px 4px 12px 0px #0000001A' : '0px 1px 2px 0px #0000000D',
-          top: windowWidth >= 768 ? `${84 - (scrollProgress * 84)}px` : '36px',
+          top: mobileTopPosition,
           maxWidth: windowWidth > 1326
             ? `${1326 + (scrollProgress * (windowWidth - 1326))}px`
             : '100%',
@@ -123,10 +161,8 @@ export default function Navbar() {
               </div>
             )}
 
-            {/* Language Switcher - Desktop */}
-            <div className='hidden md:block'>
-              <LanguageSwitcher />
-            </div>
+            {/* Language Switcher */}
+            <LanguageSwitcher />
 
             {/* Mobile Menu Button */}
             <button
@@ -145,63 +181,142 @@ export default function Navbar() {
       </nav>
 
       {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className='fixed inset-0 z-40 lg:hidden' style={{ top: '96px' }}>
-          <div
-            className='absolute inset-0 bg-black/20 backdrop-blur-sm'
-            onClick={() => setIsMobileMenuOpen(false)}
-          />
-          <div className='relative bg-white border-b border-gray-200 shadow-lg'>
-            <div className='flex flex-col px-4 py-4 space-y-4'>
-              {/* Search Bar Mobile */}
-              <div className='relative'>
-                <Search className='absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5 z-10' />
-                <Input
-                  type='search'
-                  placeholder='Snel zoeken . . .'
-                  className='pl-12 pr-4 py-3 w-full bg-[#F8F8F8] border border-gray-200 rounded-[12px] text-[#111111] placeholder-muted-foreground h-[42px]'
-                />
-              </div>
+      <div
+        className={`fixed inset-0 z-40 lg:hidden transition-opacity duration-300 ${
+          isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        style={{
+          top: windowWidth < 768
+            ? `${Math.max(0, 36 - scrollY) + 63}px`  // 36px initial gap + 63px navbar height (py-3 + content)
+            : '96px'
+        }}
+      >
+        <div
+          className='absolute inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-300'
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+        <div
+          className={`relative bg-white border-b border-gray-200 shadow-lg transform transition-all duration-300 ease-out ${
+            isMobileMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
+          }`}
+        >
+          <div className='flex flex-col px-6 py-6 space-y-1 max-h-[calc(100vh-120px)] overflow-y-auto'>
+            {/* Navigation Links */}
+            <Link
+              href='/categories'
+              className={`text-foreground hover:text-primary transition-all duration-200 font-medium text-base py-4 px-0 border-b border-gray-200 transform ${
+                isMobileMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+              }`}
+              style={{ transitionDelay: '50ms' }}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Categorieën
+            </Link>
+            <Link
+              href='/contact'
+              className={`text-foreground hover:text-primary transition-all duration-200 font-medium text-base py-4 px-0 border-b border-gray-200 transform ${
+                isMobileMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+              }`}
+              style={{ transitionDelay: '100ms' }}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Contact
+            </Link>
 
-              {/* Navigation Links */}
-              <Link
-                href='/categories'
-                className='text-foreground hover:text-primary transition-colors font-medium py-2'
-                onClick={() => setIsMobileMenuOpen(false)}
+            {/* Account Menu with Submenu */}
+            {!loading && user && (
+              <div
+                className={`transform transition-all duration-300 border-b border-gray-200 ${
+                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+                }`}
+                style={{ transitionDelay: '150ms' }}
               >
-                Categorieën
-              </Link>
-              <Link
-                href='/contact'
-                className='text-foreground hover:text-primary transition-colors font-medium py-2'
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Contact
-              </Link>
-
-              {/* User Actions */}
-              {!loading && !user && !isAuthRoute && (
-                <Link href='/auth/login' onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button
-                    className='w-full bg-primary hover:bg-primary/90 text-white px-4 py-3 border border-gray-200 font-medium text-base h-auto rounded-[12px]'
-                    style={{
-                      boxShadow:
-                        '0px 10px 15px 0px #0000001A, 0px 4px 6px 0px #0000001A',
-                    }}
+                <button
+                  onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
+                  className='w-full flex items-center justify-between text-foreground hover:text-primary transition-all duration-200 font-medium text-base py-4 px-0'
+                >
+                  <span>Account</span>
+                  <svg
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      isAccountMenuOpen ? 'rotate-180' : ''
+                    }`}
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    stroke='currentColor'
                   >
-                    Login
-                  </Button>
-                </Link>
-              )}
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M19 9l-7 7-7-7'
+                    />
+                  </svg>
+                </button>
 
-              {/* Language Switcher Mobile */}
-              <div className='pt-2 border-t border-gray-200'>
-                <LanguageSwitcher />
+                {/* Account Submenu */}
+                <div
+                  className={`overflow-hidden transition-all duration-300 ${
+                    isAccountMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                  }`}
+                >
+                  <div className='pl-4 pb-2 space-y-2'>
+                    {dashboardNavigation
+                      .filter((item) => item.id !== 'home' && item.id !== 'logout')
+                      .map((item) => (
+                        <Link
+                          key={item.id}
+                          href={item.href}
+                          className='flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors text-sm py-2'
+                          onClick={() => {
+                            setIsMobileMenuOpen(false);
+                            setIsAccountMenuOpen(false);
+                          }}
+                        >
+                          <Image
+                            src={item.icon}
+                            alt={item.label}
+                            width={16}
+                            height={16}
+                            className='w-4 h-4'
+                          />
+                          <span>{item.label}</span>
+                        </Link>
+                      ))}
+
+                    {/* Logout Button */}
+                    <button
+                      onClick={handleLogout}
+                      disabled={isLoggingOut}
+                      className='flex items-center gap-3 text-destructive hover:text-destructive/80 transition-colors text-sm py-2 w-full disabled:opacity-50'
+                    >
+                      <LogOut className='w-4 h-4' />
+                      <span>{isLoggingOut ? 'Uitloggen...' : 'Log uit'}</span>
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
+
+            {/* Login Button for non-authenticated users */}
+            {!loading && !user && !isAuthRoute && (
+              <div
+                className={`transform transition-all duration-300 ${
+                  isMobileMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+                }`}
+                style={{ transitionDelay: '150ms' }}
+              >
+                <Link
+                  href='/auth/login'
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className='block text-foreground hover:text-primary transition-all duration-200 font-medium text-base py-4 px-0'
+                >
+                  Login
+                </Link>
+              </div>
+            )}
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 }
