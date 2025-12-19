@@ -25,11 +25,11 @@ function CTA({
   return (
     <div
       className={cn(
-        'w-full flex flex-col md:flex-row items-center justify-between bg-gradient-to-r from-green-100 to-blue-50 rounded-[25px] pt-8 pb-6 px-6 md:pt-9.5 md:pb-14 md:px-16 relative overflow-hidden',
+        'w-full flex items-end justify-between bg-gradient-to-r from-green-100 to-blue-50 rounded-[25px] pt-8 pb-0 px-6 md:pt-9.5 md:pb-0 md:px-16 relative overflow-hidden',
         className
       )}
     >
-      <div className='flex-1 max-w-[700px] z-10'>
+      <div className='flex-1 max-w-[700px] z-10 pb-6 md:pb-14'>
         <h2 className='text-xl md:text-[32px] lg:text-5xl font-semibold text-foreground leading-tight md:leading-12.5 mb-3 md:mb-0'>
           {heading}
         </h2>
@@ -44,13 +44,13 @@ function CTA({
         </Button>
       </div>
 
-      <div className='hidden md:block absolute bottom-0 right-0'>
+      <div className='flex-shrink-0 z-10'>
         <Image
           src={image || fallbackImage}
           alt='CTA Image'
           width={379}
           height={373}
-          className='object-contain'
+          className='w-[150px] h-[148px] md:w-[250px] md:h-[246px] lg:w-[379px] lg:h-[373px] object-contain'
         />
       </div>
     </div>
