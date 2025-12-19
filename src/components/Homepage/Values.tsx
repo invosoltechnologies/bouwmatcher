@@ -50,10 +50,10 @@ export default function Values({
     <section className='py-16 px-4'>
       <div className='max-w-7xl mx-auto'>
         <div className='text-center mb-12'>
-          <h2 className='text-5xl font-normal text-foreground mb-5'>
+          <h2 className='text-[32px] md:text-5xl font-normal text-foreground mb-2 md:mb-5'>
             {heading}
           </h2>
-          <p className='text-muted-foreground text-2xl'>
+          <p className='text-muted-foreground text-base md:text-2xl'>
             {description}
           </p>
         </div>

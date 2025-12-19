@@ -75,92 +75,130 @@ export default function ValuesShape({ values, centerText = 'Jouw zekerheid\nin d
   };
 
   return (
-    <div className='relative flex justify-center items-center max-w-4xl mx-auto px-4'>
-      {/* Cards Grid */}
-      <div className='grid grid-cols-2 gap-x-[35px] gap-y-[27px] relative z-10'>
-        {valuesData.map((value) => {
-          const isBottomCard = value.position.includes('bottom');
-          const maskStyle = getInvertedRadiusMask(value.position);
-
-          return (
+    <>
+      {/* Mobile Layout - Simple Cards (Below lg) */}
+      <div className='lg:hidden'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto px-4'>
+          {valuesData.map((value) => (
             <div
               key={value.id}
-              className={`relative w-[333px] h-[291px] rounded-[20px] p-5 flex flex-col gap-0.5 transition-all duration-300 ease-in-out cursor-pointer ${
-                isBottomCard ? 'flex-col-reverse' : ''
-              } ${value.id % 2 === 0 ? 'items-end' : 'items-start'} ${
-                value.position === 'top-left'
-                  ? 'hover:scale-110 hover:-translate-x-6 hover:-translate-y-6'
-                  : value.position === 'top-right'
-                  ? 'hover:scale-110 hover:translate-x-6 hover:-translate-y-6'
-                  : value.position === 'bottom-left'
-                  ? 'hover:scale-110 hover:-translate-x-6 hover:translate-y-6'
-                  : 'hover:scale-110 hover:translate-x-6 hover:translate-y-6'
-              }`}
+              className='rounded-2xl p-6 flex flex-col gap-3'
               style={{
                 background:
                   value.id % 2 === 0
                     ? 'linear-gradient(90deg, rgba(10, 178, 126, 0.25) 0%, rgba(2, 58, 162, 0.25) 100%)'
                     : 'linear-gradient(90deg, rgba(2, 58, 162, 0.25) 0%, rgba(10, 178, 126, 0.25) 100%)',
-                filter: 'drop-shadow(0px 16px 40px #2929291F)',
-                ...maskStyle,
+                boxShadow: '0px 16px 40px #2929291F',
               }}
             >
-              {/* Content based on position */}
-              {/* Icon and Title Row */}
-              <div
-                className={`flex items-center gap-3 mb-4 ${
-                  value.id % 2 === 0 ? 'flex-row-reverse' : ''
-                }`}
-              >
+              <div className='flex items-center justify-center mb-2'>
                 <Image
                   src={value.icon}
                   alt={value.title}
-                  width={76}
-                  height={76}
-                  className='w-[76px] h-[76px]'
+                  width={60}
+                  height={60}
+                  className='w-[60px] h-[60px]'
                 />
-
-                <h3 className='text-[26px] font-bold text-slate-900'>
-                  {value.title}
-                </h3>
               </div>
-              {/* Description */}
-              <p
-                className={`text-sm text-slate-900 leading-relaxed max-w-46 text-wrap ${
-                  value.id % 2 === 0 ? 'text-right' : 'text-left'
-                }  `}
-              >
+              <h3 className='text-xl font-bold text-slate-900 text-center'>
+                {value.title}
+              </h3>
+              <p className='text-sm text-slate-900 leading-relaxed text-center'>
                 {value.description}
               </p>
             </div>
-          );
-        })}
-      </div>
-
-      {/* Center Circle */}
-
-      <div
-        className='absolute inset-0 w-[231px] h-[231px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 rounded-full border border-gray-200 '
-        style={{
-          background:
-            'linear-gradient(90deg, rgba(2, 58, 162, 0.34) 0%, #0AB27E 50%, rgba(2, 58, 162, 0.23) 100%)',
-        }}
-      ></div>
-      <div className='absolute inset-0 w-[231px] h-[231px] z-10 bg-white/60 backdrop:blur-[100px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full'></div>
-      <div
-        className='absolute z-30 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-primary/85 rounded-full flex items-center justify-center opacity-100'
-        style={{
-          width: '176px',
-          height: '176px',
-          boxShadow: '0px 10px 15px 0px #0000001A',
-        }}
-      >
-        <div className='text-center text-white p-6'>
-          <p className='text-lg font-medium leading-tight whitespace-pre-line'>
-            {centerText}
-          </p>
+          ))}
         </div>
       </div>
-    </div>
+
+      {/* Desktop Layout - Shape with Center Circle (lg and above) */}
+      <div className='hidden lg:flex relative justify-center items-center max-w-4xl mx-auto px-4'>
+        {/* Cards Grid */}
+        <div className='grid grid-cols-2 gap-x-[35px] gap-y-[27px] relative z-10'>
+          {valuesData.map((value) => {
+            const isBottomCard = value.position.includes('bottom');
+            const maskStyle = getInvertedRadiusMask(value.position);
+
+            return (
+              <div
+                key={value.id}
+                className={`relative w-[333px] h-[291px] rounded-[20px] p-5 flex flex-col gap-0.5 transition-all duration-300 ease-in-out cursor-pointer ${
+                  isBottomCard ? 'flex-col-reverse' : ''
+                } ${value.id % 2 === 0 ? 'items-end' : 'items-start'} ${
+                  value.position === 'top-left'
+                    ? 'hover:scale-110 hover:-translate-x-6 hover:-translate-y-6'
+                    : value.position === 'top-right'
+                    ? 'hover:scale-110 hover:translate-x-6 hover:-translate-y-6'
+                    : value.position === 'bottom-left'
+                    ? 'hover:scale-110 hover:-translate-x-6 hover:translate-y-6'
+                    : 'hover:scale-110 hover:translate-x-6 hover:translate-y-6'
+                }`}
+                style={{
+                  background:
+                    value.id % 2 === 0
+                      ? 'linear-gradient(90deg, rgba(10, 178, 126, 0.25) 0%, rgba(2, 58, 162, 0.25) 100%)'
+                      : 'linear-gradient(90deg, rgba(2, 58, 162, 0.25) 0%, rgba(10, 178, 126, 0.25) 100%)',
+                  filter: 'drop-shadow(0px 16px 40px #2929291F)',
+                  ...maskStyle,
+                }}
+              >
+                {/* Content based on position */}
+                {/* Icon and Title Row */}
+                <div
+                  className={`flex items-center gap-3 mb-4 ${
+                    value.id % 2 === 0 ? 'flex-row-reverse' : ''
+                  }`}
+                >
+                  <Image
+                    src={value.icon}
+                    alt={value.title}
+                    width={76}
+                    height={76}
+                    className='w-[76px] h-[76px]'
+                  />
+
+                  <h3 className='text-[26px] font-bold text-slate-900'>
+                    {value.title}
+                  </h3>
+                </div>
+                {/* Description */}
+                <p
+                  className={`text-sm text-slate-900 leading-relaxed max-w-46 text-wrap ${
+                    value.id % 2 === 0 ? 'text-right' : 'text-left'
+                  }  `}
+                >
+                  {value.description}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Center Circle */}
+
+        <div
+          className='absolute inset-0 w-[231px] h-[231px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 rounded-full border border-gray-200 '
+          style={{
+            background:
+              'linear-gradient(90deg, rgba(2, 58, 162, 0.34) 0%, #0AB27E 50%, rgba(2, 58, 162, 0.23) 100%)',
+          }}
+        ></div>
+        <div className='absolute inset-0 w-[231px] h-[231px] z-10 bg-white/60 backdrop:blur-[100px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-full'></div>
+        <div
+          className='absolute z-30 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-primary/85 rounded-full flex items-center justify-center opacity-100'
+          style={{
+            width: '176px',
+            height: '176px',
+            boxShadow: '0px 10px 15px 0px #0000001A',
+          }}
+        >
+          <div className='text-center text-white p-6'>
+            <p className='text-lg font-medium leading-tight whitespace-pre-line'>
+              {centerText}
+            </p>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

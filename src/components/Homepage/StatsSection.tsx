@@ -121,26 +121,26 @@ export default function StatsSection({
   return (
     <section
       ref={sectionRef}
-      className='py-14 bg-gradient-to-b from-slate-50 to-white'
+      className='py-14 md:py-20 bg-gradient-to-b from-slate-50 to-white'
     >
       <div className='custom-container'>
-        <div className='text-center mb-24'>
+        <div className='text-center mb-12 md:mb-24'>
           <SectionPill
             text={pillText}
             icon={pillIcon}
-            className='bg-white/80 border border-[#023AA233] text-primary py-3.5 px-6 mb-5'
+            className='bg-white/80 border border-[#023AA233] text-primary py-3.5 px-6 mb-3 md:mb-5'
             textClassName='font-montserrat text-sm font-normal'
             iconClassName='text-accent'
           />
-          <h2 className='text-5xl font-normal text-foreground mb-5'>
+          <h2 className='text-[32px] md:text-5xl font-normal text-foreground mb-2 md:mb-5 px-4'>
             {heading}
           </h2>
-          <p className='text-muted-foreground text-2xl'>
+          <p className='text-muted-foreground text-base md:text-2xl px-4'>
             {description}
           </p>
         </div>
 
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6'>
           {stats.map((stat, index) => {
             const isBlue = index % 2 === 0;
             return (
@@ -164,7 +164,7 @@ export default function StatsSection({
 
         {/* CTA Buttons */}
         {showCTA && (
-          <div className='flex justify-center gap-4 mt-16'>
+          <div className='flex flex-col md:flex-row justify-center gap-4 mt-12 md:mt-16'>
             {ctaButtons || defaultCTAButtons}
           </div>
         )}

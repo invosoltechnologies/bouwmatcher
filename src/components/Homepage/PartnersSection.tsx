@@ -17,9 +17,9 @@ export default function PartnersSection() {
   ];
 
   return (
-      <section className='py-24 bg-white'>
+      <section className='py-14 md:py-24 bg-white'>
         <div className='custom-container'>
-          <div className='text-center mb-16'>
+          <div className='text-center mb-8 md:mb-16'>
 
               <SectionPill
                 text='Trusted Network'
@@ -31,7 +31,7 @@ export default function PartnersSection() {
                     height={24}
                   />
                 }
-                className='text-accent  py-3 px-6 mb-5 border-gray-200'
+                className='text-accent py-3 px-6 mb-3 md:mb-5 border-gray-200'
                 textClassName='font-montserrat text-sm font-normal text-primary'
                 iconClassName='text-accent w-6'
                 stylePill={{
@@ -41,19 +41,19 @@ export default function PartnersSection() {
               />
 
 
-            <h2 className='text-5xl font-normal text-foreground mb-5'>
+            <h2 className='text-[32px] md:text-5xl font-normal text-foreground mb-2 md:mb-5'>
               Vertrouwde partners
             </h2>
-            <p className='text-muted-foreground text-2xl'>
+            <p className='text-muted-foreground text-base md:text-2xl px-4'>
               Werken met geverifieerde professionals in Nederland
             </p>
           </div>
 
-          <div className='flex justify-center flex-wrap xl:flex-nowrap gap-8'>
+          <div className='flex justify-center flex-wrap gap-4 md:gap-6 lg:gap-8'>
             {partners.map((partner, index) => (
               <div
                 key={partner.id}
-                className='relative bg-white py-4 px-10 transition-all duration-300 cursor-pointer'
+                className='relative bg-white py-3 px-6 md:py-4 md:px-10 transition-all duration-300 cursor-pointer'
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
               >
@@ -62,7 +62,7 @@ export default function PartnersSection() {
                   alt={partner.alt}
                   width={96}
                   height={48}
-                  className='object-contain'
+                  className='w-16 h-8 md:w-24 md:h-12 object-contain'
                 />
 
                 {/* Hover pill overlay */}

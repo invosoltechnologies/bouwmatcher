@@ -97,12 +97,12 @@ export default function ProcessSteps({
         {(title || subtitle) && (
           <div className='text-center mb-[60px]'>
             {title && (
-              <h2 className='text-5xl font-normal text-foreground mb-5'>
+              <h2 className='text-[32px] md:text-5xl font-normal text-foreground mb-2 md:mb-5'>
                 {title}
               </h2>
             )}
             {subtitle && (
-              <p className='text-muted-foreground  text-2xl'>
+              <p className='text-muted-foreground text-base md:text-2xl'>
                 {subtitle}
               </p>
             )}
@@ -112,7 +112,7 @@ export default function ProcessSteps({
         {/* Process Steps */}
         <div className='relative max-w-[938px] mx-auto'>
           {/* Central Progress Bar */}
-          <div className='absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-px bg-gray-200'>
+          <div className='absolute left-8 md:left-1/2 md:transform md:-translate-x-1/2 top-0 bottom-0 w-px bg-gray-200'>
             {/* Filled portion of the bar */}
             <div
               className='w-full transition-all duration-1000 ease-out'
@@ -127,7 +127,7 @@ export default function ProcessSteps({
           {steps.map((step, index) => (
             <div
               key={step.id}
-              className='absolute left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full  flex items-center justify-center text-[20px] font-bold transition-all duration-500'
+              className='absolute left-8 md:left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full  flex items-center justify-center text-[20px] font-bold transition-all duration-500'
               style={{
                 top: `${(index / (steps.length - 1)) * 100}%`,
                 marginTop:
@@ -165,7 +165,42 @@ export default function ProcessSteps({
                   top: `${(index / (steps.length - 1)) * 100}%`,
                 }}
               >
-                <div className='flex items-center justify-center gap-[102px]'>
+                {/* Mobile Layout - Content on right side only */}
+                <div className='md:hidden flex items-start gap-6 pl-20'>
+                  <div className='w-full'>
+                    <div
+                      className={`pt-6 px-6 pb-9 rounded-2xl text-left transition-all duration-800 transform ${
+                        isVisible
+                          ? 'translate-y-0 opacity-100'
+                          : 'translate-y-10 opacity-0'
+                      }`}
+                      style={{
+                        background:
+                          'linear-gradient(90deg, rgba(10, 178, 126, 0.2) 0%, rgba(2, 58, 162, 0.2) 100%)',
+                        boxShadow: '0px 12px 30px 0px #0AB27E1F',
+                      }}
+                    >
+                      <div className='flex flex-col items-start justify-end gap-1'>
+                        <Image
+                          src={step.icon}
+                          alt={step.title}
+                          width={48}
+                          height={48}
+                          className='w-12 h-12 mb-4'
+                        />
+                        <h3 className='text-base font-bold text-foreground'>
+                          {step.title}
+                        </h3>
+                        <p className='text-foreground text-base'>
+                          {step.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Desktop Layout - Alternating left/right */}
+                <div className='hidden md:flex items-center justify-center gap-[102px]'>
                   {/* Left side content */}
                   <div className='w-1/2'>
                     {isLeft ? (
@@ -277,7 +312,7 @@ export default function ProcessSteps({
 
         {/* CTA Buttons */}
         {showCTA && ctaButtons && (
-          <div className='flex justify-center gap-4 mt-16'>
+          <div className='flex flex-col md:flex-row justify-center gap-4 mt-16'>
             {ctaButtons}
           </div>
         )}

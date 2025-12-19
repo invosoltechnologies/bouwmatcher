@@ -9,7 +9,7 @@ export default function CTASection() {
   }
 
   return (
-    <section className='w-full lg:my-20.5'>
+    <section className='w-full my-8 md:my-14 lg:my-20.5'>
       <div className='custom-container'>
         <CTA
           heading='Heeft u vragen over ons proces?'
