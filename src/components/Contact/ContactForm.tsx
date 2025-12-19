@@ -54,33 +54,33 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
   };
 
   return (
-    <div className='w-full max-w-3xl mx-auto bg-white/90 border-gray-200 rounded-3xl p-12 shadow-lg relative z-20 -top-20'>
+    <div className='w-full max-w-3xl mx-auto bg-white/90 border-gray-200 rounded-3xl p-6 md:p-12 shadow-lg relative z-20 -top-20'>
       {/* Header */}
-      <div className='flex items-center gap-4 mb-8'>
+      <div className='flex items-center gap-3 md:gap-4 mb-6 md:mb-8'>
         <Image
           src='/images/contact/contact-form-head.svg'
           width={48}
           height={48}
           alt='Contact'
-          className='w-12 h-12'
+          className='w-10 h-10 md:w-12 md:h-12'
         />
         <div>
-          <h2 className='text-2xl leading-8 text-foreground'>
+          <h2 className='text-lg md:text-2xl leading-6 md:leading-8 text-foreground font-medium'>
             Stuur ons een bericht
           </h2>
-          <p className='text-base leading-5 text-muted-foreground'>
+          <p className='text-sm md:text-base leading-4 md:leading-5 text-muted-foreground'>
             Gratis, reactietijd &lt;24u
           </p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onFormSubmit)} className='space-y-6'>
+      <form onSubmit={handleSubmit(onFormSubmit)} className='space-y-4 md:space-y-6'>
         {/* Name and Email Row */}
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           <div>
             <Label
               htmlFor='name'
-              className='block text-lg font-medium text-slate-700 mb-2'
+              className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
             >
               Naam <span className='text-red-600'>*</span>
             </Label>
@@ -88,7 +88,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
               id='name'
               type='text'
               placeholder='Uw volledige naam'
-              className='h-12 md:text-lg'
+              className='h-10 md:h-12 text-sm md:text-base'
               {...register('name', {
                 required: 'Naam is verplicht',
                 minLength: {
@@ -98,13 +98,13 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
               })}
             />
             {errors.name && (
-              <p className='text-sm text-red-500 mt-1'>{errors.name.message}</p>
+              <p className='text-xs md:text-sm text-red-500 mt-1'>{errors.name.message}</p>
             )}
           </div>
           <div>
             <Label
               htmlFor='email'
-              className='block text-lg font-medium text-slate-700 mb-2'
+              className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
             >
               E-mail <span className='text-red-600'>*</span>
             </Label>
@@ -112,7 +112,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
               id='email'
               type='email'
               placeholder='uw.email@voorbeeld.nl'
-              className='h-12 md:text-lg'
+              className='h-10 md:h-12 text-sm md:text-base'
               {...register('email', {
                 required: 'E-mail is verplicht',
                 pattern: {
@@ -122,7 +122,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
               })}
             />
             {errors.email && (
-              <p className='text-sm text-red-500 mt-1'>
+              <p className='text-xs md:text-sm text-red-500 mt-1'>
                 {errors.email.message}
               </p>
             )}
@@ -134,7 +134,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
           <div>
             <Label
               htmlFor='phone'
-              className='block text-lg font-medium text-slate-700 mb-2'
+              className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
             >
               Telefoon
             </Label>
@@ -142,7 +142,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
               id='phone'
               type='tel'
               placeholder='06 12 34 56 78'
-              className='h-12 md:text-lg'
+              className='h-10 md:h-12 text-sm md:text-base'
               {...register('phone', {
                 pattern: {
                   value: /^[\+]?[0-9\s\-\(\)]+$/,
@@ -151,7 +151,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
               })}
             />
             {errors.phone && (
-              <p className='text-sm text-red-500 mt-1'>
+              <p className='text-xs md:text-sm text-red-500 mt-1'>
                 {errors.phone.message}
               </p>
             )}
@@ -159,7 +159,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
           <div>
             <Label
               htmlFor='subject'
-              className='block text-lg font-medium text-slate-700 mb-2'
+              className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
             >
               Onderwerp <span className='text-red-600'>*</span>
             </Label>
@@ -167,7 +167,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
               id='subject'
               type='text'
               placeholder='Waar gaat uw vraag over?'
-              className='h-12 md:text-lg'
+              className='h-10 md:h-12 text-sm md:text-base'
               {...register('subject', {
                 required: 'Onderwerp is verplicht',
                 minLength: {
@@ -177,7 +177,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
               })}
             />
             {errors.subject && (
-              <p className='text-sm text-red-500 mt-1'>
+              <p className='text-xs md:text-sm text-red-500 mt-1'>
                 {errors.subject.message}
               </p>
             )}
@@ -188,7 +188,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
         <div>
           <Label
             htmlFor='category'
-            className='block text-lg font-medium text-slate-700 mb-2'
+            className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
           >
             Type vraag
           </Label>
@@ -199,8 +199,8 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value}>
                 <SelectTrigger
-                  className='w-full h-12 md:text-lg cursor-pointer'
-                  iconClassName='w-[31px] h-[31px]'
+                  className='w-full h-10 md:h-12 text-sm md:text-base cursor-pointer'
+                  iconClassName='w-5 h-5 md:w-[31px] md:h-[31px]'
                 >
                   <SelectValue placeholder='Selecteer een categorie' />
                 </SelectTrigger>
@@ -215,7 +215,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
             )}
           />
           {errors.category && (
-            <p className='text-sm text-red-500 mt-1'>
+            <p className='text-xs md:text-sm text-red-500 mt-1'>
               {errors.category.message}
             </p>
           )}
@@ -225,14 +225,14 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
         <div>
           <Label
             htmlFor='message'
-            className='block text-lg font-medium text-slate-700 mb-2'
+            className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
           >
             Bericht <span className='text-red-600'>*</span>
           </Label>
           <Textarea
             id='message'
             placeholder='Beschrijf uw vraag of project zo gedetailleerd mogelijk...'
-            className='min-h-32 resize-none md:text-lg'
+            className='min-h-24 md:min-h-32 resize-none text-sm md:text-base'
             {...register('message', {
               required: 'Bericht is verplicht',
               minLength: {
@@ -242,7 +242,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
             })}
           />
           {errors.message && (
-            <p className='text-sm text-red-500 mt-1'>
+            <p className='text-xs md:text-sm text-red-500 mt-1'>
               {errors.message.message}
             </p>
           )}
@@ -252,7 +252,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
         <div>
           <Label
             htmlFor='file'
-            className='block text-lg font-medium text-slate-700 mb-2'
+            className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
           >
             Bestand toevoegen (optioneel)
           </Label>
@@ -277,11 +277,11 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
             />
             <label
               htmlFor='file'
-              className='flex items-center justify-center w-full h-12 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition-colors'
+              className='flex items-center justify-center w-full h-10 md:h-12 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition-colors'
             >
               <div className='flex items-center gap-2 text-slate-600'>
-                <CloudUpload className='w-5 h-4' />
-                <span className='text-lg'>
+                <CloudUpload className='w-4 h-4 md:w-5 md:h-5' />
+                <span className='text-sm md:text-base'>
                   {selectedFileName || 'Klik om bestand te selecteren'}
                 </span>
               </div>
@@ -291,12 +291,12 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
             JPG, PNG of PDF - max 10MB
           </p>
           {errors.file && (
-            <p className='text-sm text-red-500 mt-1'>{errors.file.message}</p>
+            <p className='text-xs md:text-sm text-red-500 mt-1'>{errors.file.message}</p>
           )}
         </div>
 
         {/* Terms Agreement */}
-        <div className='flex items-start gap-3'>
+        <div className='flex items-start gap-2 md:gap-3'>
           <Controller
             name='agreeToTerms'
             control={control}
@@ -306,11 +306,11 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
                 id='terms'
                 checked={field.value}
                 onCheckedChange={field.onChange}
-                className=' rounded text-bold'
+                className='rounded text-bold mt-0.5'
               />
             )}
           />
-          <Label htmlFor='terms' className='text-base text-slate-600'>
+          <Label htmlFor='terms' className='text-xs md:text-sm text-slate-600 cursor-pointer'>
             Ik ga akkoord met de{' '}
             <a href='#' className='text-primary hover:underline'>
               privacyverklaring
@@ -319,37 +319,38 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
           </Label>
         </div>
         {errors.agreeToTerms && (
-          <p className='text-sm text-red-500'>{errors.agreeToTerms.message}</p>
+          <p className='text-xs md:text-sm text-red-500'>{errors.agreeToTerms.message}</p>
         )}
 
         {/* Submit Buttons */}
-        <div className='flex flex-col sm:flex-row gap-4 pt-4'>
+        <div className='flex flex-col sm:flex-row gap-3 md:gap-4 pt-2 md:pt-4'>
           <Button
             type='submit'
             disabled={isSubmitting}
-            className='flex-1 bg-primary hover:bg-primary/90 text-white font-semibold py-4 flex items-center text-xl rounded-[12px] justify-center gap-2 disabled:opacity-50'
+            className='flex-1 bg-primary hover:bg-primary/90 text-white font-semibold py-3 md:py-4 flex items-center text-base md:text-xl rounded-[12px] justify-center gap-2 disabled:opacity-50'
             style={{
               boxShadow:
                 '0px 10px 15px 0px #0000001A, 0px 4px 6px 0px #0000001A',
             }}
           >
             <span>{isSubmitting ? 'Versturen...' : 'Versturen'}</span>
-            <Send className='w-5 h-5' />
+            <Send className='w-4 h-4 md:w-5 md:h-5' />
           </Button>
 
           <Button
             type='button'
             variant='outline'
-            className='px-6 text-primary border-none hover:border hover:border-primary hover:bg-transparent hover:text-primary font-semibold  py-4  text-xl rounded-[12px] flex items-center justify-center gap-2'
+            className='px-4 md:px-6 text-primary border-none hover:border hover:border-primary hover:bg-transparent hover:text-primary font-semibold py-3 md:py-4 text-sm md:text-xl rounded-[12px] flex items-center justify-center gap-2'
           >
             <Image
               src='/icons/chat.svg'
               width={20}
               height={24}
               alt='Chat'
-              className='w-5 h-6'
+              className='w-4 h-5 md:w-5 md:h-6'
             />
-            <span>Liever direct chatten?</span>
+            <span className='hidden sm:inline'>Liever direct chatten?</span>
+            <span className='sm:hidden'>Direct chatten?</span>
           </Button>
         </div>
       </form>
