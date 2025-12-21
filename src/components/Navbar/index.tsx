@@ -13,8 +13,10 @@ import { dashboardNavigation } from "@/config/professional-dashboard";
 import { LogOut } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useTranslations } from 'next-intl';
 
 export default function Navbar() {
+  const t = useTranslations('common.navbar');
   const [scrollY, setScrollY] = useState(0);
   const [windowWidth, setWindowWidth] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -39,7 +41,7 @@ export default function Navbar() {
         throw new Error('Failed to logout');
       }
 
-      toast.success('Succesvol uitgelogd');
+      toast.success(t('logoutSuccess'));
       setIsMobileMenuOpen(false);
       setIsAccountMenuOpen(false);
 
@@ -48,7 +50,7 @@ export default function Navbar() {
       router.refresh();
     } catch (error) {
       console.error('Logout error:', error);
-      toast.error('Kon niet uitloggen. Probeer het opnieuw.');
+      toast.error(t('logoutError'));
       setIsLoggingOut(false);
     }
   };
@@ -113,13 +115,13 @@ export default function Navbar() {
                 href='/categories'
                 className='text-foreground hover:text-primary transition-colors font-medium'
               >
-                Categorieën
+                {t('categories')}
               </Link>
               <Link
                 href='/contact'
                 className='text-foreground hover:text-primary transition-colors font-medium'
               >
-                Contact
+                {t('contact')}
               </Link>
             </div>
           </div>
@@ -132,7 +134,7 @@ export default function Navbar() {
                 <Search className='absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5 z-10' />
                 <Input
                   type='search'
-                  placeholder='Snel zoeken . . .'
+                  placeholder={t('searchPlaceholder')}
                   className='pl-12 pr-4 py-[14px] w-80 bg-[#F8F8F8] border border-gray-200 rounded-[12px] text-[#111111] placeholder-muted-foreground hover:border-ring focus:border-ring focus:bg-[#F8F8F8] h-[42px] text-lg'
                 />
               </div>
@@ -153,7 +155,7 @@ export default function Navbar() {
                             '0px 10px 15px 0px #0000001A, 0px 4px 6px 0px #0000001A',
                         }}
                       >
-                        Login
+                        {t('login')}
                       </Button>
                     </Link>
                   )
@@ -210,7 +212,7 @@ export default function Navbar() {
               style={{ transitionDelay: '50ms' }}
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Categorieën
+              {t('categories')}
             </Link>
             <Link
               href='/contact'
@@ -220,7 +222,7 @@ export default function Navbar() {
               style={{ transitionDelay: '100ms' }}
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Contact
+              {t('contact')}
             </Link>
 
             {/* Account Menu with Submenu */}
@@ -235,7 +237,7 @@ export default function Navbar() {
                   onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
                   className='w-full flex items-center justify-between text-foreground hover:text-primary transition-all duration-200 font-medium text-base py-4 px-0'
                 >
-                  <span>Account</span>
+                  <span>{t('account')}</span>
                   <svg
                     className={`w-4 h-4 transition-transform duration-200 ${
                       isAccountMenuOpen ? 'rotate-180' : ''
@@ -290,7 +292,7 @@ export default function Navbar() {
                       className='flex items-center gap-3 text-destructive hover:text-destructive/80 transition-colors text-sm py-2 w-full disabled:opacity-50'
                     >
                       <LogOut className='w-4 h-4' />
-                      <span>{isLoggingOut ? 'Uitloggen...' : 'Log uit'}</span>
+                      <span>{isLoggingOut ? t('loggingOut') : t('logout')}</span>
                     </button>
                   </div>
                 </div>
@@ -310,7 +312,7 @@ export default function Navbar() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className='block text-foreground hover:text-primary transition-all duration-200 font-medium text-base py-4 px-0'
                 >
-                  Login
+                  {t('login')}
                 </Link>
               </div>
             )}

@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { type Service } from '@/data/services';
 import Image from 'next/image';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface ProjectFormProps {
   mode?: 'home' | 'service';
@@ -14,6 +15,8 @@ interface ProjectFormProps {
 }
 
 export default function ProjectForm({ mode = 'home', preselectedService }: ProjectFormProps) {
+  const t = useTranslations('homepage.projectForm');
+  const locale = useLocale();
   const router = useRouter();
   const [services, setServices] = useState<Service[]>([]);
   const [category, setCategory] = useState('');
@@ -34,7 +37,8 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
         if (preselectedService) {
           const preselected = fetchedServices.find((s: Service) => s.slug === preselectedService);
           if (preselected) {
-            setCategory(preselected.name_nl);
+            // Store the slug instead of the name
+            setCategory(preselected.slug);
           }
         }
       } catch (error) {
@@ -43,28 +47,26 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
     };
 
     fetchServices();
-  }, [preselectedService]);
-
-  const categories = services.map(service => service.name_nl);
+  }, [preselectedService, locale]);
 
   const executionDates = [
-    'Zo snel mogelijk',
-    'Binnen 1 maand',
-    'Binnen 3 maanden',
-    'Binnen 6 maanden',
-    'Over meer dan 6 maanden',
-    'Nog niet beslist'
+    t('executionDate1'),
+    t('executionDate2'),
+    t('executionDate3'),
+    t('executionDate4'),
+    t('executionDate5'),
+    t('executionDate6')
   ];
 
   const handleStartProject = async () => {
     // Validate category selection
     if (!category) {
-      alert('Selecteer een categorie');
+      alert(t('selectCategoryAlert'));
       return;
     }
 
-    // Find the service category slug
-    const selectedService = services.find((s: Service) => s.name_nl === category);
+    // Category is now stored as slug, find the service by slug
+    const selectedService = services.find((s: Service) => s.slug === category);
     if (!selectedService) return;
 
     setIsLoading(true);
@@ -102,7 +104,7 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
       router.push(`/create-project?draft=${data.draftId}`);
     } catch (error) {
       console.error('Error starting project:', error);
-      alert('Er is een fout opgetreden. Probeer het opnieuw.');
+      alert(t('errorAlert'));
     } finally {
       setIsLoading(false);
     }
@@ -126,7 +128,7 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
                 alt='Category'
               />
               <label className='text-foreground font-medium text-sm md:text-base'>
-                Categorie
+                {t('categoryLabel')}
               </label>
             </div>
             <Select
@@ -142,14 +144,17 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
                 }`}
                 iconClassName={mode === 'service' ? 'hidden' : ''}
               >
-                <SelectValue placeholder='Selecteer categorie' />
+                <SelectValue placeholder={t('categoryPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat} value={cat} className='font-montserrat'>
-                    {cat}
-                  </SelectItem>
-                ))}
+                {services.map((service) => {
+                  const serviceName = locale === 'en' ? service.name_en : service.name_nl;
+                  return (
+                    <SelectItem key={service.slug} value={service.slug} className='font-montserrat'>
+                      {serviceName}
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>
@@ -165,12 +170,12 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
                 className='[filter:brightness(0)_saturate(100%)_invert(14%)_sepia(95%)_saturate(2511%)_hue-rotate(214deg)_brightness(100%)_contrast(105%)]'
               />
               <label className='text-foreground font-medium text-sm md:text-base'>
-                Postcode
+                {t('postcodeLabel')}
               </label>
             </div>
             <Input
               type='text'
-              placeholder='1000 AB'
+              placeholder={t('postcodePlaceholder')}
               value={postcode}
               onChange={(e) => setPostcode(e.target.value)}
               className='font-montserrat w-full md:min-w-[253px] min-h-12 md:min-h-14 px-4 py-3 md:py-[22px] bg-white border-gray-200 rounded-xl text-sm md:text-base'
@@ -187,12 +192,12 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
                 alt='Date'
               />
               <label className='text-foreground font-medium text-sm md:text-base'>
-                Uitvoerdatum
+                {t('executionDateLabel')}
               </label>
             </div>
             <Select value={executionDate} onValueChange={setExecutionDate}>
               <SelectTrigger className='font-montserrat w-full md:min-w-[253px] min-h-12 md:min-h-14 px-4 py-3 md:py-[22px] bg-white border-gray-200 rounded-xl text-sm md:text-base'>
-                <SelectValue placeholder='Zo snel mogelijk' />
+                <SelectValue placeholder={t('executionDatePlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 {executionDates.map((date) => (
@@ -217,7 +222,7 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
             className='bg-accent hover:bg-accent/90 text-white px-8 md:px-14 py-3 md:py-4 w-full md:w-auto md:min-w-64 h-12 md:h-14 rounded-[12px] font-medium text-sm md:text-base flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed'
           >
             <Search className='w-5 h-5 md:w-6 md:h-6' />
-            {isLoading ? 'Laden...' : 'Project starten'}
+            {isLoading ? t('loadingButton') : t('startButton')}
           </Button>
         </div>
       </div>

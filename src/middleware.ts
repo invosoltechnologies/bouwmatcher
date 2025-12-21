@@ -1,8 +1,25 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import createMiddleware from 'next-intl/middleware';
+import { routing } from './i18n/routing';
+
+// Create the internationalization middleware
+const intlMiddleware = createMiddleware(routing);
 
 export async function middleware(request: NextRequest) {
+  // Handle internationalization first
+  const pathname = request.nextUrl.pathname;
+
+  // Check if the pathname is missing a locale
+  const pathnameIsMissingLocale = routing.locales.every(
+    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
+  );
+
+  // If no locale in pathname, let next-intl handle the redirect
+  if (pathnameIsMissingLocale) {
+    return intlMiddleware(request);
+  }
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -36,15 +53,18 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const pathname = request.nextUrl.pathname;
-  const isAuthPage = pathname.startsWith('/auth');
-  const isProDashboard = pathname.startsWith('/pro-dashboard');
+  // Extract locale from pathname
+  const locale = pathname.split('/')[1];
+  const pathnameWithoutLocale = pathname.replace(`/${locale}`, '') || '/';
+
+  const isAuthPage = pathnameWithoutLocale.startsWith('/auth');
+  const isProDashboard = pathnameWithoutLocale.startsWith('/pro-dashboard');
 
   // If user is not signed in
   if (!user) {
     // Redirect to login if trying to access protected routes
     if (!isAuthPage) {
-      const redirectUrl = new URL('/auth/login', request.url);
+      const redirectUrl = new URL(`/${locale}/auth/login`, request.url);
       redirectUrl.searchParams.set('redirect', pathname);
       return NextResponse.redirect(redirectUrl);
     }
@@ -68,7 +88,7 @@ export async function middleware(request: NextRequest) {
     // Check if profile is completed
     if (!isProfileCompleted || currentStep < 6) {
       // Redirect to registration to complete profile
-      return NextResponse.redirect(new URL('/auth/register', request.url));
+      return NextResponse.redirect(new URL(`/${locale}/auth/register`, request.url));
     }
     // Profile is completed, allow access
     return supabaseResponse;
@@ -77,21 +97,21 @@ export async function middleware(request: NextRequest) {
   // If user is trying to access auth pages
   if (isAuthPage) {
     // Allow access to /auth/register if profile is not completed
-    if (pathname.startsWith('/auth/register')) {
+    if (pathnameWithoutLocale.startsWith('/auth/register')) {
       if (!isProfileCompleted || currentStep < 6) {
         return supabaseResponse;
       }
       // Profile is completed, redirect to dashboard
-      return NextResponse.redirect(new URL('/pro-dashboard/account', request.url));
+      return NextResponse.redirect(new URL(`/${locale}/pro-dashboard/account`, request.url));
     }
 
     // For other auth pages (like login), redirect to dashboard if profile is completed
     if (isProfileCompleted && currentStep >= 6) {
-      return NextResponse.redirect(new URL('/pro-dashboard/account', request.url));
+      return NextResponse.redirect(new URL(`/${locale}/pro-dashboard/account`, request.url));
     }
 
     // Otherwise redirect to registration to complete profile
-    return NextResponse.redirect(new URL('/auth/register', request.url));
+    return NextResponse.redirect(new URL(`/${locale}/auth/register`, request.url));
   }
 
   return supabaseResponse;
@@ -100,10 +120,15 @@ export async function middleware(request: NextRequest) {
 // Configure which routes to run middleware on
 export const config = {
   matcher: [
-    '/dashboard/:path*',
-    '/pro-dashboard/:path*',
-    '/profile/:path*',
-    '/projects/:path*',
-    '/auth/:path*',
+    // Enable a redirect to a matching locale at the root
+    '/',
+
+    // Set a cookie to remember the previous locale for
+    // all requests that have a locale prefix
+    '/(nl|en)/:path*',
+
+    // Enable redirects that add missing locales
+    // Exclude: _next, _vercel, api, files with extensions
+    '/((?!api|_next|_vercel|.*\\..*).*)',
   ],
 };

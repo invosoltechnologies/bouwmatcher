@@ -1,44 +1,54 @@
+'use client';
+
 import Image from 'next/image';
 import { ValueItem } from './Values';
+import { useTranslations } from 'next-intl';
 
-const defaultValuesData: ValueItem[] = [
-  {
-    id: 1,
-    icon: '/icons/values/Betrouwbaarheid.svg',
-    title: 'Betrouwbaarheid',
-    description: 'Wij staan voor heldere contracten zonder verborgen valkuilen of hoge opslagkosten.',
-    position: 'top-left'
-  },
-  {
-    id: 2,
-    icon: '/icons/values/Transparantie.svg',
-    title: 'Transparantie',
-    description: 'Ontvang je geen leuk? Dan betaal je ook niets. Zo weet je altijd waar je aan toe bent.',
-    position: 'top-right'
-  },
-  {
-    id: 3,
-    icon: '/icons/values/Eerlijkheid.svg',
-    title: 'Eerlijkheid',
-    description: 'Geen loze beloftes of waargaranties. Bij ons sta jij altijd centraal.',
-    position: 'bottom-left'
-  },
-  {
-    id: 4,
-    icon: '/icons/values/Doelgericht.svg',
-    title: 'Doelgericht',
-    description: 'Vertel ons wat je zoekt, wij regelen de rest. Het gemak van een betrouwbare bouwpartner.',
-    position: 'bottom-right'
-  }
-];
+function useDefaultValuesData(): ValueItem[] {
+  const t = useTranslations('homepage.values');
+
+  return [
+    {
+      id: 1,
+      icon: '/icons/values/Betrouwbaarheid.svg',
+      title: t('item1Title'),
+      description: t('item1Description'),
+      position: 'top-left'
+    },
+    {
+      id: 2,
+      icon: '/icons/values/Transparantie.svg',
+      title: t('item2Title'),
+      description: t('item2Description'),
+      position: 'top-right'
+    },
+    {
+      id: 3,
+      icon: '/icons/values/Eerlijkheid.svg',
+      title: t('item3Title'),
+      description: t('item3Description'),
+      position: 'bottom-left'
+    },
+    {
+      id: 4,
+      icon: '/icons/values/Doelgericht.svg',
+      title: t('item4Title'),
+      description: t('item4Description'),
+      position: 'bottom-right'
+    }
+  ];
+}
 
 interface ValuesShapeProps {
   values?: ValueItem[];
   centerText?: string;
 }
 
-export default function ValuesShape({ values, centerText = 'Jouw zekerheid\nin de bouw.' }: ValuesShapeProps) {
+export default function ValuesShape({ values, centerText}: ValuesShapeProps) {
+  const defaultValuesData = useDefaultValuesData();
+  const t = useTranslations('homepage.values');
   const valuesData = values || defaultValuesData;
+  const displayCenterText = centerText || t('centerText');
   const getInvertedRadiusMask = (position: string) => {
     const borderRadius = '10px'; // Corner radius of the cards
     const cutoutDepth = '100px'; // How deep the curved cutout goes into the card
@@ -194,7 +204,7 @@ export default function ValuesShape({ values, centerText = 'Jouw zekerheid\nin d
         >
           <div className='text-center text-white p-6'>
             <p className='text-lg font-medium leading-tight whitespace-pre-line'>
-              {centerText}
+              {displayCenterText}
             </p>
           </div>
         </div>

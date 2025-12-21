@@ -1,9 +1,12 @@
+'use client';
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import ProjectForm from "./ProjectForm";
 import Pill from "@/components/ui/pill";
+import { useTranslations } from 'next-intl';
 
 export default function Hero() {
+  const t = useTranslations('homepage.hero');
   return (
     <section className='relative min-h-screen pt-32 md:pt-[168px]'>
       {/* Background div with gradient and blur */}
@@ -18,15 +21,15 @@ export default function Hero() {
             <div className='inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-3 py-1.5 border border-[#023AA233]'>
               <div className='w-1.5 h-1.5 bg-accent rounded-full'></div>
               <span className='text-sm text-primary font-medium'>
-                Vertrouwen door 10,000+ Klanten
+                {t('trustPill')}
               </span>
             </div>
           </div>
 
           {/* Main Heading - Left aligned */}
           <h1 className='text-3xl font-display font-normal leading-tight mb-6 text-left'>
-            Vind en vergelijk vertrouwde{' '}
-            <span className='text-accent'>professionals</span>
+            {t('heading')}{' '}
+            <span className='text-accent'>{t('headingAccent')}</span>
           </h1>
 
           {/* Image - Right aligned */}
@@ -45,7 +48,7 @@ export default function Hero() {
                 <Pill
                   className='bg-white/90 px-2 py-1 text-[10px]'
                   style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
-                  text='24/7 beschikbaar'
+                  text={t('availability')}
                   dotColor='#0AB27E'
                 />
               </div>
@@ -55,7 +58,7 @@ export default function Hero() {
           {/* CTA Button - Below image, centered */}
           <div className='flex justify-center'>
             <Button size='lg' className='text-base h-auto px-8 py-3 rounded-xl'>
-              Hoe werkt het?
+              {t('ctaButton')}
             </Button>
           </div>
         </div>
@@ -68,20 +71,20 @@ export default function Hero() {
             <div className='inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-8 py-2 mb-6 border border-[#023AA233]'>
               <div className='w-2 h-2 bg-accent rounded-full'></div>
               <span className='text-sm text-primary font-medium'>
-                Vertrouwen door 10,000+ Klanten
+                {t('trustPill')}
               </span>
             </div>
 
             {/* Main Heading */}
             <h1 className='text-4xl lg:text-5xl font-display font-normal leading-tight mb-8'>
-              Vind en vergelijk
+              {t('heading')}
               <br />
-              vertrouwde <span className='text-accent'>professionals</span>
+              {t('heading').split(' ').slice(-1)[0]} <span className='text-accent'>{t('headingAccent')}</span>
             </h1>
 
             {/* CTA Button */}
             <Button size='lg' className='text-lg h-auto px-9.5 py-4'>
-              Hoe werkt het?
+              {t('ctaButton')}
             </Button>
           </div>
 
@@ -112,7 +115,7 @@ export default function Hero() {
                 <Pill
                   className='bg-white/80 p-4 pr-5'
                   style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
-                  text='24/7 beschikbaar'
+                  text={t('availability')}
                   dotColor='#0AB27E'
                 />
               </div>
@@ -133,25 +136,25 @@ export default function Hero() {
               <Pill
                 className='min-w-[264px] h-[52px] flex-shrink-0'
                 style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
-                text='Eerlijkheid'
+                text={t('values.honesty')}
                 dotColor='#0AB27E'
               />
               <Pill
                 className='min-w-[264px] h-[52px] flex-shrink-0'
                 style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
-                text='Transparantie'
+                text={t('values.transparency')}
                 dotColor='#0AB27E'
               />
               <Pill
                 className='min-w-[264px] h-[52px] flex-shrink-0'
                 style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
-                text='Doelgericht'
+                text={t('values.goalOriented')}
                 dotColor='#0AB27E'
               />
               <Pill
                 className='min-w-[264px] h-[52px] flex-shrink-0'
                 style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
-                text='Geen valse beloften'
+                text={t('values.noFalsePromises')}
                 dotColor='#0AB27E'
               />
             </div>
@@ -162,25 +165,25 @@ export default function Hero() {
             <Pill
               className='w-[264px] h-[52px]'
               style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
-              text='Eerlijkheid'
+              text={t('values.honesty')}
               dotColor='#0AB27E'
             />
             <Pill
               className='w-[264px] h-[52px]'
               style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
-              text='Transparantie'
+              text={t('values.transparency')}
               dotColor='#0AB27E'
             />
             <Pill
               className='w-[264px] h-[52px]'
               style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
-              text='Doelgericht'
+              text={t('values.goalOriented')}
               dotColor='#0AB27E'
             />
             <Pill
               className='w-[264px] h-[52px]'
               style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
-              text='Geen valse beloften'
+              text={t('values.noFalsePromises')}
               dotColor='#0AB27E'
             />
           </div>

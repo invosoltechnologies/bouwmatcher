@@ -1,9 +1,13 @@
+'use client';
+
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Pill from "@/components/ui/pill";
 import { ArrowDown } from "lucide-react";
+import { useTranslations } from 'next-intl';
 
 export default function HeroContact() {
+  const t = useTranslations('contact.hero');
   return (
     <section className='pt-30 md:pt-[168px] pb-56 relative'>
       {/* Background div with gradient and blur */}
@@ -31,7 +35,7 @@ export default function HeroContact() {
                   className='-mt-0.5 w-3 h-3 md:w-4 md:h-4'
                 />
                 <span className='text-xs md:text-sm font-semibold text-primary'>
-                  &lt;24u reactie
+                  {t('pillResponse')}
                 </span>
               </div>
               <div
@@ -49,7 +53,7 @@ export default function HeroContact() {
                   className='-mt-0.5 w-3 h-3 md:w-4 md:h-4'
                 />
                 <span className='text-xs md:text-sm font-semibold text-primary'>
-                  Veilige gegevens (GDPR)
+                  {t('pillSecurity')}
                 </span>
               </div>
               <div
@@ -67,19 +71,18 @@ export default function HeroContact() {
                   className='-mt-0.5 w-3 h-3 md:w-4 md:h-4'
                 />
                 <span className='text-xs md:text-sm font-semibold text-primary'>
-                  NL/EN
+                  {t('pillLanguage')}
                 </span>
               </div>
             </div>
 
             {/* Main Heading */}
             <h1 className='text-3xl md:text-4xl lg:text-5xl font-display font-normal leading-tight mb-4 md:mb-6 mt-4 md:mt-0'>
-              Neem <span className='text-accent'>contact </span>op met
-              Bouwmatcher
+              {t('heading')} <span className='text-accent'>{t('headingAccent')} </span>{t('headingSuffix')}
             </h1>
 
             <p className='text-base md:text-2xl leading-7 text-[#555555E5] mb-8 md:mb-8'>
-              We reageren binnen 24 uur. Gratis & vrijblijvend.
+              {t('description')}
             </p>
 
             {/* CTA Button - Desktop only */}
@@ -91,7 +94,7 @@ export default function HeroContact() {
                   '0px 10px 15px 0px #0000001A, 0px 4px 6px 0px #0000001A',
               }}
             >
-              <span>Stel je vraag</span>
+              <span>{t('ctaButton')}</span>
               <ArrowDown className='font-semibold text-lg' />
             </Button>
           </div>
@@ -134,7 +137,7 @@ export default function HeroContact() {
                 <Pill
                   className='bg-white/80 p-3 pr-4 md:p-4 md:pr-5 text-xs md:text-sm'
                   style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
-                  text='Online'
+                  text={t('availability')}
                   dotColor='#0AB27E'
                 />
               </div>
@@ -149,7 +152,7 @@ export default function HeroContact() {
                   '0px 10px 15px 0px #0000001A, 0px 4px 6px 0px #0000001A',
               }}
             >
-              <span>Stel je vraag</span>
+              <span>{t('ctaButton')}</span>
               <ArrowDown className='font-semibold text-base' />
             </Button>
           </div>

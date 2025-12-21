@@ -10,9 +10,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { dashboardNavigation } from '@/config/professional-dashboard';
 import { useAccount } from '@/lib/hooks/professional/account/useAccount';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 export default function UserAvatarDropdown() {
   const router = useRouter();
+  const t = useTranslations('common');
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [open, setOpen] = useState(false);
   const { data, isLoading } = useAccount();
@@ -31,14 +33,14 @@ export default function UserAvatarDropdown() {
         throw new Error('Failed to logout');
       }
 
-      toast.success('Succesvol uitgelogd');
+      toast.success(t('navbar.logoutSuccess'));
 
       // Redirect to home page
       router.push('/');
       router.refresh();
     } catch (error) {
       console.error('Logout error:', error);
-      toast.error('Kon niet uitloggen. Probeer het opnieuw.');
+      toast.error(t('navbar.logoutError'));
       setIsLoggingOut(false);
     }
   };
@@ -101,16 +103,18 @@ export default function UserAvatarDropdown() {
               key={item.id}
               href={item.href}
               onClick={() => setOpen(false)}
-              className='flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent transition-colors cursor-pointer'
+              className='group flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent transition-colors cursor-pointer'
             >
               <Image
                 src={item.icon}
-                alt={item.label}
+                alt={t(`proDashboard.${item.id}`)}
                 width={16}
                 height={16}
-                className='w-4 h-4'
+                className='w-4 h-4 group-hover:brightness-0 group-hover:invert transition-all'
               />
-              <span className='text-sm'>{item.label}</span>
+              <span className='text-sm group-hover:text-white transition-colors'>
+                {t(`proDashboard.${item.id}`)}
+              </span>
             </Link>
           ))}
         </div>
@@ -130,7 +134,7 @@ export default function UserAvatarDropdown() {
           )}
         >
           <LogOut className='w-4 h-4' />
-          <span>{isLoggingOut ? 'Uitloggen...' : 'Log out'}</span>
+          <span>{isLoggingOut ? t('navbar.loggingOut') : t('navbar.logout')}</span>
         </button>
       </PopoverContent>
     </Popover>

@@ -1,8 +1,22 @@
 'use client';
-import { useState } from 'react';
+import { useLocale } from 'next-intl';
+import { useRouter, usePathname } from '@/i18n/navigation';
+
+type Locale = 'nl' | 'en';
+const locales: readonly Locale[] = ['nl', 'en'] as const;
 
 export default function LanguageSwitcher() {
-  const [selectedLanguage, setSelectedLanguage] = useState('NL');
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const switchLanguage = (newLocale: Locale) => {
+    if (locale === newLocale) return;
+
+    // The router from next-intl navigation automatically handles locale switching
+    // pathname from usePathname() is already without the locale prefix
+    router.push(pathname, { locale: newLocale });
+  };
 
   return (
     <div className='flex items-center'>
@@ -10,34 +24,23 @@ export default function LanguageSwitcher() {
         className='bg-[#F8F8F8] border border-gray-200 rounded-lg p-1 flex'
         style={{ borderRadius: '8px' }}
       >
-        <button 
-          onClick={() => setSelectedLanguage('NL')}
-          className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all ${
-            selectedLanguage === 'NL' 
-              ? 'bg-white text-primary border border-[#EFEFEF] rounded-md' 
-              : 'text-gray-600'
-          }`}
-          style={{ 
-            borderRadius: '6px',
-            boxShadow: selectedLanguage === 'NL' ? '0px 1px 2px 0px #0000000D' : 'none'
-          }}
-        >
-          NL
-        </button>
-        <button 
-          onClick={() => setSelectedLanguage('EN')}
-          className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all ${
-            selectedLanguage === 'EN' 
-              ? 'bg-white text-primary border border-[#EFEFEF] rounded-md' 
-              : 'text-gray-600'
-          }`}
-          style={{ 
-            borderRadius: '6px',
-            boxShadow: selectedLanguage === 'EN' ? '0px 1px 2px 0px #0000000D' : 'none'
-          }}
-        >
-          EN
-        </button>
+        {locales.map((lang) => (
+          <button
+            key={lang}
+            onClick={() => switchLanguage(lang)}
+            className={`px-4 py-2 text-sm font-medium cursor-pointer transition-all ${
+              locale === lang
+                ? 'bg-white text-primary border border-[#EFEFEF] rounded-md'
+                : 'text-gray-600'
+            }`}
+            style={{
+              borderRadius: '6px',
+              boxShadow: locale === lang ? '0px 1px 2px 0px #0000000D' : 'none'
+            }}
+          >
+            {lang.toUpperCase()}
+          </button>
+        ))}
       </div>
     </div>
   );

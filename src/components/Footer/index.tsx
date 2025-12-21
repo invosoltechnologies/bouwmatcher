@@ -1,7 +1,10 @@
+'use client';
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from 'next-intl';
 
 export default function Footer() {
+  const t = useTranslations('common.footer');
   return (
     <footer className='bg-gray-900 text-white'>
       <div className='custom-container pt-8 md:pt-16 pb-6 md:pb-8 flex flex-col gap-8 md:gap-16'>
@@ -18,38 +21,38 @@ export default function Footer() {
               />
             </Link>
             <p className='text-white text-sm md:text-xl font-light leading-relaxed max-w-sm'>
-              Het vertrouwde platform voor het matchen van bouwers en projecten.
+              {t('description')}
             </p>
           </div>
 
           {/* Help Section */}
           <div className='flex-1'>
-            <h3 className='text-white text-base md:text-xl font-medium mb-4 md:mb-6'>Help</h3>
+            <h3 className='text-white text-base md:text-xl font-medium mb-4 md:mb-6'>{t('helpTitle')}</h3>
             <div className='space-y-3 md:space-y-4'>
               <Link
                 href='/blog'
                 className='block text-white text-sm md:text-base font-light hover:text-white hover:underline transition-colors'
               >
-                Nieuws
+                {t('news')}
               </Link>
               <Link
                 href='/veelgestelde-vragen'
                 className='block text-white text-sm md:text-base font-light hover:text-white hover:underline transition-colors'
               >
-                Veelgestelde vragen
+                {t('faq')}
               </Link>
               <Link
                 href='/contact'
                 className='block text-white text-sm md:text-base font-light hover:text-white hover:underline transition-colors'
               >
-                Contacteren
+                {t('contact')}
               </Link>
             </div>
           </div>
 
           {/* Contact Section */}
           <div className='flex-1'>
-            <h3 className='text-white text-base md:text-xl font-medium mb-4 md:mb-6'>Contact</h3>
+            <h3 className='text-white text-base md:text-xl font-medium mb-4 md:mb-6'>{t('contactTitle')}</h3>
             <div className='space-y-3 md:space-y-4'>
               <div className='flex items-center gap-3'>
                 <Image
@@ -59,7 +62,7 @@ export default function Footer() {
                   height={16}
                   className='w-4 h-4 brightness-0 invert flex-shrink-0'
                 />
-                <span className='text-white text-sm md:text-base font-light'>+32 491 11 59 49</span>
+                <span className='text-white text-sm md:text-base font-light'>{t('phone')}</span>
               </div>
               <div className='flex items-center gap-3'>
                 <Image
@@ -75,7 +78,7 @@ export default function Footer() {
                   rel='noopener noreferrer'
                   className='text-white text-sm md:text-base font-light hover:text-white hover:underline transition-colors'
                 >
-                  +32 491 11 59 49
+                  {t('phone')}
                 </Link>
               </div>
               <div className='flex items-center gap-3'>
@@ -90,7 +93,7 @@ export default function Footer() {
                   href='mailto:support@bouwmatcher.com'
                   className='text-white text-sm md:text-base font-light hover:text-white hover:underline transition-colors break-all'
                 >
-                  support@bouwmatcher.com
+                  {t('email')}
                 </Link>
               </div>
               <div className='flex items-start gap-3'>
@@ -102,8 +105,8 @@ export default function Footer() {
                   className='w-4 h-4 brightness-0 invert mt-1 flex-shrink-0'
                 />
                 <div className='text-white text-sm md:text-base font-light'>
-                  <div>Philips Site 5 bus 1</div>
-                  <div>3001 Leuven, België</div>
+                  <div>{t('addressLine1')}</div>
+                  <div>{t('addressLine2')}</div>
                 </div>
               </div>
             </div>
@@ -111,7 +114,7 @@ export default function Footer() {
 
           {/* Socials Section */}
           <div className='flex-1'>
-            <h3 className='text-white text-base md:text-xl font-medium mb-4 md:mb-6'>Socials</h3>
+            <h3 className='text-white text-base md:text-xl font-medium mb-4 md:mb-6'>{t('socialsTitle')}</h3>
             <div className='space-y-3 md:space-y-4'>
               <Link
                 href='#'
@@ -124,7 +127,7 @@ export default function Footer() {
                   height={16}
                   className='w-4 h-4 brightness-0 invert'
                 />
-                <span>Facebook</span>
+                <span>{t('facebook')}</span>
               </Link>
               <Link
                 href='#'
@@ -137,7 +140,7 @@ export default function Footer() {
                   height={16}
                   className='w-4 h-4 brightness-0 invert'
                 />
-                <span>Instagram</span>
+                <span>{t('instagram')}</span>
               </Link>
               <Link
                 href='#'
@@ -150,7 +153,7 @@ export default function Footer() {
                   height={16}
                   className='w-4 h-4 brightness-0 invert'
                 />
-                <span>LinkedIn</span>
+                <span>{t('linkedin')}</span>
               </Link>
             </div>
           </div>
@@ -158,36 +161,36 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className='border-t border-gray-800 pt-6'>
           <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-xs md:text-sm text-white'>
-            <div className='text-center md:text-left w-full md:w-auto'>© 2025 Bouwmatcher | Alle rechten voorbehouden</div>
+            <div className='text-center md:text-left w-full md:w-auto'>{t('copyright')}</div>
             <div className='flex md:flex-row justify-center items-center gap-3 md:gap-6 w-full md:w-auto text-center md:text-left'>
               <Link
                 href='/privacy-policy'
                 className='hover:text-white hover:underline transition-colors'
               >
-                Privacybeleid
+                {t('privacy')}
               </Link>
               <Link
                 href='/terms-conditions'
                 className='hover:text-white hover:underline transition-colors'
               >
-                Algemene voorwaarden
+                {t('terms')}
               </Link>
               <Link
                 href='/cookie-policy'
                 className='hover:text-white hover:underline transition-colors'
               >
-                Cookiebeleid
+                {t('cookies')}
               </Link>
               <Link
                 href='/disclaimer'
                 className='hover:text-white hover:underline transition-colors'
               >
-                Disclaimer
+                {t('disclaimer')}
               </Link>
-              <span className='hidden md:inline'>Ondernemingsnummer - BE 1024.216.268</span>
+              <span className='hidden md:inline'>{t('companyNumber')}</span>
             </div>
             <div className='text-center w-full md:hidden text-xs mt-2'>
-              Ondernemingsnummer - BE 1024.216.268
+              {t('companyNumber')}
             </div>
           </div>
         </div>

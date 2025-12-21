@@ -1,10 +1,11 @@
 'use client'
-import { useEffect, useState, useRef, ReactNode } from 'react'
+import { useEffect, useState, useRef, ReactNode, useMemo } from 'react'
 import { SectionPill } from "@/components/ui/section-pill"
 import { StatCard } from "@/components/ui/stat-card"
 import { Button } from "@/components/ui/button"
-import { statsData, Stat } from "@/data/stats"
+import { Stat } from "@/data/stats"
 import Image from 'next/image'
+import { useTranslations } from 'next-intl'
 
 export interface StatsSectionProps {
   pillText?: string;
@@ -17,8 +18,46 @@ export interface StatsSectionProps {
 }
 
 export default function StatsSection({
-  pillText = 'Onze impact',
-  pillIcon = (
+  pillText,
+  pillIcon,
+  heading,
+  description,
+  stats,
+  showCTA = true,
+  ctaButtons,
+}: StatsSectionProps) {
+  const t = useTranslations('homepage.stats');
+
+  const defaultStatsData = useMemo<Stat[]>(() => [
+    {
+      id: "1",
+      value: t('stat1Value'),
+      numericValue: 10000,
+      description: t('stat1Description'),
+    },
+    {
+      id: "2",
+      value: t('stat2Value'),
+      numericValue: 4.98,
+      description: t('stat2Description'),
+    },
+    {
+      id: "3",
+      value: t('stat3Value'),
+      numericValue: 2000,
+      description: t('stat3Description'),
+    },
+    {
+      id: "4",
+      value: t('stat4Value'),
+      numericValue: 24,
+      description: t('stat4Description'),
+    },
+  ], [t]);
+
+  const statsData = stats || defaultStatsData;
+
+  const defaultPillIcon = (
     <Image
       src='/icons/statsSection-pill-icon.svg'
       alt='Stats icon'
@@ -26,13 +65,7 @@ export default function StatsSection({
       height={14}
       className='w-3.5 h-3.5'
     />
-  ),
-  heading = 'Wat hebben we tot nu toe bereikt?',
-  description = 'Wat we samen hebben opgebouwd',
-  stats = statsData,
-  showCTA = true,
-  ctaButtons,
-}: StatsSectionProps) {
+  );
   const [isVisible, setIsVisible] = useState(false)
   const [animatedValues, setAnimatedValues] = useState<{ [key: string]: number }>({})
   const sectionRef = useRef<HTMLElement>(null)
@@ -56,11 +89,11 @@ export default function StatsSection({
 
   useEffect(() => {
     if (isVisible) {
-      stats.forEach((stat) => {
+      statsData.forEach((stat) => {
         animateValue(stat.id, stat.numericValue, stat.value)
       })
     }
-  }, [isVisible, stats])
+  }, [isVisible, statsData])
 
   const animateValue = (id: string, target: number, originalValue: string) => {
     const duration = 2000
@@ -106,14 +139,14 @@ export default function StatsSection({
         size='lg'
         className='bg-primary hover:bg-primary/90 text-white font-medium px-6 py-4 rounded-[12px] text-base'
       >
-        Word een professional
+        {t('ctaPrimary')}
       </Button>
       <Button
         variant='default'
         size='lg'
         className='bg-accent hover:bg-accent/90 text-white font-medium px-6 py-4 rounded-[12px] text-base'
       >
-        Vind een professional
+        {t('ctaSecondary')}
       </Button>
     </>
   );
@@ -126,22 +159,22 @@ export default function StatsSection({
       <div className='custom-container'>
         <div className='text-center mb-12 md:mb-24'>
           <SectionPill
-            text={pillText}
-            icon={pillIcon}
+            text={pillText ?? t('pillText')}
+            icon={pillIcon ?? defaultPillIcon}
             className='bg-white/80 border border-[#023AA233] text-primary py-3.5 px-6 mb-3 md:mb-5'
             textClassName='font-montserrat text-sm font-normal'
             iconClassName='text-accent'
           />
           <h2 className='text-[32px] md:text-5xl font-normal text-foreground mb-2 md:mb-5 px-4'>
-            {heading}
+            {heading ?? t('heading')}
           </h2>
           <p className='text-muted-foreground text-base md:text-2xl px-4'>
-            {description}
+            {description ?? t('description')}
           </p>
         </div>
 
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6'>
-          {stats.map((stat, index) => {
+          {statsData.map((stat, index) => {
             const isBlue = index % 2 === 0;
             return (
               <StatCard

@@ -1,6 +1,9 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import ValuesShape from './ValuesShape';
 import { ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
 
 export interface ValueItem {
   id: number;
@@ -20,13 +23,15 @@ export interface ValuesProps {
 }
 
 export default function Values({
-  heading = 'De matchmaker voor al jouw bouwprojecten',
-  description = 'Voor iedereen die zonder zorgen een vakman wil inschakelen.',
-  centerText = 'Jouw zekerheid\nin de bouw.',
+  heading,
+  description,
+  centerText,
   values,
   ctaButtons,
   showCTA = true,
 }: ValuesProps) {
+  const t = useTranslations('homepage.values');
+
   const defaultCTAButtons = (
     <>
       <Button
@@ -34,14 +39,14 @@ export default function Values({
         size='lg'
         className='bg-primary hover:bg-primary/90 text-white font-medium px-6 py-4 rounded-[12px] text-base'
       >
-        Word een professional
+        {t('ctaPrimary')}
       </Button>
       <Button
         variant='default'
         size='lg'
         className='bg-accent hover:bg-accent/90 text-white font-medium px-6 py-4 rounded-[12px] text-base'
       >
-        Vind een professional
+        {t('ctaSecondary')}
       </Button>
     </>
   );
@@ -51,15 +56,15 @@ export default function Values({
       <div className='max-w-7xl mx-auto'>
         <div className='text-center mb-12'>
           <h2 className='text-[32px] md:text-5xl font-normal text-foreground mb-2 md:mb-5'>
-            {heading}
+            {heading || t('heading')}
           </h2>
           <p className='text-muted-foreground text-base md:text-2xl'>
-            {description}
+            {description || t('description')}
           </p>
         </div>
 
         <div className='mb-12'>
-          <ValuesShape values={values} centerText={centerText} />
+          <ValuesShape values={values} centerText={centerText || t('centerText')} />
         </div>
 
         {showCTA && (

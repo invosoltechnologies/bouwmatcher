@@ -1,55 +1,56 @@
+'use client';
+
 import { Card, CardContent } from "@/components/ui/card"
 import { Star } from "lucide-react"
+import { useTranslations } from 'next-intl'
 
 interface Review {
   id: string
-  name: string
+  nameKey: string
   rating: number
-  review: string
+  reviewKey: string
   bgColor: string
   borderColor?: string
 }
 
-const reviewsData: Review[] = [
-  {
-    id: '1',
-    name: 'Emma J.',
-    rating: 5,
-    review:
-      'Bouwmatcher maakte het zo gemakkelijk om een betrouwbare aannemer te vinden. Duidelijke communicatie, eerlijke prijzen en de taak was eerder voltooid dan verwacht.',
-    bgColor: '#EDFDF2',
-    borderColor: '#BEEECD',
-  },
-  {
-    id: '2',
-    name: 'Daniel V.',
-    rating: 5,
-    review:
-      'Ik was verrast door hoe snel ik op elkaar werd gekoppeld. Binnen een dag had ik een bekwame professional aan mijn deur. Uitstekende service!',
-    bgColor: '#ECF4FF',
-    borderColor: '#D0E4FF',
-  },
-  {
-    id: '3',
-    name: 'Sophie de B.',
-    rating: 5,
-    review:
-      'Het platform heeft me zoveel tijd bespaard. De loodgieter was professioneel, legde alles duidelijk uit en liet alles vlekkeloos achter. Ten zeerste aanbevolen.',
-    bgColor: '#EDFDF2',
-    borderColor: '#BEEECD',
-  },
-  {
-    id: '4',
-    name: 'Thomas B.',
-    rating: 4,
-    review:
-      'Snel, transparant en betrouwbaar. De specialist was verbond met mijn project was een echte expert en heeft alles perfect gedaan. Zou zeker beter vragen.',
-    bgColor: '#ECF4FF',
-    borderColor: '#D0E4FF',
-  },
-];
-
 export function ReviewCarousel() {
+  const t = useTranslations('homepage.reviews');
+
+  const reviewsData: Review[] = [
+    {
+      id: '1',
+      nameKey: 'review1Name',
+      rating: 5,
+      reviewKey: 'review1Text',
+      bgColor: '#EDFDF2',
+      borderColor: '#BEEECD',
+    },
+    {
+      id: '2',
+      nameKey: 'review2Name',
+      rating: 5,
+      reviewKey: 'review2Text',
+      bgColor: '#ECF4FF',
+      borderColor: '#D0E4FF',
+    },
+    {
+      id: '3',
+      nameKey: 'review3Name',
+      rating: 5,
+      reviewKey: 'review3Text',
+      bgColor: '#EDFDF2',
+      borderColor: '#BEEECD',
+    },
+    {
+      id: '4',
+      nameKey: 'review4Name',
+      rating: 4,
+      reviewKey: 'review4Text',
+      bgColor: '#ECF4FF',
+      borderColor: '#D0E4FF',
+    },
+  ];
+
   return (
     <div className="w-full overflow-hidden group">
       <style dangerouslySetInnerHTML={{
@@ -91,7 +92,7 @@ export function ReviewCarousel() {
             >
               <CardContent className='p-6 pt-4 flex flex-col h-full'>
                 <p className='font-montserrate text-foreground text-base font-normal leading-6 mb-2'>
-                  {review.name}
+                  {t(review.nameKey as any)}
                 </p>
                 <div className='flex items-center gap-1 mb-4'>
                   {Array.from({ length: 5 }).map((_, i) => (
@@ -106,7 +107,7 @@ export function ReviewCarousel() {
                   ))}
                 </div>
                 <p className='text-muted-foreground text-sm leading-relaxed font-montserrat flex-1'>
-                  &quot;{review.review}&quot;
+                  &quot;{t(review.reviewKey as any)}&quot;
                 </p>
               </CardContent>
             </Card>
@@ -129,7 +130,7 @@ export function ReviewCarousel() {
             >
               <CardContent className='p-6 pt-4 flex flex-col h-full'>
                 <p className='font-montserrate text-foreground text-base font-normal leading-6 mb-2'>
-                  {review.name}
+                  {t(review.nameKey as any)}
                 </p>
                 <div className='flex items-center gap-1 mb-4'>
                   {Array.from({ length: 5 }).map((_, i) => (
@@ -144,7 +145,7 @@ export function ReviewCarousel() {
                   ))}
                 </div>
                 <p className='text-muted-foreground text-sm leading-relaxed font-montserrat flex-1'>
-                  &quot;{review.review}&quot;
+                  &quot;{t(review.reviewKey as any)}&quot;
                 </p>
               </CardContent>
             </Card>

@@ -16,8 +16,10 @@ import {
 } from "@/components/ui/select";
 import { Send, CloudUpload } from "lucide-react";
 import { ContactFormData, ContactFormProps } from "@/types/contact";
+import { useTranslations } from 'next-intl';
 
 export default function ContactForm({ onSubmit }: ContactFormProps) {
+  const t = useTranslations('contact.form');
   const {
     register,
     handleSubmit,
@@ -66,10 +68,10 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
         />
         <div>
           <h2 className='text-lg md:text-2xl leading-6 md:leading-8 text-foreground font-medium'>
-            Stuur ons een bericht
+            {t('heading')}
           </h2>
           <p className='text-sm md:text-base leading-4 md:leading-5 text-muted-foreground'>
-            Gratis, reactietijd &lt;24u
+            {t('subheading')}
           </p>
         </div>
       </div>
@@ -82,18 +84,18 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
               htmlFor='name'
               className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
             >
-              Naam <span className='text-red-600'>*</span>
+              {t('nameLabel')} <span className='text-red-600'>*</span>
             </Label>
             <Input
               id='name'
               type='text'
-              placeholder='Uw volledige naam'
+              placeholder={t('namePlaceholder')}
               className='h-10 md:h-12 text-sm md:text-base'
               {...register('name', {
-                required: 'Naam is verplicht',
+                required: t('nameRequired'),
                 minLength: {
                   value: 2,
-                  message: 'Naam moet minimaal 2 karakters bevatten',
+                  message: t('nameMinLength'),
                 },
               })}
             />
@@ -106,18 +108,18 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
               htmlFor='email'
               className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
             >
-              E-mail <span className='text-red-600'>*</span>
+              {t('emailLabel')} <span className='text-red-600'>*</span>
             </Label>
             <Input
               id='email'
               type='email'
-              placeholder='uw.email@voorbeeld.nl'
+              placeholder={t('emailPlaceholder')}
               className='h-10 md:h-12 text-sm md:text-base'
               {...register('email', {
-                required: 'E-mail is verplicht',
+                required: t('emailRequired'),
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Voer een geldig e-mailadres in',
+                  message: t('emailInvalid'),
                 },
               })}
             />
@@ -136,17 +138,17 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
               htmlFor='phone'
               className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
             >
-              Telefoon
+              {t('phoneLabel')}
             </Label>
             <Input
               id='phone'
               type='tel'
-              placeholder='06 12 34 56 78'
+              placeholder={t('phonePlaceholder')}
               className='h-10 md:h-12 text-sm md:text-base'
               {...register('phone', {
                 pattern: {
                   value: /^[\+]?[0-9\s\-\(\)]+$/,
-                  message: 'Voer een geldig telefoonnummer in',
+                  message: t('phoneInvalid'),
                 },
               })}
             />
@@ -161,18 +163,18 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
               htmlFor='subject'
               className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
             >
-              Onderwerp <span className='text-red-600'>*</span>
+              {t('subjectLabel')} <span className='text-red-600'>*</span>
             </Label>
             <Input
               id='subject'
               type='text'
-              placeholder='Waar gaat uw vraag over?'
+              placeholder={t('subjectPlaceholder')}
               className='h-10 md:h-12 text-sm md:text-base'
               {...register('subject', {
-                required: 'Onderwerp is verplicht',
+                required: t('subjectRequired'),
                 minLength: {
                   value: 3,
-                  message: 'Onderwerp moet minimaal 3 karakters bevatten',
+                  message: t('subjectMinLength'),
                 },
               })}
             />
@@ -190,26 +192,26 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
             htmlFor='category'
             className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
           >
-            Type vraag
+            {t('categoryLabel')}
           </Label>
           <Controller
             name='category'
             control={control}
-            rules={{ required: 'Selecteer een categorie' }}
+            rules={{ required: t('categoryRequired') }}
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value}>
                 <SelectTrigger
                   className='w-full h-10 md:h-12 text-sm md:text-base cursor-pointer'
                   iconClassName='w-5 h-5 md:w-[31px] md:h-[31px]'
                 >
-                  <SelectValue placeholder='Selecteer een categorie' />
+                  <SelectValue placeholder={t('categoryPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='general'>Algemene vraag</SelectItem>
-                  <SelectItem value='quote'>Offerte aanvraag</SelectItem>
-                  <SelectItem value='support'>Ondersteuning</SelectItem>
-                  <SelectItem value='partnership'>Samenwerking</SelectItem>
-                  <SelectItem value='complaint'>Klacht</SelectItem>
+                  <SelectItem value='general'>{t('categoryGeneral')}</SelectItem>
+                  <SelectItem value='quote'>{t('categoryQuote')}</SelectItem>
+                  <SelectItem value='support'>{t('categorySupport')}</SelectItem>
+                  <SelectItem value='partnership'>{t('categoryPartnership')}</SelectItem>
+                  <SelectItem value='complaint'>{t('categoryComplaint')}</SelectItem>
                 </SelectContent>
               </Select>
             )}
@@ -227,17 +229,17 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
             htmlFor='message'
             className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
           >
-            Bericht <span className='text-red-600'>*</span>
+            {t('messageLabel')} <span className='text-red-600'>*</span>
           </Label>
           <Textarea
             id='message'
-            placeholder='Beschrijf uw vraag of project zo gedetailleerd mogelijk...'
+            placeholder={t('messagePlaceholder')}
             className='min-h-24 md:min-h-32 resize-none text-sm md:text-base'
             {...register('message', {
-              required: 'Bericht is verplicht',
+              required: t('messageRequired'),
               minLength: {
                 value: 10,
-                message: 'Bericht moet minimaal 10 karakters bevatten',
+                message: t('messageMinLength'),
               },
             })}
           />
@@ -254,7 +256,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
             htmlFor='file'
             className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
           >
-            Bestand toevoegen (optioneel)
+            {t('fileLabel')}
           </Label>
           <div className='relative'>
             <input
@@ -269,7 +271,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
                     const file = files[0];
                     return (
                       file.size <= 10 * 1024 * 1024 ||
-                      'Bestand mag maximaal 10MB zijn'
+                      t('fileMaxSize')
                     );
                   },
                 },
@@ -282,13 +284,13 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
               <div className='flex items-center gap-2 text-slate-600'>
                 <CloudUpload className='w-4 h-4 md:w-5 md:h-5' />
                 <span className='text-sm md:text-base'>
-                  {selectedFileName || 'Klik om bestand te selecteren'}
+                  {selectedFileName || t('filePlaceholder')}
                 </span>
               </div>
             </label>
           </div>
           <p className='text-xs text-slate-600 mt-1'>
-            JPG, PNG of PDF - max 10MB
+            {t('fileInfo')}
           </p>
           {errors.file && (
             <p className='text-xs md:text-sm text-red-500 mt-1'>{errors.file.message}</p>
@@ -300,7 +302,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
           <Controller
             name='agreeToTerms'
             control={control}
-            rules={{ required: 'U moet akkoord gaan met de privacyverklaring' }}
+            rules={{ required: t('termsRequired') }}
             render={({ field }) => (
               <Checkbox
                 id='terms'
@@ -311,9 +313,9 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
             )}
           />
           <Label htmlFor='terms' className='text-xs md:text-sm text-slate-600 cursor-pointer'>
-            Ik ga akkoord met de{' '}
+            {t('termsText')}{' '}
             <a href='#' className='text-primary hover:underline'>
-              privacyverklaring
+              {t('termsLink')}
             </a>
             <span className='text-red-600'> *</span>
           </Label>
@@ -333,7 +335,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
                 '0px 10px 15px 0px #0000001A, 0px 4px 6px 0px #0000001A',
             }}
           >
-            <span>{isSubmitting ? 'Versturen...' : 'Versturen'}</span>
+            <span>{isSubmitting ? t('submittingButton') : t('submitButton')}</span>
             <Send className='w-4 h-4 md:w-5 md:h-5' />
           </Button>
 
@@ -349,8 +351,8 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
               alt='Chat'
               className='w-4 h-5 md:w-5 md:h-6'
             />
-            <span className='hidden sm:inline'>Liever direct chatten?</span>
-            <span className='sm:hidden'>Direct chatten?</span>
+            <span className='hidden sm:inline'>{t('chatButton')}</span>
+            <span className='sm:hidden'>{t('chatButtonShort')}</span>
           </Button>
         </div>
       </form>

@@ -1,8 +1,11 @@
 'use client'
 
 import { CTA } from "@/components/ui/cta"
+import { useTranslations } from 'next-intl'
 
 export default function CTASection() {
+  const t = useTranslations('homepage.cta');
+
   const handleCTAClick = () => {
     // Handle contact action - you can customize this
     window.location.href = 'mailto:info@bouwmatcher.nl'
@@ -12,9 +15,9 @@ export default function CTASection() {
     <section className='w-full my-8 md:my-14 lg:my-20.5'>
       <div className='custom-container'>
         <CTA
-          heading='Heeft u vragen over ons proces?'
-          description='Neem gerust contact met ons op via e-mail, telefoon of WhatsApp. Ons team staat klaar om u verder te helpen.'
-          ctaText='Neem contact op'
+          heading={t('heading')}
+          description={t('description')}
+          ctaText={t('ctaText')}
           ctaAction={handleCTAClick}
         />
       </div>

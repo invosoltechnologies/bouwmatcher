@@ -2,8 +2,11 @@
 import { SectionPill } from '@/components/ui/section-pill';
 import { ReviewCarousel } from './ReviewCarousel';
 import { Quote } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function ReviewsSection() {
+  const t = useTranslations('homepage.reviews');
+
   return (
     <>
       {/* Top gradient border */}
@@ -27,7 +30,7 @@ export default function ReviewsSection() {
         <div className='text-center mb-8 md:mb-12'>
           <div className='flex justify-center mb-3 md:mb-6'>
             <SectionPill
-              text='Klantverhalen'
+              text={t('pillText')}
               icon={<Quote className='w-3.5 rotate-180 fill-accent' />}
               className='text-accent py-3.5 px-6 mb-3 md:mb-5'
               textClassName='font-montserrat text-sm font-normal'
@@ -40,10 +43,10 @@ export default function ReviewsSection() {
           </div>
 
           <h2 className='text-[32px] md:text-5xl font-normal text-foreground mb-2 md:mb-5 px-4'>
-            Waarom anderen voor ons kiezen
+            {t('heading')}
           </h2>
           <p className='text-muted-foreground text-base md:text-2xl px-4'>
-            Echte ervaringen van tevreden klanten
+            {t('description')}
           </p>
         </div>
         <div className='relative'>

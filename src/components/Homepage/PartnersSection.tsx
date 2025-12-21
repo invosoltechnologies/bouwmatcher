@@ -3,8 +3,10 @@
 import { SectionPill } from '@/components/ui/section-pill';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 export default function PartnersSection() {
+  const t = useTranslations('homepage.partners');
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const partners = [
@@ -22,7 +24,7 @@ export default function PartnersSection() {
           <div className='text-center mb-8 md:mb-16'>
 
               <SectionPill
-                text='Trusted Network'
+                text={t('pillText')}
                 icon={
                   <Image
                     src="/icons/handshake-icon.svg"
@@ -42,10 +44,10 @@ export default function PartnersSection() {
 
 
             <h2 className='text-[32px] md:text-5xl font-normal text-foreground mb-2 md:mb-5'>
-              Vertrouwde partners
+              {t('heading')}
             </h2>
             <p className='text-muted-foreground text-base md:text-2xl px-4'>
-              Werken met geverifieerde professionals in Nederland
+              {t('description')}
             </p>
           </div>
 
@@ -69,7 +71,7 @@ export default function PartnersSection() {
                 {hoveredIndex === index && (
                   <div className='absolute top-0 -right-2'>
                     <SectionPill
-                      text='Geverifieerd'
+                      text={t('verified')}
                       className='text-white py-1.5 px-4'
                       textClassName='font-montserrat text-xs font-medium'
                       stylePill={{

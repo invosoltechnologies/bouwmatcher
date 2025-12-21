@@ -8,30 +8,37 @@ import { type Service } from '@/data/services';
 import { MoveHorizontal, Grid3X3 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
 
-const ServiceCard = ({ service }: { service: Service }) => (
-  <Link
-    href={`/service/${service.slug}`}
-    className="cursor-pointer block"
-  >
-    <div className="bg-white rounded-[12px] border-2 border-gray-200 pt-6 pb-4 px-2 min-w-[106px] h-[130px] md:pt-6.5 md:pb-0 md:px-0 md:min-w-[133px] md:h-[152px] flex flex-col items-center justify-start gap-3 md:gap-4 transition-all hover:shadow-lg hover:border-primary">
-      <div className="w-12 h-12 md:w-16 md:h-16 flex bg-blue-100 rounded-full items-center justify-center flex-shrink-0">
-        <Image
-          src={service.icon_url}
-          alt={service.name_nl}
-          width={24}
-          height={24}
-          className="w-[18px] h-[18px] md:w-6 md:h-6 object-fit"
-        />
+const ServiceCard = ({ service }: { service: Service }) => {
+  const locale = useLocale();
+  const serviceName = locale === 'en' ? service.name_en : service.name_nl;
+
+  return (
+    <Link
+      href={`/service/${service.slug}`}
+      className="cursor-pointer block"
+    >
+      <div className="bg-white rounded-[12px] border-2 border-gray-200 pt-6 pb-4 px-2 min-w-[106px] h-[130px] md:pt-6.5 md:pb-0 md:px-0 md:min-w-[133px] md:h-[152px] flex flex-col items-center justify-start gap-3 md:gap-4 transition-all hover:shadow-lg hover:border-primary">
+        <div className="w-12 h-12 md:w-16 md:h-16 flex bg-blue-100 rounded-full items-center justify-center flex-shrink-0">
+          <Image
+            src={service.icon_url}
+            alt={serviceName}
+            width={24}
+            height={24}
+            className="w-[18px] h-[18px] md:w-6 md:h-6 object-fit"
+          />
+        </div>
+        <p className="font-montserrat block text-xs md:text-sm text-center text-wrap break-all text-foreground px-1">
+          {serviceName}
+        </p>
       </div>
-      <p className="font-montserrat block text-xs md:text-sm text-center text-wrap break-all text-foreground px-1">
-        {service.name_nl}
-      </p>
-    </div>
-  </Link>
-);
+    </Link>
+  );
+};
 
 export default function ServicesSection() {
+  const t = useTranslations('homepage.services');
   const [currentView, setCurrentView] = useState('carousel');
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -75,12 +82,12 @@ export default function ServicesSection() {
   const viewOptions = [
     {
       value: 'carousel',
-      label: 'Carrousel',
+      label: t('carousel'),
       icon: <MoveHorizontal className="w-4 h-4" />,
     },
     {
       value: 'grid',
-      label: 'Rooster',
+      label: t('grid'),
       icon: <Grid3X3 className="w-4 h-4 fill-muted-foreground hover:fill-primary text-gray-100 hover:gray-100" />,
     },
   ];
@@ -175,7 +182,7 @@ export default function ServicesSection() {
               className={`w-3 h-3 rounded-full transition-colors ${
                 currentSlide === index ? 'bg-primary' : 'bg-gray-300'
               }`}
-              aria-label={`Go to slide ${index + 1}`}
+              aria-label={`${t('ariaLabel')} ${index + 1}`}
             />
           ))}
         </div>
@@ -195,7 +202,7 @@ export default function ServicesSection() {
     return (
       <section className='py-14 bg-white'>
         <div className='custom-container flex justify-center items-center min-h-[400px]'>
-          <p className='text-muted-foreground'>Loading services...</p>
+          <p className='text-muted-foreground'>{t('loading')}</p>
         </div>
       </section>
     );
@@ -205,9 +212,9 @@ export default function ServicesSection() {
     <section className='py-14 bg-white'>
       <div className='custom-container'>
         <div className='flex flex-col md:flex-row items-start md:items-center justify-between mb-8 md:mb-16 gap-4'>
-          <div className='flex-1 w-full text-center '>
+          <div className='flex-1 w-full text-center md:text-left'>
             <SectionPill
-              text='Populaire diensten'
+              text={t('pillText')}
               icon={
                 <Image
                   src='/icons/services-pill-icon.svg'
@@ -221,10 +228,10 @@ export default function ServicesSection() {
               iconClassName='text-primary'
             />
             <h2 className='text-[32px] md:text-5xl font-normal text-foreground mb-2 md:mb-5'>
-              Categorieën
+              {t('heading')}
             </h2>
             <p className='text-muted-foreground text-base md:text-2xl'>
-              Zoek professionals voor elk type woningverbetering
+              {t('description')}
             </p>
           </div>
 

@@ -1,3 +1,5 @@
+'use client';
+
 import Image from "next/image";
 import { Phone, Mail } from "lucide-react";
 import {
@@ -6,13 +8,15 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { useTranslations } from 'next-intl';
 
 export default function ContactMethods() {
+  const t = useTranslations('contact.methods');
   const contactMethods = [
     {
       id: 'form',
-      title: 'Formulier',
-      description: 'Neem eenvoudig contact op!',
+      title: t('method1Title'),
+      description: t('method1Description'),
       icon: (
         <div className='w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 bg-primary rounded-xl md:rounded-2xl flex items-center justify-center'>
           <Image
@@ -27,9 +31,9 @@ export default function ContactMethods() {
     },
     {
       id: 'phone',
-      title: 'Telefoon',
-      description: 'Ma-Vr 09:00-17:00 (CET)',
-      subDescription: '+32 491 11 59 49',
+      title: t('method2Title'),
+      description: t('method2Description'),
+      subDescription: t('method2Sub'),
       icon: (
         <div className='w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 bg-accent rounded-xl md:rounded-2xl flex items-center justify-center'>
           <Phone className='w-5 h-5 md:w-6 md:h-6 text-white' />
@@ -38,9 +42,9 @@ export default function ContactMethods() {
     },
     {
       id: 'email',
-      title: 'E-mail',
-      description: 'Antwoord binnen <24u',
-      subDescription: 'info@bouwmatcher.com',
+      title: t('method3Title'),
+      description: t('method3Description'),
+      subDescription: t('method3Sub'),
       icon: (
         <div className='w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 bg-primary rounded-xl md:rounded-2xl flex items-center justify-center'>
           <Mail className='w-5 h-5 md:w-6 md:h-6 text-white' />
@@ -49,8 +53,8 @@ export default function ContactMethods() {
     },
     {
       id: 'chat',
-      title: 'Live chat',
-      description: 'Direct beschikbaar',
+      title: t('method4Title'),
+      description: t('method4Description'),
       icon: (
         <div className='w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 bg-accent rounded-xl md:rounded-2xl flex items-center justify-center'>
           <Image
@@ -71,10 +75,10 @@ export default function ContactMethods() {
       <div className="custom-container">
         <div className="text-center mb-8 md:mb-12 lg:mb-16 px-4">
           <h2 className="text-2xl md:text-4xl lg:text-5xl font-normal text-foreground mb-2 md:mb-4 lg:mb-5">
-            Kies je contactmethode
+            {t('heading')}
           </h2>
           <p className="text-muted-foreground text-sm md:text-lg lg:text-2xl">
-            Kies jouw contact methode
+            {t('description')}
           </p>
         </div>
 
@@ -117,7 +121,7 @@ export default function ContactMethods() {
             />
           </div>
           <span className="text-xs md:text-sm text-muted-foreground">
-            Gratis & vrijblijvend
+            {t('trustIndicator')}
           </span>
         </div>
       </div>
