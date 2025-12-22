@@ -1,23 +1,10 @@
 import type { Metadata } from "next";
-import { League_Spartan, Montserrat } from "next/font/google";
 import "../globals.css";
 import { Providers } from "@/components/providers/Providers";
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
-
-const leagueSpartan = League_Spartan({
-  variable: "--font-league-spartan",
-  subsets: ["latin"],
-  weight: ['100','200','300',"400",'500','600',"700",'800','900'],
-});
-
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
-  subsets: ["latin"],
-  weight: ['300',"400", "500", "600",'700'],
-});
 
 export async function generateMetadata({
   params
@@ -81,16 +68,10 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body
-        className={`${leagueSpartan.variable} ${montserrat.variable} antialiased`}
-      >
-        <NextIntlClientProvider messages={messages}>
-          <Providers>
-            {children}
-          </Providers>
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider messages={messages}>
+      <Providers>
+        {children}
+      </Providers>
+    </NextIntlClientProvider>
   );
 }
