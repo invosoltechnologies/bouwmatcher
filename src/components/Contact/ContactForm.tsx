@@ -17,6 +17,7 @@ import {
 import { Send, CloudUpload } from "lucide-react";
 import { ContactFormData, ContactFormProps } from "@/types/contact";
 import { useTranslations } from 'next-intl';
+import toast from 'react-hot-toast';
 
 export default function ContactForm({ onSubmit }: ContactFormProps) {
   const t = useTranslations('contact.form');
@@ -44,14 +45,49 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
 
   const onFormSubmit = async (data: ContactFormData) => {
     try {
-      console.log("Form submitted:", data);
+      // Create FormData object for API submission
+      const formData = new FormData();
+      formData.append('name', data.name);
+      formData.append('email', data.email);
+      if (data.phone) formData.append('phone', data.phone);
+      formData.append('subject', data.subject);
+      formData.append('category', data.category);
+      formData.append('message', data.message);
+
+      // Append file if present
+      if (data.file && data.file.length > 0) {
+        formData.append('file', data.file[0]);
+      }
+
+      // Submit to API
+      const response = await fetch('/api/contact/submit', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to submit form');
+      }
+
+      // Show success message
+      toast.success(t('successMessage') || 'Your message has been sent successfully!');
+
+      // Call onSubmit callback if provided
       if (onSubmit) {
         await onSubmit(data);
       }
+
       // Reset form after successful submission
       reset();
     } catch (error) {
       console.error("Form submission error:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : (t('errorMessage') || 'Failed to submit form. Please try again.')
+      );
     }
   };
 

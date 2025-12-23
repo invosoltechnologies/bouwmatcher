@@ -19,7 +19,18 @@ export default function HeroContact() {
           {/* Left Content */}
           <div className='flex-1 w-full'>
             {/* Feature Pills - Moved above heading on mobile */}
-            <div className='flex flex-wrap gap-2 md:gap-4 mb-4 md:mb-0 md:order-2'>
+
+            {/* Main Heading */}
+            <h1 className='text-3xl md:text-4xl lg:text-5xl font-display font-normal leading-tight mb-4 md:mb-6 mt-4 md:mt-0'>
+              {t('heading')}{' '}
+              <span className='text-accent'>{t('headingAccent')} </span>
+              {t('headingSuffix')}
+            </h1>
+
+            <p className='text-base md:text-2xl leading-7 text-[#555555E5] mb-8 md:mb-8'>
+              {t('description')}
+            </p>
+            <div className='flex flex-wrap gap-2 md:gap-4 mb-4 md:mb-8'>
               <div
                 className='flex items-center gap-2 bg-white rounded-full px-4 md:px-6 py-2 md:py-3 border border-gray-200'
                 style={{
@@ -75,16 +86,6 @@ export default function HeroContact() {
                 </span>
               </div>
             </div>
-
-            {/* Main Heading */}
-            <h1 className='text-3xl md:text-4xl lg:text-5xl font-display font-normal leading-tight mb-4 md:mb-6 mt-4 md:mt-0'>
-              {t('heading')} <span className='text-accent'>{t('headingAccent')} </span>{t('headingSuffix')}
-            </h1>
-
-            <p className='text-base md:text-2xl leading-7 text-[#555555E5] mb-8 md:mb-8'>
-              {t('description')}
-            </p>
-
             {/* CTA Button - Desktop only */}
             <Button
               size={null}
