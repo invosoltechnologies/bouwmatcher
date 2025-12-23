@@ -36,10 +36,16 @@ export default function Footer() {
                 {t('news')}
               </Link>
               <Link
-                href='/veelgestelde-vragen'
+                href='/faq-klanten'
                 className='block text-white text-sm md:text-base font-light hover:text-white hover:underline transition-colors'
               >
-                {t('faq')}
+                {t('faqCustomers')}
+              </Link>
+              <Link
+                href='/faq-specialisten'
+                className='block text-white text-sm md:text-base font-light hover:text-white hover:underline transition-colors'
+              >
+                {t('faqSpecialists')}
               </Link>
               <Link
                 href='/contact'

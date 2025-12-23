@@ -197,6 +197,58 @@
       "method4Description": "Available now"
     }
   },
+  "faq": {
+    "klanten": {
+      "hero": {
+        "badge": "FAQ for customers",
+        "heading": "FAQ for",
+        "headingAccent": "customers",
+        "ctaButton1": "FAQ for specialists",
+        "ctaButton2": "FAQ for customers"
+      },
+      "q1": "What does it cost to request a quote?",
+      "a1": "At Bouwmatcher, requesting quotes is completely free. Specialists only pay us when their quote is accepted by you. This keeps it transparent and cost-free for you as a customer.",
+      "q2": "Why do I sometimes receive fewer than 5 quotes?",
+      "a2": "We only select specialists who truly match your project based on location, specialization and availability. Quality comes first – sometimes that's 3, sometimes 5. We prefer few good matches over many bad ones.",
+      "q3": "How quickly does a specialist respond?",
+      "a3": "On average, you'll receive responses from interested specialists within 24-48 hours. The specialist will contact you directly to schedule an appointment.",
+      "q4": "Can I modify my request after submission?",
+      "a4": "Yes, contact us via info@bouwmatcher.com or call +32 491 11 59 49. We're happy to help you modify or cancel your request.",
+      "q5": "Do I get a warranty on the work?",
+      "a5": "Warranty is agreed directly with the specialist. All professionals on our platform are registered with the Chamber of Commerce and often affiliated with trade organizations that offer warranty schemes.",
+      "q6": "How do I compare quotes?",
+      "a6": "Don't just look at price, but also at experience, portfolio, reviews and communication. A good match is more important than the lowest price.",
+      "q7": "What if I'm not satisfied with the specialist?",
+      "a7": "Discuss this directly with the specialist first. If this doesn't lead to a solution, contact our team. We'll work together to find an appropriate solution.",
+      "q8": "What if someone doesn't show up or communicates poorly?",
+      "a8": "Report this directly to us via info@bouwmatcher.com. We'll contact the specialist and look for an alternative if necessary. Professionals who repeatedly receive complaints are removed from our platform.",
+      "q9": "Is my data safe?",
+      "a9": "Yes, your data is only shared with the specialists who respond to your request. We comply with GDPR and never share your data with third parties without your permission."
+    },
+    "specialisten": {
+      "hero": {
+        "badge": "FAQ for specialists",
+        "heading": "FAQ for",
+        "headingAccent": "specialists",
+        "ctaButton1": "FAQ for specialists",
+        "ctaButton2": "FAQ for customers"
+      },
+      "q1": "How does the matching work?",
+      "a1": "You receive project requests that match your specialization, work area and availability. You choose which requests to respond to.",
+      "q2": "What costs/commissions apply?",
+      "a2": "You only pay when your quote is accepted by the customer. The commission is a fixed percentage of the project value. There are no monthly subscription costs.",
+      "q3": "How do I increase my win rate?",
+      "a3": "Complete profiles with portfolio, positive reviews and fast response times significantly increase your chances. Communication and transparency are key.",
+      "q4": "What do I see in a quote request?",
+      "a4": "You see all project details: location, desired execution date, description, any photos and customer contact information.",
+      "q5": "May I add customer data to my own CRM?",
+      "a5": "Yes, once you have contact with a customer via our platform, you may use this data for your own administration and CRM. We only ask that you continue to approach the customer via our platform until the quote is accepted.",
+      "q6": "May I use customer data in my own CRM?",
+      "a6": "Yes, once you have contact with a customer via our platform, you may use this data for your own administration and CRM. We only ask that you continue to approach the customer via our platform until the quote is accepted.",
+      "q7": "Planning and no-shows",
+      "a7": "Always confirm your appointments in time and remind the customer of the appointment. In case of a customer no-show, report this to our team so we can follow up."
+    }
+  },
   "common": {
     "navbar": {
       "categories": "Categories",
@@ -220,7 +272,8 @@
       "description": "The trusted platform for matching builders and projects.",
       "helpTitle": "Help",
       "news": "News",
-      "faq": "Frequently asked questions",
+      "faqCustomers": "FAQ for customers",
+      "faqSpecialists": "FAQ for specialists",
       "contact": "Contact",
       "contactTitle": "Contact",
       "phone": "+32 491 11 59 49",

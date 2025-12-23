@@ -197,6 +197,58 @@
       "method4Description": "Direct beschikbaar"
     }
   },
+  "faq": {
+    "klanten": {
+      "hero": {
+        "badge": "FAQ voor klanten",
+        "heading": "FAQ voor",
+        "headingAccent": "klanten",
+        "ctaButton1": "FAQ voor specialisten",
+        "ctaButton2": "FAQ voor klanten"
+      },
+      "q1": "Wat kost een aannemer om offerte te maken?",
+      "a1": "Bij Bouwmatcher is het aanvragen van offertes volledig gratis. Specialisten betalen ons pas wanneer hun offerte door u wordt geaccepteerd. Zo blijft het voor u als klant transparant en zonder kosten.",
+      "q2": "Waarom krijg ik soms minder dan 5 offertes?",
+      "a2": "We selecteren alleen specialisten die echt passen bij uw project op basis van locatie, specialisatie en beschikbaarheid. Kwaliteit staat voorop – soms zijn dat er 3, soms 5. Liever weinig goede matches dan veel slechte.",
+      "q3": "Hoe snel reageerd een specialist?",
+      "a3": "Gemiddeld ontvangt u binnen 24-48 uur reacties van geïnteresseerde specialisten. De specialist neemt direct contact met u op voor het maken van een afspraak.",
+      "q4": "Kan ik mijn aanvraag na verzending nog wijzigen?",
+      "a4": "Ja, neem contact op met ons via info@bouwmatcher.com of bel +32 491 11 59 49. We helpen u graag om uw aanvraag aan te passen of te annuleren.",
+      "q5": "Krijg ik garantie op het werk?",
+      "a5": "Garantie wordt rechtstreeks met de specialist afgesproken. Alle professionals op ons platform zijn KvK-geregistreerd en vaak aangesloten bij brancheorganisaties die garantieregelingen bieden.",
+      "q6": "Hoe vergelijk ik offertes?",
+      "a6": "Let niet alleen op prijs, maar ook op ervaring, portfolio, beoordelingen en communicatie. Een goede match is belangrijker dan de laagste prijs.",
+      "q7": "Wat als ik niet tevreden ben met de specialist?",
+      "a7": "Bespreek dit eerst direct met de specialist zelf. Mocht dit niet tot een oplossing leiden, neem dan contact op met ons team. We kijken samen naar een passende oplossing.",
+      "q8": "Wat als iemand rust niet komt opdagen of slecht communiceerd?",
+      "a8": "Meld dit direct aan ons via info@bouwmatcher.com. We nemen contact op met de specialist en zoeken zo nodig naar een alternatief. Professionals die herhaaldelijk klachten krijgen, worden van ons platform verwijderd.",
+      "q9": "Zo mijn gegevens veilig?",
+      "a9": "Ja, uw gegevens worden alleen gedeeld met de specialisten die reageren op uw aanvraag. We werken volgens de AVG en delen nooit uw gegevens met derden zonder uw toestemming."
+    },
+    "specialisten": {
+      "hero": {
+        "badge": "FAQ voor specialisten",
+        "heading": "FAQ voor",
+        "headingAccent": "specialisten",
+        "ctaButton1": "FAQ voor specialisten",
+        "ctaButton2": "FAQ voor klanten"
+      },
+      "q1": "Hoe werkt de matching?",
+      "a1": "U ontvangt projectaanvragen die passen bij uw specialisatie, werkgebied en beschikbaarheid. U kiest zelf op welke aanvragen u reageert.",
+      "q2": "Welke kosten/provisies gelden er?",
+      "a2": "U betaalt alleen wanneer uw offerte wordt geaccepteerd door de klant. De provisie is een vast percentage van de projectwaarde. Er zijn geen maandelijkse abonnementskosten.",
+      "q3": "Hoe verhoog ik mijn winkans?",
+      "a3": "Complete profielen met portfolio, positieve reviews en snelle reactietijden verhogen uw kans aanzienlijk. Communicatie en transparantie zijn key.",
+      "q4": "Wat zie ik in een offerte?",
+      "a4": "U ziet alle projectdetails: locatie, gewenste uitvoerdatum, omschrijving, eventuele foto's en contactgegevens van de klant.",
+      "q5": "Mag ik klandata of erg eigen CRM setten?",
+      "a5": "Ja, zodra u contact heeft met een klant via ons platform, mag u deze gegevens gebruiken voor uw eigen administratie en CRM. We vragen alleen om de klant via ons platform te blijven benaderen totdat de offerte is geaccepteerd.",
+      "q6": "Mag ik klantdata in mijn eigen CRM zetten?",
+      "a6": "Ja, zodra u contact heeft met een klant via ons platform, mag u deze gegevens gebruiken voor uw eigen administratie en CRM. We vragen alleen om de klant via ons platform te blijven benaderen totdat de offerte is geaccepteerd.",
+      "q7": "Planning en no-shows",
+      "a7": "Bevestig altijd uw afspraken tijdig en herinner de klant aan de afspraak. Bij een no-show van de klant, meld dit aan ons team zodat we dit kunnen opvolgen."
+    }
+  },
   "common": {
     "navbar": {
       "categories": "Categorieën",
@@ -220,7 +272,8 @@
       "description": "Het vertrouwde platform voor het matchen van bouwers en projecten.",
       "helpTitle": "Help",
       "news": "Nieuws",
-      "faq": "Veelgestelde vragen",
+      "faqCustomers": "FAQ voor klanten",
+      "faqSpecialists": "FAQ voor specialisten",
       "contact": "Contacteren",
       "contactTitle": "Contact",
       "phone": "+32 491 11 59 49",
