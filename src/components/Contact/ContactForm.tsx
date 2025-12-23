@@ -18,6 +18,7 @@ import { Send, CloudUpload } from "lucide-react";
 import { ContactFormData, ContactFormProps } from "@/types/contact";
 import { useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
+import Link from "next/link";
 
 export default function ContactForm({ onSubmit }: ContactFormProps) {
   const t = useTranslations('contact.form');
@@ -350,9 +351,9 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
           />
           <Label htmlFor='terms' className='text-xs md:text-sm text-slate-600 cursor-pointer'>
             {t('termsText')}{' '}
-            <a href='#' className='text-primary hover:underline'>
+            <Link href='/privacy-policy' className='text-primary hover:underline'>
               {t('termsLink')}
-            </a>
+            </Link>
             <span className='text-red-600'> *</span>
           </Label>
         </div>
