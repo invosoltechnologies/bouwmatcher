@@ -200,9 +200,9 @@
   "faq": {
     "klanten": {
       "hero": {
-        "badge": "FAQ voor klanten",
         "heading": "FAQ voor",
         "headingAccent": "klanten",
+        "description":"FAQ voor specialisten • FAQ voor klanten",
         "ctaButton1": "FAQ voor specialisten",
         "ctaButton2": "FAQ voor klanten"
       },
@@ -227,9 +227,9 @@
     },
     "specialisten": {
       "hero": {
-        "badge": "FAQ voor specialisten",
         "heading": "FAQ voor",
         "headingAccent": "specialisten",
+        "description": "FAQ voor specialisten • FAQ voor klanten",
         "ctaButton1": "FAQ voor specialisten",
         "ctaButton2": "FAQ voor klanten"
       },
