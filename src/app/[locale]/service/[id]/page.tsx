@@ -7,7 +7,7 @@ import DefaultLayout from '@/components/DefaultLayout';
 import { createClient } from '@/lib/supabase/server';
 
 interface ServicePageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; locale: string }>;
 }
 
 export default async function ServicePage({ params }: ServicePageProps) {
@@ -51,7 +51,17 @@ export async function generateStaticParams() {
     return [];
   }
 
-  return services.map((service) => ({
-    id: service.slug,
-  }));
+  const locales = ['en', 'nl'];
+  const params = [];
+
+  for (const service of services) {
+    for (const locale of locales) {
+      params.push({
+        id: service.slug,
+        locale,
+      });
+    }
+  }
+
+  return params;
 }
