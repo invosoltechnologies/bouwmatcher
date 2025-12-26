@@ -59,17 +59,38 @@ export async function middleware(request: NextRequest) {
 
   const isAuthPage = pathnameWithoutLocale.startsWith('/auth');
   const isProDashboard = pathnameWithoutLocale.startsWith('/pro-dashboard');
+  const isDashboard = pathnameWithoutLocale.startsWith('/dashboard');
+
+  // Define public routes that don't require authentication
+  const publicRoutes = [
+    '/',
+    '/contact',
+    '/faq-klanten',
+    '/faq-specialisten',
+    '/privacy-policy',
+    '/terms',
+    '/cookies-policy',
+    '/disclaimer',
+    '/categories',
+    '/service',
+    '/blog',
+  ];
+
+  const isPublicRoute = publicRoutes.some(route =>
+    pathnameWithoutLocale === route || pathnameWithoutLocale.startsWith(`${route}/`)
+  );
 
   // If user is not signed in
   if (!user) {
-    // Redirect to login if trying to access protected routes
-    if (!isAuthPage) {
-      const redirectUrl = new URL(`/${locale}/auth/login`, request.url);
-      redirectUrl.searchParams.set('redirect', pathname);
-      return NextResponse.redirect(redirectUrl);
+    // Allow access to public routes and auth pages
+    if (isPublicRoute || isAuthPage) {
+      return supabaseResponse;
     }
-    // Allow access to auth pages
-    return supabaseResponse;
+
+    // Redirect to login if trying to access protected routes
+    const redirectUrl = new URL(`/${locale}/auth/login`, request.url);
+    redirectUrl.searchParams.set('redirect', pathname);
+    return NextResponse.redirect(redirectUrl);
   }
 
   // User is signed in - check profile completion status

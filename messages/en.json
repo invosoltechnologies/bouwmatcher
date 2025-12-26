@@ -203,6 +203,7 @@
         "badge": "FAQ for customers",
         "heading": "FAQ for",
         "headingAccent": "customers",
+        "description": "FAQ for specialists • FAQ for customers",
         "ctaButton1": "FAQ for specialists",
         "ctaButton2": "FAQ for customers"
       },
@@ -230,6 +231,7 @@
         "badge": "FAQ for specialists",
         "heading": "FAQ for",
         "headingAccent": "specialists",
+        "description": "FAQ for specialists • FAQ for customers",
         "ctaButton1": "FAQ for specialists",
         "ctaButton2": "FAQ for customers"
       },

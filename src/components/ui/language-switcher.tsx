@@ -1,21 +1,24 @@
 'use client';
 import { useLocale } from 'next-intl';
-import { useRouter, usePathname } from '@/i18n/navigation';
+import { usePathname } from 'next/navigation';
 
 type Locale = 'nl' | 'en';
 const locales: readonly Locale[] = ['nl', 'en'] as const;
 
 export default function LanguageSwitcher() {
   const locale = useLocale();
-  const router = useRouter();
   const pathname = usePathname();
 
   const switchLanguage = (newLocale: Locale) => {
     if (locale === newLocale) return;
 
-    // The router from next-intl navigation automatically handles locale switching
-    // pathname from usePathname() is already without the locale prefix
-    router.push(pathname, { locale: newLocale });
+    // Get current pathname and replace the locale
+    // pathname will be like "/nl/faq-specialisten" or "/en/contact"
+    const pathWithoutLocale = pathname.replace(`/${locale}`, '');
+    const newPath = `/${newLocale}${pathWithoutLocale}`;
+
+    // Use hard navigation to ensure proper locale switching and re-rendering
+    window.location.href = newPath;
   };
 
   return (

@@ -1,18 +1,17 @@
 'use client';
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Search, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import LanguageSwitcher from "@/components/ui/language-switcher";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import UserAvatarDropdown from "./UserAvatarDropdown";
 import { dashboardNavigation } from "@/config/professional-dashboard";
 import { LogOut } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
 
 export default function Navbar() {

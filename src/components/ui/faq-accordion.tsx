@@ -22,8 +22,11 @@ export function FAQAccordion({ items, className }: FAQAccordionProps) {
         <AccordionItem
           key={index}
           value={`item-${index}`}
-          className='bg-white/90 rounded-2xl border border-white/20 mb-4 border-b-accent/20 [&[data-state=open]]:border-accent p-5 md:p-6'
-          style={{ boxShadow: '0px 10px 30px 0px #023AA214' }}
+          className='rounded-2xl border border-white/20 mb-4 border-b-accent/20 [&[data-state=open]]:border-accent p-5 md:p-6'
+          style={{
+            boxShadow: '0px 10px 30px 0px #023AA214',
+            background: 'linear-gradient(90deg, rgba(10, 178, 126, 0.1) 0%, rgba(2, 58, 162, 0.1) 100%)'
+          }}
         >
           <AccordionTrigger
             className='text-left text-sm md:text-xl py-0 text-muted-foreground hover:no-underline hover:border-accent [&[data-state=open]>img]:rotate-45'
