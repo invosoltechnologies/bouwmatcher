@@ -186,7 +186,7 @@ export default function PhotoUploadModal({ draftId, onClose, onComplete }: Photo
             <X className='w-6 h-6' />
           </button>
 
-          <h2 className='text-2xl font-semibold text-center mb-8'>
+          <h2 className='text-xl md:text-2xl font-semibold text-center mb-5 md:mb-8'>
             Upload hier jouw foto&apos;s
           </h2>
 
@@ -222,7 +222,7 @@ export default function PhotoUploadModal({ draftId, onClose, onComplete }: Photo
           <X className='w-6 h-6' />
         </button>
 
-        <h2 className='text-2xl font-semibold mb-6'>Voeg je foto&apos;s toe</h2>
+        <h2 className='text-xl md:text-2xl font-semibold mb-6'>Voeg je foto&apos;s toe</h2>
 
         {/* Photo Grid */}
         <div className='grid grid-cols-3 gap-4 mb-6'>

@@ -23,7 +23,7 @@ export default function QuestionnaireRadio({
   return (
     <div
       className={cn(
-        'flex items-center w-full px-3 py-4 rounded-xl border cursor-pointer transition-all',
+        'flex items-center w-full px-2.5 py-3 md:px-3 md:py-4  rounded-lg md:rounded-xl border cursor-pointer transition-all',
         checked
           ? 'bg-gradient-to-r from-[rgba(10,178,126,0.10)] to-[rgba(2,58,162,0.10)] border-primary/20'
           : 'bg-white border-neutral-800/20 hover:border-primary/40'
@@ -32,9 +32,9 @@ export default function QuestionnaireRadio({
       <RadioGroupItem
         value={value}
         id={id}
-        circleClassName={'size-3.5'}
+        circleClassName={'size-2.5 md:size-3.5'}
         className={cn(
-          'w-6 h-6 border-2 shrink-0',
+          'w-4 h-4 md:w-6 md:h-6 border-2 shrink-0',
           checked
             ? 'border-primary'
             : 'border-neutral-800/20'
@@ -43,7 +43,7 @@ export default function QuestionnaireRadio({
       <Label
         htmlFor={id}
         className={cn(
-          'ml-3.5 text-lg font-medium cursor-pointer flex-1',
+          'ml-3.5 text-base md:text-lg font-medium cursor-pointer flex-1',
           checked ? 'text-primary' : 'text-muted-foreground'
         )}
       >
