@@ -249,6 +249,62 @@
       "a7": "Bevestig altijd uw afspraken tijdig en herinner de klant aan de afspraak. Bij een no-show van de klant, meld dit aan ons team zodat we dit kunnen opvolgen."
     }
   },
+  "blog": {
+    "hero": {
+      "badge": "Nieuw!",
+      "readTime": "8 mins read",
+      "featuredTitle": "De perfecte voordeur kiezen: materialen, isolatie en veiligheid",
+      "featuredExcerpt": "Hout, kunststof of aluminium? In dit artikel vergelijken we looks, onderhoud, U-waardes en inbraakwerendheid zodat je gericht kunt kiezen. Inclusief richtprijzen en wanneer vervangen of repareren slim is.",
+      "readMore": "Lees meer"
+    },
+    "list": {
+      "winterSchilderen": {
+        "title": "Winter of zomer schilderen",
+        "excerpt": "Wanneer presteerd verf het best, welke voorbereiding is nodig en wat kost het per m².",
+        "category": "Schilderen",
+        "date": "02 Sep 2025"
+      },
+      "badkamerRenoveren": {
+        "title": "Badkamer renoveren stap voor stap",
+        "excerpt": "Realistische doorlooptijd, budgetopbouw en veelgemaakte fouten om te vermijden.",
+        "category": "Badkamer renoveren",
+        "date": "01 Sep 2025"
+      },
+      "lekkage": {
+        "title": "Lekkage? Snel handelen met deze checklist",
+        "excerpt": "Wat je direct zelf controleert, wanneer je een loodgieter belt en welke info hij nodig heeft.",
+        "category": "Lekkage",
+        "date": "23 Aug 2025"
+      },
+      "meterkast": {
+        "title": "Meterkast klaar voor inductie en EV",
+        "excerpt": "Groeperen, vermogen en kosten voor een veilige elektrische upgrade.",
+        "category": "Inductie en EV",
+        "date": "12 Jul 2025"
+      },
+      "isoleren": {
+        "title": "Spouwmuur of zolder isoleren",
+        "excerpt": "Warmteverlies, terugverdientijd en welke isolatie waar het meeste oplevert.",
+        "category": "Isoleren",
+        "date": "01 Sep 2025"
+      }
+    }
+  },
+  "legal": {
+    "hero": {
+      "version": "v1.0",
+      "lastUpdated": "Laatst bijgewerkt: 15 januari 2025",
+      "heading": "Legal Center",
+      "description": "Privacybeleid • Algemene voorwaarden • Cookiebeleid",
+      "language": "Taal:",
+      "languageNL": "NL",
+      "languageEN": "EN",
+      "privacyButton": "Privacybeleid",
+      "termsButton": "Algemene voorwaarden",
+      "cookiesButton": "Cookiebeleid",
+      "privacyFirstPill": "Privacy First"
+    }
+  },
   "common": {
     "navbar": {
       "categories": "Categorieën",

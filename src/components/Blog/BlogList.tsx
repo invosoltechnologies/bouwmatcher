@@ -4,63 +4,58 @@ import { useState } from "react";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { NavigationArrow } from "@/components/ui/navigation-arrow";
-
-// Mock data for demonstration - this will be replaced with dynamic content
-const mockBlogs = [
-  {
-    id: 1,
-    title: "Winter of zomer schilderen",
-    excerpt: "Wanneer presteerd verf het best, welke voorbereiding is nodig en wat kost het per m².",
-    image: "/images/blog/temp-blog.png",
-    date: "02 Sep 2025",
-    category: "Painting"
-  },
-  {
-    id: 2,
-    title: "Badkamer renoveren stap voor stap",
-    excerpt: "Realistische doorlooptijd, budgetopbouw en veelgemaakte fouten om te vermijden.",
-    image: "/images/blog/temp-blog.png",
-    date: "01 Sep 2025",
-    category: "Badkamer renoveren"
-  },
-  {
-    id: 3,
-    title: "Lekkage? Snel handelen met deze checklist",
-    excerpt: "Wat je direct zelf controleert, wanneer je een loodgieter belt en welke info hij nodig heeft.",
-    image: "/images/blog/temp-blog.png",
-    date: "23 Aug 2025",
-    category: "Lekkage"
-  },
-  {
-    id: 4,
-    title: "Meterkast klaar voor inductie en EV",
-    excerpt: "Groeperen, vermogen en kosten voor een veilige elektrische upgrade.",
-    image: "/images/blog/temp-blog.png",
-    date: "12 Jul 2025",
-    category: "Inductie en EV"
-  },
-  {
-    id: 5,
-    title: "Spouwmuur of zolder isoleren",
-    excerpt: "Warmteverlies, terugverdientijd en welke isolatie waar het meeste oplevert.",
-    image: "/images/blog/temp-blog.png",
-    date: "01 Sep 2025",
-    category: "Isoleren"
-  },
-  {
-    id: 6,
-    title: "HR++ of triple glas in nieuwe kozijnen",
-    excerpt: "Vergelijk comfort, geluiddemping en prijs per raamtype.",
-    image: "/images/blog/temp-blog.png",
-    date: "23 Aug 2025",
-    category: "Raamtype"
-  }
-];
+import { useTranslations } from 'next-intl';
 
 const BLOGS_PER_PAGE = 3;
 
 export default function BlogList() {
+  const t = useTranslations('blog');
   const [currentPage, setCurrentPage] = useState(0);
+
+  // Blog data using translations
+  const mockBlogs = [
+    {
+      id: 1,
+      title: t('list.winterSchilderen.title'),
+      excerpt: t('list.winterSchilderen.excerpt'),
+      image: "/images/blog/temp-blog.png",
+      date: t('list.winterSchilderen.date'),
+      category: t('list.winterSchilderen.category')
+    },
+    {
+      id: 2,
+      title: t('list.badkamerRenoveren.title'),
+      excerpt: t('list.badkamerRenoveren.excerpt'),
+      image: "/images/blog/temp-blog.png",
+      date: t('list.badkamerRenoveren.date'),
+      category: t('list.badkamerRenoveren.category')
+    },
+    {
+      id: 3,
+      title: t('list.lekkage.title'),
+      excerpt: t('list.lekkage.excerpt'),
+      image: "/images/blog/temp-blog.png",
+      date: t('list.lekkage.date'),
+      category: t('list.lekkage.category')
+    },
+    {
+      id: 4,
+      title: t('list.meterkast.title'),
+      excerpt: t('list.meterkast.excerpt'),
+      image: "/images/blog/temp-blog.png",
+      date: t('list.meterkast.date'),
+      category: t('list.meterkast.category')
+    },
+    {
+      id: 5,
+      title: t('list.isoleren.title'),
+      excerpt: t('list.isoleren.excerpt'),
+      image: "/images/blog/temp-blog.png",
+      date: t('list.isoleren.date'),
+      category: t('list.isoleren.category')
+    }
+  ];
+
   const totalPages = Math.ceil(mockBlogs.length / BLOGS_PER_PAGE);
 
   const currentBlogs = mockBlogs.slice(
@@ -144,7 +139,7 @@ export default function BlogList() {
 
                 {/* Read More */}
                 <button className="flex items-center gap-3 text-primary font-medium hover:text-primary/80 transition-colors">
-                  Read more
+                  {t('hero.readMore')}
                   <ArrowRight size={20} />
                 </button>
               </div>

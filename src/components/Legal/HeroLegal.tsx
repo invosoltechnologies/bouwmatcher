@@ -1,9 +1,22 @@
+'use client';
+
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Pill from "@/components/ui/pill";
 import { Cookie } from "lucide-react";
+import { useTranslations, useLocale } from 'next-intl';
+import { useRouter, usePathname } from '@/i18n/navigation';
 
 export default function HeroLegal() {
+  const t = useTranslations('legal.hero');
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleLanguageChange = (newLocale: string) => {
+    router.replace(pathname, { locale: newLocale });
+  };
+
   return (
     <section className='pt-[198px] pb-48 relative'>
       {/* Background div with gradient and blur */}
@@ -17,34 +30,40 @@ export default function HeroLegal() {
             {/* Version and Last Updated Pills */}
             <div className='flex flex-wrap gap-4 mb-6'>
               <div className='bg-primary text-white font-montserrat rounded-full px-4 py-2'>
-                <span className='text-sm font-extrabold'>v1.0</span>
+                <span className='text-sm font-extrabold'>{t('version')}</span>
               </div>
               <div className='bg-emerald-100 border border-accent/55 font-montserrat text-emerald-700 rounded-full px-4 py-2'>
-                <span className='text-sm'>Last updated: January 15, 2025</span>
+                <span className='text-sm'>{t('lastUpdated')}</span>
               </div>
             </div>
 
             {/* Main Heading */}
             <h1 className='text-4xl lg:text-5xl font-display font-normal leading-tight mb-6'>
-              Legal Center
+              {t('heading')}
             </h1>
 
             <p className='text-2xl leading-7 text-[#555555E5] mb-8'>
-              Privacy Policy • Terms & Conditions • Cookies Policy
+              {t('description')}
             </p>
 
             {/* Language Selection */}
             <div className='flex items-center gap-2 mb-8'>
-              <span className='text-gray-700 mr-2'>Language:</span>
+              <span className='text-gray-700 mr-2'>{t('language')}</span>
               <Button
-                variant='outline'
+                variant={locale === 'en' ? 'default' : 'outline'}
                 size='sm'
                 className='px-3 py-1 h-auto text-slate-700 border-gray-300'
+                onClick={() => handleLanguageChange('en')}
               >
-                EN
+                {t('languageEN')}
               </Button>
-              <Button size='sm' className='px-3 py-1 h-auto'>
-                NL
+              <Button
+                variant={locale === 'nl' ? 'default' : 'outline'}
+                size='sm'
+                className='px-3 py-1 h-auto'
+                onClick={() => handleLanguageChange('nl')}
+              >
+                {t('languageNL')}
               </Button>
             </div>
 
@@ -58,7 +77,7 @@ export default function HeroLegal() {
                   alt='Privacy Policy'
                   className='filter brightness-0 invert'
                 />
-                <span>Privacybeleid</span>
+                <span>{t('privacyButton')}</span>
               </Button>
               <Button className='flex items-center gap-2 text-lg rounded-2xl px-4 py-5 h-auto bg-accent hover:bg-accent/90 text-white font-medium'>
                 <Image
@@ -68,11 +87,11 @@ export default function HeroLegal() {
                   alt='Terms & Conditions'
                   className='filter brightness-0 invert'
                 />
-                <span>Algemene voorwaarden</span>
+                <span>{t('termsButton')}</span>
               </Button>
               <Button className='flex items-center gap-2 text-lg rounded-2xl px-4 py-5 h-auto text-white font-medium'>
                 <Cookie size={15} />
-                <span>Cookiebeleid</span>
+                <span>{t('cookiesButton')}</span>
               </Button>
             </div>
           </div>
@@ -114,7 +133,7 @@ export default function HeroLegal() {
                 <Pill
                   className='bg-white/60 p-4 pr-5'
                   style={{ boxShadow: '0px 4px 5.3px 0px #00000017' }}
-                  text='Privacy First'
+                  text={t('privacyFirstPill')}
                   dotColor='#0AB27E'
                 />
               </div>

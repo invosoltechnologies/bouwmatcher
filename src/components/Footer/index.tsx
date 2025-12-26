@@ -176,13 +176,13 @@ export default function Footer() {
                 {t('privacy')}
               </Link>
               <Link
-                href='/terms-conditions'
+                href='/terms'
                 className='hover:text-white hover:underline transition-colors'
               >
                 {t('terms')}
               </Link>
               <Link
-                href='/cookie-policy'
+                href='/cookies-policy'
                 className='hover:text-white hover:underline transition-colors'
               >
                 {t('cookies')}

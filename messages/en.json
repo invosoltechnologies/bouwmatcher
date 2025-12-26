@@ -251,6 +251,62 @@
       "a7": "Always confirm your appointments in time and remind the customer of the appointment. In case of a customer no-show, report this to our team so we can follow up."
     }
   },
+  "blog": {
+    "hero": {
+      "badge": "New!",
+      "readTime": "8 mins read",
+      "featuredTitle": "Choosing the perfect front door: materials, insulation and safety",
+      "featuredExcerpt": "Wood, plastic or aluminum? In this article we compare looks, maintenance, U-values and burglary resistance so you can make an informed choice. Including guideline prices and when replacement or repair is smart.",
+      "readMore": "Read more"
+    },
+    "list": {
+      "winterSchilderen": {
+        "title": "Winter or summer painting",
+        "excerpt": "When does paint perform best, what preparation is needed and what does it cost per m².",
+        "category": "Painting",
+        "date": "02 Sep 2025"
+      },
+      "badkamerRenoveren": {
+        "title": "Bathroom renovation step by step",
+        "excerpt": "Realistic timeline, budget breakdown and common mistakes to avoid.",
+        "category": "Bathroom renovation",
+        "date": "01 Sep 2025"
+      },
+      "lekkage": {
+        "title": "Leakage? Act quickly with this checklist",
+        "excerpt": "What to check yourself immediately, when to call a plumber and what information they need.",
+        "category": "Leakage",
+        "date": "23 Aug 2025"
+      },
+      "meterkast": {
+        "title": "Meter box ready for induction and EV",
+        "excerpt": "Grouping, power and costs for a safe electrical upgrade.",
+        "category": "Induction and EV",
+        "date": "12 Jul 2025"
+      },
+      "isoleren": {
+        "title": "Cavity wall or attic insulation",
+        "excerpt": "Heat loss, payback time and which insulation provides the most value.",
+        "category": "Insulation",
+        "date": "01 Sep 2025"
+      }
+    }
+  },
+  "legal": {
+    "hero": {
+      "version": "v1.0",
+      "lastUpdated": "Last updated: January 15, 2025",
+      "heading": "Legal Center",
+      "description": "Privacy Policy • Terms & Conditions • Cookies Policy",
+      "language": "Language:",
+      "languageNL": "NL",
+      "languageEN": "EN",
+      "privacyButton": "Privacy policy",
+      "termsButton": "Terms & Conditions",
+      "cookiesButton": "Cookie policy",
+      "privacyFirstPill": "Privacy First"
+    }
+  },
   "common": {
     "navbar": {
       "categories": "Categories",
