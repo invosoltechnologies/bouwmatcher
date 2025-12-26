@@ -72,21 +72,21 @@ export default function BlogList() {
   };
 
   return (
-    <section className="py-14 bg-white">
+    <section className="py-8 md:py-14 bg-white">
       <div className="custom-container">
         {/* Header */}
-        <div className="flex items-center justify-between mb-16">
-          <div className="flex-1">
-            <h2 className="text-5xl font-display font-normal text-foreground mb-5">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 md:mb-16">
+          <div className="flex-1 text-center md:text-left mb-4 md:mb-0">
+            <h2 className="text-2xl md:text-5xl font-display font-normal text-foreground mb-2 md:mb-5">
               Onze recente artikelen
             </h2>
-            <p className="text-muted-foreground text-2xl">
+            <p className="text-muted-foreground text-sm md:text-2xl">
               Blijf op de hoogte van onze nieuwste inzichten
             </p>
           </div>
 
-          {/* Navigation Arrows */}
-          <div className="flex gap-4">
+          {/* Navigation Arrows - Desktop only */}
+          <div className="hidden md:flex gap-4">
             <NavigationArrow
               direction="left"
               onClick={handlePrevious}
@@ -100,10 +100,56 @@ export default function BlogList() {
           </div>
         </div>
 
-        {/* Blog Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Blog Grid - Mobile: all blogs, Desktop: paginated */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {/* Mobile: Show all blogs */}
+          {mockBlogs.map((blog) => (
+            <article key={blog.id} className="group cursor-pointer md:hidden">
+              {/* Image */}
+              <div className="mb-4 overflow-hidden rounded-lg">
+                <Image
+                  src={blog.image}
+                  alt={blog.title}
+                  width={400}
+                  height={240}
+                  className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              {/* Content */}
+              <div className="space-y-3">
+                {/* Category and Date */}
+                <div className="w-full flex items-center justify-between gap-4">
+                  <span className="bg-accent/10 text-accent px-2.5 py-1 rounded-full text-xs font-medium">
+                    {blog.category}
+                  </span>
+                  <span className="text-muted-foreground text-xs">
+                    {blog.date}
+                  </span>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-lg font-display font-normal leading-tight text-foreground group-hover:text-primary transition-colors">
+                  {blog.title}
+                </h3>
+
+                {/* Excerpt */}
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {blog.excerpt}
+                </p>
+
+                {/* Read More */}
+                <button className="flex items-center gap-2 text-primary text-sm font-medium hover:text-primary/80 transition-colors">
+                  {t('hero.readMore')}
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+            </article>
+          ))}
+
+          {/* Desktop: Show paginated blogs */}
           {currentBlogs.map((blog) => (
-            <article key={blog.id} className="group cursor-pointer">
+            <article key={blog.id} className="hidden md:block group cursor-pointer">
               {/* Image */}
               <div className="mb-6 overflow-hidden rounded-lg">
                 <Image
@@ -147,8 +193,8 @@ export default function BlogList() {
           ))}
         </div>
 
-        {/* Pagination Dots */}
-        <div className="flex justify-center items-center gap-2 mt-16">
+        {/* Pagination Dots - Desktop only */}
+        <div className="hidden md:flex justify-center items-center gap-2 mt-16">
           {Array.from({ length: totalPages }).map((_, index) => (
             <button
               key={index}
