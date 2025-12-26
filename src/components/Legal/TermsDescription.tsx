@@ -1,437 +1,370 @@
+'use client';
+
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 export default function TermsDescription() {
+  const t = useTranslations('legal.terms');
+
   return (
-    <section className='py-16'>
+    <section className='py-8 md:py-16'>
       <div className='custom-container'>
-        <div className='space-y-12'>
-          {/* 1. Definities */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              1. Definities
+        <div className='space-y-8 md:space-y-12'>
+          {/* 1. Definities / Definitions */}
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section1Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                In deze Algemene Voorwaarden wordt verstaan onder:
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section1Intro')}
               </p>
-              <ul className='space-y-3 pl-12'>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Algemene Voorwaarden: dit document, bindend voor Gebruikers,
-                  Leveranciers en Partners.
+              <ul className='space-y-2 md:space-y-3 pl-8 md:pl-12'>
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section1List1')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Gebruiker: iedere natuurlijke persoon of rechtspersoon die via
-                  het platform een offerteaanvraag indient of gebruikmaakt van
-                  de diensten.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section1List2')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Leverancier of Vakspecialist: iedere natuurlijke persoon of
-                  rechtspersoon die via het platform diensten en/of producten
-                  aanbiedt.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section1List3')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Offerteaanvraag of Lead: de door een Gebruiker via de website
-                  ingevulde aanvraag om in contact te komen met een Leverancier.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section1List4')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Contract: de verbintenis die ontstaat door registratie of
-                  gebruik van het platform, inclusief deze Algemene Voorwaarden.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section1List5')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Creditpacks: vooraf betaalde tegoeden waarmee Leveranciers
-                  toegang krijgen tot Offerteaanvragen.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section1List6')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Extranet: het beveiligde gedeelte van de website, uitsluitend
-                  toegankelijk voor geregistreerde Leveranciers.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section1List7')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Diensten: de door Bouwmatcher aangeboden matchingdiensten
-                  tussen Gebruikers en Leveranciers.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section1List8')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Partner: bedrijven of organisaties die met Bouwmatcher een
-                  samenwerkingsverband aangaan buiten het leverancierscontract.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section1List9')}
                 </li>
               </ul>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Review: een beoordeling van een Leverancier door een Gebruiker.
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section1Outro')}
               </p>
             </div>
           </div>
 
-          {/* 2. Voorwerp van het contract */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              2. Voorwerp van het contract
+          {/* 2. Voorwerp van het contract / Subject of the Contract */}
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section2Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Bouwmatcher stelt een online platform ter beschikking dat
-                fungeert als bemiddelaar tussen Gebruikers en Leveranciers.
-                Bouwmatcher is geen partij bij de overeenkomsten die tussen hen
-                tot stand komen en draagt geen verantwoordelijkheid voor de
-                uitvoering, naleving of kwaliteit ervan. Bouwmatcher biedt geen
-                garantie op het aantal offertes, de kwaliteit van Leveranciers
-                of de uiteindelijke uitvoering van de werken.
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section2Para1')}
               </p>
             </div>
           </div>
 
-          {/* 3. Inschrijving en accountbeheer */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              3. Inschrijving en accountbeheer
+          {/* 3. Inschrijving en accountbeheer / Registration and Account Management */}
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section3Title')}
             </h2>
-            <div className='space-y-4'>
-              <ul className='space-y-3 pl-12'>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Een Gebruiker registreert zich door het indienen van een
-                  Offerteaanvraag.
+            <div className='space-y-3 md:space-y-4'>
+              <ul className='space-y-2 md:space-y-3 pl-8 md:pl-12'>
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section3List1')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Een Leverancier registreert zich via een Bestelbon of via het
-                  Extranet.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section3List2')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Leveranciers zijn verplicht juiste, actuele en volledige
-                  gegevens te verstrekken. Bouwmatcher kan inschrijvingen zonder
-                  opgave van redenen weigeren.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section3List3')}
                 </li>
               </ul>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Iedere gebruiker is verantwoordelijk voor de geheimhouding van
-                zijn inloggegevens. Misbruik, verlies of onbevoegd gebruik moet
-                onmiddellijk aan Bouwmatcher worden gemeld.
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section3Para1')}
               </p>
             </div>
           </div>
 
-          {/* 4. Verplichtingen van Gebruikers */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              4. Verplichtingen van Gebruikers
+          {/* 4. Verplichtingen van Gebruikers / Obligations of Users */}
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section4Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                De Gebruiker garandeert dat:
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section4Intro')}
               </p>
-              <ul className='space-y-3 pl-12'>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  alle verstrekte informatie correct en waarheidsgetrouw is;
+              <ul className='space-y-2 md:space-y-3 pl-8 md:pl-12'>
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section4List1')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Offerteaanvragen uitsluitend worden gedaan met een reële
-                  aankoopintentie;
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section4List2')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  aanvragen niet louter worden gebruikt om offertes van
-                  concurrenten te vergelijken zonder intentie tot aankoop.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section4List3')}
                 </li>
               </ul>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                De Gebruiker is aansprakelijk voor de juistheid van alle door
-                hem verstrekte gegevens.
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section4Para1')}
               </p>
             </div>
           </div>
 
-          {/* 5. Verplichtingen van Leveranciers */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              5. Verplichtingen van Leveranciers
+          {/* 5. Verplichtingen van Leveranciers / Obligations of Suppliers */}
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section5Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                De Leverancier verbindt zich ertoe:
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section5Intro')}
               </p>
-              <ul className='space-y-3 pl-12'>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Offerteaanvragen binnen 48 uur na ontvangst op te volgen;
+              <ul className='space-y-2 md:space-y-3 pl-8 md:pl-12'>
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section5List1')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  correcte en uitvoerbare offertes te bezorgen;
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section5List2')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  enkel aanbiedingen te doen die daadwerkelijk kunnen worden
-                  uitgevoerd;
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section5List3')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  respectvol en professioneel te communiceren met Gebruikers;
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section5List4')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  de kwaliteit en uitvoering van zijn diensten te waarborgen.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section5List5')}
                 </li>
               </ul>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Bouwmatcher kan sancties opleggen of accounts schorsen bij
-                herhaaldelijke klachten of schendingen van deze voorwaarden.
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section5Para1')}
               </p>
             </div>
           </div>
 
-          {/* 6. Vergoeding en betaling */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              6. Vergoeding en betaling
+          {/* 6. Vergoeding en betaling / Fees and Payment */}
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section6Title')}
             </h2>
-            <div className='space-y-4'>
-              <ul className='space-y-3 pl-12'>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Voor Gebruikers zijn de diensten van Bouwmatcher kosteloos.
+            <div className='space-y-3 md:space-y-4'>
+              <ul className='space-y-2 md:space-y-3 pl-8 md:pl-12'>
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section6List1')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Leveranciers betalen een vergoeding via Creditpacks of via
-                  facturatie.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section6List2')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Creditpacks zijn één jaar geldig en niet terugbetaalbaar.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section6List3')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Facturen zijn betaalbaar via domiciliëring of automatische
-                  incasso, tenzij schriftelijk anders overeengekomen.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section6List4')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Bij wanbetaling kan Bouwmatcher de toegang tot het Extranet
-                  opschorten.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section6List5')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Laattijdige betalingen geven aanleiding tot 1%
-                  nalatigheidsintrest per maand, vermeerderd met een forfaitaire
-                  schadevergoeding van 15% van het openstaande bedrag (minimum
-                  €50).
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section6List6')}
                 </li>
               </ul>
             </div>
           </div>
 
-          {/* 7. Protesten en retourbeleid */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              7. Protesten en retourbeleid
+          {/* 7. Protesten en retourbeleid / Complaints and Return Policy */}
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section7Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Een Leverancier kan binnen tien (10) kalenderdagen na ontvangst
-                van een Offerteaanvraag een Protest indienen via het Extranet.
-                Protesten zijn enkel geldig indien:
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section7Para1')}
               </p>
-              <ol className='space-y-3 pl-12'>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-decimal'>
-                  de Gebruiker geen reële aankoopintentie heeft;
+              <ul className='space-y-2 md:space-y-3 pl-8 md:pl-12'>
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section7List1')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-decimal'>
-                  de Gebruiker een student, concurrent of buiten het werkgebied
-                  van de Leverancier is;
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section7List2')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-decimal'>
-                  de aanvraag buiten de vooraf overeengekomen criteria valt;
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section7List3')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-decimal'>
-                  de aanvraag identiek is aan een reeds eerder ontvangen
-                  aanvraag binnen twee weken.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section7List4')}
                 </li>
-              </ol>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Bouwmatcher beslist autonoom en finaal over de gegrondheid van
-                een Protest. Bij goedkeuring wordt compensatie uitsluitend
-                toegekend in de vorm van credits.
+              </ul>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section7Para2')}
               </p>
             </div>
           </div>
 
-          {/* 8. Reviews en feedback */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              8. Reviews en feedback
+          {/* 8. Reviews en feedback / Reviews and Feedback */}
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section8Title')}
             </h2>
-            <div className='space-y-4'>
-              <ul className='space-y-3 pl-12'>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Reviews moeten eerlijk, respectvol en gebaseerd zijn op eigen
-                  ervaring.
+            <div className='space-y-3 md:space-y-4'>
+              <ul className='space-y-2 md:space-y-3 pl-8 md:pl-12'>
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section8List1')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Bouwmatcher kan reviews verwijderen die ongepast, misleidend
-                  of beledigend zijn.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section8List2')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Het plaatsen van valse of gemanipuleerde reviews is verboden.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section8List3')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Leveranciers kunnen gemotiveerde verzoeken tot verwijdering
-                  van een review indienen.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section8List4')}
                 </li>
               </ul>
             </div>
           </div>
 
-          {/* 9. Intellectueel eigendom */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              9. Intellectueel eigendom
+          {/* 9. Intellectueel eigendom / Intellectual Property */}
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section9Title')}
             </h2>
-            <div className='space-y-4'>
-              <ul className='space-y-3 pl-12'>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Alle intellectuele eigendomsrechten verbonden aan het
-                  platform, de software, logo&apos;`s, teksten, beelden en
-                  ontwerpen behoren uitsluitend toe aan Bouwmatcher.
+            <div className='space-y-3 md:space-y-4'>
+              <ul className='space-y-2 md:space-y-3 pl-8 md:pl-12'>
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section9List1')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Het is verboden deze zonder voorafgaande schriftelijke
-                  toestemming te gebruiken, kopiëren of verspreiden.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section9List2')}
                 </li>
               </ul>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Gebruikers en Leveranciers behouden de rechten op eigen
-                geplaatste inhoud, maar verlenen Bouwmatcher een beperkte,
-                niet-exclusieve licentie om deze te gebruiken voor promotie- en
-                publicatiedoeleinden.
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section9Para1')}
               </p>
             </div>
           </div>
 
-          {/* 10. Aansprakelijkheid */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              10. Aansprakelijkheid
+          {/* 10. Aansprakelijkheid / Liability */}
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section10Title')}
             </h2>
-            <div className='space-y-4'>
-              <ul className='space-y-3 pl-12'>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Bouwmatcher is niet aansprakelijk voor schade die voortvloeit
-                  uit overeenkomsten of transacties tussen Gebruikers en
-                  Leveranciers.
+            <div className='space-y-3 md:space-y-4'>
+              <ul className='space-y-2 md:space-y-3 pl-8 md:pl-12'>
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section10List1')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Bouwmatcher garandeert geen continuïteit, minimum aantal
-                  offertes of kwaliteit van de aangeboden diensten.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section10List2')}
                 </li>
               </ul>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Storingen van het internet, virussen, technische defecten of
-                fouten in de gegevens vallen niet onder de aansprakelijkheid van
-                Bouwmatcher.
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section10Para1')}
               </p>
             </div>
           </div>
 
-          {/* 11. Overmacht */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              11. Overmacht
+          {/* 11. Overmacht / Force Majeure */}
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section11Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Bouwmatcher kan niet aansprakelijk worden gesteld voor
-                tekortkomingen door omstandigheden buiten haar redelijke
-                controle, waaronder maar niet beperkt tot: netwerkstoreningen,
-                stakingen, natuurrampen, pandemieën of overheidsmaatregelen.
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section11Para1')}
               </p>
             </div>
           </div>
 
-          {/* 12. Duur, opschorting en beëindiging */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              12. Duur, opschorting en beëindiging
+          {/* 12. Duur, opschorting en beëindiging / Duration, Suspension, and Termination */}
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section12Title')}
             </h2>
-            <div className='space-y-4'>
-              <ul className='space-y-3 pl-12'>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Bouwmatcher kan het Contract met onmiddellijke ingang
-                  beëindigen bij wanbetaling, fraude, misbruik of schending van
-                  deze voorwaarden.
+            <div className='space-y-3 md:space-y-4'>
+              <ul className='space-y-2 md:space-y-3 pl-8 md:pl-12'>
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section12List1')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Reeds betaalde bedragen worden niet teruggestort.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section12List2')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Leveranciers kunnen hun contract beëindigen met een
-                  opzegtermijn van twee (2) weken.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section12List3')}
                 </li>
               </ul>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Bouwmatcher kan accounts tijdelijk of definitief schorsen bij
-                vermoeden van fraude of misbruik.
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section12Para1')}
               </p>
             </div>
           </div>
 
-          {/* 13. Bescherming van persoonsgegevens */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              13. Bescherming van persoonsgegevens
+          {/* 13. Bescherming van persoonsgegevens / Protection of Personal Data */}
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section13Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Bouwmatcher verwerkt persoonsgegevens conform haar Privacybeleid
-                en Cookiebeleid, gepubliceerd op de website. Gebruikers en
-                Leveranciers hebben recht op inzage, rectificatie en
-                verwijdering van hun gegevens. Klachten kunnen worden ingediend
-                bij de Gegevensbeschermingsautoriteit.
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section13Para1')}
               </p>
             </div>
           </div>
 
-          {/* 14. Wijzigingen van de voorwaarden */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              14. Wijzigingen van de voorwaarden
+          {/* 14. Wijzigingen van de voorwaarden / Amendments to the Terms */}
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section14Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Bouwmatcher behoudt zich het recht voor deze Algemene
-                Voorwaarden te allen tijde te wijzigen. De gewijzigde
-                voorwaarden worden gepubliceerd op de website en zijn bindend
-                vanaf de datum van publicatie. Het verder gebruik van het
-                platform geldt als aanvaarding van de nieuwe voorwaarden.
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section14Para1')}
               </p>
             </div>
           </div>
 
-          {/* 15. Toepasselijk recht en bevoegde rechtbank */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              15. Toepasselijk recht en bevoegde rechtbank
+          {/* 15. Toepasselijk recht en bevoegde rechtbank / Governing Law and Jurisdiction */}
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section15Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Op deze Algemene Voorwaarden is uitsluitend Belgisch recht van
-                toepassing. Geschillen behoren tot de exclusieve bevoegdheid van
-                de rechtbanken van Leuven. Partijen verbinden zich ertoe eerst
-                te trachten geschillen minnelijk te regelen.
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section15Para1')}
               </p>
             </div>
           </div>
 
-          {/* 16. Contactgegevens */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              16. Contactgegevens
+          {/* 16. Contactgegevens / Contact Details */}
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section16Title')}
             </h2>
-            <div className='space-y-4'>
-              <div className='text-muted-foreground font-normal leading-relaxed text-2xl'>
+            <div className='space-y-3 md:space-y-4'>
+              <div className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
                 <p className='mb-2'>Bouwmatcher BV</p>
                 <p className='mb-2'>Philipsite 5 bus 1</p>
                 <p className='mb-2'>3001 Leuven, België</p>
                 <p className='mb-2'>
                   E-mail:{' '}
                   <Link
-                    href='mailto:bouwmatchersocials@gmail.com'
+                    href='mailto:support@bouwmatcher.com'
                     className='text-muted-foreground underline hover:text-primary'
                   >
-                    bouwmatchersocials@gmail.com
+                    support@bouwmatcher.com
                   </Link>
                 </p>
                 <p>
                   Website:{' '}
                   <Link
-                    href='/'
+                    href='/contact'
                     className='text-muted-foreground underline hover:text-primary'
                   >
-                    www.bouwmatcher.com
+                    www.bouwmatcher.com/contact
                   </Link>
                 </p>
               </div>

@@ -1,352 +1,350 @@
+'use client';
+
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 export default function PrivacyDescription() {
+  const t = useTranslations('legal.privacy');
+
   return (
-    <section className='py-16'>
+    <section className='py-8 md:py-16'>
       <div className='custom-container'>
-        <div className='space-y-12'>
+        <div className='space-y-8 md:space-y-12'>
           {/* 1. Introductie */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              1. Introductie
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section1Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Deze Privacyverklaring van Bouwmatcher BV (hierna:
-                &quot;Bouwmatcher&quot;, &quot;wij&quot; of &quot;ons&quot;)
-                legt uit hoe wij omgaan met persoonsgegevens van:
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section1Para1')}
               </p>
-              <ul className='space-y-3 pl-12'>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  bezoekers van onze website,
+              <ul className='space-y-2 md:space-y-3 pl-8 md:pl-12'>
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section1List1')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  personen die een offertenaanvraag indienen,
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section1List2')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  gebruikers die een account aanmaken,
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section1List3')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  klanten die een review plaatsen,
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section1List4')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  personen die zich abonneren op onze nieuwsbrief,
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section1List5')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  en iedereen die contact met ons opneemt (telefonisch, per
-                  e-mail of via social media).
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section1List6')}
                 </li>
               </ul>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Wij hechten groot belang aan jouw privacy en verwerken
-                persoonsgegevens uitsluitend in overeenstemming met de Algemene
-                Verordening Gegevensbescherming (AVG/GDPR).
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section1Para2')}
               </p>
             </div>
           </div>
 
           {/* 2. Toepasselijkheid */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              2. Toepasselijkheid
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section2Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Deze verklaring is van toepassing op alle verwerkingen van
-                persoonsgegevens door Bouwmatcher in het kader van onze
-                dienstverlening aan particulieren en websitebezoekers.
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section2Para1')}
               </p>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Let op: vakspecialisten die via Bouwmatcher opdrachten aanmenen
-                zijn zelf verantwoordelijk voor hun verwerking van
-                persoonsgegevens.
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section2Para2')}
               </p>
             </div>
           </div>
 
           {/* 3. Verwerkingsverantwoordelijke */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              3. Verwerkingsverantwoordelijke
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section3Title')}
             </h2>
-            <div className='space-y-4'>
-              <div className='text-muted-foreground font-normal leading-relaxed text-2xl'>
+            <div className='space-y-3 md:space-y-4'>
+              <div className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
                 <p className='mb-2'>Bouwmatcher BV</p>
                 <p className='mb-2'>Philipsite 5 bus 1</p>
                 <p className='mb-2'>3001 Leuven, België</p>
-                <p className='mb-2'>E-mail: <Link href="mailto:support@bouwmatcher.com" className="text-muted-foreground underline hover:text-primary">support@bouwmatcher.com</Link></p>
-                <p>Website: <Link href="/contact" className="text-muted-foreground underline hover:text-primary">www.bouwmatcher.com/contact</Link></p>
+                <p className='mb-2'>{t('contactEmail')}: <Link href="mailto:support@bouwmatcher.com" className="text-muted-foreground underline hover:text-primary">support@bouwmatcher.com</Link></p>
+                <p>{t('contactWebsite')}: <Link href="/contact" className="text-muted-foreground underline hover:text-primary">www.bouwmatcher.com/contact</Link></p>
               </div>
             </div>
           </div>
 
           {/* 4. Offerteaanvragen */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              4. Offerteaanvragen
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section4Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Wanneer je een offerteaanvraag indient, gebruiken wij je gegevens om je te koppelen aan geschikte vakspecialisten. Standaard koppelen wij je aanvraag aan maximaal vier bedrijven, tenzij je ons vraagt om minder of juist meer bedrijven te benaderen.
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section4Para1')}
               </p>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                De vakspecialisten nemen doorgaans contact met je op via telefoon of e-mail, en soms via sms of WhatsApp. Ook Bouwmatcher kan aanvullende informatie opvragen.
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section4Para2')}
               </p>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Verwerkte gegevens:
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section4Para3')}
               </p>
-              <ul className='space-y-3 pl-12'>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Contactgegevens (naam, adres, e-mailadres, telefoonnummer, geslacht)
+              <ul className='space-y-2 md:space-y-3 pl-8 md:pl-12'>
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section4List1')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Projectinformatie (soort werk, type woning, situatie, budget)
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section4List2')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Technische gegevens (IP-adres, device-informatie, anti-fraudedata)
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section4List3')}
                 </li>
               </ul>
             </div>
           </div>
 
           {/* 5. Accounts */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              5. Accounts
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section5Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Bij het indienen van een offerteaanvraag wordt automatisch een account aangemaakt. Dit account gebruik je om de status van aanvragen te volgen, reviews te plaatsen en nieuwe aanvragen te doen.
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section5Para1')}
               </p>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Verwerkte gegevens:
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section5Para2')}
               </p>
-              <ul className='space-y-3 pl-12'>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Inloggegevens (e-mailadres en wachtwoord)
+              <ul className='space-y-2 md:space-y-3 pl-8 md:pl-12'>
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section5List1')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Gegevens over je offerteaanvragen en status
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section5List2')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Reviews en communicatie met vakspecialisten
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section5List3')}
                 </li>
               </ul>
             </div>
           </div>
 
           {/* 6. Contactmomenten */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              6. Contactmomenten
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section6Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Neem je contact met ons op (via telefoon, e-mail, webformulier of social media), dan verwerken wij de gegevens die je verstrekt om je vraag of klacht af te handelen. Dit doen wij op basis van ons gerechtvaardigd belang om je correct te kunnen ondersteunen.
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section6Para1')}
               </p>
             </div>
           </div>
 
           {/* 7. Nieuwsbrief & marketing */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              7. Nieuwsbrief & marketing
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section7Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Je kunt je vrijwillig inschrijven voor onze nieuwsbrief. Hiervoor verwerken wij enkel je e-mailadres.
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section7Para1')}
               </p>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Afmelden kan op elk moment via de afmeldlink onderaan de e-mail of via je account.
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section7Para2')}
               </p>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Daarnaast sturen wij transactionele e-mails over de status van je offerteaanvraag. Deze berichten zijn noodzakelijk en kun je niet uitschakelen.
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section7Para3')}
               </p>
             </div>
           </div>
 
           {/* 8. Wettelijke verplichtingen & geschillen */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              8. Wettelijke verplichtingen & geschillen
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section8Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                In uitzonderlijke gevallen kunnen wij wettelijk verplicht zijn om persoonsgegevens te delen met autoriteiten zoals politie, justitie of toezichthouders. Ook kunnen gegevens worden gebruikt bij geschillen, bewijsvoering of bij vermoedens van fraude of misbruik.
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section8Para1')}
               </p>
             </div>
           </div>
 
           {/* 9. Cookies */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              9. Cookies
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section9Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Wij maken gebruik van cookies en vergelijkbare technologieën om onze website goed te laten functioneren, het gebruik te analyseren en – met jouw toestemming – gepersonaliseerde advertenties te tonen. Zie ons afzonderlijke Cookiebeleid voor meer details.
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section9Para1')}
               </p>
             </div>
           </div>
 
           {/* 10. Geautomatiseerde besluitvorming */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              10. Geautomatiseerde besluitvorming
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section10Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Bouwmatcher neemt geen geautomatiseerde besluiten die aanzienlijke gevolgen hebben voor gebruikers. Het koppelen van een aanvraag aan vakspecialisten gebeurt deels automatisch op basis van werkgebied en beschikbaarheid, maar de keuze met wie je in zee gaat ligt volledig bij jou.
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section10Para1')}
               </p>
             </div>
           </div>
 
           {/* 11. Delen van gegevens */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              11. Delen van gegevens
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section11Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Wij delen persoonsgegevens uitsluitend indien dat noodzakelijk is voor onze dienstverlening:
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section11Para1')}
               </p>
-              <ul className='space-y-3 pl-12'>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Met vakspecialisten die jouw aanvraag ontvangen (maximaal 4, tenzij je anders kiest).
+              <ul className='space-y-2 md:space-y-3 pl-8 md:pl-12'>
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section11List1')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Met IT- en hostingpartners voor beheer en opslag.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section11List2')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Met marketing- en analysetools (Google, Meta, LinkedIn, Microsoft) – enkel met jouw toestemming.
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section11List3')}
                 </li>
               </ul>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Wanneer derden als verwerker optreden, sluiten wij een verwerkersovereenkomst. Indien gegevens buiten de EU worden verwerkt, zorgen wij voor passende waarborgen (zoals EU-standaardcontractbepalingen).
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section11Para2')}
               </p>
             </div>
           </div>
 
           {/* 12. Beveiliging van gegevens */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              12. Beveiliging van gegevens
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section12Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Wij nemen passende technische en organisatorische maatregelen om persoonsgegevens te beschermen, waaronder:
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section12Para1')}
               </p>
-              <ul className='space-y-3 pl-12'>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  SSL-beveiligde verbindingen
+              <ul className='space-y-2 md:space-y-3 pl-8 md:pl-12'>
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section12List1')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Toegangsbeheer en logging
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section12List2')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Versleutelde opslag op beveiligde servers
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section12List3')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Geheimhoudingsplicht voor medewerkers
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section12List4')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Regelmatige audits en software-updates
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section12List5')}
                 </li>
               </ul>
             </div>
           </div>
 
           {/* 13. Bewaartermijnen */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              13. Bewaartermijnen
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section13Title')}
             </h2>
-            <div className='space-y-4'>
-              <ul className='space-y-3 pl-12'>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Offerteaanvragen: tot 3 jaar na afhandeling
+            <div className='space-y-3 md:space-y-4'>
+              <ul className='space-y-2 md:space-y-3 pl-8 md:pl-12'>
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section13List1')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Accounts: zolang het account actief is
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section13List2')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Reviews: zolang zichtbaar op de website
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section13List3')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Nieuwsbrief/marketing: tot intrekking van toestemming
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section13List4')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Facturen en wettelijke bewaarplicht: 7 jaar
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section13List5')}
                 </li>
               </ul>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Na afloop van deze termijnen worden gegevens verwijderd of geanonimiseerd.
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section13Para1')}
               </p>
             </div>
           </div>
 
           {/* 14. Jouw rechten */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              14. Jouw rechten
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section14Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Volgens de AVG heb je de volgende rechten:
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section14Para1')}
               </p>
-              <ul className='space-y-3 pl-12'>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Recht op inzage
+              <ul className='space-y-2 md:space-y-3 pl-8 md:pl-12'>
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section14List1')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Recht op correctie en verwijdering
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section14List2')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Recht op beperking van de verwerking
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section14List3')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Recht op overdraagbaarheid (dataportabiliteit)
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section14List4')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Recht om bezwaar te maken, o.a. tegen direct marketing
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section14List5')}
                 </li>
-                <li className='text-muted-foreground font-normal leading-relaxed text-2xl list-disc'>
-                  Recht om toestemming in te trekken
+                <li className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl list-disc'>
+                  {t('section14List6')}
                 </li>
               </ul>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Verzoeken kun je indienen via <Link href="mailto:support@bouwmatcher.com" className="text-muted-foreground underline hover:text-primary">support@bouwmatcher.com</Link>. Wij kunnen je vragen je identiteit te bevestigen voordat we je verzoek behandelen.
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section14Para2')}{' '}
+                <Link href="mailto:support@bouwmatcher.com" className="text-muted-foreground underline hover:text-primary">support@bouwmatcher.com</Link>
+                . {t('section14Para3')}
               </p>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Ben je ontevreden over onze afhandeling? Dan kun je een klacht indienen bij de Gegevensbeschermingsautoriteit (www.gegevensbeschermingsautoriteit.be).
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section14Para4')}
               </p>
             </div>
           </div>
 
           {/* 15. Wijzigingen */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              15. Wijzigingen
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section15Title')}
             </h2>
-            <div className='space-y-4'>
-              <p className='text-muted-foreground font-normal leading-relaxed text-2xl'>
-                Wij kunnen deze Privacyverklaring wijzigen bij gewijzigde wetgeving of interne aanpassingen. De meest actuele versie staat steeds op onze website. Bij ingrijpende wijzigingen informeren wij je actief.
+            <div className='space-y-3 md:space-y-4'>
+              <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
+                {t('section15Para1')}
               </p>
             </div>
           </div>
 
           {/* 16. Contact */}
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-medium text-foreground'>
-              16. Contact
+          <div className='space-y-4 md:space-y-6'>
+            <h2 className='text-xl md:text-2xl font-medium text-foreground'>
+              {t('section16Title')}
             </h2>
-            <div className='space-y-4'>
-              <div className='text-muted-foreground font-normal leading-relaxed text-2xl'>
+            <div className='space-y-3 md:space-y-4'>
+              <div className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
                 <p className='mb-2'>Bouwmatcher BV</p>
                 <p className='mb-2'>Philipsite 5 bus 1</p>
                 <p className='mb-2'>3001 Leuven, België</p>
-                <p className='mb-2'>E-mail: <Link href="mailto:support@bouwmatcher.com" className="text-muted-foreground underline hover:text-primary">support@bouwmatcher.com</Link></p>
-                <p>Website: <Link href="/contact" className="text-muted-foreground underline hover:text-primary">www.bouwmatcher.com/contact</Link></p>
+                <p className='mb-2'>{t('contactEmail')}: <Link href="mailto:support@bouwmatcher.com" className="text-muted-foreground underline hover:text-primary">support@bouwmatcher.com</Link></p>
+                <p>{t('contactWebsite')}: <Link href="/contact" className="text-muted-foreground underline hover:text-primary">www.bouwmatcher.com/contact</Link></p>
               </div>
             </div>
           </div>
