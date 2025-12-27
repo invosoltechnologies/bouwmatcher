@@ -177,6 +177,29 @@
       "profileCreationFailed": "Could not create profile. Please contact support.",
       "oauthCallbackFailed": "Something went wrong during login. Please try again.",
       "genericError": "An error occurred during login."
+    },
+    "register": {
+      "contactInfo": {
+        "heading": "Contact Information",
+        "firstNameLabel": "First Name",
+        "firstNamePlaceholder": "John",
+        "firstNameRequired": "First name is required",
+        "lastNameLabel": "Last Name",
+        "lastNamePlaceholder": "Doe",
+        "lastNameRequired": "Last name is required",
+        "emailLabel": "Email Address (Business)",
+        "emailPlaceholder": "example@company.com",
+        "emailRequired": "Email address is required",
+        "emailInvalid": "Invalid email address",
+        "phoneLabel": "Phone Number",
+        "phonePlaceholder": "(6)-12-34-56-78",
+        "phoneRequired": "Phone number is required",
+        "phoneInvalid": "Invalid phone number",
+        "termsText": "By continuing, you agree to the",
+        "termsLink": "terms and conditions",
+        "termsTextSuffix": "of Bouwmatcher",
+        "submitButton": "Set Password"
+      }
     }
   },
   "contact": {

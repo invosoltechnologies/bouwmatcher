@@ -177,6 +177,29 @@
       "profileCreationFailed": "Kon profiel niet aanmaken. Neem contact op met support.",
       "oauthCallbackFailed": "Er ging iets mis tijdens het inloggen. Probeer het opnieuw.",
       "genericError": "Er is een fout opgetreden tijdens het inloggen."
+    },
+    "register": {
+      "contactInfo": {
+        "heading": "Contactgegevens",
+        "firstNameLabel": "Voornaam",
+        "firstNamePlaceholder": "Jhon",
+        "firstNameRequired": "Voornaam is verplicht",
+        "lastNameLabel": "Achternaam",
+        "lastNamePlaceholder": "Ilya",
+        "lastNameRequired": "Achternaam is verplicht",
+        "emailLabel": "E-mailadres (zakelijk)",
+        "emailPlaceholder": "voorbeeld@bedrijf.nl",
+        "emailRequired": "E-mailadres is verplicht",
+        "emailInvalid": "Ongeldig e-mailadres",
+        "phoneLabel": "Telefoonnummer",
+        "phonePlaceholder": "(6)-12-34-56-78",
+        "phoneRequired": "Telefoonnummer is verplicht",
+        "phoneInvalid": "Ongeldig telefoonnummer",
+        "termsText": "Door verder te gaan, ga je akkoord met de",
+        "termsLink": "algemene voorwaarden",
+        "termsTextSuffix": "van Bouwmatcher",
+        "submitButton": "Wachtwoord instellen"
+      }
     }
   },
   "contact": {
