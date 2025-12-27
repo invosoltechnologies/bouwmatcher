@@ -1,8 +1,14 @@
+'use client';
+
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import {  ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 
-export default function HeroContact() {
+export default function HeroAuth() {
+  const t = useTranslations('auth.hero');
+
   return (
     <section className='pt-[168px] pb-56 relative'>
       {/* Background div with gradient and blur */}
@@ -15,25 +21,27 @@ export default function HeroContact() {
           <div className='flex-1'>
             {/* Main Heading */}
             <h1 className='text-4xl lg:text-5xl font-display font-normal leading-tight mb-6'>
-              Altijd nieuwe opdrachten binnen handbereik
+              {t('heading')}
             </h1>
 
             <p className='text-2xl leading-7 text-[#555555E5] mb-8'>
-              Kom direct in contact met klanten die nú een specialist zoeken.{' '}
+              {t('description')}
             </p>
 
             {/* CTA Button */}
-            <Button
-              className='text-lg w-auto py-5 px-6 flex items-center font-semibold rounded-2xl gap-2'
-              style={{
-                boxShadow:
-                  '0px 10px 15px 0px #0000001A, 0px 4px 6px 0px #0000001A',
-              }}
-              size={null}
-            >
-              Meld je gratis aan
-              <ArrowRight className='font-bold text-lg' size={45} />
-            </Button>
+            <Link href='/auth/login'>
+              <Button
+                className='text-lg w-auto py-5 px-6 flex items-center font-semibold rounded-2xl gap-2'
+                style={{
+                  boxShadow:
+                    '0px 10px 15px 0px #0000001A, 0px 4px 6px 0px #0000001A',
+                }}
+                size={null}
+              >
+                {t('ctaButton')}
+                <ArrowRight className='font-bold text-lg' size={45} />
+              </Button>
+            </Link>
           </div>
 
           {/* Right Content - Image Space */}

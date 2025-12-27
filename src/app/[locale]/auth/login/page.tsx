@@ -2,7 +2,8 @@
 
 import { Suspense, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
 import Link from 'next/link';

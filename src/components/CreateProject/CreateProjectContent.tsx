@@ -1,6 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
+import { useLocale, useTranslations } from 'next-intl';
 import QuestionnaireNavbar from '@/components/Questionnaire/QuestionnaireNavbar';
 import QuestionnaireRadio from '@/components/Questionnaire/QuestionnaireRadio';
 import { getQuestionsForStep } from '@/data/generalQuestions';
@@ -19,6 +21,8 @@ export default function CreateProjectContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const draftId = searchParams.get('draft');
+  const locale = useLocale();
+  const t = useTranslations('questionnaire');
 
   const [currentStep, setCurrentStep] = useState(1);
   const [currentQuestions, setCurrentQuestions] = useState<
@@ -43,6 +47,11 @@ export default function CreateProjectContent() {
 
   const currentQuestion = currentQuestions[currentQuestionIndex] || null;
   const selectedAnswer = answers[currentQuestion?.id || ''] || '';
+
+  // Helper function to get localized text
+  const getLocalizedText = (nlText?: string, enText?: string): string => {
+    return locale === 'en' ? (enText || nlText || '') : (nlText || enText || '');
+  };
 
   const progressPercentage = (currentStep / totalSteps) * 100;
 
@@ -469,7 +478,7 @@ export default function CreateProjectContent() {
             onChange={(e) =>
               setAnswers({ ...answers, [question.id]: e.target.value })
             }
-            placeholder={question.placeholder_nl}
+            placeholder={getLocalizedText(question.placeholder_nl, question.placeholder_en)}
             className='w-full placeholder:text-neutral-400 text-secondary-foreground font-medium py-2 px-4 rounded-lg text-base md:py-4 md:px-6 md:rounded-xl h-auto md:text-lg'
           />
         ))}
@@ -489,7 +498,7 @@ export default function CreateProjectContent() {
             onChange={(e) =>
               setAnswers({ ...answers, [question.id]: e.target.value })
             }
-            placeholder={question.placeholder_nl}
+            placeholder={getLocalizedText(question.placeholder_nl, question.placeholder_en)}
             className='w-full placeholder:text-neutral-400 text-secondary-foreground font-medium py-2 px-4 rounded-lg md:py-4 md:px-6 md:rounded-xl h-auto md:text-lg'
           />
         ))}
@@ -518,7 +527,7 @@ export default function CreateProjectContent() {
                 id={option.id}
                 name={currentQuestion.id}
                 value={option.id}
-                label={option.option_label_nl}
+                label={getLocalizedText(option.option_label_nl, option.option_label_en)}
                 checked={selectedAnswer === option.id}
               />
             ))}
@@ -533,7 +542,7 @@ export default function CreateProjectContent() {
             onChange={(e) =>
               setAnswers({ ...answers, [currentQuestion.id]: e.target.value })
             }
-            placeholder={currentQuestion.placeholder_nl}
+            placeholder={getLocalizedText(currentQuestion.placeholder_nl, currentQuestion.placeholder_en)}
             className='w-full max-w-md py-4 px-6 placeholder:text-neutral-400 text-secondary-foreground font-medium text-lg'
           />
         );
@@ -545,8 +554,8 @@ export default function CreateProjectContent() {
             onChange={(e) =>
               setAnswers({ ...answers, [currentQuestion.id]: e.target.value })
             }
-            placeholder={currentQuestion.placeholder_nl}
-            className='w-full max-w-2xl min-h-[150px]'
+            placeholder={getLocalizedText(currentQuestion.placeholder_nl, currentQuestion.placeholder_en)}
+            className='w-full text-sm md:text-base max-w-2xl min-h-[150px]'
           />
         );
 
@@ -699,20 +708,19 @@ export default function CreateProjectContent() {
                   {/* Question Counter (for multiple questions in same step) */}
                   {currentQuestions.length > 1 && (
                     <p className='text-center text-xs md:text-sm text-gray-500 mb-4'>
-                      Vraag {currentQuestionIndex + 1} van{' '}
-                      {currentQuestions.length}
+                      {t('questionCounter', { current: currentQuestionIndex + 1, total: currentQuestions.length })}
                     </p>
                   )}
 
                   {/* Question */}
                   <h2 className='text-2xl md:text-4xl font-normal leading-10 text-center text-foreground mb-4'>
-                    {currentQuestion.question_text_nl}
+                    {getLocalizedText(currentQuestion.question_text_nl, currentQuestion.question_text_en)}
                   </h2>
 
                   {/* Help Text */}
-                  {currentQuestion.help_text_nl && (
+                  {(currentQuestion.help_text_nl || currentQuestion.help_text_en) && (
                     <p className='text-center text-sm md:text-base text-slate-500 mb-11'>
-                      {currentQuestion.help_text_nl}
+                      {getLocalizedText(currentQuestion.help_text_nl, currentQuestion.help_text_en)}
                     </p>
                   )}
 
@@ -731,10 +739,10 @@ export default function CreateProjectContent() {
                       className='text-primary font-medium text-sm md:text-base flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
                       <ArrowLeft className='w-4 h-4 md:w-5 md:h-5' />
-                      Vorige
+                      {t('previous')}
                     </Button>
                     <p className='text-xs md:text-sm text-gray-500 md:mt-2 text-center'>
-                      Stap {currentStep} van {totalSteps}
+                      {t('stepCounter', { current: currentStep, total: totalSteps })}
                     </p>
                     <Button
                       size={null}
@@ -742,7 +750,7 @@ export default function CreateProjectContent() {
                       disabled={!selectedAnswer || isSaving}
                       className='bg-primary hover:bg-primary/90 text-white font-medium text-sm px-4 py-2 md:text-base md:px-8 md:py-4 rounded-lg md:rounded-xl w-auto flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                      {isSaving ? 'Opslaan...' : 'Volgende'}
+                      {isSaving ? t('saving') : t('next')}
                       <ArrowRight className='w-4 h-4 md:w-5 md:h-5' />
                     </Button>
                   </div>

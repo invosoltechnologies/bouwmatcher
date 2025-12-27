@@ -12,13 +12,19 @@ export default function LanguageSwitcher() {
   const switchLanguage = (newLocale: Locale) => {
     if (locale === newLocale) return;
 
-    // Get current pathname and replace the locale
-    // pathname will be like "/nl/faq-specialisten" or "/en/contact"
+    // Get the full current URL including query parameters and hash
+    const currentUrl = new URL(window.location.href);
+
+    // pathname from usePathname() includes the locale, e.g., "/nl/create-project" or "/en/faq"
+    // Replace the current locale with the new locale
     const pathWithoutLocale = pathname.replace(`/${locale}`, '');
     const newPath = `/${newLocale}${pathWithoutLocale}`;
 
+    // Preserve query parameters (like ?draft=123) and hash
+    const newUrl = `${newPath}${currentUrl.search}${currentUrl.hash}`;
+
     // Use hard navigation to ensure proper locale switching and re-rendering
-    window.location.href = newPath;
+    window.location.href = newUrl;
   };
 
   return (

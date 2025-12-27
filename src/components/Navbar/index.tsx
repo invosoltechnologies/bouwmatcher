@@ -146,7 +146,7 @@ export default function Navbar() {
                   <UserAvatarDropdown />
                 ) : (
                   !isAuthRoute && (
-                    <Link href='/auth/login'>
+                    <Link href='/auth'>
                       <Button
                         className='bg-primary hover:bg-primary/90 text-white px-4 md:px-[22px] py-2 md:py-3 border border-gray-200 font-medium text-base md:text-lg h-auto rounded-[12px]'
                         style={{

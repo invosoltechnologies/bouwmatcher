@@ -1,14 +1,20 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { routing } from '@/i18n/routing';
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
   const origin = requestUrl.origin;
 
+  // Get locale from cookie or default to 'nl'
+  const cookies = request.headers.get('cookie') || '';
+  const localeCookie = cookies.match(/NEXT_LOCALE=([^;]+)/);
+  const locale = localeCookie ? localeCookie[1] : routing.defaultLocale;
+
   if (!code) {
     // Redirect to login if no code provided
-    return NextResponse.redirect(new URL('/auth/login', origin));
+    return NextResponse.redirect(new URL(`/${locale}/auth/login`, origin));
   }
 
   try {
@@ -19,7 +25,7 @@ export async function GET(request: Request) {
 
     if (sessionError || !sessionData.user) {
       console.error('OAuth session error:', sessionError);
-      return NextResponse.redirect(new URL('/auth/login?error=oauth_failed', origin));
+      return NextResponse.redirect(new URL(`/${locale}/auth/login?error=oauth_failed`, origin));
     }
 
     const user = sessionData.user;
@@ -35,10 +41,10 @@ export async function GET(request: Request) {
       // Profile exists - redirect based on completion status
       if (existingProfile.profile_completed && existingProfile.current_step >= 6) {
         // Profile is complete - redirect to dashboard
-        return NextResponse.redirect(new URL('/pro-dashboard/account', origin));
+        return NextResponse.redirect(new URL(`/${locale}/pro-dashboard/account`, origin));
       } else {
         // Profile is incomplete - redirect to registration to continue
-        return NextResponse.redirect(new URL('/auth/register', origin));
+        return NextResponse.redirect(new URL(`/${locale}/auth/register`, origin));
       }
     }
 
@@ -77,14 +83,14 @@ export async function GET(request: Request) {
 
     if (updateError) {
       console.error('Error updating professional profile with OAuth data:', updateError);
-      return NextResponse.redirect(new URL('/auth/login?error=profile_update_failed', origin));
+      return NextResponse.redirect(new URL(`/${locale}/auth/login?error=profile_update_failed`, origin));
     }
 
     // Redirect to registration to complete profile (step 2 onwards)
-    return NextResponse.redirect(new URL('/auth/register', origin));
+    return NextResponse.redirect(new URL(`/${locale}/auth/register`, origin));
 
   } catch (error) {
     console.error('OAuth callback error:', error);
-    return NextResponse.redirect(new URL('/auth/login?error=oauth_callback_failed', origin));
+    return NextResponse.redirect(new URL(`/${locale}/auth/login?error=oauth_callback_failed`, origin));
   }
 }

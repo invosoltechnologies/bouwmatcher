@@ -127,6 +127,40 @@
       "verified": "Verified"
     }
   },
+  "auth": {
+    "hero": {
+      "heading": "New projects always within reach",
+      "description": "Connect directly with clients who are looking for a specialist now.",
+      "ctaButton": "Sign up for free"
+    },
+    "values": {
+      "heading": "The matchmaker that helps you get new projects",
+      "description": "For specialists who want to work on great projects without worries.",
+      "centerText": "Your certainty in construction.",
+      "item1Title": "Reliability",
+      "item1Description": "You only get real requests from clients. We carefully filter projects so you know you're working with serious leads.",
+      "item2Title": "Transparency",
+      "item2Description": "No hidden costs or fine print. You choose which leads you open and only pay for contact details of projects you find interesting.",
+      "item3Title": "Honesty",
+      "item3Description": "No binding contracts or unreasonable obligations. You always maintain control and choose which projects you want to take on.",
+      "item4Title": "Goal-oriented",
+      "item4Description": "We connect you directly with relevant clients in your field. So you save less time searching and more time executing.",
+      "ctaButton": "Become a professional"
+    },
+    "process": {
+      "title": "How it works for specialists",
+      "subtitle": "Follow these simple steps and discover how you can quickly get started with new projects.",
+      "step1Title": "Sign up",
+      "step1Description": "Register for free as a specialist and create a profile.",
+      "step2Title": "Complete verification",
+      "step2Description": "We verify your details so clients know they're working with a reliable specialist.",
+      "step3Title": "Add your specializations",
+      "step3Description": "Indicate which fields you're active in and which projects suit you.",
+      "step4Title": "Receive and respond to quotes",
+      "step4Description": "Your profile is live: receive requests and respond directly to projects that appeal to you.",
+      "ctaButton": "Become a professional"
+    }
+  },
   "contact": {
     "hero": {
       "pillResponse": "<24h response",
@@ -227,6 +261,10 @@
       "a9": "Yes, your data is only shared with the specialists who respond to your request. We comply with GDPR and never share your data with third parties without your permission."
     },
     "specialisten": {
+      "heading": "Frequently asked questions",
+      "description": "Everything you need to know to get started as a specialist",
+      "ctaButtonLong": "Still have questions? Visit our FAQ page",
+      "ctaButtonShort": "Visit our FAQ page",
       "hero": {
         "badge": "FAQ for specialists",
         "heading": "FAQ for",
@@ -500,9 +538,54 @@
       "section15Para1": "These General Terms and Conditions are governed exclusively by Belgian law. Any disputes fall under the exclusive jurisdiction of the courts of Leuven. Parties agree to first attempt an amicable settlement.",
 
       "section16Title": "16. Contact Details"
+    },
+    "cookies": {
+      "section1Title": "1. What are cookies?",
+      "section1Para1": "Cookies are small text files stored on your computer, smartphone, or tablet by your browser. They remember your preferences, collect information about your website usage, and allow us to show you relevant content and advertisements.",
+      "section2Title": "2. Which cookies do we use?",
+      "section2p1Title": "2.1 Functional cookies (always active)",
+      "section2p1Para1": "These cookies are necessary for the website to function properly. For example, they remember your language settings and ensure that forms work correctly. These cookies are anonymous and cannot be disabled.",
+      "section2p2Title": "2.2 Analytical cookies (opt-in)",
+      "section2p2Para1": "With analytical cookies, we measure how our website is used. This helps us see which pages are popular and where visitors drop off. We use these insights to continuously improve our website.",
+      "section2p3Title": "2.3 Marketing and personalization cookies (opt-in)",
+      "section2p3Para1": "These cookies ensure that you see advertisements and information that match your interests. Think of advertisements from Google, Facebook, LinkedIn, and Microsoft Ads.",
+      "section3Title": "3. Overview of cookies we use",
+      "section3Para1": "For a complete overview of all cookies we use, you can visit your cookie preferences. Here you can also change or withdraw your consent.",
+      "cookieTable": {
+        "header": ["Cookie", "Type", "Provider", "Purpose / Function", "Retention Period"],
+        "phpsessid": ["PHPSESSID", "Functional", "Bouwmatcher", "Keeps track of session information so forms work correctly.", "Session"],
+        "cookieConsent": ["CookieConsent", "Functional", "Bouwmatcher", "Remembers your cookie settings.", "1 year"],
+        "ga": ["_ga", "Analytical", "Google Analytics", "Analyzes visitor behavior and website usage.", "2 years"],
+        "gid": ["_gid", "Analytical", "Google Analytics", "Analyzes visitor behavior and website usage.", "24 hours"],
+        "fbp": ["_fbp", "Marketing", "Facebook / Meta", "Tracks which pages you visit for statistics.", "3 months"],
+        "fr": ["fr", "Marketing", "Facebook / Meta", "Shows relevant advertisements on Facebook & Instagram.", "3 months"],
+        "liSugr": ["li_sugr", "Marketing", "LinkedIn", "Browser ID cookie for LinkedIn Ads.", "90 days"],
+        "bcookie": ["bcookie", "Marketing", "LinkedIn", "Used for advertisement targeting.", "1 year"],
+        "uetvid": ["_uetvid", "Marketing", "Microsoft Ads", "Helps tailor advertisements to your interests.", "13 months"]
+      },
+      "section4Title": "4. Managing or deleting cookies",
+      "section4Para1": "You can adjust your preferences at any time via the cookie settings at the bottom of our website.",
+      "section4Para2": "You can also manage, block, or delete cookies manually through your internet browser settings (for example, Chrome, Safari, Firefox, or Edge). Please note that disabling cookies may affect the functionality of the website.",
+      "section5Title": "5. Changes",
+      "section5Para1": "Bouwmatcher may modify this Cookie Policy when the cookies used or applicable legislation changes. The most recent version is always available at www.bouwmatcher.com."
     }
   },
+  "questionnaire": {
+    "questionCounter": "Question {current} of {total}",
+    "stepCounter": "Step {current} of {total}",
+    "previous": "Previous",
+    "next": "Next",
+    "saving": "Saving...",
+    "loading": "Loading...",
+    "locationHeading": "What is the project location?",
+    "useCurrentLocation": "Use my current location",
+    "loadingLocation": "Fetching location...",
+    "errorLoadingQuestions": "An error occurred while loading the questions."
+  },
   "common": {
+    "topbar": {
+      "message": "Free and non-binding • Response within 24 hours"
+    },
     "navbar": {
       "categories": "Categories",
       "contact": "Contact",

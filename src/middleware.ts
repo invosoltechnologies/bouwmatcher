@@ -74,6 +74,7 @@ export async function middleware(request: NextRequest) {
     '/categories',
     '/service',
     '/blog',
+    '/create-project',
   ];
 
   const isPublicRoute = publicRoutes.some(route =>

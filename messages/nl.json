@@ -127,6 +127,40 @@
       "verified": "Geverifieerd"
     }
   },
+  "auth": {
+    "hero": {
+      "heading": "Altijd nieuwe opdrachten binnen handbereik",
+      "description": "Kom direct in contact met klanten die nú een specialist zoeken.",
+      "ctaButton": "Meld je gratis aan"
+    },
+    "values": {
+      "heading": "De matchmaker die jou helpt aan nieuwe opdrachten",
+      "description": "Voor specialisten die zonder zorgen aan mooie projecten willen werken.",
+      "centerText": "Jouw zekerheid in de bouw.",
+      "item1Title": "Betrouwbaarheid",
+      "item1Description": "Je krijgt alleen échte aanvragen van opdrachtgevers. Wij filteren de projecten zorgvuldig zodat jij zeker weet dat je met serieuze leads werkt.",
+      "item2Title": "Transparantie",
+      "item2Description": "Geen verborgen kosten of kleine lettertjes. Jij betaalt zelf welke leads je opent en betaal alleen voor de contactgegevens van projecten die jij interessant vindt.",
+      "item3Title": "Eerlijkheid",
+      "item3Description": "Geen wurgcontracten of onredelijke verplichtingen. Jij behoudt altijd de controle en kiest zelf welke opdrachten je wilt oppakken.",
+      "item4Title": "Doelgericht",
+      "item4Description": "Wij koppelen jou direct aan relevante opdrachtgevers in jouw vakgebied. Zo bespaar je minder tijd aan zoeken en meer tijd aan uitvoeren.",
+      "ctaButton": "Word een professional"
+    },
+    "process": {
+      "title": "Zo werkt het voor specialisten",
+      "subtitle": "Volg deze eenvoudige stappen en ontdek hoe jij snel aan de slag gaat met nieuwe opdrachten.",
+      "step1Title": "Schrijf je in",
+      "step1Description": "Registreer je gratis als specialist en maak een profiel aan.",
+      "step2Title": "Doorloop de verificatie",
+      "step2Description": "Wij controleren je gegevens zodat opdrachtgevers zeker weten dat ze met een betrouwbare specialist werken.",
+      "step3Title": "Voeg je vakgebieden toe",
+      "step3Description": "Geef aan in welke vakgebieden je actief bent en welke projecten bij jou passen.",
+      "step4Title": "Ontvang en reageer op offertes",
+      "step4Description": "Je profiel staat live: ontvang aanvragen en reageer direct op opdrachten die jou aanspreken.",
+      "ctaButton": "Word een professional"
+    }
+  },
   "contact": {
     "hero": {
       "pillResponse": "<24u reactie",
@@ -226,6 +260,10 @@
       "a9": "Ja, uw gegevens worden alleen gedeeld met de specialisten die reageren op uw aanvraag. We werken volgens de AVG en delen nooit uw gegevens met derden zonder uw toestemming."
     },
     "specialisten": {
+      "heading": "Veelgestelde vragen",
+      "description": "Alles wat je moet weten om aan de slag te gaan als specialist",
+      "ctaButtonLong": "Heb je nog vragen? Bekijk onze FAQ-pagina",
+      "ctaButtonShort": "Bekijk onze FAQ-pagina",
       "hero": {
         "heading": "FAQ voor",
         "headingAccent": "specialisten",
@@ -498,9 +536,54 @@
       "section15Para1": "Op deze Algemene Voorwaarden is uitsluitend Belgisch recht van toepassing. Geschillen behoren tot de exclusieve bevoegdheid van de rechtbanken van Leuven. Partijen verbinden zich ertoe eerst te trachten geschillen minnelijk te regelen.",
 
       "section16Title": "16. Contactgegevens"
+    },
+    "cookies": {
+      "section1Title": "1. Wat zijn cookies?",
+      "section1Para1": "Cookies zijn kleine tekstbestanden die door je browser op je computer, smartphone of tablet worden opgeslagen. Ze onthouden jouw voorkeuren, verzamelen informatie over het gebruik van de website en zorgen ervoor dat wij jou relevante inhoud en advertenties kunnen tonen.",
+      "section2Title": "2. Welke cookies gebruiken wij?",
+      "section2p1Title": "2.1 Functionele cookies (altijd actief)",
+      "section2p1Para1": "Deze cookies zijn noodzakelijk voor de werking van de website. Ze onthouden bijvoorbeeld jouw taalinstellingen en zorgen ervoor dat formulieren correct functioneren. Deze cookies zijn anoniem en kunnen niet worden uitgeschakeld.",
+      "section2p2Title": "2.2 Analytische cookies (opt-in)",
+      "section2p2Para1": "Met analytische cookies meten we hoe onze website wordt gebruikt. Zo zien we welke pagina's populair zijn en waar bezoekers afhaken. Deze inzichten gebruiken wij om onze website continu te verbeteren.",
+      "section2p3Title": "2.3 Marketing- en personalisatiecookies (opt-in)",
+      "section2p3Para1": "Deze cookies zorgen ervoor dat je advertenties en informatie te zien krijgt die aansluiten bij jouw interesses. Denk hierbij aan advertenties via Google, Facebook, LinkedIn en Microsoft Ads.",
+      "section3Title": "3. Overzicht van gebruikte cookies",
+      "section3Para1": "Voor een volledig overzicht van alle cookies die wij gebruiken, kun je terecht in je cookievoorkeuren. Hier kun je ook je toestemming wijzigen of intrekken.",
+      "cookieTable": {
+        "header": ["Cookie", "Type", "Uitgever", "Doel / Functie", "Bewaartermijn"],
+        "phpsessid": ["PHPSESSID", "Functioneel", "Bouwmatcher", "Houdt sessie-informatie bij zodat formulieren werken.", "Sessie"],
+        "cookieConsent": ["CookieConsent", "Functioneel", "Bouwmatcher", "Onthoudt jouw cookie-instellingen.", "1 jaar"],
+        "ga": ["_ga", "Analytisch", "Google Analytics", "Analyseert bezoekersgedrag en websitegebruik.", "2 jaar"],
+        "gid": ["_gid", "Analytisch", "Google Analytics", "Analyseert bezoekersgedrag en websitegebruik.", "24 uur"],
+        "fbp": ["_fbp", "Marketing", "Facebook / Meta", "Houdt bij welke pagina's je bezoekt voor statistieken.", "3 maanden"],
+        "fr": ["fr", "Marketing", "Facebook / Meta", "Toont relevante advertenties op Facebook & Instagram.", "3 maanden"],
+        "liSugr": ["li_sugr", "Marketing", "LinkedIn", "Browser-ID cookie voor LinkedIn Ads.", "90 dagen"],
+        "bcookie": ["bcookie", "Marketing", "LinkedIn", "Gebruikt voor advertentietargeting.", "1 jaar"],
+        "uetvid": ["_uetvid", "Marketing", "Microsoft Ads", "Helpt advertenties af te stemmen op jouw interesses.", "13 maanden"]
+      },
+      "section4Title": "4. Cookies beheren of verwijderen",
+      "section4Para1": "Je kan je voorkeuren op elk moment aanpassen via de cookie-instellingen onderaan onze website.",
+      "section4Para2": "Daarnaast kan je cookies handmatig beheren, blokkeren of verwijderen via de instellingen van je internetbrowser (bijvoorbeeld Chrome, Safari, Firefox of Edge). Houd er rekening mee dat het uitschakelen van cookies de werking van de website kan beïnvloeden.",
+      "section5Title": "5. Wijzigingen",
+      "section5Para1": "Bouwmatcher kan dit Cookiebeleid aanpassen wanneer de gebruikte cookies of de toepasselijke wetgeving wijzigen. De meest recente versie is steeds beschikbaar op www.bouwmatcher.com."
     }
   },
+  "questionnaire": {
+    "questionCounter": "Vraag {current} van {total}",
+    "stepCounter": "Stap {current} van {total}",
+    "previous": "Vorige",
+    "next": "Volgende",
+    "saving": "Opslaan...",
+    "loading": "Laden...",
+    "locationHeading": "Wat is de projectlocatie?",
+    "useCurrentLocation": "Gebruik mijn huidige locatie",
+    "loadingLocation": "Locatie ophalen...",
+    "errorLoadingQuestions": "Er is een fout opgetreden bij het laden van de vragen."
+  },
   "common": {
+    "topbar": {
+      "message": "Gratis en niet-bindend • Binnen 24 uur reactie"
+    },
     "navbar": {
       "categories": "Categorieën",
       "contact": "Contact",
