@@ -159,6 +159,24 @@
       "step4Title": "Receive and respond to quotes",
       "step4Description": "Your profile is live: receive requests and respond directly to projects that appeal to you.",
       "ctaButton": "Become a professional"
+    },
+    "login": {
+      "heading": "Log in",
+      "headingSuffix": "to your account",
+      "emailPlaceholder": "Email address",
+      "passwordPlaceholder": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "loginButton": "Log in",
+      "loggingIn": "Logging in...",
+      "orLoginWith": "Or log in with",
+      "createAccount": "Create an account",
+      "loginSuccess": "Successfully logged in! Redirecting...",
+      "loginError": "Incorrect email or password",
+      "oauthFailed": "OAuth authentication failed. Please try again.",
+      "profileCreationFailed": "Could not create profile. Please contact support.",
+      "oauthCallbackFailed": "Something went wrong during login. Please try again.",
+      "genericError": "An error occurred during login."
     }
   },
   "contact": {

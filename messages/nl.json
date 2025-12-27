@@ -159,6 +159,24 @@
       "step4Title": "Ontvang en reageer op offertes",
       "step4Description": "Je profiel staat live: ontvang aanvragen en reageer direct op opdrachten die jou aanspreken.",
       "ctaButton": "Word een professional"
+    },
+    "login": {
+      "heading": "Log in",
+      "headingSuffix": "op je account",
+      "emailPlaceholder": "E-mailadres",
+      "passwordPlaceholder": "Wachtwoord",
+      "rememberMe": "Onthoud mij",
+      "forgotPassword": "Wachtwoord vergeten?",
+      "loginButton": "Inloggen",
+      "loggingIn": "Bezig met inloggen...",
+      "orLoginWith": "Of inloggen met",
+      "createAccount": "Maak een account aan",
+      "loginSuccess": "Succesvol ingelogd! Je wordt doorgestuurd...",
+      "loginError": "Onjuist e-mailadres of wachtwoord",
+      "oauthFailed": "OAuth authenticatie mislukt. Probeer het opnieuw.",
+      "profileCreationFailed": "Kon profiel niet aanmaken. Neem contact op met support.",
+      "oauthCallbackFailed": "Er ging iets mis tijdens het inloggen. Probeer het opnieuw.",
+      "genericError": "Er is een fout opgetreden tijdens het inloggen."
     }
   },
   "contact": {

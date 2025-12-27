@@ -6,18 +6,20 @@ import { useSearchParams } from 'next/navigation';
 import { useRouter } from '@/i18n/navigation';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import AuthNavbar from '@/components/auth/AuthNavbar';
 import type { LoginFormData } from '@/types/auth';
 import { useAuth } from '@/hooks/useAuth';
+import { useTranslations } from 'next-intl';
 
 function LoginForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { signIn, signInWithOAuth } = useAuth();
+  const t = useTranslations('auth.login');
 
   // Get redirect URL from query params (set by middleware)
   const redirectUrl = searchParams.get('redirect');
@@ -27,12 +29,12 @@ function LoginForm() {
     const oauthError = searchParams.get('error');
     if (oauthError) {
       const errorMessages: Record<string, string> = {
-        oauth_failed: 'OAuth authenticatie mislukt. Probeer het opnieuw.',
-        profile_creation_failed: 'Kon profiel niet aanmaken. Neem contact op met support.',
-        oauth_callback_failed: 'Er ging iets mis tijdens het inloggen. Probeer het opnieuw.',
+        oauth_failed: t('oauthFailed'),
+        profile_creation_failed: t('profileCreationFailed'),
+        oauth_callback_failed: t('oauthCallbackFailed'),
       };
 
-      const message = errorMessages[oauthError] || 'Er is een fout opgetreden tijdens het inloggen.';
+      const message = errorMessages[oauthError] || t('genericError');
       toast.error(message);
 
       // Remove error from URL
@@ -40,7 +42,7 @@ function LoginForm() {
       newUrl.searchParams.delete('error');
       window.history.replaceState({}, '', newUrl);
     }
-  }, [searchParams]);
+  }, [searchParams, t]);
 
   const {
     register,
@@ -65,7 +67,7 @@ function LoginForm() {
       {
         onSuccess: async (result) => {
           if (result.success) {
-            toast.success('Succesvol ingelogd! Je wordt doorgestuurd...');
+            toast.success(t('loginSuccess'));
 
             // Check profile completion status
             try {
@@ -98,12 +100,12 @@ function LoginForm() {
               }, 1000);
             }
           } else {
-            toast.error(result.error || 'Onjuist e-mailadres of wachtwoord');
+            toast.error(result.error || t('loginError'));
           }
         },
         onError: (err) => {
           console.error('Login error:', err);
-          const errorMessage = err instanceof Error ? err.message : 'Onjuist e-mailadres of wachtwoord';
+          const errorMessage = err instanceof Error ? err.message : t('loginError');
           toast.error(errorMessage);
         },
       }
@@ -126,9 +128,9 @@ function LoginForm() {
                 backgroundClip: 'text',
               }}
             >
-              Log in
+              {t('heading')}
             </span>{' '}
-            op je account
+            {t('headingSuffix')}
           </h1>
 
           <form onSubmit={handleSubmit(onSubmit)} className='space-y-4 md:space-y-6'>
@@ -136,7 +138,7 @@ function LoginForm() {
               <Input
                 {...register('email')}
                 type='email'
-                placeholder='E-mailadres'
+                placeholder={t('emailPlaceholder')}
                 className='h-12 md:h-14 lg:h-[60px] bg-white border-neutral-300 rounded-lg px-4 md:px-6 lg:px-7 text-base md:text-lg lg:text-xl font-medium'
                 style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
               />
@@ -151,7 +153,7 @@ function LoginForm() {
               <Input
                 {...register('password')}
                 type='password'
-                placeholder='Wachtwoord'
+                placeholder={t('passwordPlaceholder')}
                 className='h-12 md:h-14 lg:h-[60px] bg-white border-neutral-300 rounded-lg px-4 md:px-6 lg:px-7 text-base md:text-lg lg:text-xl font-medium'
                 style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
               />
@@ -176,7 +178,7 @@ function LoginForm() {
                   htmlFor='rememberMe'
                   className='text-sm md:text-base lg:text-xl text-secondary-foreground cursor-pointer'
                 >
-                  Onthoud mij
+                  {t('rememberMe')}
                 </label>
               </div>
 
@@ -184,7 +186,7 @@ function LoginForm() {
                 href='/auth/forgot-password'
                 className='text-sm md:text-base lg:text-xl text-primary font-medium hover:underline'
               >
-                Wachtwoord vergeten?
+                {t('forgotPassword')}
               </Link>
             </div>
 
@@ -193,7 +195,7 @@ function LoginForm() {
               disabled={signIn.isPending}
               className='w-full text-base md:text-lg lg:text-2xl py-3 md:py-4 lg:py-4.5 font-medium rounded-[7px]'
             >
-              {signIn.isPending ? 'Bezig met inloggen...' : 'Inloggen'}
+              {signIn.isPending ? t('loggingIn') : t('loginButton')}
             </Button>
 
             <div className='relative py-0 md:py-4'>
@@ -204,7 +206,7 @@ function LoginForm() {
                 <span
                   className='px-3 md:px-4.5 py-1.5 md:py-2 text-sm md:text-base font-medium text-muted-foreground bg-[#e6f1f4d9]'
                 >
-                  Of inloggen met
+                  {t('orLoginWith')}
                 </span>
               </div>
             </div>
@@ -261,7 +263,7 @@ function LoginForm() {
                 href='/auth/register'
                 className='text-base md:text-lg lg:text-2xl text-primary font-medium hover:underline'
               >
-                Maak een account aan
+                {t('createAccount')}
               </Link>
             </div>
           </form>
