@@ -115,8 +115,8 @@ function LoginForm() {
   };
 
   return (
-    <div className='w-full max-w-3xl'>
-          <h1 className='text-[55px] font-normal text-center mb-12 leading-tight'>
+    <div className='w-full max-w-md md:max-w-lg lg:max-w-xl px-4'>
+          <h1 className='text-2xl sm:text-3xl md:text-4xl lg:text-[55px] font-normal text-center mb-8 md:mb-12 leading-tight'>
             <span
               style={{
                 background:
@@ -131,13 +131,13 @@ function LoginForm() {
             op je account
           </h1>
 
-          <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
+          <form onSubmit={handleSubmit(onSubmit)} className='space-y-4 md:space-y-6'>
             <div>
               <Input
                 {...register('email')}
                 type='email'
                 placeholder='E-mailadres'
-                className='h-[60px] bg-white border-neutral-300 rounded-lg px-7 text-xl md:text-lg font-medium'
+                className='h-12 md:h-14 lg:h-[60px] bg-white border-neutral-300 rounded-lg px-4 md:px-6 lg:px-7 text-base md:text-lg lg:text-xl font-medium'
                 style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
               />
               {errors.email && (
@@ -152,7 +152,7 @@ function LoginForm() {
                 {...register('password')}
                 type='password'
                 placeholder='Wachtwoord'
-                className='h-[60px] bg-white border-neutral-300 rounded-lg px-7 text-xl md:text-lg font-medium'
+                className='h-12 md:h-14 lg:h-[60px] bg-white border-neutral-300 rounded-lg px-4 md:px-6 lg:px-7 text-base md:text-lg lg:text-xl font-medium'
                 style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
               />
               {errors.password && (
@@ -162,7 +162,7 @@ function LoginForm() {
               )}
             </div>
 
-            <div className='flex items-center justify-between mt-7 mb-8'>
+            <div className='flex justify-between sm:justify-between gap-3 sm:gap-0 mt-4 md:mt-7 mb-6 md:mb-8'>
               <div className='flex items-center gap-2'>
                 <Checkbox
                   id='rememberMe'
@@ -170,11 +170,11 @@ function LoginForm() {
                   onCheckedChange={(checked) =>
                     setValue('rememberMe', checked as boolean)
                   }
-                  className='bg-white rounded-none border-neutral-300 w-5 h-5 font-medium'
+                  className='bg-white rounded-none border-neutral-300 w-4 h-4 md:w-5 md:h-5 font-medium'
                 />
                 <label
                   htmlFor='rememberMe'
-                  className='text-xl text-secondary-foreground cursor-pointer'
+                  className='text-sm md:text-base lg:text-xl text-secondary-foreground cursor-pointer'
                 >
                   Onthoud mij
                 </label>
@@ -182,7 +182,7 @@ function LoginForm() {
 
               <Link
                 href='/auth/forgot-password'
-                className='text-xl text-primary font-medium'
+                className='text-sm md:text-base lg:text-xl text-primary font-medium hover:underline'
               >
                 Wachtwoord vergeten?
               </Link>
@@ -191,76 +191,75 @@ function LoginForm() {
             <Button
               type='submit'
               disabled={signIn.isPending}
-              className='w-full text-2xl py-4.5 font-medium rounded-[7px]'
+              className='w-full text-base md:text-lg lg:text-2xl py-3 md:py-4 lg:py-4.5 font-medium rounded-[7px]'
             >
               {signIn.isPending ? 'Bezig met inloggen...' : 'Inloggen'}
             </Button>
 
-            <div className='relative'>
+            <div className='relative py-0 md:py-4'>
               <div className='absolute inset-0 flex items-center'>
                 <div className='w-full border-t border border-dashed border-muted-foreground'></div>
               </div>
               <div className='relative flex justify-center text-sm'>
                 <span
-                  className='px-4.5 py-2 text-base font-medium text-muted-foreground bg-[#e6f1f4d9]'
-                  // style={{
-                  //   background:
-                  //     'linear-gradient(90deg, rgba(10, 178, 126, 0.1) 0%, rgba(2, 58, 162, 0.1) 100%)',
-                  // }}
+                  className='px-3 md:px-4.5 py-1.5 md:py-2 text-sm md:text-base font-medium text-muted-foreground bg-[#e6f1f4d9]'
                 >
                   Of inloggen met
                 </span>
               </div>
             </div>
 
-            <div className='flex gap-4'>
+            <div className='flex gap-3 md:gap-4'>
               <button
                 type='button'
                 onClick={() => handleOAuthLogin('google')}
-                className='flex-1 py-4 cursor-pointer bg-white border border-neutral-300 rounded-lg flex items-center justify-center hover:bg-neutral-50 transition-colors'
+                className='flex-1 py-3 md:py-4 cursor-pointer bg-white border border-neutral-300 rounded-lg flex items-center justify-center hover:bg-neutral-50 transition-colors'
                 style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
               >
                 <Image
                   src='/images/auth/google.svg'
                   alt='Google'
-                  width={24}
-                  height={24}
+                  width={20}
+                  height={20}
+                  className='w-5 h-5 md:w-6 md:h-6'
                 />
               </button>
 
               {/* <button
                 type='button'
                 onClick={() => handleOAuthLogin('facebook')}
-                className='flex-1 py-4 cursor-pointer bg-white border border-neutral-300 rounded-lg flex items-center justify-center hover:bg-neutral-50 transition-colors'
+                className='flex-1 py-3 md:py-4 cursor-pointer bg-white border border-neutral-300 rounded-lg flex items-center justify-center hover:bg-neutral-50 transition-colors'
                 style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
               >
                 <Image
                   src='/images/auth/facebook.svg'
                   alt='Facebook'
-                  width={24}
-                  height={24}
+                  width={20}
+                  height={20}
+                  className='w-5 h-5 md:w-6 md:h-6'
                 />
               </button>
 
               <button
                 type='button'
                 onClick={() => handleOAuthLogin('apple')}
-                className='flex-1 py-4 bg-white border border-neutral-300 rounded-lg flex items-center justify-center hover:bg-neutral-50 transition-colors'
+                className='flex-1 py-3 md:py-4 bg-white border border-neutral-300 rounded-lg flex items-center justify-center hover:bg-neutral-50 transition-colors'
                 style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
               >
                 <Image
                   src='/images/auth/apple.svg'
                   alt='Apple'
-                  width={24}
-                  height={24}
+                  width={20}
+                  height={20}
+                  className='w-5 h-5 md:w-6 md:h-6'
                 />
               </button> */}
             </div>
 
-            <div className='text-center'>
+            <div className='text-center pt-2'>
               <Link
                 href='/auth/register'
-                className='text-2xl text-primary font-medium hover:underline'
+                className='text-base md:text-lg lg:text-2xl text-primary font-medium hover:underline'
               >
                 Maak een account aan
               </Link>
@@ -273,7 +272,7 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <div
-      className='min-h-screen pt-10 flex flex-col'
+      className='min-h-screen pt-8 md:pt-10 flex flex-col'
       style={{
         background:
           'linear-gradient(90deg, rgba(10, 178, 126, 0.1) 0%, rgba(2, 58, 162, 0.1) 100%)',
@@ -281,8 +280,8 @@ export default function LoginPage() {
     >
       <AuthNavbar />
 
-      <main className='flex-1 flex items-center justify-center px-4 pt-24 pb-12'>
-        <Suspense fallback={<div className='w-full max-w-3xl text-center'>Loading...</div>}>
+      <main className='flex-1 flex items-center justify-center px-4 pt-20 md:pt-24 pb-8 md:pb-12'>
+        <Suspense fallback={<div className='w-full max-w-md md:max-w-lg lg:max-w-xl text-center'>Loading...</div>}>
           <LoginForm />
         </Suspense>
       </main>
