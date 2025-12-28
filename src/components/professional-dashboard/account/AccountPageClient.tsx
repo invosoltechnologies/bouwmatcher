@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 import AccountStatusCard from '@/components/professional-dashboard/account/AccountStatusCard';
 import ContactInfoCard from '@/components/professional-dashboard/account/ContactInfoCard';
 import ProfileCompletionCard from '@/components/professional-dashboard/account/ProfileCompletionCard';
@@ -13,18 +14,21 @@ import { useAccount } from '@/lib/hooks/professional/account';
 import { useWorkArea } from '@/lib/hooks/professional/account/useWorkArea';
 
 export default function AccountPageClient() {
+  const t = useTranslations('common.proDashboard.account');
   const [isCompanyModalOpen, setIsCompanyModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isWorkAreaModalOpen, setIsWorkAreaModalOpen] = useState(false);
 
   const { data, isLoading, isError } = useAccount();
   const { data: workAreaData } = useWorkArea();
-useEffect(() => {
-  console.log('AccountData', data?.accountData);
-}, [data?.accountData]);
+
+  useEffect(() => {
+    console.log('AccountData', data?.accountData);
+  }, [data?.accountData]);
+
   // Show error toast if fetch fails
   if (isError) {
-    toast.error('Kon accountgegevens niet laden');
+    toast.error(t('errorLoading'));
   }
 
   const handleContactEdit = () => {
@@ -38,7 +42,7 @@ useEffect(() => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-muted-foreground">Laden...</div>
+        <div className="text-muted-foreground">{t('loading')}</div>
       </div>
     );
   }
@@ -46,46 +50,33 @@ useEffect(() => {
   if (!data?.accountData) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-muted-foreground">Geen accountgegevens gevonden</div>
+        <div className="text-muted-foreground">{t('noData')}</div>
       </div>
     );
   }
 
   const accountData = data.accountData;
 
-
-
   return (
-    <div className="flex gap-6 w-full">
+    <div className="flex flex-col lg:flex-row gap-6 w-full">
       {/* Main Content */}
-      <div className="flex-1 max-w-3xl">
+      <div className="flex-1 lg:max-w-3xl space-y-6">
         <AccountStatusCard
-          status={accountData.accountStatus.status}
-          description={accountData.accountStatus.description}
+          statusKey={accountData.accountStatus.statusKey}
+          descriptionKey={accountData.accountStatus.descriptionKey}
           statusCode={accountData.accountStatus.statusCode}
         />
 
-        <div className="mt-6">
-          {/* <CompanyInfoCard
-            companyInfo={accountData.companyInfo}
-            onEdit={handleCompanyEdit}
-          /> */}
-        </div>
+        <WorkAreaCard onEdit={handleWorkAreaEdit} />
 
-        <div className="mt-6">
-          <WorkAreaCard onEdit={handleWorkAreaEdit} />
-        </div>
-
-        <div className="mt-6">
-          <ContactInfoCard
-            contactInfo={accountData.contactInfo}
-            onEdit={handleContactEdit}
-          />
-        </div>
+        <ContactInfoCard
+          contactInfo={accountData.contactInfo}
+          onEdit={handleContactEdit}
+        />
       </div>
 
-      {/* Right Sidebar */}
-      <aside className="max-w-sm w-full flex-shrink-0">
+      {/* Right Sidebar - comes first on mobile, second on desktop */}
+      <aside className="w-full lg:max-w-sm lg:flex-shrink-0 order-first lg:order-last">
         <ProfileCompletionCard
           completionPercentage={accountData.profileCompletion.percentage}
           tasks={accountData.profileCompletion.tasks}

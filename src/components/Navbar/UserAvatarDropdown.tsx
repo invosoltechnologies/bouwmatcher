@@ -107,13 +107,13 @@ export default function UserAvatarDropdown() {
             >
               <Image
                 src={item.icon}
-                alt={t(`proDashboard.${item.id}`)}
+                alt={t(`proDashboard.navigation.${item.id}`)}
                 width={16}
                 height={16}
                 className='w-4 h-4 group-hover:brightness-0 group-hover:invert transition-all'
               />
               <span className='text-sm group-hover:text-white transition-colors'>
-                {t(`proDashboard.${item.id}`)}
+                {t(`proDashboard.navigation.${item.id}`)}
               </span>
             </Link>
           ))}

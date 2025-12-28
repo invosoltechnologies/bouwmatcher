@@ -773,11 +773,95 @@
       "logoutError": "Kon niet uitloggen. Probeer het opnieuw."
     },
     "proDashboard": {
-      "offerteaanvragen": "Offerteaanvragen",
-      "bedrijfsprofiel": "Bedrijfsprofiel",
-      "werkgebied": "Werkgebied",
-      "faq": "FAQ",
-      "account": "Account"
+      "navigation": {
+        "offerteaanvragen": "Offerteaanvragen",
+        "bedrijfsprofiel": "Bedrijfsprofiel",
+        "werkgebied": "Werkgebied",
+        "faq": "FAQ",
+        "account": "Account",
+        "home": "Home",
+        "logout": "Uitloggen"
+      },
+      "account": {
+        "title": "Account",
+        "loading": "Laden...",
+        "noData": "Geen accountgegevens gevonden",
+        "errorLoading": "Kon accountgegevens niet laden",
+        "contactInfo": {
+          "title": "Contactgegevens",
+          "edit": "Wijzig",
+          "contactPerson": "Contactpersoon",
+          "quotesEmail": "E-mailadres (offerteaanvragen)",
+          "invoicesEmail": "E-mailadres (facturering)",
+          "generalEmail": "E-mailadres (algemeen)",
+          "phoneNumber": "Telefoonnummer"
+        },
+        "workArea": {
+          "title": "Werkgebied",
+          "edit": "Wijzig",
+          "loading": "Laden...",
+          "error": "Fout bij het laden van werkgebied gegevens",
+          "notSet": "Je werkgebied is nog niet ingesteld.",
+          "notSetHint": "Klik op \"Wijzig\" om je werklocatie en straal in te stellen.",
+          "workLocation": "Werklocatie",
+          "postalCode": "Postcode",
+          "city": "Stad",
+          "serviceRadius": "Service straal",
+          "coordinates": "Coördinaten"
+        },
+        "profileCompletion": {
+          "title": "Maak het bedrijfsprofiel compleet",
+          "tasks": {
+            "uploadLogo": "Upload een logo en bedrijfsfoto",
+            "fillDescription": "Vul je omschrijving & doelregio in",
+            "requestReview": "Vraag ten minste 1 review aan",
+            "verifyCompany": "Verifieer je bedrijfsgegevens"
+          },
+          "completed": "Klaar",
+          "pending": "Nog te doen"
+        },
+        "accountStatus": {
+          "title": "Accountstatus",
+          "statuses": {
+            "verified": "Geverifieerd",
+            "inReview": "In beoordeling",
+            "pending": "In afwachting",
+            "rejected": "Afgewezen",
+            "suspended": "Geschorst",
+            "inVerification": "In verificatie"
+          },
+          "descriptions": {
+            "verified": "Je account is geverifieerd en actief.",
+            "inReview": "Je aanmelding wordt beoordeeld door ons team.",
+            "pending": "Je aanmelding is ontvangen en wacht op verificatie.",
+            "rejected": "Je aanvraag is afgewezen. Neem contact op met support voor meer informatie.",
+            "suspended": "Je account is tijdelijk geschorst. Neem contact op met support.",
+            "inVerification": "Je aanmelding wordt geverifieerd. Dit kan 1-2 werkdagen duren."
+          }
+        }
+      },
+      "pages": {
+        "offerteaanvragen": {
+          "title": "Offerteaanvragen",
+          "description": "Beheer je inkomende projectaanvragen"
+        },
+        "bedrijfsprofiel": {
+          "title": "Bedrijfsprofiel",
+          "description": "Beheer je bedrijfsinformatie, foto's en reviews"
+        },
+        "werkgebied": {
+          "title": "Werkgebied",
+          "description": "Beheer je regio's, straal en rubrieken"
+        },
+        "faq": {
+          "title": "FAQ",
+          "description": "Veelgestelde vragen en antwoorden"
+        },
+        "account": {
+          "title": "Account",
+          "description": "Beheer je instellingen, bedrijf- en contactgegevens"
+        }
+      }
     },
     "footer": {
       "description": "Het vertrouwde platform voor het matchen van bouwers en projecten.",

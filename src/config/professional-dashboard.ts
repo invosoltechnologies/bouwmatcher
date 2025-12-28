@@ -31,7 +31,7 @@ export const dashboardNavigation: NavigationItem[] = [
   {
     id: 'faq',
     label: 'FAQ',
-    href: '/pro-dashboard/faq',
+    href: '/pro-dashboard/faq-specialisten',
     icon: '/icons/professional-dashboard/faq.svg',
     type: 'link',
   },
@@ -73,7 +73,7 @@ export const pageConfigs: Record<string, PageConfig> = {
     description: 'Beheer je bedrijfsinformatie, foto’s en reviews',
   },
   werkgebied: {
-    title: 'Werkgebied',
+    title: 'Services',
     description: 'Beheer je regio’s, straal en rubrieken',
   },
   faq: {

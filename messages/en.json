@@ -775,11 +775,95 @@
       "logoutError": "Could not log out. Please try again."
     },
     "proDashboard": {
-      "offerteaanvragen": "Quote requests",
-      "bedrijfsprofiel": "Company profile",
-      "werkgebied": "Work area",
-      "faq": "FAQ",
-      "account": "Account"
+      "navigation": {
+        "offerteaanvragen": "Quote requests",
+        "bedrijfsprofiel": "Company profile",
+        "werkgebied": "Work area",
+        "faq": "FAQ",
+        "account": "Account",
+        "home": "Home",
+        "logout": "Logout"
+      },
+      "account": {
+        "title": "Account",
+        "loading": "Loading...",
+        "noData": "No account data found",
+        "errorLoading": "Could not load account data",
+        "contactInfo": {
+          "title": "Contact information",
+          "edit": "Edit",
+          "contactPerson": "Contact person",
+          "quotesEmail": "Email address (quote requests)",
+          "invoicesEmail": "Email address (invoicing)",
+          "generalEmail": "Email address (general)",
+          "phoneNumber": "Phone number"
+        },
+        "workArea": {
+          "title": "Work area",
+          "edit": "Edit",
+          "loading": "Loading...",
+          "error": "Error loading work area data",
+          "notSet": "Your work area is not yet configured.",
+          "notSetHint": "Click \"Edit\" to set your work location and radius.",
+          "workLocation": "Work location",
+          "postalCode": "Postal code",
+          "city": "City",
+          "serviceRadius": "Service radius",
+          "coordinates": "Coordinates"
+        },
+        "profileCompletion": {
+          "title": "Complete your company profile",
+          "tasks": {
+            "uploadLogo": "Upload a logo and company photo",
+            "fillDescription": "Fill in your description & target region",
+            "requestReview": "Request at least 1 review",
+            "verifyCompany": "Verify your company details"
+          },
+          "completed": "Completed",
+          "pending": "To do"
+        },
+        "accountStatus": {
+          "title": "Account status",
+          "statuses": {
+            "verified": "Verified",
+            "inReview": "Under review",
+            "pending": "Pending",
+            "rejected": "Rejected",
+            "suspended": "Suspended",
+            "inVerification": "In verification"
+          },
+          "descriptions": {
+            "verified": "Your account is verified and active.",
+            "inReview": "Your application is being reviewed by our team.",
+            "pending": "Your application has been received and is awaiting verification.",
+            "rejected": "Your application has been rejected. Please contact support for more information.",
+            "suspended": "Your account is temporarily suspended. Please contact support.",
+            "inVerification": "Your application is being verified. This may take 1-2 business days."
+          }
+        }
+      },
+      "pages": {
+        "offerteaanvragen": {
+          "title": "Quote requests",
+          "description": "Manage your incoming project requests"
+        },
+        "bedrijfsprofiel": {
+          "title": "Company profile",
+          "description": "Manage your company information, photos and reviews"
+        },
+        "werkgebied": {
+          "title": "Work area",
+          "description": "Manage your regions, radius and categories"
+        },
+        "faq": {
+          "title": "FAQ",
+          "description": "Frequently asked questions and answers"
+        },
+        "account": {
+          "title": "Account",
+          "description": "Manage your settings, company and contact information"
+        }
+      }
     },
     "footer": {
       "description": "The trusted platform for matching builders and projects.",

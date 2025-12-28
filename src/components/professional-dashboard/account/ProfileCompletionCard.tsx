@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Check } from 'lucide-react';
@@ -7,8 +8,8 @@ import { cn } from '@/lib/utils';
 
 interface ProfileTask {
   id: string;
-  title: string;
-  statusText: string;
+  titleKey: string;
+  statusKey: string;
   completed: boolean;
 }
 
@@ -21,12 +22,14 @@ export default function ProfileCompletionCard({
   completionPercentage,
   tasks,
 }: ProfileCompletionCardProps) {
+  const t = useTranslations('common.proDashboard.account.profileCompletion');
+
   return (
     <Card className='px-5 gap-4'>
       <CardHeader className='p-0 gap-0'>
         <div className='flex items-center justify-between mb-4'>
           <CardTitle className='text-base leading-normal font-normal'>
-            Maak het bedrijfsprofiel compleet
+            {t('title')}
           </CardTitle>
           <span className='text-primary text-base font-bold'>
             {completionPercentage}%
@@ -53,7 +56,7 @@ export default function ProfileCompletionCard({
               {/* Task Content */}
               <div className='flex-1'>
                 <p className='text-secondary-foreground text-sm font-medium leading-normal'>
-                  {task.title}
+                  {t(`tasks.${task.titleKey}` as any)}
                 </p>
                 <p
                   className={cn(
@@ -61,7 +64,7 @@ export default function ProfileCompletionCard({
                     task.completed ? 'text-accent' : 'text-muted-foreground'
                   )}
                 >
-                  {task.statusText}
+                  {t(task.statusKey as any)}
                 </p>
               </div>
             </div>
