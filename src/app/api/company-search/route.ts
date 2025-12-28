@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { KBO_CONFIG } from '@/lib/config';
+import { KBO_CONFIG, BEDRIJFSDATA_CONFIG } from '@/lib/config';
 
 /**
  * GET /api/company-search
@@ -258,51 +258,111 @@ async function searchBelgianCompanies(query: string) {
 }
 
 /**
- * Search Dutch companies (mock for now, can integrate KVK API later)
+ * Search Dutch companies using Bedrijfsdata.nl API
  */
 async function searchDutchCompanies(query: string) {
-  // Mock data - Replace with actual KVK API integration when available
-  const mockCompanies = [
-    {
-      name: 'Big Gym Amsterdam Noord',
-      kvkNumber: '70933479',
-      businessIdFormatted: '70933479',
-      address: 'Klaproosweg 75',
-      city: 'Amsterdam',
-      postalCode: '1033 NN',
-      houseNumber: '75',
-      street: 'Klaproosweg',
-      country: 'NL' as const,
-      businessIdType: 'KVK' as const,
-    },
-    {
-      name: 'Big Gym Amsterdam Zuid',
-      kvkNumber: '70933480',
-      businessIdFormatted: '70933480',
-      address: 'Amstelveenseweg 500',
-      city: 'Amsterdam',
-      postalCode: '1081 KL',
-      houseNumber: '500',
-      street: 'Amstelveenseweg',
-      country: 'NL' as const,
-      businessIdType: 'KVK' as const,
-    },
-  ];
+  const freeApiUrl = BEDRIJFSDATA_CONFIG.freeApiUrl;
 
-  // Simple search filter
-  const searchLower = query.toLowerCase();
-  const results = mockCompanies.filter(
-    (company) =>
-      company.name.toLowerCase().includes(searchLower) ||
-      company.kvkNumber.includes(query)
-  );
+  // Debug logging
+  console.log('Bedrijfsdata Free API URL:', freeApiUrl);
+  console.log('Searching Dutch companies with query:', query);
 
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  try {
+    // Check if query looks like a KVK number (8 digits)
+    const cleanQuery = query.replace(/\D/g, '');
+    const isKvkNumber = /^\d{8}$/.test(cleanQuery);
 
-  return NextResponse.json({
-    companies: results,
-    query,
-    country: 'NL',
-  });
+    // Currently, the free API only supports KVK number lookup
+    if (!isKvkNumber) {
+      console.log('Query is not a valid KVK number (8 digits). Free API only supports KVK lookup.');
+      // Return empty results for non-KVK queries
+      // In the future, this could be enhanced with paid API or alternative search
+      return NextResponse.json({
+        companies: [],
+        query,
+        country: 'NL',
+        message: 'Voer een geldig 8-cijferig KVK nummer in om te zoeken',
+      });
+    }
+
+    // Search by KVK number using free API
+    const url = `${freeApiUrl}/kvk?kvk=${cleanQuery}`;
+    console.log('Requesting URL:', url);
+
+    const searchResponse = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+
+    console.log('Response status:', searchResponse.status);
+
+    if (!searchResponse.ok) {
+      const errorText = await searchResponse.text();
+      console.error(`Bedrijfsdata API error ${searchResponse.status}:`, errorText);
+
+      if (searchResponse.status === 404) {
+        // No results found
+        return NextResponse.json({
+          companies: [],
+          query,
+          country: 'NL',
+        });
+      }
+
+      throw new Error(`Bedrijfsdata API error: ${searchResponse.status} - ${errorText}`);
+    }
+
+    const searchData = await searchResponse.json();
+    console.log('Search data:', JSON.stringify(searchData, null, 2));
+
+    // Free API response format:
+    // { status: "ok", found: 1, kvk: [{id, coc, vestiging, name, city, type, active}] }
+    const kvkResults = searchData.kvk || [];
+
+    if (kvkResults.length === 0) {
+      return NextResponse.json({
+        companies: [],
+        query,
+        country: 'NL',
+      });
+    }
+
+    // Transform results to match our CompanySearchResponse interface
+    // Note: Free API doesn't provide full address details, only city
+    const companies = kvkResults
+      .filter((result: { active: number }) => result.active === 1) // Only active companies
+      .map((result: {
+        coc: string;
+        name: string;
+        city: string;
+        type: string;
+      }) => ({
+        name: result.name,
+        kvkNumber: result.coc,
+        businessIdFormatted: result.coc,
+        address: '', // Free API doesn't provide street address
+        city: result.city,
+        postalCode: '', // Free API doesn't provide postal code
+        houseNumber: '', // Free API doesn't provide house number
+        street: '', // Free API doesn't provide street
+        country: 'NL' as const,
+        businessIdType: 'KVK' as const,
+      }));
+
+    console.log(`Returning ${companies.length} Dutch companies`);
+    console.log('Final companies data:', JSON.stringify(companies, null, 2));
+
+    return NextResponse.json({
+      companies,
+      query,
+      country: 'NL',
+    });
+  } catch (error) {
+    console.error('Dutch KVK search error:', error);
+    return NextResponse.json(
+      { error: 'Failed to search Dutch companies' },
+      { status: 500 }
+    );
+  }
 }
