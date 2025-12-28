@@ -331,7 +331,7 @@ export default function ProfessionalRegistrationForm() {
     <>
       <RegistrationSteps currentStep={currentStep} />
 
-      <main className='flex-1 flex items-center justify-center px-4 py-12'>
+      <main className='flex-1 flex items-center justify-center px-4 py-8 md:py-12'>
         {currentStep === 1 && (
           <>
             {subStep === 'contact' && (

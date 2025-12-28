@@ -47,7 +47,7 @@ export default function AllCategoriesGrid({
       <div
         className={cn(
           'grid gap-4',
-          columns === 2 && 'grid-cols-1 md:grid-cols-2',
+          columns === 2 && 'grid-cols-2',
           columns === 3 && 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
         )}
       >
@@ -60,7 +60,7 @@ export default function AllCategoriesGrid({
               onClick={() => !disabled && onToggle(category.id)}
               disabled={disabled}
               className={cn(
-                'flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left',
+                'flex items-center gap-3 px-0 py-4 flex-col sm:flex-row sm:p-4 text-sm  rounded-xl border-2 transition-all text-left',
                 isSelected
                   ? 'border-primary bg-primary text-white'
                   : 'border-neutral-300 bg-white hover:border-primary',
@@ -75,7 +75,7 @@ export default function AllCategoriesGrid({
                   width={24}
                   height={24}
                   className={cn(
-                    'shrink-0',
+                    'w-5 h-5 sm:w-6 sm:h-6 shrink-0',
                     isSelected &&
                       'brightness-0 invert'
                   )}

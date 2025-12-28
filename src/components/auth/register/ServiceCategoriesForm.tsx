@@ -7,6 +7,7 @@ import { Loader } from '@/components/ui/loader';
 import CategorySearch from '@/components/shared/categories/CategorySearch';
 import PopularCategoriesSection from '@/components/shared/categories/PopularCategoriesSection';
 import AllCategoriesGrid from '@/components/shared/categories/AllCategoriesGrid';
+import SelectedCategoriesCart from '@/components/shared/categories/SelectedCategoriesCart';
 import SelectedCategoriesSidebar from '@/components/shared/categories/SelectedCategoriesSidebar';
 import { useTranslations, useLocale } from 'next-intl';
 import type { ServiceCategory, ProfessionalSpecialization } from '@/types/categories';
@@ -255,28 +256,28 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
   }
 
   return (
-    <div className='custom-container'>
+    <div className='md:custom-container'>
       {/* Full Screen Loader for saving operations */}
       {isSaving && <Loader fullScreen text={t('saving')} />}
 
       {/* Header */}
-      <div className='mb-11.5 mt-5.5 text-center'>
-        <h1 className='text-2xl md:text-4xl font-normal text-slate-900 mb-3'>
+      <div className='mb-6 sm:mb-8 lg:mb-11.5 mt-4 sm:mt-5 lg:mt-5.5 text-center'>
+        <h1 className='text-2xl sm:text-3xl lg:text-4xl font-normal text-slate-900 mb-2 sm:mb-3'>
           {t('heading')}
         </h1>
-        <p className='text-base md:text-lg text-muted-foreground'>
+        <p className='text-sm sm:text-base lg:text-lg text-muted-foreground'>
           {t('description', { maxCategories: MAX_CATEGORIES })}
         </p>
       </div>
 
       {/* Main Card */}
       <div
-        className='bg-white/95 rounded-3xl p-6 lg:p-8'
+        className='bg-white/95 rounded-3xl p-4 sm:p-6 lg:p-8'
         style={{ boxShadow: '0px 12px 36px 0px #023AA21F' }}
       >
-        <div className='flex flex-col lg:flex-row gap-8'>
+        <div className='flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8'>
           {/* Left Panel - Selection */}
-          <div className='w-full lg:w-[60%] space-y-8'>
+          <div className='w-full lg:w-[60%] space-y-4 sm:space-y-6 lg:space-y-8'>
             {/* Search Input - filters the list below */}
             <CategorySearch
               value={searchQuery}
@@ -313,10 +314,10 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
             />
 
             {/* Add custom option */}
-            <div className='pt-4'>
+            <div className='pt-2 sm:pt-4'>
               <button
                 type='button'
-                className='text-primary hover:text-primary/80 text-base font-medium flex items-center gap-2'
+                className='text-primary hover:text-primary/80 text-sm sm:text-base font-medium flex items-center gap-2'
                 onClick={() => toast(t('comingSoon'))}
               >
                 {t('addCustom')}
@@ -324,8 +325,8 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
             </div>
           </div>
 
-          {/* Right Panel - Selected Categories Sidebar */}
-          <div className='w-full lg:w-[40%]'>
+          {/* Right Panel - Sidebar (Desktop only) */}
+          <div className='hidden lg:block w-full lg:w-[40%]'>
             <SelectedCategoriesSidebar
               title={t('selectedTitle')}
               selectedSpecializations={selectedSpecializations}
@@ -347,14 +348,35 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
         </div>
       </div>
 
-      {/* Bottom Buttons */}
-      <div className='flex justify-between mt-6 px-2'>
+      {/* Floating Cart (Mobile/Tablet only) */}
+      <div className='lg:hidden'>
+        <SelectedCategoriesCart
+          title={t('selectedTitle')}
+          selectedSpecializations={selectedSpecializations}
+          maxCategories={MAX_CATEGORIES}
+          onRemove={removeCategory}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
+          draggedIndex={draggedIndex}
+          isDraggable={true}
+          showReorderButton={true}
+          onReorderClick={() => toast(t('comingSoon'))}
+          showInfoCard={true}
+          emptyStateIcon='/icons/services/renovatie.svg'
+          locale={locale}
+          t={t}
+        />
+      </div>
+
+      {/* Bottom Buttons - Add padding to avoid overlap with floating cart on mobile */}
+      <div className='flex justify-between mt-4 sm:mt-6 px-2 sm:px-4 pb-24 sm:pb-28 lg:pb-4'>
         {onBack && (
           <Button
             type='button'
             variant='ghost'
             onClick={onBack}
-            className='px-8 py-5 text-lg rounded-xl font-semibold'
+            className='px-4 sm:px-8 py-2 sm:py-4 text-sm sm:text-base lg:text-lg rounded-xl font-semibold'
             size={null}
           >
             {t('backButton')}
@@ -363,7 +385,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
         <Button
           type='button'
           onClick={handleSubmit}
-          className='px-8 py-5 text-lg rounded-xl font-semibold shadow-lg ml-auto'
+          className='px-4 sm:px-8 py-2 sm:py-4 text-sm sm:text-base lg:text-lg rounded-xl font-semibold shadow-lg ml-auto'
           disabled={selectedSpecializations.length === 0 || isSaving}
           size={null}
         >

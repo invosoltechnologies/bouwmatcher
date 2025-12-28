@@ -27,7 +27,7 @@ export function CategoryPill({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        'px-4.5 py-3 cursor-pointer rounded-full text-base font-medium transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed',
+        'px-2.5 py-2 sm:px-4.5 sm:py-3 cursor-pointer rounded-full text-sm sm:text-base font-medium transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed',
         selected
           ? 'bg-primary text-white'
           : 'bg-white text-slate-900 border border-neutral-300 hover:border-primary',
@@ -44,6 +44,7 @@ export function CategoryPill({
           width={14}
           height={14}
           className={cn(
+            'w-3 h-3 sm:w-3.5 sm:h-3.5',
             selected
               ? 'brightness-0 invert'
               : '[filter:brightness(0)_saturate(100%)_invert(7%)_sepia(8%)_saturate(6422%)_hue-rotate(187deg)_brightness(98%)_contrast(95%)]'
