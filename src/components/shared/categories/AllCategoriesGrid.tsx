@@ -14,6 +14,7 @@ interface AllCategoriesGridProps {
   showLabel?: boolean;
   label?: string;
   columns?: 2 | 3;
+  locale?: string;
 }
 
 export default function AllCategoriesGrid({
@@ -25,11 +26,18 @@ export default function AllCategoriesGrid({
   showLabel = true,
   label = 'Alle vakgebieden',
   columns = 2,
+  locale = 'nl',
 }: AllCategoriesGridProps) {
+  // Get category name based on locale
+  const getCategoryName = (category: ServiceCategory) => {
+    return locale === 'en' ? (category.name_en || category.name_nl) : category.name_nl;
+  };
+
   // Filter categories based on search query
-  const filteredCategories = categories.filter((category) =>
-    category.name_nl.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredCategories = categories.filter((category) => {
+    const name = getCategoryName(category);
+    return name && name.toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
   return (
     <div>
@@ -63,7 +71,7 @@ export default function AllCategoriesGrid({
               {category.icon_url && (
                 <Image
                   src={category.icon_url}
-                  alt={category.name_nl}
+                  alt={getCategoryName(category)}
                   width={24}
                   height={24}
                   className={cn(
@@ -73,7 +81,7 @@ export default function AllCategoriesGrid({
                   )}
                 />
               )}
-              <span className='text-base font-medium flex-1'>{category.name_nl}</span>
+              <span className='text-base font-medium flex-1'>{getCategoryName(category)}</span>
             </button>
           );
         })}

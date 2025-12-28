@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { extractLocationDetails, type GoogleAddressComponent } from '@/lib/utils/address-parser';
+import { useTranslations } from 'next-intl';
 
 interface WorkAreaFormProps {
   onNext: (data: WorkAreaData) => void;
@@ -27,20 +28,22 @@ export interface WorkAreaData {
 }
 
 const RADIUS_OPTIONS = [
-  { value: 10, label: '10 km' },
-  { value: 20, label: '20 km' },
-  { value: 30, label: '30 km' },
-  { value: 50, label: '+50 km' },
-];
+  { value: 10, key: 'radius10' },
+  { value: 20, key: 'radius20' },
+  { value: 30, key: 'radius30' },
+  { value: 50, key: 'radius50' },
+] as const;
 
 function PlacesAutocompleteInput({
   onPlaceSelect,
   inputValue,
   setInputValue,
+  t,
 }: {
   onPlaceSelect: (place: { address: string; lat: number; lng: number; addressComponents?: GoogleAddressComponent[] }) => void;
   inputValue: string;
   setInputValue: (value: string) => void;
+  t: (key: string) => string;
 }) {
   const [suggestions, setSuggestions] = useState<google.maps.places.AutocompletePrediction[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -108,7 +111,7 @@ function PlacesAutocompleteInput({
 
   const handleSearch = () => {
     if (!inputValue.trim()) {
-      toast.error('Voer een locatie in');
+      toast.error(t('enterLocation'));
       return;
     }
 
@@ -128,7 +131,7 @@ function PlacesAutocompleteInput({
           // Auto-select first result
           handleSelectSuggestion(predictions[0].place_id, predictions[0].description);
         } else {
-          toast.error('Geen resultaten gevonden. Probeer een andere zoekopdracht.');
+          toast.error(t('noResults'));
         }
       }
     );
@@ -167,7 +170,7 @@ function PlacesAutocompleteInput({
               handleSearch();
             }
           }}
-          placeholder='Zoek adres of postcode'
+          placeholder={t('searchPlaceholder')}
           className='w-full pl-10 pr-12 py-4 bg-white border border-neutral-300 rounded-lg text-base md:text-lg placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary'
           style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
         />
@@ -342,6 +345,7 @@ function MapComponent({
 }
 
 function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
+  const t = useTranslations('auth.register.workArea');
   const [selectedLocation, setSelectedLocation] = useState<string>(initialData?.location || '');
   const [inputValue, setInputValue] = useState<string>(initialData?.location || '');
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(
@@ -375,11 +379,11 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
         }
       } catch (error) {
         console.error('Error reverse geocoding:', error);
-        toast.error('Fout bij het ophalen van het adres');
+        toast.error(t('addressError'));
       }
       return null;
     },
-    []
+    [t]
   );
 
   // Fetch saved location from database or get current location on initial load
@@ -418,7 +422,7 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
       // No saved location, automatically get current location
       if (navigator.geolocation) {
         setIsLoadingLocation(true);
-        setInputValue('Huidige locatie ophalen...');
+        setInputValue(t('gettingLocation'));
 
         navigator.geolocation.getCurrentPosition(
           async (position) => {
@@ -426,7 +430,7 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
             const lng = position.coords.longitude;
 
             setCoordinates({ lat, lng });
-            setInputValue('Adres ophalen...');
+            setInputValue(t('gettingAddress'));
 
             try {
               const result = await reverseGeocode(lat, lng);
@@ -434,7 +438,7 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
                 setSelectedLocation(result.address);
                 setInputValue(result.address);
                 setAddressComponents(result.addressComponents);
-                toast.success('Je huidige locatie is ingesteld');
+                toast.success(t('locationFound'));
               }
             } catch (error) {
               console.error('Error getting address:', error);
@@ -453,11 +457,11 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
             // Show user-friendly message based on error code
             if (error.code === error.PERMISSION_DENIED) {
               // User denied location access - this is fine, they can enter manually
-              toast('Je kunt je locatie handmatig invoeren', { icon: 'ℹ️' });
+              toast(t('locationPermissionDenied'), { icon: 'ℹ️' });
             } else if (error.code === error.POSITION_UNAVAILABLE) {
-              toast.error('Locatie is niet beschikbaar. Voer handmatig in.');
+              toast.error(t('locationUnavailable'));
             } else if (error.code === error.TIMEOUT) {
-              toast.error('Locatie verzoek verlopen. Voer handmatig in.');
+              toast.error(t('locationTimeout'));
             }
           }
         );
@@ -488,7 +492,7 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
       setCoordinates({ lat, lng });
 
       // Show loading state
-      setInputValue('Adres ophalen...');
+      setInputValue(t('gettingAddress'));
 
       const result = await reverseGeocode(lat, lng);
       if (result) {
@@ -497,16 +501,16 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
         setAddressComponents(result.addressComponents);
       } else {
         setInputValue('');
-        toast.error('Kon adres niet ophalen voor deze locatie');
+        toast.error(t('couldNotGetAddress'));
       }
     },
-    [reverseGeocode]
+    [reverseGeocode, t]
   );
 
   // Handle current location button
   const handleGetCurrentLocation = () => {
     setIsLoadingLocation(true);
-    setInputValue('Huidige locatie ophalen...');
+    setInputValue(t('gettingLocation'));
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -517,7 +521,7 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
           console.log('Got coordinates:', lat, lng);
 
           setCoordinates({ lat, lng });
-          setInputValue('Adres ophalen...');
+          setInputValue(t('gettingAddress'));
 
           try {
             const result = await reverseGeocode(lat, lng);
@@ -527,15 +531,15 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
               setSelectedLocation(result.address);
               setInputValue(result.address);
               setAddressComponents(result.addressComponents);
-              toast.success('Locatie gevonden!');
+              toast.success(t('locationFound'));
             } else {
               setInputValue('');
-              toast.error('Kon geen adres vinden voor deze locatie');
+              toast.error(t('couldNotGetAddress'));
             }
           } catch (error) {
             console.error('Reverse geocode error:', error);
             setInputValue('');
-            toast.error('Fout bij ophalen adres');
+            toast.error(t('addressError'));
           }
 
           setIsLoadingLocation(false);
@@ -543,20 +547,20 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
         (error) => {
           console.error('Error getting location:', error);
           setInputValue('');
-          toast.error('Kon je locatie niet ophalen. Controleer je browser instellingen.');
+          toast.error(t('locationError'));
           setIsLoadingLocation(false);
         }
       );
     } else {
       setInputValue('');
-      toast.error('Geolocatie wordt niet ondersteund door je browser.');
+      toast.error(t('geolocationNotSupported'));
       setIsLoadingLocation(false);
     }
   };
 
   const handleSubmit = async () => {
     if (!selectedLocation || !coordinates) {
-      toast.error('Selecteer eerst een werklocatie');
+      toast.error(t('selectLocation'));
       return;
     }
 
@@ -578,153 +582,161 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
   const defaultCenter = coordinates || { lat: 52.3676, lng: 4.9041 };
 
   return (
-    <div className='w-full max-w-[1400px] mx-auto px-4'>
+    <div className='w-full px-4'>
       {/* Main Card */}
       <div
-        className='bg-white/95 rounded-3xl p-6 lg:p-10'
+        className='bg-white/95 rounded-3xl overflow-hidden'
         style={{ boxShadow: '0px 12px 36px 0px #023AA21F' }}
       >
-        <div className='flex flex-col lg:flex-row gap-8'>
-          {/* Left Panel - Form */}
-          <div className='w-full lg:w-[40%] space-y-13'>
-            <div>
-              <h1 className='text-2xl md:text-4xl font-normal text-slate-900 mb-3'>
-                Waar werk je?
-              </h1>
-              <p className='text-base md:text-lg text-muted-foreground'>
-                Kies je werkbasis en straal. Je kunt dit later altijd aanpassen.
-              </p>
-            </div>
+        {/* Map Panel - Top on mobile, full width */}
+        <div className='w-full h-[300px] sm:h-[350px] lg:h-[450px] overflow-hidden relative'>
+          <Map
+            defaultCenter={defaultCenter}
+            defaultZoom={coordinates ? 11 : 6}
+            mapId='bf51a910020fa25a'
+            gestureHandling='greedy'
+            disableDefaultUI={true}
+            mapTypeId={mapTypeId}
+            clickableIcons={false}
+          >
+            <MapComponent
+              center={coordinates || defaultCenter}
+              mapTypeId={mapTypeId}
+              onClick={handleMapClick}
+              radius={selectedRadius}
+            >
+              {coordinates && (
+                <Marker position={coordinates} title={selectedLocation} />
+              )}
+            </MapComponent>
+          </Map>
 
-            {/* Location Search */}
-            <div className='space-y-3'>
-              <Label className='text-sm md:text-lg text-slate-900'>
-                Je werklocatie
-              </Label>
-              <PlacesAutocompleteInput
-                onPlaceSelect={handlePlaceSelect}
-                inputValue={inputValue}
-                setInputValue={setInputValue}
-              />
-            </div>
+          {/* Top Right Controls */}
+          <div className='absolute top-3 right-3 flex flex-col gap-2'>
+            <button
+              onClick={handleGetCurrentLocation}
+              disabled={isLoadingLocation}
+              className='bg-primary text-white p-2.5 rounded-lg shadow-lg hover:bg-primary/90 transition-colors disabled:opacity-50'
+              title='Gebruik huidige locatie'
+            >
+              {isLoadingLocation ? (
+                <div className='w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin' />
+              ) : (
+                <LocateFixed className='w-5 h-5' />
+              )}
+            </button>
 
-            {/* Radius Selection */}
-            <div className='space-y-3'>
-              <Label className='text-sm md:text-lg text-slate-900'>Straal</Label>
-              <div className='flex flex-wrap gap-3'>
-                {RADIUS_OPTIONS.map((option) => (
-                  <button
-                    key={option.value}
-                    type='button'
-                    onClick={() => setSelectedRadius(option.value)}
-                    className={cn(
-                      'px-6 py-3 cursor-pointer rounded-full text-base font-medium transition-all',
-                      selectedRadius === option.value
-                        ? 'bg-primary text-white'
-                        : 'bg-white text-slate-900 border border-neutral-300 hover:border-primary'
-                    )}
-                    style={
-                      selectedRadius !== option.value
-                        ? { boxShadow: '0px 2px 6.5px 0px #0000001A' }
-                        : undefined
-                    }
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Map Type Toggle */}
+            <button
+              onClick={() =>
+                setMapTypeId((prev) =>
+                  prev === 'roadmap'
+                    ? 'satellite'
+                    : prev === 'satellite'
+                    ? 'terrain'
+                    : 'roadmap'
+                )
+              }
+              className='bg-white text-slate-900 p-2.5 rounded-lg shadow-lg hover:bg-neutral-50 transition-colors'
+              title={`${t('switchToMap')} ${
+                mapTypeId === 'roadmap'
+                  ? t('mapTypeSatellite')
+                  : mapTypeId === 'satellite'
+                  ? t('mapTypeTerrain')
+                  : t('mapTypeRoadmap')
+              }`}
+            >
+              <svg
+                className='w-5 h-5'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7'
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
 
-            {/* Privacy Message - Always visible */}
-            <div className='bg-emerald-50 p-4 border border-accent rounded-md'>
-              <p className='text-base text-emerald-800 flex items-center gap-2'>
-                <Compass className='w-6 h-6' />
-                Jouw exacte adres wordt nooit getoond.
-              </p>
+        {/* Form Panel - Below map */}
+        <div className='p-4 sm:p-6 pt-10 lg:p-8 space-y-6'>
+          {/* Header */}
+          <div className='text-center sm:text-left'>
+            <h1 className='text-2xl sm:text-3xl lg:text-4xl font-normal text-slate-900 mb-2'>
+              {t('heading')}
+            </h1>
+            <p className='text-sm sm:text-base lg:text-lg text-muted-foreground'>
+              {t('description')}
+            </p>
+          </div>
+
+          {/* Location Search */}
+          <div className='space-y-2 sm:space-y-3'>
+            <Label className='text-sm sm:text-base lg:text-lg text-slate-900'>
+              {t('locationLabel')}
+            </Label>
+            <PlacesAutocompleteInput
+              onPlaceSelect={handlePlaceSelect}
+              inputValue={inputValue}
+              setInputValue={setInputValue}
+              t={t}
+            />
+          </div>
+
+          {/* Radius Selection */}
+          <div className='space-y-2 sm:space-y-3'>
+            <Label className='text-sm sm:text-base lg:text-lg text-slate-900'>
+              {t('radiusLabel')}
+            </Label>
+            <div className='flex flex-wrap gap-2 sm:gap-3'>
+              {RADIUS_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type='button'
+                  onClick={() => setSelectedRadius(option.value)}
+                  className={cn(
+                    'px-3.5 sm:px-6 py-2 sm:py-3 cursor-pointer rounded-full text-sm sm:text-base font-medium transition-all',
+                    selectedRadius === option.value
+                      ? 'bg-primary text-white'
+                      : 'bg-white text-slate-900 border border-neutral-300 hover:border-primary'
+                  )}
+                  style={
+                    selectedRadius !== option.value
+                      ? { boxShadow: '0px 2px 6.5px 0px #0000001A' }
+                      : undefined
+                  }
+                >
+                  {t(option.key)}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Right Panel - Map */}
-          <div className='w-full lg:w-[60%] h-[450px] lg:h-[500px] rounded-2xl overflow-hidden relative'>
-            <Map
-              defaultCenter={defaultCenter}
-              defaultZoom={coordinates ? 11 : 6}
-              mapId='bf51a910020fa25a'
-              gestureHandling='greedy'
-              disableDefaultUI={true}
-              mapTypeId={mapTypeId}
-              clickableIcons={false}
-            >
-              <MapComponent
-                center={coordinates || defaultCenter}
-                mapTypeId={mapTypeId}
-                onClick={handleMapClick}
-                radius={selectedRadius}
-              >
-                {coordinates && (
-                  <Marker position={coordinates} title={selectedLocation} />
-                )}
-              </MapComponent>
-            </Map>
-
-            {/* Top Right Controls */}
-            <div className='absolute top-3 right-3 flex flex-col gap-2'>
-              <button
-                onClick={handleGetCurrentLocation}
-                disabled={isLoadingLocation}
-                className='bg-primary text-white p-2.5 rounded-lg shadow-lg hover:bg-primary/90 transition-colors disabled:opacity-50'
-                title='Gebruik huidige locatie'
-              >
-                {isLoadingLocation ? (
-                  <div className='w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin' />
-                ) : (
-                  <LocateFixed className='w-5 h-5' />
-                )}
-              </button>
-
-              {/* Map Type Toggle */}
-              <button
-                onClick={() =>
-                  setMapTypeId((prev) =>
-                    prev === 'roadmap'
-                      ? 'satellite'
-                      : prev === 'satellite'
-                        ? 'terrain'
-                        : 'roadmap'
-                  )
-                }
-                className='bg-white text-slate-900 p-2.5 rounded-lg shadow-lg hover:bg-neutral-50 transition-colors'
-                title={`Schakel naar ${mapTypeId === 'roadmap' ? 'satelliet' : mapTypeId === 'satellite' ? 'terrein' : 'kaart'}`}
-              >
-                <svg
-                  className='w-5 h-5'
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7'
-                  />
-                </svg>
-              </button>
-            </div>
+          {/* Privacy Message - Always visible */}
+          <div className='bg-emerald-50 p-3 sm:p-4 border border-accent rounded-md'>
+            <p className='text-sm sm:text-base text-emerald-800 flex items-start gap-2'>
+              <Compass className='w-5 h-5 sm:w-6 sm:h-6 shrink-0 mt-0.5' />
+              <span>{t('privacyMessage')}</span>
+            </p>
           </div>
         </div>
       </div>
 
       {/* Bottom Button */}
-      <div className='flex justify-end mt-6 px-2'>
+      <div className='flex justify-end mt-4 sm:mt-6 px-4'>
         <Button
           type='button'
           onClick={handleSubmit}
-          className='px-8 py-5 text-lg rounded-xl font-semibold shadow-lg'
+          className='px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-xl font-semibold shadow-lg'
           disabled={!selectedLocation || !coordinates}
           size={null}
         >
-          Naar vakgebieden →
+          {t('submitButton')}
         </Button>
       </div>
     </div>

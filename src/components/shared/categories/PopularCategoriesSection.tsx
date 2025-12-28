@@ -11,6 +11,7 @@ interface PopularCategoriesSectionProps {
   disabled?: boolean;
   showLabel?: boolean;
   label?: string;
+  locale?: string;
 }
 
 export default function PopularCategoriesSection({
@@ -20,7 +21,13 @@ export default function PopularCategoriesSection({
   disabled = false,
   showLabel = true,
   label = 'Populaire keuzes',
+  locale = 'nl',
 }: PopularCategoriesSectionProps) {
+  // Get category name based on locale
+  const getCategoryName = (category: ServiceCategory) => {
+    return locale === 'en' ? (category.name_en || category.name_nl) : category.name_nl;
+  };
+
   return (
     <div>
       {showLabel && (
@@ -31,7 +38,7 @@ export default function PopularCategoriesSection({
           <CategoryPill
             key={category.id}
             id={category.id}
-            name={category.name_nl}
+            name={getCategoryName(category)}
             icon={category.icon_url}
             selected={selectedIds.includes(category.id)}
             onClick={() => !disabled && onToggle(category.id)}

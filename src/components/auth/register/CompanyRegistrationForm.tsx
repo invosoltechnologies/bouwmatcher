@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Search } from 'lucide-react';
 import { useDebounce } from '@/hooks';
+import { useTranslations } from 'next-intl';
 
 interface CompanySearchResult {
   name: string;
@@ -42,6 +43,7 @@ export interface CompanyData {
 type FormMode = 'search' | 'manual';
 
 export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegistrationFormProps) {
+  const t = useTranslations('auth.register.companyRegistration');
   const [mode, setMode] = useState<FormMode>('search');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<CompanySearchResult[]>([]);
@@ -153,10 +155,10 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
       {/* Header */}
       <div className='mb-11.5 mt-5.5 text-center'>
         <h1 className='text-2xl md:text-4xl font-normal text-slate-900 mb-3'>
-          Kies je bedrijf
+          {t('heading')}
         </h1>
         <p className='text-base md:text-lg text-muted-foreground'>
-          Zoek op bedrijfsnaam of Bedrijfs ID
+          {t('description')}
         </p>
       </div>
 
@@ -170,13 +172,13 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
           <div className='flex items-center space-x-2'>
             <RadioGroupItem value='NL' id='nl' />
             <Label htmlFor='nl' className='text-base font-medium cursor-pointer'>
-              Nederland
+              {t('countryNL')}
             </Label>
           </div>
           <div className='flex items-center space-x-2'>
             <RadioGroupItem value='BE' id='be' />
             <Label htmlFor='be' className='text-base font-medium cursor-pointer'>
-              België
+              {t('countryBE')}
             </Label>
           </div>
         </RadioGroup>
@@ -194,7 +196,7 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
               type='text'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder='Typ je bedrijfsnaam of bedrijfs ID…'
+              placeholder={t('searchPlaceholder')}
               className='pl-6 pr-12 h-16 bg-white border-gray-200 rounded-2xl lg:text-lg placeholder:text-slate-400'
             />
             <Search className='absolute right-8 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none' />
@@ -227,7 +229,7 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
                     className='px-6 py-2.5 text-base rounded-xl font-semibold ml-4 shrink-0'
                     size={null}
                   >
-                    Dit is mijn bedrijf →
+                    {t('selectCompanyButton')}
                   </Button>
                 </div>
               ))}
@@ -242,14 +244,14 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
                 onClick={handleManualEntry}
                 className='text-primary text-base lg:text-lg font-medium hover:text-primary/80 hover:underline'
               >
-                Ik vind mijn bedrijf niet.
+                {t('notFoundButton')}
               </button>
             </div>
           )}
 
           {/* Loading indicator */}
           {isSearching && (
-            <div className='mt-6 text-center text-slate-500'>Zoeken...</div>
+            <div className='mt-6 text-center text-slate-500'>{t('searching')}</div>
           )}
         </div>
       )}
@@ -265,15 +267,15 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
                 htmlFor='companyName'
                 className='text-base text-slate-900 mb-2 block'
               >
-                Bedrijfsnaam
+                {t('companyNameLabel')}
               </Label>
               <Input
                 id='companyName'
                 {...register('companyName', {
-                  required: 'Bedrijfsnaam is verplicht',
+                  required: t('companyNameRequired'),
                 })}
                 type='text'
-                placeholder='Big Gym'
+                placeholder={t('companyNamePlaceholder')}
                 className='h-14 bg-white border-neutral-300 rounded-lg text-base'
               />
               {errors.companyName && (
@@ -289,24 +291,24 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
                 htmlFor='kvkNumber'
                 className='text-base text-slate-900 mb-2 block'
               >
-                {country === 'BE' ? 'Ondernemingsnummer (KBO)' : 'Bedrijfs ID (KVK)'}
+                {country === 'BE' ? t('kboLabel') : t('kvkLabel')}
               </Label>
               <Input
                 id='kvkNumber'
                 {...register('kvkNumber', {
-                  required: `${country === 'BE' ? 'Ondernemingsnummer' : 'Bedrijfs ID'} is verplicht`,
+                  required: country === 'BE' ? t('kboRequired') : t('kvkRequired'),
                   pattern: country === 'BE'
                     ? {
                         value: /^\d{10}$/,
-                        message: 'Ondernemingsnummer moet 10 cijfers zijn',
+                        message: t('kboInvalid'),
                       }
                     : {
                         value: /^\d{8}$/,
-                        message: 'Bedrijfs ID moet 8 cijfers zijn',
+                        message: t('kvkInvalid'),
                       },
                 })}
                 type='text'
-                placeholder={country === 'BE' ? '0123456789' : '12345678'}
+                placeholder={country === 'BE' ? t('kboPlaceholder') : t('kvkPlaceholder')}
                 maxLength={country === 'BE' ? 10 : 8}
                 className='h-14 bg-white border-neutral-300 rounded-lg text-base'
               />
@@ -317,7 +319,7 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
               )}
               {country === 'BE' && (
                 <p className='text-sm text-slate-500 mt-1'>
-                  Formaat: 0123456789 (10 cijfers)
+                  {t('kboFormat')}
                 </p>
               )}
             </div>
@@ -329,15 +331,15 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
                   htmlFor='postalCode'
                   className='text-base text-slate-900 mb-2 block'
                 >
-                  Postcode
+                  {t('postalCodeLabel')}
                 </Label>
                 <Input
                   id='postalCode'
                   {...register('postalCode', {
-                    required: 'Postcode is verplicht',
+                    required: t('postalCodeRequired'),
                   })}
                   type='text'
-                  placeholder='1234 AB'
+                  placeholder={t('postalCodePlaceholder')}
                   className='h-14 bg-white border-neutral-300 rounded-lg text-base'
                 />
                 {errors.postalCode && (
@@ -352,15 +354,15 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
                   htmlFor='houseNumber'
                   className='text-base text-slate-900 mb-2 block'
                 >
-                  Huisnummer
+                  {t('houseNumberLabel')}
                 </Label>
                 <Input
                   id='houseNumber'
                   {...register('houseNumber', {
-                    required: 'Huisnummer is verplicht',
+                    required: t('houseNumberRequired'),
                   })}
                   type='text'
-                  placeholder='123'
+                  placeholder={t('houseNumberPlaceholder')}
                   className='h-14 bg-white border-neutral-300 rounded-lg text-base'
                 />
                 {errors.houseNumber && (
@@ -377,15 +379,15 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
                 htmlFor='street'
                 className='text-base text-slate-900 mb-2 block'
               >
-                Straatnaam
+                {t('streetLabel')}
               </Label>
               <Input
                 id='street'
                 {...register('street', {
-                  required: 'Straatnaam is verplicht',
+                  required: t('streetRequired'),
                 })}
                 type='text'
-                placeholder='Straatnaam'
+                placeholder={t('streetPlaceholder')}
                 className='h-14 bg-white border-neutral-300 rounded-lg text-base'
               />
               {errors.street && (
@@ -401,15 +403,15 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
                 htmlFor='city'
                 className='text-base text-slate-900 mb-2 block'
               >
-                Plaats
+                {t('cityLabel')}
               </Label>
               <Input
                 id='city'
                 {...register('city', {
-                  required: 'Plaats is verplicht',
+                  required: t('cityRequired'),
                 })}
                 type='text'
-                placeholder='Amsterdam'
+                placeholder={t('cityPlaceholder')}
                 className='h-14 bg-white border-neutral-300 rounded-lg text-base'
               />
               {errors.city && (
@@ -429,14 +431,14 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
               className='text-lg rounded-xl font-semibold'
 
             >
-              ← Terug
+              {t('backButton')}
             </Button>
             <Button
               type='submit'
               className='px-8 py-5 text-lg rounded-xl font-semibold shadow-lg'
               size={null}
             >
-              Naar persoonsgegevens →
+              {t('submitButton')}
             </Button>
           </div>
         </form>
@@ -451,7 +453,7 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
             onClick={handleBack}
             className='text-lg rounded-xl font-semibold'
           >
-            ← Terug
+            {t('backButton')}
           </Button>
         </div>
       )}

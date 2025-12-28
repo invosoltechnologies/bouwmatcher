@@ -8,6 +8,7 @@ import CategorySearch from '@/components/shared/categories/CategorySearch';
 import PopularCategoriesSection from '@/components/shared/categories/PopularCategoriesSection';
 import AllCategoriesGrid from '@/components/shared/categories/AllCategoriesGrid';
 import SelectedCategoriesSidebar from '@/components/shared/categories/SelectedCategoriesSidebar';
+import { useTranslations, useLocale } from 'next-intl';
 import type { ServiceCategory, ProfessionalSpecialization } from '@/types/categories';
 
 interface ServiceCategoriesFormProps {
@@ -25,6 +26,8 @@ const MAX_CATEGORIES = 6;
 const POPULAR_SLUGS = ['schilderwerk', 'loodgieter', 'elektricien'];
 
 export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategoriesFormProps) {
+  const t = useTranslations('auth.register.serviceCategories');
+  const locale = useLocale();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [categories, setCategories] = useState<ServiceCategory[]>([]);
   const [popularCategories, setPopularCategories] = useState<ServiceCategory[]>([]);
@@ -59,7 +62,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
         setAllCategories(all);
       } catch (error) {
         console.error('Error fetching categories:', error);
-        toast.error('Kon vakgebieden niet laden');
+        toast.error(t('loadingError'));
       } finally {
         setIsLoading(false);
       }
@@ -87,7 +90,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
         setSelectedSpecializations(specializations || []);
       } catch (error) {
         console.error('Error fetching specializations:', error);
-        toast.error('Kon geselecteerde vakgebieden niet laden');
+        toast.error(t('loadingSpecializations'));
       }
     };
 
@@ -119,17 +122,17 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
 
         // Update UI after successful deletion
         setSelectedSpecializations((prev) => prev.filter((s) => s.id !== spec.id));
-        toast.success('Vakgebied verwijderd');
+        toast.success(t('categoryRemoved'));
       } catch (error) {
         console.error('Error deleting specialization:', error);
-        toast.error('Kon vakgebied niet verwijderen');
+        toast.error(t('removeError'));
       } finally {
         setIsSaving(false);
       }
     } else {
       // Add category (check max limit)
       if (selectedSpecializations.length >= MAX_CATEGORIES) {
-        toast.error(`Je kunt maximaal ${MAX_CATEGORIES} vakgebieden selecteren`);
+        toast.error(t('maxCategoriesError', { maxCategories: MAX_CATEGORIES }));
         return;
       }
 
@@ -153,10 +156,10 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
 
         // Update UI after successful addition
         setSelectedSpecializations((prev) => [...prev, specialization]);
-        toast.success('Vakgebied toegevoegd');
+        toast.success(t('categoryAdded'));
       } catch (error) {
         console.error('Error adding specialization:', error);
-        toast.error('Kon vakgebied niet toevoegen');
+        toast.error(t('addError'));
       } finally {
         setIsSaving(false);
       }
@@ -177,10 +180,10 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
 
       // Update UI after successful deletion
       setSelectedSpecializations((prev) => prev.filter((s) => s.id !== specializationId));
-      toast.success('Vakgebied verwijderd');
+      toast.success(t('categoryRemoved'));
     } catch (error) {
       console.error('Error deleting specialization:', error);
-      toast.error('Kon vakgebied niet verwijderen');
+      toast.error(t('removeError'));
     } finally {
       setIsSaving(false);
     }
@@ -225,10 +228,10 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
         throw new Error('Failed to update priorities');
       }
 
-      toast.success('Volgorde bijgewerkt');
+      toast.success(t('orderUpdated'));
     } catch (error) {
       console.error('Error updating priorities:', error);
-      toast.error('Kon volgorde niet bijwerken');
+      toast.error(t('orderError'));
     } finally {
       setIsSaving(false);
     }
@@ -236,7 +239,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
 
   const handleSubmit = () => {
     if (selectedSpecializations.length === 0) {
-      toast.error('Selecteer minimaal 1 vakgebied');
+      toast.error(t('minCategoriesError'));
       return;
     }
 
@@ -248,22 +251,21 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
 
   // Show loader while fetching initial data
   if (isLoading) {
-    return <Loader fullScreen text='Vakgebieden laden...' />;
+    return <Loader fullScreen text={t('loadingCategories')} />;
   }
 
   return (
     <div className='custom-container'>
       {/* Full Screen Loader for saving operations */}
-      {isSaving && <Loader fullScreen text='Bezig met opslaan...' />}
+      {isSaving && <Loader fullScreen text={t('saving')} />}
 
       {/* Header */}
       <div className='mb-11.5 mt-5.5 text-center'>
         <h1 className='text-2xl md:text-4xl font-normal text-slate-900 mb-3'>
-          Wat zijn je vakgebieden?
+          {t('heading')}
         </h1>
         <p className='text-base md:text-lg text-muted-foreground'>
-          Selecteer maximaal {MAX_CATEGORIES} gewenste vakgebieden. Je kunt er
-          later meer toevoegen.
+          {t('description', { maxCategories: MAX_CATEGORIES })}
         </p>
       </div>
 
@@ -279,7 +281,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
             <CategorySearch
               value={searchQuery}
               onChange={setSearchQuery}
-              placeholder='Zoek vakgebied...'
+              placeholder={t('searchPlaceholder')}
               isDropdown={false}
               isListFiltered={true}
             />
@@ -292,7 +294,8 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
                 onToggle={toggleCategory}
                 disabled={isSaving}
                 showLabel={true}
-                label='Populaire keuzes'
+                label={t('popularLabel')}
+                locale={locale}
               />
             )}
 
@@ -304,8 +307,9 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
               searchQuery={searchQuery}
               disabled={isSaving}
               showLabel={true}
-              label='Alle vakgebieden'
+              label={t('allLabel')}
               columns={2}
+              locale={locale}
             />
 
             {/* Add custom option */}
@@ -313,9 +317,9 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
               <button
                 type='button'
                 className='text-primary hover:text-primary/80 text-base font-medium flex items-center gap-2'
-                onClick={() => toast('Vak voorstellen functie komt binnenkort')}
+                onClick={() => toast(t('comingSoon'))}
               >
-                + Mis je een vak? → Vak voorstellen
+                {t('addCustom')}
               </button>
             </div>
           </div>
@@ -323,7 +327,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
           {/* Right Panel - Selected Categories Sidebar */}
           <div className='w-full lg:w-[40%]'>
             <SelectedCategoriesSidebar
-              title='Gekozen vakgebieden'
+              title={t('selectedTitle')}
               selectedSpecializations={selectedSpecializations}
               maxCategories={MAX_CATEGORIES}
               onRemove={removeCategory}
@@ -333,9 +337,11 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
               draggedIndex={draggedIndex}
               isDraggable={true}
               showReorderButton={true}
-              onReorderClick={() => toast('Volgorde opnieuw instellen')}
+              onReorderClick={() => toast(t('comingSoon'))}
               showInfoCard={true}
               emptyStateIcon='/icons/services/renovatie.svg'
+              locale={locale}
+              t={t}
             />
           </div>
         </div>
@@ -351,7 +357,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
             className='px-8 py-5 text-lg rounded-xl font-semibold'
             size={null}
           >
-            ← Terug
+            {t('backButton')}
           </Button>
         )}
         <Button
@@ -361,7 +367,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
           disabled={selectedSpecializations.length === 0 || isSaving}
           size={null}
         >
-          {isSaving ? 'Opslaan...' : 'Naar extra vakgebieden →'}
+          {isSaving ? t('submitting') : t('submitButton')}
         </Button>
       </div>
     </div>

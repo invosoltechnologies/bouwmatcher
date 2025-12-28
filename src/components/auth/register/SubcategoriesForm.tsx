@@ -7,6 +7,7 @@ import { Loader } from '@/components/ui/loader';
 import CategoryFilterBar from '@/components/shared/categories/CategoryFilterBar';
 import GradientCountBar from '@/components/shared/categories/GradientCountBar';
 import SubcategoryAccordion from '@/components/shared/categories/SubcategoryAccordion';
+import { useTranslations } from 'next-intl';
 import type { ServiceCategoryWithSubcategories, ServiceSubcategory } from '@/types/categories';
 
 interface SubcategoriesFormProps {
@@ -19,6 +20,7 @@ export interface SubcategoriesData {
 }
 
 export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormProps) {
+  const t = useTranslations('auth.register.subcategories');
   const [categories, setCategories] = useState<ServiceCategoryWithSubcategories[]>([]);
   const [selectedSubcategories, setSelectedSubcategories] = useState<Set<number>>(new Set());
   const [selectedCategoryFilters, setSelectedCategoryFilters] = useState<Set<number>>(new Set());
@@ -42,7 +44,7 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
         const { specializations } = await specializationsResponse.json();
 
         if (!specializations || specializations.length === 0) {
-          toast.error('Geen vakgebieden gevonden. Ga terug naar stap 3.');
+          toast.error(t('noCategoriesError'));
           return;
         }
 
@@ -114,7 +116,7 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
         setOpenAccordions(categoriesArray.map(cat => cat.id.toString()));
       } catch (error) {
         console.error('Error fetching data:', error);
-        toast.error('Kon gegevens niet laden');
+        toast.error(t('loadingError'));
       } finally {
         setIsLoading(false);
       }
@@ -180,7 +182,7 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
 
   const handleSubmit = () => {
     if (selectedSubcategories.size === 0) {
-      toast.error('Selecteer minimaal 1 onderdeel');
+      toast.error(t('minSubcategoriesError'));
       return;
     }
 
@@ -208,24 +210,24 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
 
   // Show loader while fetching initial data
   if (isLoading) {
-    return <Loader fullScreen text='Onderdelen laden...' />;
+    return <Loader fullScreen text={t('loadingSubcategories')} />;
   }
 
   return (
     <div className='custom-container'>
       {/* Full Screen Loader for saving operations */}
-      {isSaving && <Loader fullScreen text='Bezig met opslaan...' />}
+      {isSaving && <Loader fullScreen text={t('saving')} />}
 
       {/* Header */}
       <div className='mb-11.5 mt-5.5 text-center'>
         <h1 className='text-2xl md:text-4xl font-normal text-slate-900 mb-3'>
-          Opdrachten die we graag ontvangen zijn...
+          {t('heading')}
         </h1>
         <p className='text-base md:text-lg text-muted-foreground'>
-          Selecteer de type projecten binnen je vakgebieden.
+          {t('description')}
         </p>
         <p className='text-sm text-muted-foreground mt-1'>
-          Je kunt altijd meer vakgebieden/type je wilt ontvangen.
+          {t('additionalInfo')}
         </p>
       </div>
 
@@ -242,8 +244,8 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
           showSearch={true}
           searchValue={searchQuery}
           onSearchChange={setSearchQuery}
-          searchPlaceholder='Zoek opdrachttypes...'
-          label='Jouw vakgebieden:'
+          searchPlaceholder={t('searchPlaceholder')}
+          label={t('yourCategories')}
           showLabel={true}
         />
 
@@ -254,7 +256,7 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
           onDeselectAll={deselectAllSubcategories}
           showLimit={true}
           showDeselectButton={true}
-          label='geselecteerd'
+          label={t('selectedLabel')}
         />
 
         {/* Accordion Section with Subcategories */}
@@ -282,7 +284,7 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
             className='px-8 py-5 text-lg rounded-xl font-semibold'
             size={null}
           >
-            ← Terug
+            {t('backButton')}
           </Button>
         )}
         <Button
@@ -292,7 +294,7 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
           disabled={selectedSubcategories.size === 0 || isSaving}
           size={null}
         >
-          {isSaving ? 'Opslaan...' : 'Naar bedrijfsgegevens →'}
+          {isSaving ? t('submitting') : t('submitButton')}
         </Button>
       </div>
     </div>

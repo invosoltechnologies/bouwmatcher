@@ -2,6 +2,7 @@
 
 import { Check } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 
 type StepStatus = 'completed' | 'in-progress' | 'default';
 
@@ -17,13 +18,14 @@ interface RegistrationStepsProps {
 
 export default function RegistrationSteps({ currentStep }: RegistrationStepsProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations('auth.register.steps');
 
   const steps: Step[] = [
-    { number: 1, label: 'Persoonsgegevens', status: 'default' },
-    { number: 2, label: 'Werkgebied', status: 'default' },
-    { number: 3, label: 'Vakgebieden', status: 'default' },
-    { number: 4, label: 'Extra vakgebieden', status: 'default' },
-    { number: 5, label: 'Bedrijf registreren', status: 'default' },
+    { number: 1, label: t('personalInfo'), status: 'default' },
+    { number: 2, label: t('workArea'), status: 'default' },
+    { number: 3, label: t('specializations'), status: 'default' },
+    { number: 4, label: t('extraSpecializations'), status: 'default' },
+    { number: 5, label: t('registerCompany'), status: 'default' },
   ];
 
   // Update step statuses based on current step
