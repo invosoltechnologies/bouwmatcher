@@ -23,6 +23,7 @@ interface SelectedCategoriesCartProps {
   emptyStateIcon?: string;
   locale?: string;
   t?: (key: string) => string;
+  onProceed?: () => void;
 }
 
 export default function SelectedCategoriesCart({
@@ -41,6 +42,7 @@ export default function SelectedCategoriesCart({
   emptyStateIcon = '/icons/services/renovatie.svg',
   locale = 'nl',
   t,
+  onProceed,
 }: SelectedCategoriesCartProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -182,7 +184,7 @@ export default function SelectedCategoriesCart({
                 {/* Selected Items or Empty State */}
                 {count > 0 ? (
                   <div className='space-y-3'>
-                    <div className='space-y-2'>
+                    <div className='space-y-2 select-none'>
                       {selectedSpecializations.map((spec, index) => {
                         const isDragging = draggedIndex === index;
                         return (
@@ -208,13 +210,13 @@ export default function SelectedCategoriesCart({
                                 e.currentTarget.style.cursor = 'grab';
                               }
                             }}
-                            onTouchStart={(e) => {
+                            onTouchMove={(e) => {
                               if (isDraggable) {
-                                e.currentTarget.style.cursor = 'grabbing';
+                                e.preventDefault();
                               }
                             }}
                             className={cn(
-                              'bg-teal-50 border-2 border-accent border-dashed rounded-xl p-3 sm:p-4 flex items-center gap-3 transition-all touch-none',
+                              'bg-teal-50 border-2 border-accent border-dashed rounded-xl p-3 sm:p-4 flex items-center gap-3 transition-all',
                               isDraggable &&
                                 'cursor-grab active:cursor-grabbing',
                               isDragging && 'opacity-50'
@@ -298,7 +300,13 @@ export default function SelectedCategoriesCart({
               <div className='border-t border-neutral-200 p-4 sm:p-5 bg-white'>
                 <button
                   type='button'
-                  onClick={() => setIsExpanded(false)}
+                  onClick={() => {
+                    if (onProceed) {
+                      onProceed();
+                    } else {
+                      setIsExpanded(false);
+                    }
+                  }}
                   className='w-full bg-primary text-white px-6 py-3 rounded-xl font-semibold text-sm sm:text-base hover:bg-primary/90 transition-colors'
                 >
                   {t ? t('submitButton') : 'Doorgaan'}

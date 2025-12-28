@@ -7,7 +7,7 @@ import { Loader } from '@/components/ui/loader';
 import CategoryFilterBar from '@/components/shared/categories/CategoryFilterBar';
 import GradientCountBar from '@/components/shared/categories/GradientCountBar';
 import SubcategoryAccordion from '@/components/shared/categories/SubcategoryAccordion';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import type { ServiceCategoryWithSubcategories, ServiceSubcategory } from '@/types/categories';
 
 interface SubcategoriesFormProps {
@@ -21,6 +21,7 @@ export interface SubcategoriesData {
 
 export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormProps) {
   const t = useTranslations('auth.register.subcategories');
+  const locale = useLocale();
   const [categories, setCategories] = useState<ServiceCategoryWithSubcategories[]>([]);
   const [selectedSubcategories, setSelectedSubcategories] = useState<Set<number>>(new Set());
   const [selectedCategoryFilters, setSelectedCategoryFilters] = useState<Set<number>>(new Set());
@@ -84,6 +85,7 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
             id: number;
             slug: string;
             name_nl: string;
+            name_en?: string | null;
             icon_url: string | null;
           };
         }) => {
@@ -91,6 +93,7 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
             id: spec.service_categories.id,
             slug: spec.service_categories.slug,
             name_nl: spec.service_categories.name_nl,
+            name_en: spec.service_categories.name_en,
             icon_url: spec.service_categories.icon_url,
             subcategories: [],
           });
@@ -192,6 +195,11 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
     });
   };
 
+  // Helper function to get subcategory name based on locale
+  const getSubcategoryName = (sub: ServiceSubcategory) => {
+    return locale === 'en' ? (sub.name_en || sub.name_nl) : sub.name_nl;
+  };
+
   // Filter categories based on category filter pills and search
   const filteredCategories = categories
     .filter((category) => {
@@ -203,7 +211,7 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
     .map((category) => ({
       ...category,
       subcategories: category.subcategories.filter((sub) =>
-        sub.name_nl.toLowerCase().includes(searchQuery.toLowerCase())
+        getSubcategoryName(sub).toLowerCase().includes(searchQuery.toLowerCase())
       ),
     }))
     .filter((category) => category.subcategories.length > 0);
@@ -214,26 +222,26 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
   }
 
   return (
-    <div className='custom-container'>
+    <div className='md:custom-container'>
       {/* Full Screen Loader for saving operations */}
       {isSaving && <Loader fullScreen text={t('saving')} />}
 
       {/* Header */}
-      <div className='mb-11.5 mt-5.5 text-center'>
-        <h1 className='text-2xl md:text-4xl font-normal text-slate-900 mb-3'>
+      <div className='mb-6 sm:mb-8 lg:mb-11.5 mt-4 sm:mt-5 lg:mt-5.5 text-center px-4 sm:px-0'>
+        <h1 className='text-2xl sm:text-3xl lg:text-4xl font-normal text-slate-900 mb-2 sm:mb-3'>
           {t('heading')}
         </h1>
-        <p className='text-base md:text-lg text-muted-foreground'>
+        <p className='text-sm sm:text-base lg:text-lg text-muted-foreground'>
           {t('description')}
         </p>
-        <p className='text-sm text-muted-foreground mt-1'>
+        <p className='text-xs sm:text-sm text-muted-foreground mt-1'>
           {t('additionalInfo')}
         </p>
       </div>
 
       {/* Main Card */}
       <div
-        className='bg-white/95 rounded-3xl overflow-hidden'
+        className='bg-white/95 rounded-3xl overflow-hidden mx-2 sm:mx-0'
         style={{ boxShadow: '0px 12px 36px 0px #023AA21F' }}
       >
         {/* Category Filter Pills and Search */}
@@ -247,6 +255,7 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
           searchPlaceholder={t('searchPlaceholder')}
           label={t('yourCategories')}
           showLabel={true}
+          locale={locale}
         />
 
         {/* Gradient Bar with Selected Count */}
@@ -260,7 +269,7 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
         />
 
         {/* Accordion Section with Subcategories */}
-        <div className='p-6 lg:p-8 pt-6'>
+        <div className='p-4 sm:p-6 lg:p-8 pt-4 sm:pt-6'>
           <SubcategoryAccordion
             categories={filteredCategories}
             selectedSubcategoryIds={selectedSubcategories}
@@ -270,18 +279,19 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
             onAccordionChange={setOpenAccordions}
             showPrices={true}
             searchQuery={searchQuery}
+            locale={locale}
           />
         </div>
       </div>
 
       {/* Bottom Buttons */}
-      <div className='flex justify-between mt-6 px-2'>
+      <div className='flex justify-between mt-4 sm:mt-6 px-2 sm:px-4'>
         {onBack && (
           <Button
             type='button'
             variant='ghost'
             onClick={onBack}
-            className='px-8 py-5 text-lg rounded-xl font-semibold'
+            className='px-4 sm:px-8 py-2 sm:py-4 text-sm sm:text-base lg:text-lg rounded-xl font-semibold'
             size={null}
           >
             {t('backButton')}
@@ -290,7 +300,7 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
         <Button
           type='button'
           onClick={handleSubmit}
-          className='px-8 py-5 text-lg rounded-xl font-semibold shadow-lg ml-auto'
+          className='px-4 sm:px-8 py-4 sm:py-4 text-sm sm:text-base lg:text-lg rounded-xl font-semibold shadow-lg ml-auto'
           disabled={selectedSubcategories.size === 0 || isSaving}
           size={null}
         >

@@ -366,6 +366,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
           emptyStateIcon='/icons/services/renovatie.svg'
           locale={locale}
           t={t}
+          onProceed={handleSubmit}
         />
       </div>
 
@@ -385,7 +386,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
         <Button
           type='button'
           onClick={handleSubmit}
-          className='px-4 sm:px-8 py-2 sm:py-4 text-sm sm:text-base lg:text-lg rounded-xl font-semibold shadow-lg ml-auto'
+          className='px-4 sm:px-8 py-4 sm:py-4 text-sm sm:text-base lg:text-lg rounded-xl font-semibold shadow-lg ml-auto'
           disabled={selectedSpecializations.length === 0 || isSaving}
           size={null}
         >
