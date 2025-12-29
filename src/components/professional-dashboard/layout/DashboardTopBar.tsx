@@ -4,7 +4,6 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Menu } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import MobileSidebar from './MobileSidebar';
 
 export default function DashboardTopBar() {
@@ -28,24 +27,22 @@ export default function DashboardTopBar() {
       <div className="bg-white border-b border-slate-200 px-6 py-4">
         <div className="flex items-center justify-between gap-4">
           <div className="flex-1">
-            <h1 className="text-2xl leading-tight text-secondary-foreground">
+            <h1 className="text-base md:text-2xl leading-tight text-secondary-foreground">
               {pageTitle}
             </h1>
-            <p className="text-base text-muted-foreground leading-normal font-montserrat">
+            <p className="text-xs md:text-base text-muted-foreground leading-normal font-montserrat">
               {pageDescription}
             </p>
           </div>
 
           {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden"
+          <button
             onClick={() => setMobileMenuOpen(true)}
+            className="lg:hidden p-2 text-primary hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Open menu"
           >
-            <Menu className="h-6 w-6" />
-            <span className="sr-only">Open menu</span>
-          </Button>
+            <Menu className="w-6 h-6" />
+          </button>
         </div>
       </div>
 

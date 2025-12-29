@@ -20,7 +20,7 @@ export default function SidebarLanguageSwitcher() {
   };
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center ">
       <div
         className="bg-slate-50 border border-slate-200 rounded-full p-1 flex gap-1"
       >
@@ -28,7 +28,7 @@ export default function SidebarLanguageSwitcher() {
           <button
             key={lang}
             onClick={() => switchLanguage(lang)}
-            className={`px-4 py-2 text-sm font-medium rounded-full transition-all ${
+            className={`px-4 cursor-pointer py-2 text-sm font-medium rounded-full transition-all ${
               locale === lang
                 ? 'bg-white text-primary shadow-sm'
                 : 'text-neutral-600 hover:text-neutral-900'

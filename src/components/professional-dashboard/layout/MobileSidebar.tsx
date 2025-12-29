@@ -14,6 +14,7 @@ import {
   Sheet,
   SheetContent,
   SheetClose,
+  SheetTitle,
 } from '@/components/ui/sheet';
 import SidebarLanguageSwitcher from './SidebarLanguageSwitcher';
 import UserProfile from './UserProfile';
@@ -77,23 +78,24 @@ export default function MobileSidebar({ open, onOpenChange }: MobileSidebarProps
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="left" className="w-[280px] p-0 flex flex-col" showCloseButton={false}>
+      <SheetContent side="right" className="w-[280px] p-0 flex flex-col" showCloseButton={true}>
+        <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
         {/* Logo */}
-        <div className="px-6 py-6 border-b border-slate-200">
+        <div className="px-4 py-4 border-b border-slate-200">
           <Link href="/" onClick={() => onOpenChange(false)}>
             <Image
               src="/images/logo.svg"
               alt="Bouwmatcher"
-              width={140}
-              height={40}
-              className="h-10 w-auto"
+              width={120}
+              height={32}
+              className="h-8 w-auto"
             />
           </Link>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-6 overflow-y-auto">
-          <ul className="space-y-2">
+        <nav className="flex-1 px-3 py-4 overflow-y-auto">
+          <ul className="space-y-1">
             {dashboardNavigation.map((item) => {
               const isActive = pathname === item.href;
               const isActionItem = item.type === 'action';
@@ -105,7 +107,7 @@ export default function MobileSidebar({ open, onOpenChange }: MobileSidebarProps
                       onClick={() => handleNavigation(item)}
                       disabled={isLoggingOut}
                       className={cn(
-                        'w-full flex items-center gap-4 px-4 py-3 rounded-lg text-base font-medium transition-colors cursor-pointer group',
+                        'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer group',
                         'hover:bg-primary/5 text-muted-foreground hover:text-primary',
                         isLoggingOut && 'opacity-50 cursor-not-allowed'
                       )}
@@ -113,9 +115,9 @@ export default function MobileSidebar({ open, onOpenChange }: MobileSidebarProps
                       <Image
                         src={item.icon}
                         alt={getNavigationLabel(item)}
-                        width={20}
-                        height={20}
-                        className="w-5 h-5 transition-all group-hover:[filter:brightness(0)_saturate(100%)_invert(16%)_sepia(97%)_saturate(2276%)_hue-rotate(213deg)_brightness(93%)_contrast(108%)]"
+                        width={18}
+                        height={18}
+                        className="w-4.5 h-4.5 transition-all group-hover:[filter:brightness(0)_saturate(100%)_invert(16%)_sepia(97%)_saturate(2276%)_hue-rotate(213deg)_brightness(93%)_contrast(108%)]"
                       />
                       <span>{getNavigationLabel(item)}</span>
                     </button>
@@ -129,7 +131,7 @@ export default function MobileSidebar({ open, onOpenChange }: MobileSidebarProps
                     href={item.href}
                     onClick={() => handleNavigation(item)}
                     className={cn(
-                      'flex items-center gap-4 px-4 py-3 rounded-lg text-base font-medium transition-colors group',
+                      'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors group',
                       isActive
                         ? 'bg-primary text-white'
                         : 'hover:bg-primary/5 text-muted-foreground hover:text-primary'
@@ -138,10 +140,10 @@ export default function MobileSidebar({ open, onOpenChange }: MobileSidebarProps
                     <Image
                       src={item.icon}
                       alt={getNavigationLabel(item)}
-                      width={20}
-                      height={20}
+                      width={18}
+                      height={18}
                       className={cn(
-                        'w-5 h-5 transition-all',
+                        'w-4.5 h-4.5 transition-all',
                         isActive && 'brightness-0 invert',
                         !isActive && 'group-hover:[filter:brightness(0)_saturate(100%)_invert(16%)_sepia(97%)_saturate(2276%)_hue-rotate(213deg)_brightness(93%)_contrast(108%)]'
                       )}
@@ -155,7 +157,7 @@ export default function MobileSidebar({ open, onOpenChange }: MobileSidebarProps
         </nav>
 
         {/* Bottom Section */}
-        <div className="border-t border-neutral-200 py-4 px-4 space-y-4">
+        <div className="border-t border-neutral-200 py-3 px-3 space-y-3">
           {/* Language Switcher */}
           <SidebarLanguageSwitcher />
 
