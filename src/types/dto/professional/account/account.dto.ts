@@ -8,10 +8,11 @@
 export interface GetAccountResponse {
   accountData: {
     accountStatus: {
-      status: string;
-      description: string;
+      statusKey: string;
+      descriptionKey: string;
       statusCode: -1 | 1 | 2;
       documentRequired: boolean;
+      status: string;
     };
     companyInfo: {
       companyName: string;
@@ -59,7 +60,7 @@ export interface Certificate {
 
 export interface ProfileTask {
   id: string;
-  title: string;
-  statusText: string;
+  titleKey: string;
+  statusKey: string;
   completed: boolean;
 }

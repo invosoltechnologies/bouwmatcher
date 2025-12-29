@@ -10,6 +10,7 @@ import { useState, useMemo } from 'react';
 import type { PasswordSetupData } from '@/types/auth';
 import PasswordStrength from '@/components/ui/password-strength';
 import { validatePasswordStrength } from '@/lib/utils/password-validator';
+import { useTranslations } from 'next-intl';
 
 interface PasswordSetupFormProps {
   email: string;
@@ -19,6 +20,7 @@ interface PasswordSetupFormProps {
 }
 
 export default function PasswordSetupForm({ email, onBack, onNext, isLoading = false }: PasswordSetupFormProps) {
+  const t = useTranslations('auth.register.passwordSetup');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -55,7 +57,7 @@ export default function PasswordSetupForm({ email, onBack, onNext, isLoading = f
 
     // Only allow OK (score 1) or above
     if (passwordValidation.score < 1) {
-      toast.error('Wachtwoord is te zwak. Gebruik minimaal 8 tekens met letters en cijfers.');
+      toast.error(t('passwordTooWeak'));
       return;
     }
 
@@ -65,13 +67,13 @@ export default function PasswordSetupForm({ email, onBack, onNext, isLoading = f
   return (
     <div className='w-full max-w-3xl mx-auto'>
       <h1 className='text-lg text-slate-900 md:text-4xl font-normal text-center mb-8 md:mb-14'>
-        Stel een wachtwoord in voor jouw account
+        {t('heading')}
       </h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
         <div>
           <Label className='block text-sm md:text-xl text-muted-foreground mb-3'>
-            E-mailadres (Log in met je e-mailadres)
+            {t('emailLabel')}
           </Label>
           <Input
             {...register('email')}
@@ -85,19 +87,19 @@ export default function PasswordSetupForm({ email, onBack, onNext, isLoading = f
 
         <div>
           <Label className='block text-sm md:text-xl text-muted-foreground mb-3'>
-            Wachtwoord
+            {t('passwordLabel')}
           </Label>
           <div className='relative'>
             <Input
               {...register('password', {
-                required: 'Wachtwoord is verplicht',
+                required: t('passwordRequired'),
                 minLength: {
                   value: 8,
-                  message: 'Wachtwoord moet minimaal 8 tekens bevatten',
+                  message: t('passwordMinLength'),
                 },
               })}
               type={showPassword ? 'text' : 'password'}
-              placeholder='Minimaal 8 tekens'
+              placeholder={t('passwordPlaceholder')}
               className='h-[56px] bg-white border-neutral-300 rounded-lg px-4 pr-12 text-base md:text-lg'
               style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
             />
@@ -122,17 +124,17 @@ export default function PasswordSetupForm({ email, onBack, onNext, isLoading = f
 
         <div>
           <Label className='block text-sm md:text-xl text-muted-foreground mb-3'>
-            Bevestig jouw wachtwoord
+            {t('confirmPasswordLabel')}
           </Label>
           <div className='relative'>
             <Input
               {...register('confirmPassword', {
-                required: 'Bevestig je wachtwoord',
+                required: t('confirmPasswordRequired'),
                 validate: (value) =>
-                  value === password || 'Wachtwoorden komen niet overeen',
+                  value === password || t('passwordMismatch'),
               })}
               type={showConfirmPassword ? 'text' : 'password'}
-              placeholder='Herhaal wachtwoord'
+              placeholder={t('confirmPasswordPlaceholder')}
               className='h-[56px] bg-white border-neutral-300 rounded-lg px-4 pr-12 text-base md:text-lg'
               style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
             />
@@ -163,7 +165,7 @@ export default function PasswordSetupForm({ email, onBack, onNext, isLoading = f
             className='flex items-center text-neutral-700 text-base md:text-lg font-medium hover:text-neutral-900'
           >
             <ArrowLeft className='w-5 h-5 md:h-6 md:w-6 mr-2' />
-            Terug
+            {t('backButton')}
           </button>
 
           <Button
@@ -171,7 +173,7 @@ export default function PasswordSetupForm({ email, onBack, onNext, isLoading = f
             disabled={isLoading || !passwordValidation.isValid}
             className='px-6 py-4 text-base rounded-2xl md:text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed'
           >
-            {isLoading ? 'Bezig met registreren...' : 'Bevestig aanmelding'}
+            {isLoading ? t('submitting') : t('submitButton')}
             <ArrowRight className='w-5 h-5 md:h-7 md:w-7' />
           </Button>
         </div>

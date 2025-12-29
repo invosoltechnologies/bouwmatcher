@@ -42,3 +42,12 @@ export const KBO_CONFIG = {
   apiUrl: process.env.KBO_API_URL || 'https://api.kbodata.app/v2',
   mockApiUrl: 'https://mock.api.kbodata.app/v2', // For development/testing
 } as const;
+
+// Netherlands Bedrijfsdata API Configuration (server-side only)
+export const BEDRIJFSDATA_CONFIG = {
+  apiKey: process.env.BEDRIJFSDATA_API_KEY,
+  // Free tier API - no authentication required for basic KVK lookup
+  freeApiUrl: 'https://free.bedrijfsdata.nl/v1.1',
+  // Paid API (if available with API key)
+  apiUrl: process.env.BEDRIJFSDATA_API_URL || 'https://api.bedrijfsdata.nl',
+} as const;

@@ -177,8 +177,8 @@ export default function PhotoUploadModal({ draftId, onClose, onComplete }: Photo
 
   if (step === 'initial') {
     return (
-      <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4'>
-        <div className='bg-white rounded-2xl max-w-md w-full p-8 relative'>
+      <div className='fixed inset-0 backdrop-blur-sm bg-black/20 flex items-center justify-center z-50 p-4'>
+        <div className='bg-white/95 backdrop-blur-md rounded-2xl max-w-md w-full p-8 relative shadow-xl border border-white/20'>
           <button
             onClick={onClose}
             className='absolute top-4 right-4 text-gray-400 hover:text-gray-600'
@@ -186,7 +186,7 @@ export default function PhotoUploadModal({ draftId, onClose, onComplete }: Photo
             <X className='w-6 h-6' />
           </button>
 
-          <h2 className='text-2xl font-semibold text-center mb-8'>
+          <h2 className='text-xl md:text-2xl font-semibold text-center mb-5 md:mb-8'>
             Upload hier jouw foto&apos;s
           </h2>
 
@@ -213,8 +213,8 @@ export default function PhotoUploadModal({ draftId, onClose, onComplete }: Photo
   }
 
   return (
-    <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4'>
-      <div className='bg-white rounded-2xl max-w-2xl w-full p-8 relative max-h-[90vh] overflow-y-auto'>
+    <div className='fixed inset-0 backdrop-blur-sm bg-black/20 flex items-center justify-center z-50 p-4'>
+      <div className='bg-white/95 backdrop-blur-md rounded-2xl max-w-2xl w-full p-8 relative max-h-[90vh] overflow-y-auto shadow-xl border border-white/20'>
         <button
           onClick={handleComplete}
           className='absolute top-4 right-4 text-gray-400 hover:text-gray-600'
@@ -222,7 +222,7 @@ export default function PhotoUploadModal({ draftId, onClose, onComplete }: Photo
           <X className='w-6 h-6' />
         </button>
 
-        <h2 className='text-2xl font-semibold mb-6'>Voeg je foto&apos;s toe</h2>
+        <h2 className='text-xl md:text-2xl font-semibold mb-6'>Voeg je foto&apos;s toe</h2>
 
         {/* Photo Grid */}
         <div className='grid grid-cols-3 gap-4 mb-6'>
@@ -249,6 +249,7 @@ export default function PhotoUploadModal({ draftId, onClose, onComplete }: Photo
                 width={photo.width || 400}
                 height={photo.height || 400}
                 className='w-full h-full object-cover rounded-lg'
+                unoptimized
               />
               <button
                 onClick={() => handleDelete(photo.id)}

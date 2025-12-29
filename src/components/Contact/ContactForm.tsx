@@ -16,8 +16,12 @@ import {
 } from "@/components/ui/select";
 import { Send, CloudUpload } from "lucide-react";
 import { ContactFormData, ContactFormProps } from "@/types/contact";
+import { useTranslations } from 'next-intl';
+import toast from 'react-hot-toast';
+import Link from "next/link";
 
 export default function ContactForm({ onSubmit }: ContactFormProps) {
+  const t = useTranslations('contact.form');
   const {
     register,
     handleSubmit,
@@ -42,87 +46,122 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
 
   const onFormSubmit = async (data: ContactFormData) => {
     try {
-      console.log("Form submitted:", data);
+      // Create FormData object for API submission
+      const formData = new FormData();
+      formData.append('name', data.name);
+      formData.append('email', data.email);
+      if (data.phone) formData.append('phone', data.phone);
+      formData.append('subject', data.subject);
+      formData.append('category', data.category);
+      formData.append('message', data.message);
+
+      // Append file if present
+      if (data.file && data.file.length > 0) {
+        formData.append('file', data.file[0]);
+      }
+
+      // Submit to API
+      const response = await fetch('/api/contact/submit', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to submit form');
+      }
+
+      // Show success message
+      toast.success(t('successMessage') || 'Your message has been sent successfully!');
+
+      // Call onSubmit callback if provided
       if (onSubmit) {
         await onSubmit(data);
       }
+
       // Reset form after successful submission
       reset();
     } catch (error) {
       console.error("Form submission error:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : (t('errorMessage') || 'Failed to submit form. Please try again.')
+      );
     }
   };
 
   return (
-    <div className='w-full max-w-3xl mx-auto bg-white/90 border-gray-200 rounded-3xl p-12 shadow-lg relative z-20 -top-20'>
+    <div className='w-full max-w-3xl mx-auto bg-white/90 border-gray-200 rounded-3xl p-6 md:p-12 shadow-lg relative z-20 -top-20'>
       {/* Header */}
-      <div className='flex items-center gap-4 mb-8'>
+      <div className='flex items-center gap-3 md:gap-4 mb-6 md:mb-8'>
         <Image
           src='/images/contact/contact-form-head.svg'
           width={48}
           height={48}
           alt='Contact'
-          className='w-12 h-12'
+          className='w-10 h-10 md:w-12 md:h-12'
         />
         <div>
-          <h2 className='text-2xl leading-8 text-foreground'>
-            Stuur ons een bericht
+          <h2 className='text-lg md:text-2xl leading-6 md:leading-8 text-foreground font-medium'>
+            {t('heading')}
           </h2>
-          <p className='text-base leading-5 text-muted-foreground'>
-            Gratis, reactietijd &lt;24u
+          <p className='text-sm md:text-base leading-4 md:leading-5 text-muted-foreground'>
+            {t('subheading')}
           </p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onFormSubmit)} className='space-y-6'>
+      <form onSubmit={handleSubmit(onFormSubmit)} className='space-y-4 md:space-y-6'>
         {/* Name and Email Row */}
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           <div>
             <Label
               htmlFor='name'
-              className='block text-lg font-medium text-slate-700 mb-2'
+              className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
             >
-              Naam <span className='text-red-600'>*</span>
+              {t('nameLabel')} <span className='text-red-600'>*</span>
             </Label>
             <Input
               id='name'
               type='text'
-              placeholder='Uw volledige naam'
-              className='h-12 md:text-lg'
+              placeholder={t('namePlaceholder')}
+              className='h-10 md:h-12 text-sm md:text-base'
               {...register('name', {
-                required: 'Naam is verplicht',
+                required: t('nameRequired'),
                 minLength: {
                   value: 2,
-                  message: 'Naam moet minimaal 2 karakters bevatten',
+                  message: t('nameMinLength'),
                 },
               })}
             />
             {errors.name && (
-              <p className='text-sm text-red-500 mt-1'>{errors.name.message}</p>
+              <p className='text-xs md:text-sm text-red-500 mt-1'>{errors.name.message}</p>
             )}
           </div>
           <div>
             <Label
               htmlFor='email'
-              className='block text-lg font-medium text-slate-700 mb-2'
+              className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
             >
-              E-mail <span className='text-red-600'>*</span>
+              {t('emailLabel')} <span className='text-red-600'>*</span>
             </Label>
             <Input
               id='email'
               type='email'
-              placeholder='uw.email@voorbeeld.nl'
-              className='h-12 md:text-lg'
+              placeholder={t('emailPlaceholder')}
+              className='h-10 md:h-12 text-sm md:text-base'
               {...register('email', {
-                required: 'E-mail is verplicht',
+                required: t('emailRequired'),
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Voer een geldig e-mailadres in',
+                  message: t('emailInvalid'),
                 },
               })}
             />
             {errors.email && (
-              <p className='text-sm text-red-500 mt-1'>
+              <p className='text-xs md:text-sm text-red-500 mt-1'>
                 {errors.email.message}
               </p>
             )}
@@ -134,24 +173,24 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
           <div>
             <Label
               htmlFor='phone'
-              className='block text-lg font-medium text-slate-700 mb-2'
+              className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
             >
-              Telefoon
+              {t('phoneLabel')}
             </Label>
             <Input
               id='phone'
               type='tel'
-              placeholder='06 12 34 56 78'
-              className='h-12 md:text-lg'
+              placeholder={t('phonePlaceholder')}
+              className='h-10 md:h-12 text-sm md:text-base'
               {...register('phone', {
                 pattern: {
                   value: /^[\+]?[0-9\s\-\(\)]+$/,
-                  message: 'Voer een geldig telefoonnummer in',
+                  message: t('phoneInvalid'),
                 },
               })}
             />
             {errors.phone && (
-              <p className='text-sm text-red-500 mt-1'>
+              <p className='text-xs md:text-sm text-red-500 mt-1'>
                 {errors.phone.message}
               </p>
             )}
@@ -159,25 +198,25 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
           <div>
             <Label
               htmlFor='subject'
-              className='block text-lg font-medium text-slate-700 mb-2'
+              className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
             >
-              Onderwerp <span className='text-red-600'>*</span>
+              {t('subjectLabel')} <span className='text-red-600'>*</span>
             </Label>
             <Input
               id='subject'
               type='text'
-              placeholder='Waar gaat uw vraag over?'
-              className='h-12 md:text-lg'
+              placeholder={t('subjectPlaceholder')}
+              className='h-10 md:h-12 text-sm md:text-base'
               {...register('subject', {
-                required: 'Onderwerp is verplicht',
+                required: t('subjectRequired'),
                 minLength: {
                   value: 3,
-                  message: 'Onderwerp moet minimaal 3 karakters bevatten',
+                  message: t('subjectMinLength'),
                 },
               })}
             />
             {errors.subject && (
-              <p className='text-sm text-red-500 mt-1'>
+              <p className='text-xs md:text-sm text-red-500 mt-1'>
                 {errors.subject.message}
               </p>
             )}
@@ -188,34 +227,34 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
         <div>
           <Label
             htmlFor='category'
-            className='block text-lg font-medium text-slate-700 mb-2'
+            className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
           >
-            Type vraag
+            {t('categoryLabel')}
           </Label>
           <Controller
             name='category'
             control={control}
-            rules={{ required: 'Selecteer een categorie' }}
+            rules={{ required: t('categoryRequired') }}
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value}>
                 <SelectTrigger
-                  className='w-full h-12 md:text-lg cursor-pointer'
-                  iconClassName='w-[31px] h-[31px]'
+                  className='w-full h-10 md:h-12 text-sm md:text-base cursor-pointer'
+                  iconClassName='w-5 h-5 md:w-[31px] md:h-[31px]'
                 >
-                  <SelectValue placeholder='Selecteer een categorie' />
+                  <SelectValue placeholder={t('categoryPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='general'>Algemene vraag</SelectItem>
-                  <SelectItem value='quote'>Offerte aanvraag</SelectItem>
-                  <SelectItem value='support'>Ondersteuning</SelectItem>
-                  <SelectItem value='partnership'>Samenwerking</SelectItem>
-                  <SelectItem value='complaint'>Klacht</SelectItem>
+                  <SelectItem value='general'>{t('categoryGeneral')}</SelectItem>
+                  <SelectItem value='quote'>{t('categoryQuote')}</SelectItem>
+                  <SelectItem value='support'>{t('categorySupport')}</SelectItem>
+                  <SelectItem value='partnership'>{t('categoryPartnership')}</SelectItem>
+                  <SelectItem value='complaint'>{t('categoryComplaint')}</SelectItem>
                 </SelectContent>
               </Select>
             )}
           />
           {errors.category && (
-            <p className='text-sm text-red-500 mt-1'>
+            <p className='text-xs md:text-sm text-red-500 mt-1'>
               {errors.category.message}
             </p>
           )}
@@ -225,24 +264,24 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
         <div>
           <Label
             htmlFor='message'
-            className='block text-lg font-medium text-slate-700 mb-2'
+            className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
           >
-            Bericht <span className='text-red-600'>*</span>
+            {t('messageLabel')} <span className='text-red-600'>*</span>
           </Label>
           <Textarea
             id='message'
-            placeholder='Beschrijf uw vraag of project zo gedetailleerd mogelijk...'
-            className='min-h-32 resize-none md:text-lg'
+            placeholder={t('messagePlaceholder')}
+            className='min-h-24 md:min-h-32 resize-none text-sm md:text-base'
             {...register('message', {
-              required: 'Bericht is verplicht',
+              required: t('messageRequired'),
               minLength: {
                 value: 10,
-                message: 'Bericht moet minimaal 10 karakters bevatten',
+                message: t('messageMinLength'),
               },
             })}
           />
           {errors.message && (
-            <p className='text-sm text-red-500 mt-1'>
+            <p className='text-xs md:text-sm text-red-500 mt-1'>
               {errors.message.message}
             </p>
           )}
@@ -252,9 +291,9 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
         <div>
           <Label
             htmlFor='file'
-            className='block text-lg font-medium text-slate-700 mb-2'
+            className='block text-sm md:text-base font-medium text-slate-700 mb-1.5 md:mb-2'
           >
-            Bestand toevoegen (optioneel)
+            {t('fileLabel')}
           </Label>
           <div className='relative'>
             <input
@@ -269,7 +308,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
                     const file = files[0];
                     return (
                       file.size <= 10 * 1024 * 1024 ||
-                      'Bestand mag maximaal 10MB zijn'
+                      t('fileMaxSize')
                     );
                   },
                 },
@@ -277,79 +316,80 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
             />
             <label
               htmlFor='file'
-              className='flex items-center justify-center w-full h-12 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition-colors'
+              className='flex items-center justify-center w-full h-10 md:h-12 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition-colors'
             >
               <div className='flex items-center gap-2 text-slate-600'>
-                <CloudUpload className='w-5 h-4' />
-                <span className='text-lg'>
-                  {selectedFileName || 'Klik om bestand te selecteren'}
+                <CloudUpload className='w-4 h-4 md:w-5 md:h-5' />
+                <span className='text-sm md:text-base'>
+                  {selectedFileName || t('filePlaceholder')}
                 </span>
               </div>
             </label>
           </div>
           <p className='text-xs text-slate-600 mt-1'>
-            JPG, PNG of PDF - max 10MB
+            {t('fileInfo')}
           </p>
           {errors.file && (
-            <p className='text-sm text-red-500 mt-1'>{errors.file.message}</p>
+            <p className='text-xs md:text-sm text-red-500 mt-1'>{errors.file.message}</p>
           )}
         </div>
 
         {/* Terms Agreement */}
-        <div className='flex items-start gap-3'>
+        <div className='flex items-start gap-2 md:gap-3'>
           <Controller
             name='agreeToTerms'
             control={control}
-            rules={{ required: 'U moet akkoord gaan met de privacyverklaring' }}
+            rules={{ required: t('termsRequired') }}
             render={({ field }) => (
               <Checkbox
                 id='terms'
                 checked={field.value}
                 onCheckedChange={field.onChange}
-                className=' rounded text-bold'
+                className='rounded text-bold mt-0.5'
               />
             )}
           />
-          <Label htmlFor='terms' className='text-base text-slate-600'>
-            Ik ga akkoord met de{' '}
-            <a href='#' className='text-primary hover:underline'>
-              privacyverklaring
-            </a>
+          <Label htmlFor='terms' className='text-xs md:text-sm text-slate-600 cursor-pointer'>
+            {t('termsText')}{' '}
+            <Link href='/privacy-policy' className='text-primary hover:underline'>
+              {t('termsLink')}
+            </Link>
             <span className='text-red-600'> *</span>
           </Label>
         </div>
         {errors.agreeToTerms && (
-          <p className='text-sm text-red-500'>{errors.agreeToTerms.message}</p>
+          <p className='text-xs md:text-sm text-red-500'>{errors.agreeToTerms.message}</p>
         )}
 
         {/* Submit Buttons */}
-        <div className='flex flex-col sm:flex-row gap-4 pt-4'>
+        <div className='flex flex-col sm:flex-row gap-3 md:gap-4 pt-2 md:pt-4'>
           <Button
             type='submit'
             disabled={isSubmitting}
-            className='flex-1 bg-primary hover:bg-primary/90 text-white font-semibold py-4 flex items-center text-xl rounded-[12px] justify-center gap-2 disabled:opacity-50'
+            className='flex-1 bg-primary hover:bg-primary/90 text-white font-semibold py-3 md:py-4 flex items-center text-base md:text-xl rounded-[12px] justify-center gap-2 disabled:opacity-50'
             style={{
               boxShadow:
                 '0px 10px 15px 0px #0000001A, 0px 4px 6px 0px #0000001A',
             }}
           >
-            <span>{isSubmitting ? 'Versturen...' : 'Versturen'}</span>
-            <Send className='w-5 h-5' />
+            <span>{isSubmitting ? t('submittingButton') : t('submitButton')}</span>
+            <Send className='w-4 h-4 md:w-5 md:h-5' />
           </Button>
 
           <Button
             type='button'
             variant='outline'
-            className='px-6 text-primary border-none hover:border hover:border-primary hover:bg-transparent hover:text-primary font-semibold  py-4  text-xl rounded-[12px] flex items-center justify-center gap-2'
+            className='px-4 md:px-6 text-primary border-none hover:border hover:border-primary hover:bg-transparent hover:text-primary font-semibold py-3 md:py-4 text-sm md:text-xl rounded-[12px] flex items-center justify-center gap-2'
           >
             <Image
               src='/icons/chat.svg'
               width={20}
               height={24}
               alt='Chat'
-              className='w-5 h-6'
+              className='w-4 h-5 md:w-5 md:h-6'
             />
-            <span>Liever direct chatten?</span>
+            <span className='hidden sm:inline'>{t('chatButton')}</span>
+            <span className='sm:hidden'>{t('chatButtonShort')}</span>
           </Button>
         </div>
       </form>

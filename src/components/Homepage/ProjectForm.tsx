@@ -1,12 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { type Service } from '@/data/services';
 import Image from 'next/image';
+import { useTranslations, useLocale } from 'next-intl';
 
 interface ProjectFormProps {
   mode?: 'home' | 'service';
@@ -14,6 +15,8 @@ interface ProjectFormProps {
 }
 
 export default function ProjectForm({ mode = 'home', preselectedService }: ProjectFormProps) {
+  const t = useTranslations('homepage.projectForm');
+  const locale = useLocale();
   const router = useRouter();
   const [services, setServices] = useState<Service[]>([]);
   const [category, setCategory] = useState('');
@@ -34,7 +37,8 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
         if (preselectedService) {
           const preselected = fetchedServices.find((s: Service) => s.slug === preselectedService);
           if (preselected) {
-            setCategory(preselected.name_nl);
+            // Store the slug instead of the name
+            setCategory(preselected.slug);
           }
         }
       } catch (error) {
@@ -43,28 +47,26 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
     };
 
     fetchServices();
-  }, [preselectedService]);
-
-  const categories = services.map(service => service.name_nl);
+  }, [preselectedService, locale]);
 
   const executionDates = [
-    'Zo snel mogelijk',
-    'Binnen 1 maand',
-    'Binnen 3 maanden',
-    'Binnen 6 maanden',
-    'Over meer dan 6 maanden',
-    'Nog niet beslist'
+    t('executionDate1'),
+    t('executionDate2'),
+    t('executionDate3'),
+    t('executionDate4'),
+    t('executionDate5'),
+    t('executionDate6')
   ];
 
   const handleStartProject = async () => {
     // Validate category selection
     if (!category) {
-      alert('Selecteer een categorie');
+      alert(t('selectCategoryAlert'));
       return;
     }
 
-    // Find the service category slug
-    const selectedService = services.find((s: Service) => s.name_nl === category);
+    // Category is now stored as slug, find the service by slug
+    const selectedService = services.find((s: Service) => s.slug === category);
     if (!selectedService) return;
 
     setIsLoading(true);
@@ -102,7 +104,7 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
       router.push(`/create-project?draft=${data.draftId}`);
     } catch (error) {
       console.error('Error starting project:', error);
-      alert('Er is een fout opgetreden. Probeer het opnieuw.');
+      alert(t('errorAlert'));
     } finally {
       setIsLoading(false);
     }
@@ -110,23 +112,23 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
 
   return (
     <div
-      className='bg-white/90 rounded-3xl shadow-lg p-8 border border-white/50'
+      className='bg-white/90 rounded-2xl md:rounded-3xl shadow-lg px-6 py-8 md:p-8 border border-white/50'
       style={{ boxShadow: '0px 15px 35px 0px #00000040' }}
     >
-      <div className='w-full flex justify-between items-end gap-6'>
+      <div className='w-full flex flex-col md:flex-row justify-between items-stretch md:items-end gap-4 md:gap-6'>
         {/* Form inputs div */}
-        <div className='w-full flex items-start justify-start gap-6'>
+        <div className='w-full flex flex-col md:flex-row items-stretch md:items-start justify-start gap-4 md:gap-6'>
           {/* Category Dropdown */}
           <div className='w-full'>
-            <div className='flex items-center gap-2 mb-3'>
+            <div className='flex items-center gap-2 mb-2 md:mb-3'>
               <Image
                 src='/icons/stack-icon.svg'
                 width={20}
                 height={20}
                 alt='Category'
               />
-              <label className='text-foreground font-medium text-base'>
-                Categorie
+              <label className='text-foreground font-medium text-sm md:text-base'>
+                {t('categoryLabel')}
               </label>
             </div>
             <Select
@@ -135,28 +137,31 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
               disabled={mode === 'service'}
             >
               <SelectTrigger
-                className={`min-w-[253px] font-montserrat min-h-14 px-3 py-[22px] border-gray-200 rounded-[12px] text-base ${
+                className={`w-full md:min-w-[253px] font-montserrat min-h-12 md:min-h-14 px-3 py-3 md:py-[22px] border-gray-200 rounded-[12px] text-sm md:text-base ${
                   mode === 'service'
                     ? 'bg-accent text-white cursor-not-allowed'
                     : 'bg-white text-muted-foreground cursor-pointer'
                 }`}
                 iconClassName={mode === 'service' ? 'hidden' : ''}
               >
-                <SelectValue placeholder='Selecteer categorie' />
+                <SelectValue placeholder={t('categoryPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat} value={cat} className='font-montserrat'>
-                    {cat}
-                  </SelectItem>
-                ))}
+                {services.map((service) => {
+                  const serviceName = locale === 'en' ? service.name_en : service.name_nl;
+                  return (
+                    <SelectItem key={service.slug} value={service.slug} className='font-montserrat'>
+                      {serviceName}
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>
 
           {/* Postcode Input */}
           <div className='w-full'>
-            <div className='flex items-center gap-2 mb-3'>
+            <div className='flex items-center gap-2 mb-2 md:mb-3'>
               <Image
                 src='/icons/map.svg'
                 width={18}
@@ -164,35 +169,35 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
                 alt='Category'
                 className='[filter:brightness(0)_saturate(100%)_invert(14%)_sepia(95%)_saturate(2511%)_hue-rotate(214deg)_brightness(100%)_contrast(105%)]'
               />
-              <label className='text-foreground font-medium text-base'>
-                Postcode
+              <label className='text-foreground font-medium text-sm md:text-base'>
+                {t('postcodeLabel')}
               </label>
             </div>
             <Input
               type='text'
-              placeholder='1000 AB'
+              placeholder={t('postcodePlaceholder')}
               value={postcode}
               onChange={(e) => setPostcode(e.target.value)}
-              className='font-montserrat min-w-[253px] min-h-14 px-4 py-[22px] bg-white border-gray-200 rounded-xl text-base'
+              className='font-montserrat w-full md:min-w-[253px] min-h-12 md:min-h-14 px-4 py-3 md:py-[22px] bg-white border-gray-200 rounded-xl text-sm md:text-base'
             />
           </div>
 
           {/* Execution Date Dropdown */}
           <div className='w-full'>
-            <div className='flex items-center gap-2 mb-3'>
+            <div className='flex items-center gap-2 mb-2 md:mb-3'>
               <Image
                 src='/icons/clock-icon.svg'
                 width={20}
                 height={20}
                 alt='Date'
               />
-              <label className='text-foreground font-medium text-base'>
-                Uitvoerdatum
+              <label className='text-foreground font-medium text-sm md:text-base'>
+                {t('executionDateLabel')}
               </label>
             </div>
             <Select value={executionDate} onValueChange={setExecutionDate}>
-              <SelectTrigger className='font-montserrat min-w-[253px] min-h-14  px-4 py-[22px] bg-white border-gray-200 rounded-xl text-base'>
-                <SelectValue placeholder='Zo snel mogelijk' />
+              <SelectTrigger className='font-montserrat w-full md:min-w-[253px] min-h-12 md:min-h-14 px-4 py-3 md:py-[22px] bg-white border-gray-200 rounded-xl text-sm md:text-base'>
+                <SelectValue placeholder={t('executionDatePlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 {executionDates.map((date) => (
@@ -210,14 +215,14 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
         </div>
 
         {/* Button div */}
-        <div className='w-full flex justify-center'>
+        <div className='w-full md:w-auto flex justify-center'>
           <Button
             onClick={handleStartProject}
             disabled={isLoading}
-            className='bg-accent hover:bg-accent/90 text-white px-14 py-4 min-w-64 h-14 rounded-[12px] font-medium text-base flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed'
+            className='bg-accent hover:bg-accent/90 text-white px-8 md:px-14 py-3 md:py-4 w-full md:w-auto md:min-w-64 h-12 md:h-14 rounded-[12px] font-medium text-sm md:text-base flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed'
           >
-            <Search className='w-6 h-6' />
-            {isLoading ? 'Laden...' : 'Project starten'}
+            <Search className='w-5 h-5 md:w-6 md:h-6' />
+            {isLoading ? t('loadingButton') : t('startButton')}
           </Button>
         </div>
       </div>

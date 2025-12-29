@@ -20,6 +20,8 @@ interface SelectedCategoriesSidebarProps {
   onReorderClick?: () => void;
   showInfoCard?: boolean;
   emptyStateIcon?: string;
+  locale?: string;
+  t?: (key: string) => string;
 }
 
 export default function SelectedCategoriesSidebar({
@@ -36,7 +38,18 @@ export default function SelectedCategoriesSidebar({
   onReorderClick,
   showInfoCard = true,
   emptyStateIcon = '/icons/services/renovatie.svg',
+  locale = 'nl',
+  t,
 }: SelectedCategoriesSidebarProps) {
+  // Get category name from service_categories table field based on locale
+  const getCategoryName = (spec: ProfessionalSpecialization) => {
+    if (!spec.service_categories) return '';
+    const catName = locale === 'en'
+      ? (spec.service_categories.name_en || spec.service_categories.name_nl)
+      : spec.service_categories.name_nl;
+    return catName || '';
+  };
+
   const progressPercentage = (selectedSpecializations.length / maxCategories) * 100;
 
   return (
@@ -45,7 +58,7 @@ export default function SelectedCategoriesSidebar({
         <h2 className='text-xl md:text-2xl font-normal text-slate-900 mb-3'>{title}</h2>
         <div className='flex items-center justify-between mb-4'>
           <p className='text-sm md:text-base text-muted-foreground'>
-            {selectedSpecializations.length} / {maxCategories} gekozen
+            {selectedSpecializations.length} / {maxCategories} {locale === 'en' ? 'selected' : 'gekozen'}
           </p>
 
           {showReorderButton && selectedSpecializations.length > 0 && (
@@ -55,7 +68,7 @@ export default function SelectedCategoriesSidebar({
               onClick={onReorderClick}
             >
               <Move className='w-4 h-4 text-primary' />
-              Herorden
+              {locale === 'en' ? 'Reorder' : 'Herorden'}
             </button>
           )}
         </div>
@@ -84,7 +97,7 @@ export default function SelectedCategoriesSidebar({
                     {spec.service_categories.icon_url && (
                       <Image
                         src={spec.service_categories.icon_url}
-                        alt={spec.service_categories.name_nl}
+                        alt={getCategoryName(spec)}
                         width={14}
                         height={14}
                         className='brightness-0 invert'
@@ -92,7 +105,7 @@ export default function SelectedCategoriesSidebar({
                     )}
                   </div>
                   <span className='flex-1 text-base font-medium text-slate-900'>
-                    {spec.service_categories.name_nl}
+                    {getCategoryName(spec)}
                   </span>
                   <span className='text-sm font-medium text-slate-400 shrink-0'>
                     #{index + 1}
@@ -114,15 +127,19 @@ export default function SelectedCategoriesSidebar({
           <div className='w-16 h-16 rounded-full bg-slate-200 flex items-center justify-center mx-auto mb-4'>
             <Image
               src={emptyStateIcon}
-              alt='Nog niets gekozen'
+              alt={t ? t('emptyStateTitle') : 'Nog niets gekozen'}
               width={32}
               height={32}
               className='opacity-40'
               style={{ filter: 'grayscale(100%)' }}
             />
           </div>
-          <p className='text-base font-medium text-slate-900 mb-1'>Nog niets gekozen</p>
-          <p className='text-sm text-slate-600'>Kies je vakgebieden uit de lijst links</p>
+          <p className='text-base font-medium text-slate-900 mb-1'>
+            {t ? t('emptyStateTitle') : 'Nog niets gekozen'}
+          </p>
+          <p className='text-sm text-slate-600'>
+            {t ? t('emptyStateDescription') : 'Kies je vakgebieden uit de lijst links'}
+          </p>
         </div>
       )}
 
@@ -132,9 +149,11 @@ export default function SelectedCategoriesSidebar({
             <Info className='w-5 h-5 text-primary' />
             <div>
               <p className='text-sm font-medium text-slate-900'>
-                Volgorde bepaalt prioriteit
+                {t ? t('infoPriorityTitle') : 'Volgorde bepaalt prioriteit'}
               </p>
-              <p className='text-xs text-slate-600 mt-1'>Sleep om te herschikken.</p>
+              <p className='text-xs text-slate-600 mt-1'>
+                {t ? t('infoPriorityDescription') : 'Sleep om te herschikken.'}
+              </p>
             </div>
           </div>
         </div>

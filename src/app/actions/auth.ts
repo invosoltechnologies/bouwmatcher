@@ -2,7 +2,6 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 
 export interface SignUpData {
   email: string;
@@ -166,7 +165,10 @@ export async function signOutAction(): Promise<{ success: boolean; error?: strin
     }
 
     revalidatePath('/', 'layout');
-    redirect('/auth/login');
+
+    return {
+      success: true,
+    };
   } catch (error) {
     console.error('Sign out error:', error);
     return {
@@ -312,7 +314,7 @@ export async function getOAuthUrlAction(
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/auth/callback`,
       },
     });
 

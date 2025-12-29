@@ -94,10 +94,11 @@ export interface AccountData {
 
 // Frontend display types
 export interface AccountStatusData {
-  status: string;
-  description: string;
+  statusKey: string; // Translation key for status
+  descriptionKey: string; // Translation key for description
   statusCode: -1 | 1 | 2; // -1: inactive/blocked, 1: verified, 2: in process
   documentRequired: boolean;
+  status: string; // Actual verification status: 'verified' | 'pending' | 'in_review' | 'unverified' | 'rejected' | 'suspended'
 }
 
 export interface CompanyInfoData {
@@ -124,8 +125,8 @@ export interface ContactInfoData {
 
 export interface ProfileTask {
   id: string;
-  title: string;
-  statusText: string;
+  titleKey: string; // Translation key for task title
+  statusKey: string; // Translation key for status text (completed/pending)
   completed: boolean;
 }
 

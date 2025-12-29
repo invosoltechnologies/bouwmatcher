@@ -1,35 +1,43 @@
 'use client';
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import QuestionnaireNavbar from "@/components/Questionnaire/QuestionnaireNavbar";
-import QuestionnaireRadio from "@/components/Questionnaire/QuestionnaireRadio";
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
+import { useLocale, useTranslations } from 'next-intl';
+import QuestionnaireNavbar from '@/components/Questionnaire/QuestionnaireNavbar';
+import QuestionnaireRadio from '@/components/Questionnaire/QuestionnaireRadio';
 import { getQuestionsForStep } from '@/data/generalQuestions';
-import TopBar from "@/components/TopBar";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, ArrowRight, MapPin } from "lucide-react";
-import type { QuestionWithOptions } from "@/types/questionnaire";
-import { RadioGroup } from "@/components/ui/radio-group";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import PhotoUploadModal from "@/components/Questionnaire/PhotoUploadModal";
-import OTPVerification from "@/components/Questionnaire/OTPVerification";
+import TopBar from '@/components/TopBar';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { ArrowLeft, ArrowRight, MapPin } from 'lucide-react';
+import type { QuestionWithOptions } from '@/types/questionnaire';
+import { RadioGroup } from '@/components/ui/radio-group';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import PhotoUploadModal from '@/components/Questionnaire/PhotoUploadModal';
+import OTPVerification from '@/components/Questionnaire/OTPVerification';
 
 export default function CreateProjectContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const draftId = searchParams.get('draft');
+  const locale = useLocale();
+  const t = useTranslations('questionnaire');
 
   const [currentStep, setCurrentStep] = useState(1);
-  const [currentQuestions, setCurrentQuestions] = useState<QuestionWithOptions[]>([]);
+  const [currentQuestions, setCurrentQuestions] = useState<
+    QuestionWithOptions[]
+  >([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [allAnswers, setAllAnswers] = useState<Record<string, string>>({}); // Track all answers across steps
-  const [questionHistory, setQuestionHistory] = useState<Array<{
-    step: number;
-    questions: QuestionWithOptions[];
-    answers: Record<string, string>;
-  }>>([]);
+  const [questionHistory, setQuestionHistory] = useState<
+    Array<{
+      step: number;
+      questions: QuestionWithOptions[];
+      answers: Record<string, string>;
+    }>
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
@@ -39,6 +47,11 @@ export default function CreateProjectContent() {
 
   const currentQuestion = currentQuestions[currentQuestionIndex] || null;
   const selectedAnswer = answers[currentQuestion?.id || ''] || '';
+
+  // Helper function to get localized text
+  const getLocalizedText = (nlText?: string, enText?: string): string => {
+    return locale === 'en' ? (enText || nlText || '') : (nlText || enText || '');
+  };
 
   const progressPercentage = (currentStep / totalSteps) * 100;
 
@@ -53,70 +66,73 @@ export default function CreateProjectContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draftId]);
 
-const loadQuestionsForStep = async (
-  step: number,
-  requestType?: 'private' | 'business'
-) => {
-  setIsLoading(true);
-  try {
-    if (step === 1) {
-      // Step 1: Load category-specific questions from API
-      const params = new URLSearchParams({ draftId: draftId! });
-      const response = await fetch(`/api/project-draft/questions?${params}`);
-      const data = await response.json();
+  const loadQuestionsForStep = async (
+    step: number,
+    requestType?: 'private' | 'business'
+  ) => {
+    setIsLoading(true);
+    try {
+      if (step === 1) {
+        // Step 1: Load category-specific questions from API
+        const params = new URLSearchParams({ draftId: draftId! });
+        const response = await fetch(`/api/project-draft/questions?${params}`);
+        const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to load questions');
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to load questions');
+        }
+
+        if (data.questions && data.questions.length > 0) {
+          setCurrentQuestions(data.questions);
+          setCurrentQuestionIndex(0);
+          setAnswers({});
+        }
+      } else if (step >= 2 && step <= 7) {
+        // Steps 2-7: Load from frontend (no API call!)
+        const questions = getQuestionsForStep(step, requestType);
+
+        if (questions && questions.length > 0) {
+          // Convert Question[] to QuestionWithOptions[] format
+          const convertedQuestions = questions.map((q) => ({
+            id: q.id,
+            question_text_nl: q.labelNl,
+            question_text_en: q.labelEn,
+            question_type: q.type,
+            is_required: q.required,
+            placeholder_nl: q.placeholderNl,
+            placeholder_en: q.placeholderEn,
+            help_text_nl: q.helpNl,
+            help_text_en: q.helpEn,
+            fieldName: q.fieldName, // Add fieldName for saving
+            options:
+              q.options?.map((opt) => ({
+                id: opt.value, // Use value as ID
+                option_value: opt.value,
+                option_label_nl: opt.labelNl,
+                option_label_en: opt.labelEn,
+              })) || [],
+          }));
+
+          setCurrentQuestions(convertedQuestions);
+          setCurrentQuestionIndex(0);
+          setAnswers({});
+        }
+      } else if (step === 8) {
+        // Step 8: Verification step
+        setShowOTPVerification(true);
       }
-
-      if (data.questions && data.questions.length > 0) {
-        setCurrentQuestions(data.questions);
-        setCurrentQuestionIndex(0);
-        setAnswers({});
-      }
-    } else if (step >= 2 && step <= 7) {
-      // Steps 2-7: Load from frontend (no API call!)
-      const questions = getQuestionsForStep(step, requestType);
-
-      if (questions && questions.length > 0) {
-        // Convert Question[] to QuestionWithOptions[] format
-        const convertedQuestions = questions.map((q) => ({
-          id: q.id,
-          question_text_nl: q.labelNl,
-          question_text_en: q.labelEn,
-          question_type: q.type,
-          is_required: q.required,
-          placeholder_nl: q.placeholderNl,
-          placeholder_en: q.placeholderEn,
-          help_text_nl: q.helpNl,
-          help_text_en: q.helpEn,
-          fieldName: q.fieldName, // Add fieldName for saving
-          options:
-            q.options?.map((opt) => ({
-              id: opt.value, // Use value as ID
-              option_value: opt.value,
-              option_label_nl: opt.labelNl,
-              option_label_en: opt.labelEn,
-            })) || [],
-        }));
-
-        setCurrentQuestions(convertedQuestions);
-        setCurrentQuestionIndex(0);
-        setAnswers({});
-      }
-    } else if (step === 8) {
-      // Step 8: Verification step
-      setShowOTPVerification(true);
+    } catch (error) {
+      console.error('Error loading questions:', error);
+      alert('Er is een fout opgetreden bij het laden van de vragen.');
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error('Error loading questions:', error);
-    alert('Er is een fout opgetreden bij het laden van de vragen.');
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
-  const loadFollowUpQuestions = async (parentQuestionId: string, parentOptionId: string) => {
+  const loadFollowUpQuestions = async (
+    parentQuestionId: string,
+    parentOptionId: string
+  ) => {
     setIsLoading(true);
     try {
       const params = new URLSearchParams({
@@ -148,115 +164,118 @@ const loadQuestionsForStep = async (
     }
   };
 
-const saveAnswer = async (
-  questionId: string,
-  selectedOptionId?: string,
-  answerText?: string
-) => {
-  try {
-    // Find the current question to get fieldName
-    const question = currentQuestions.find((q) => q.id === questionId);
+  const saveAnswer = async (
+    questionId: string,
+    selectedOptionId?: string,
+    answerText?: string
+  ) => {
+    try {
+      // Find the current question to get fieldName
+      const question = currentQuestions.find((q) => q.id === questionId);
 
-    await fetch('/api/project-draft/save-answer', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        draftId,
-        questionId,
-        answerText,
-        currentStep, // Add current step
-        fieldName: question?.fieldName, // Add fieldName from question
-      }),
-    });
-  } catch (error) {
-    console.error('Error saving answer:', error);
-  }
-};
-
-const saveAllCurrentAnswers = async () => {
-  setIsSaving(true);
-  try {
-    // For steps with multiple fields (Step 6, 7), use batch save
-    if (currentStep === 6 || currentStep === 7) {
-      // Build answers object with fieldName
-      const answersWithFields: Record<string, { answerText: string; fieldName?: string }> = {};
-
-      Object.entries(answers).forEach(([questionId, answer]) => {
-        const question = currentQuestions.find((q) => q.id === questionId);
-        if (question) {
-          answersWithFields[questionId] = {
-            answerText: answer,
-            fieldName: question.fieldName,
-          };
-        }
-      });
-
-      // Single batch API call
-      await fetch('/api/project-draft/save-answers-batch', {
+      await fetch('/api/project-draft/save-answer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           draftId,
-          answers: answersWithFields,
-          currentStep,
+          questionId,
+          answerText,
+          currentStep, // Add current step
+          fieldName: question?.fieldName, // Add fieldName from question
         }),
       });
-    } else {
-      // For other steps, save individually
-      await Promise.all(
-        Object.entries(answers).map(([questionId, answer]) => {
-          const question = currentQuestions.find((q) => q.id === questionId);
-          if (!question) return Promise.resolve();
-
-          return saveAnswer(questionId, undefined, answer);
-        })
-      );
+    } catch (error) {
+      console.error('Error saving answer:', error);
     }
-  } catch (error) {
-    console.error('Error saving answers:', error);
-  } finally {
-    setIsSaving(false);
-  }
-};
+  };
 
-const moveToNextStep = async () => {
-  // Save all answers from current step
-  await saveAllCurrentAnswers();
+  const saveAllCurrentAnswers = async () => {
+    setIsSaving(true);
+    try {
+      // For steps with multiple fields (Step 6, 7), use batch save
+      if (currentStep === 6 || currentStep === 7) {
+        // Build answers object with fieldName
+        const answersWithFields: Record<
+          string,
+          { answerText: string; fieldName?: string }
+        > = {};
 
-  // Merge current answers into all answers
-  setAllAnswers((prev) => ({ ...prev, ...answers }));
+        Object.entries(answers).forEach(([questionId, answer]) => {
+          const question = currentQuestions.find((q) => q.id === questionId);
+          if (question) {
+            answersWithFields[questionId] = {
+              answerText: answer,
+              fieldName: question.fieldName,
+            };
+          }
+        });
 
-  // Save to history
-  setQuestionHistory((prev) => [
-    ...prev,
-    {
-      step: currentStep,
-      questions: currentQuestions,
-      answers,
-    },
-  ]);
+        // Single batch API call
+        await fetch('/api/project-draft/save-answers-batch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            draftId,
+            answers: answersWithFields,
+            currentStep,
+          }),
+        });
+      } else {
+        // For other steps, save individually
+        await Promise.all(
+          Object.entries(answers).map(([questionId, answer]) => {
+            const question = currentQuestions.find((q) => q.id === questionId);
+            if (!question) return Promise.resolve();
 
-  const nextStep = currentStep + 1;
+            return saveAnswer(questionId, undefined, answer);
+          })
+        );
+      }
+    } catch (error) {
+      console.error('Error saving answers:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
-  if (nextStep > totalSteps) {
-    // All steps completed
-    alert('Formulier voltooid!');
-    return;
-  }
+  const moveToNextStep = async () => {
+    // Save all answers from current step
+    await saveAllCurrentAnswers();
 
-  setCurrentStep(nextStep);
+    // Merge current answers into all answers
+    setAllAnswers((prev) => ({ ...prev, ...answers }));
 
-  // Special handling for Step 7 (conditional based on Step 2)
-  if (nextStep === 7) {
-    // Get request type from Step 2 answer (new ID: lead_request_type)
-    const requestTypeAnswer = allAnswers['lead_request_type'];
-    const requestType =
-      requestTypeAnswer === 'business' ? 'business' : 'private';
-    await loadQuestionsForStep(7, requestType);
-  } else {
-    await loadQuestionsForStep(nextStep);
-  }
-};
+    // Save to history
+    setQuestionHistory((prev) => [
+      ...prev,
+      {
+        step: currentStep,
+        questions: currentQuestions,
+        answers,
+      },
+    ]);
+
+    const nextStep = currentStep + 1;
+
+    if (nextStep > totalSteps) {
+      // All steps completed
+      alert('Formulier voltooid!');
+      return;
+    }
+
+    setCurrentStep(nextStep);
+
+    // Special handling for Step 7 (conditional based on Step 2)
+    if (nextStep === 7) {
+      // Get request type from Step 2 answer (new ID: lead_request_type)
+      const requestTypeAnswer = allAnswers['lead_request_type'];
+      const requestType =
+        requestTypeAnswer === 'business' ? 'business' : 'private';
+      await loadQuestionsForStep(7, requestType);
+    } else {
+      await loadQuestionsForStep(nextStep);
+    }
+  };
 
   const handleNext = async () => {
     if (!currentQuestion) return;
@@ -274,7 +293,7 @@ const moveToNextStep = async () => {
     // Check if there are more questions in current set
     if (currentQuestionIndex < currentQuestions.length - 1) {
       // Move to next question in the same set
-      setCurrentQuestionIndex(prev => prev + 1);
+      setCurrentQuestionIndex((prev) => prev + 1);
       return;
     }
 
@@ -283,17 +302,22 @@ const moveToNextStep = async () => {
     if (currentStep === 1) {
       const firstQuestion = currentQuestions[0];
       const firstAnswer = newAnswers[firstQuestion.id];
-      const selectedOption = firstQuestion.options?.find(opt => opt.id === firstAnswer);
+      const selectedOption = firstQuestion.options?.find(
+        (opt) => opt.id === firstAnswer
+      );
 
       if (selectedOption?.has_follow_up) {
         // Load follow-up questions
         await saveAllCurrentAnswers();
-        setAllAnswers(prev => ({ ...prev, ...newAnswers }));
-        setQuestionHistory(prev => [...prev, {
-          step: currentStep,
-          questions: currentQuestions,
-          answers: newAnswers,
-        }]);
+        setAllAnswers((prev) => ({ ...prev, ...newAnswers }));
+        setQuestionHistory((prev) => [
+          ...prev,
+          {
+            step: currentStep,
+            questions: currentQuestions,
+            answers: newAnswers,
+          },
+        ]);
         await loadFollowUpQuestions(firstQuestion.id, selectedOption.id);
       } else {
         // No follow-ups, move to next step
@@ -307,7 +331,7 @@ const moveToNextStep = async () => {
       if (wantsPhotos) {
         // Show photo upload modal
         await saveAllCurrentAnswers();
-        setAllAnswers(prev => ({ ...prev, ...newAnswers }));
+        setAllAnswers((prev) => ({ ...prev, ...newAnswers }));
         setShowPhotoModal(true);
       } else {
         // Skip photos, move to next step
@@ -328,14 +352,14 @@ const moveToNextStep = async () => {
   const handleBack = () => {
     // If we're not on the first question of the current set, go back within the set
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
+      setCurrentQuestionIndex((prev) => prev - 1);
       return;
     }
 
     // If we have history, go back to previous set of questions
     if (questionHistory.length > 0) {
       const previous = questionHistory[questionHistory.length - 1];
-      setQuestionHistory(prev => prev.slice(0, -1));
+      setQuestionHistory((prev) => prev.slice(0, -1));
       setCurrentStep(previous.step);
       setCurrentQuestions(previous.questions);
       setCurrentQuestionIndex(previous.questions.length - 1);
@@ -380,28 +404,34 @@ const moveToNextStep = async () => {
             let streetName = '';
             let streetNumber = '';
 
-            components.forEach((component: { types: string[]; long_name: string; short_name: string }) => {
-              if (component.types.includes('postal_code')) {
-                postcode = component.long_name;
+            components.forEach(
+              (component: {
+                types: string[];
+                long_name: string;
+                short_name: string;
+              }) => {
+                if (component.types.includes('postal_code')) {
+                  postcode = component.long_name;
+                }
+                if (component.types.includes('locality')) {
+                  city = component.long_name;
+                }
+                if (component.types.includes('route')) {
+                  streetName = component.long_name;
+                }
+                if (component.types.includes('street_number')) {
+                  streetNumber = component.long_name;
+                }
               }
-              if (component.types.includes('locality')) {
-                city = component.long_name;
-              }
-              if (component.types.includes('route')) {
-                streetName = component.long_name;
-              }
-              if (component.types.includes('street_number')) {
-                streetNumber = component.long_name;
-              }
-            });
+            );
 
             // Auto-fill the location fields
             setAnswers({
               ...answers,
-              'project_postcode': postcode,
-              'project_city': city,
-              'project_street_name': streetName,
-              'project_street_number': streetNumber,
+              project_postcode: postcode,
+              project_city: city,
+              project_street_name: streetName,
+              project_street_number: streetNumber,
             });
           }
         } catch (error) {
@@ -413,7 +443,9 @@ const moveToNextStep = async () => {
       },
       (error) => {
         console.error('Geolocation error:', error);
-        alert('Kon uw locatie niet ophalen. Controleer uw browser-instellingen.');
+        alert(
+          'Kon uw locatie niet ophalen. Controleer uw browser-instellingen.'
+        );
         setIsLoadingLocation(false);
       }
     );
@@ -429,10 +461,12 @@ const moveToNextStep = async () => {
           variant='outline'
           onClick={handleUseCurrentLocation}
           disabled={isLoadingLocation}
-          className='w-full flex items-center justify-center gap-2 py-4 px-6 rounded-[10px] border-2 border-primary text-primary hover:bg-primary/5 font-medium'
+          className='w-full flex items-center text-base md:text-lg justify-center gap-2 px-4 py-2 md:py-4 md:px-6 rounded-lg border-2 border-primary text-primary hover:bg-primary/5 font-medium'
         >
-          <MapPin className='w-5 h-5' />
-          {isLoadingLocation ? 'Locatie ophalen...' : 'Gebruik mijn huidige locatie'}
+          <MapPin className='w-4 h-4 md:w-5 md:h-5' />
+          {isLoadingLocation
+            ? 'Locatie ophalen...'
+            : 'Gebruik mijn huidige locatie'}
         </Button>
 
         {/* Location input fields */}
@@ -444,8 +478,8 @@ const moveToNextStep = async () => {
             onChange={(e) =>
               setAnswers({ ...answers, [question.id]: e.target.value })
             }
-            placeholder={question.placeholder_nl}
-            className='w-full placeholder:text-neutral-400 text-secondary-foreground font-medium py-4 px-6 rounded-[10px] h-auto md:text-lg'
+            placeholder={getLocalizedText(question.placeholder_nl, question.placeholder_en)}
+            className='w-full placeholder:text-neutral-400 text-secondary-foreground font-medium py-2 px-4 rounded-lg text-base md:py-4 md:px-6 md:rounded-xl h-auto md:text-lg'
           />
         ))}
       </div>
@@ -464,8 +498,8 @@ const moveToNextStep = async () => {
             onChange={(e) =>
               setAnswers({ ...answers, [question.id]: e.target.value })
             }
-            placeholder={question.placeholder_nl}
-            className='w-full placeholder:text-neutral-400 text-secondary-foreground font-medium py-4 px-6 rounded-[10px] h-auto md:text-lg'
+            placeholder={getLocalizedText(question.placeholder_nl, question.placeholder_en)}
+            className='w-full placeholder:text-neutral-400 text-secondary-foreground font-medium py-2 px-4 rounded-lg md:py-4 md:px-6 md:rounded-xl h-auto md:text-lg'
           />
         ))}
       </div>
@@ -482,8 +516,10 @@ const moveToNextStep = async () => {
         return (
           <RadioGroup
             value={selectedAnswer}
-            onValueChange={(value) => setAnswers({ ...answers, [currentQuestion.id]: value })}
-            className="space-y-4"
+            onValueChange={(value) =>
+              setAnswers({ ...answers, [currentQuestion.id]: value })
+            }
+            className='space-y-1 md:space-y-4'
           >
             {currentQuestion.options?.map((option) => (
               <QuestionnaireRadio
@@ -491,7 +527,7 @@ const moveToNextStep = async () => {
                 id={option.id}
                 name={currentQuestion.id}
                 value={option.id}
-                label={option.option_label_nl}
+                label={getLocalizedText(option.option_label_nl, option.option_label_en)}
                 checked={selectedAnswer === option.id}
               />
             ))}
@@ -501,11 +537,13 @@ const moveToNextStep = async () => {
       case 'text':
         return (
           <Input
-            type="text"
+            type='text'
             value={selectedAnswer}
-            onChange={(e) => setAnswers({ ...answers, [currentQuestion.id]: e.target.value })}
-            placeholder={currentQuestion.placeholder_nl}
-            className="w-full max-w-md py-4 px-6 placeholder:text-neutral-400 text-secondary-foreground font-medium text-lg"
+            onChange={(e) =>
+              setAnswers({ ...answers, [currentQuestion.id]: e.target.value })
+            }
+            placeholder={getLocalizedText(currentQuestion.placeholder_nl, currentQuestion.placeholder_en)}
+            className='w-full max-w-md py-4 px-6 placeholder:text-neutral-400 text-secondary-foreground font-medium text-lg'
           />
         );
 
@@ -513,9 +551,11 @@ const moveToNextStep = async () => {
         return (
           <Textarea
             value={selectedAnswer}
-            onChange={(e) => setAnswers({ ...answers, [currentQuestion.id]: e.target.value })}
-            placeholder={currentQuestion.placeholder_nl}
-            className="w-full max-w-2xl min-h-[150px]"
+            onChange={(e) =>
+              setAnswers({ ...answers, [currentQuestion.id]: e.target.value })
+            }
+            placeholder={getLocalizedText(currentQuestion.placeholder_nl, currentQuestion.placeholder_en)}
+            className='w-full text-sm md:text-base max-w-2xl min-h-[150px]'
           />
         );
 
@@ -540,18 +580,18 @@ const moveToNextStep = async () => {
       </div>
 
       {/* Main Content */}
-      <main className='flex-1 flex items-center justify-center px-7 py-12'>
+      <main className='flex-1 flex items-center justify-center px-4 py-6 md:px-7 md:py-12'>
         <div className='w-full max-w-[680px]'>
           {showOTPVerification ? (
             <OTPVerification
-              phoneNumber={
-                allAnswers['lead_phone'] || ''
-              }
+              phoneNumber={allAnswers['lead_phone'] || ''}
               draftId={draftId!}
               onVerify={(projectId) => {
                 // Project created successfully!
                 console.log('Project created:', projectId);
-                alert('Project succesvol ingediend! U ontvangt binnenkort offertes.');
+                alert(
+                  'Project succesvol ingediend! U ontvangt binnenkort offertes.'
+                );
                 router.push('/dashboard');
               }}
               onBack={() => setShowOTPVerification(false)}
@@ -565,12 +605,14 @@ const moveToNextStep = async () => {
               {/* Step 6: Location fields (all together) */}
               {currentStep === 6 ? (
                 <>
-                  <h2 className='text-4xl font-normal leading-10 text-center text-foreground mb-8'>
+                  <h2 className='text-2xl md:text-4xl font-normal leading-10 text-center text-foreground  mb-4 md:mb-8'>
                     Wat is de projectlocatie?
                   </h2>
 
                   {/* All location fields */}
-                  <div className='mb-12'>{renderStep6LocationFields()}</div>
+                  <div className='mb-6 md:mb-12'>
+                    {renderStep6LocationFields()}
+                  </div>
 
                   {/* Navigation Buttons */}
                   <div className='flex items-center justify-between'>
@@ -578,20 +620,20 @@ const moveToNextStep = async () => {
                       variant='ghost'
                       onClick={handleBack}
                       disabled={questionHistory.length === 0}
-                      className='text-primary font-medium text-base flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
+                      className='text-primary font-medium text-sm md:text-base flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                      <ArrowLeft className='w-5 h-5' />
+                      <ArrowLeft className='w-4 h-4 md:w-5 md:h-5' />
                       Vorige
                     </Button>
 
-                    <p className='text-sm text-gray-500 text-center'>
+                    <p className='text-xs md:text-sm text-gray-500 text-center'>
                       Stap {currentStep} van {totalSteps}
                     </p>
 
                     <Button
                       onClick={async () => {
                         // Validate all required fields
-                        const allFilled = currentQuestions.every ((q) =>
+                        const allFilled = currentQuestions.every((q) =>
                           q.is_required ? answers[q.id]?.trim() : true
                         );
                         if (!allFilled) {
@@ -601,17 +643,17 @@ const moveToNextStep = async () => {
                         await moveToNextStep();
                       }}
                       disabled={isSaving}
-                      className='bg-primary hover:bg-primary/90 text-white font-medium text-base px-8 py-4 w-auto rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
+                      className='bg-primary hover:bg-primary/90 text-white font-medium text-sm px-4 py-2 md:text-base md:px-8 md:py-4 rounded-lg md:rounded-xl w-auto flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
                       size={null}
                     >
                       {isSaving ? 'Opslaan...' : 'Volgende'}
-                      <ArrowRight className='w-5 h-5' />
+                      <ArrowRight className='w-4 h-4 md:w-5 md:h-5' />
                     </Button>
                   </div>
                 </>
               ) : currentStep === 7 ? (
                 <>
-                  <h2 className='text-4xl font-normal leading-10 text-center text-foreground mb-8'>
+                  <h2 className='text-2xl md:text-4xl font-normal leading-10 text-center text-foreground mb-8'>
                     Vul hier jouw gegevens in
                   </h2>
 
@@ -624,13 +666,13 @@ const moveToNextStep = async () => {
                       variant='ghost'
                       onClick={handleBack}
                       disabled={questionHistory.length === 0}
-                      className='text-primary font-medium text-base flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
+                      className='text-primary font-medium text-sm md:text-base flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                      <ArrowLeft className='w-5 h-5' />
+                      <ArrowLeft className='w-4 h-4 md:w-5 md:h-5' />
                       Vorige
                     </Button>
 
-                    <p className='text-sm text-gray-500 text-center'>
+                    <p className='text-xs md:text-sm text-gray-500 text-center'>
                       Stap {currentStep} van {totalSteps}
                     </p>
 
@@ -653,10 +695,10 @@ const moveToNextStep = async () => {
                         setShowOTPVerification(true);
                       }}
                       disabled={isSaving}
-                      className='bg-primary hover:bg-primary/90 text-white font-medium text-base px-8 py-6 rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
+                      className='bg-primary hover:bg-primary/90 text-white font-medium text-sm px-4 py-2 md:text-base md:px-8 md:py-4 rounded-lg md:rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
                       {isSaving ? 'Opslaan...' : 'Ontvang offertes'}
-                      <ArrowRight className='w-5 h-5' />
+                      <ArrowRight className='w-4 h-4 md:w-5 md:h-5' />
                     </Button>
                   </div>
                 </>
@@ -665,21 +707,20 @@ const moveToNextStep = async () => {
                   {/* Regular question rendering for other steps */}
                   {/* Question Counter (for multiple questions in same step) */}
                   {currentQuestions.length > 1 && (
-                    <p className='text-center text-sm text-gray-500 mb-4'>
-                      Vraag {currentQuestionIndex + 1} van{' '}
-                      {currentQuestions.length}
+                    <p className='text-center text-xs md:text-sm text-gray-500 mb-4'>
+                      {t('questionCounter', { current: currentQuestionIndex + 1, total: currentQuestions.length })}
                     </p>
                   )}
 
                   {/* Question */}
-                  <h2 className='text-4xl font-normal leading-10 text-center text-foreground mb-4'>
-                    {currentQuestion.question_text_nl}
+                  <h2 className='text-2xl md:text-4xl font-normal leading-10 text-center text-foreground mb-4'>
+                    {getLocalizedText(currentQuestion.question_text_nl, currentQuestion.question_text_en)}
                   </h2>
 
                   {/* Help Text */}
-                  {currentQuestion.help_text_nl && (
-                    <p className='text-center text-base text-slate-500 mb-11'>
-                      {currentQuestion.help_text_nl}
+                  {(currentQuestion.help_text_nl || currentQuestion.help_text_en) && (
+                    <p className='text-center text-sm md:text-base text-slate-500 mb-11'>
+                      {getLocalizedText(currentQuestion.help_text_nl, currentQuestion.help_text_en)}
                     </p>
                   )}
 
@@ -695,22 +736,22 @@ const moveToNextStep = async () => {
                         questionHistory.length === 0 &&
                         currentQuestionIndex === 0
                       }
-                      className='text-primary font-medium text-base flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
+                      className='text-primary font-medium text-sm md:text-base flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                      <ArrowLeft className='w-5 h-5' />
-                      Vorige
+                      <ArrowLeft className='w-4 h-4 md:w-5 md:h-5' />
+                      {t('previous')}
                     </Button>
-                    <p className='text-sm text-gray-500 mt-2 text-center'>
-                      Stap {currentStep} van {totalSteps}
+                    <p className='text-xs md:text-sm text-gray-500 md:mt-2 text-center'>
+                      {t('stepCounter', { current: currentStep, total: totalSteps })}
                     </p>
                     <Button
                       size={null}
                       onClick={handleNext}
                       disabled={!selectedAnswer || isSaving}
-                      className='bg-primary hover:bg-primary/90 text-white font-medium text-base px-8 py-4 w-auto rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
+                      className='bg-primary hover:bg-primary/90 text-white font-medium text-sm px-4 py-2 md:text-base md:px-8 md:py-4 rounded-lg md:rounded-xl w-auto flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                      {isSaving ? 'Opslaan...' : 'Volgende'}
-                      <ArrowRight className='w-5 h-5' />
+                      {isSaving ? t('saving') : t('next')}
+                      <ArrowRight className='w-4 h-4 md:w-5 md:h-5' />
                     </Button>
                   </div>
                 </>

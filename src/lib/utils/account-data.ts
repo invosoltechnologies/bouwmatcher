@@ -36,6 +36,7 @@ export function getStatusCode(
 /**
  * Transforms database data to AccountStatus format
  * Uses ONLY profile.is_verified (professional profile status)
+ * Returns translation keys instead of hardcoded text
  */
 export function transformToAccountStatus(
   profile: ProfessionalProfile,
@@ -45,46 +46,46 @@ export function transformToAccountStatus(
   const profileStatus = profile.is_verified || 'unverified';
   const statusCode = getStatusCode(profileStatus);
 
-  let status = 'In verificatie';
-  let description = 'Je aanmelding wordt geverifieerd. Dit kan 1-2 werkdagen duren.';
+  let statusKey = 'inVerification';
+  let descriptionKey = 'inVerification';
   let documentRequired = false;
 
   // Determine status based on profile.is_verified
   switch (profileStatus) {
     case 'verified':
-      status = 'Geverifieerd';
-      description = 'Je account is geverifieerd en actief.';
+      statusKey = 'verified';
+      descriptionKey = 'verified';
       documentRequired = false;
       break;
 
     case 'in_review':
-      status = 'In beoordeling';
-      description = 'Je aanmelding wordt beoordeeld door ons team.';
+      statusKey = 'inReview';
+      descriptionKey = 'inReview';
       documentRequired = false;
       break;
 
     case 'pending':
-      status = 'In afwachting';
-      description = 'Je aanmelding is ontvangen en wacht op verificatie.';
+      statusKey = 'pending';
+      descriptionKey = 'pending';
       documentRequired = false;
       break;
 
     case 'rejected':
-      status = 'Afgewezen';
-      description = 'Je aanvraag is afgewezen. Neem contact op met support voor meer informatie.';
+      statusKey = 'rejected';
+      descriptionKey = 'rejected';
       documentRequired = false;
       break;
 
     case 'suspended':
-      status = 'Geschorst';
-      description = 'Je account is tijdelijk geschorst. Neem contact op met support.';
+      statusKey = 'suspended';
+      descriptionKey = 'suspended';
       documentRequired = false;
       break;
 
     case 'unverified':
     default:
-      status = 'In verificatie';
-      description = 'Je aanmelding wordt geverifieerd. Dit kan 1-2 werkdagen duren.';
+      statusKey = 'inVerification';
+      descriptionKey = 'inVerification';
       // Check if documents are needed
       const hasDocuments = company?.verification_documents;
       documentRequired = !hasDocuments;
@@ -92,10 +93,11 @@ export function transformToAccountStatus(
   }
 
   return {
-    status,
-    description,
+    statusKey,
+    descriptionKey,
     statusCode,
     documentRequired,
+    status: profileStatus,
   };
 }
 
@@ -162,6 +164,7 @@ export function transformToContactInfo(
 
 /**
  * Calculates profile completion percentage and tasks
+ * Returns translation keys instead of hardcoded text
  */
 export function calculateProfileCompletion(
   profile: ProfessionalProfile,
@@ -170,26 +173,26 @@ export function calculateProfileCompletion(
   const tasks = [
     {
       id: '1',
-      title: 'Upload een logo en bedrijfsfoto',
-      statusText: 'Klaar',
+      titleKey: 'uploadLogo',
+      statusKey: 'completed',
       completed: true, // TODO: Check if logo and photos exist
     },
     {
       id: '2',
-      title: 'Vul je omschrijving & doelregio in',
-      statusText: company?.business_description ? 'Klaar' : 'Nog te doen',
+      titleKey: 'fillDescription',
+      statusKey: company?.business_description ? 'completed' : 'pending',
       completed: !!company?.business_description,
     },
     {
       id: '3',
-      title: 'Vraag ten minste 1 review aan',
-      statusText: 'Nog te doen',
+      titleKey: 'requestReview',
+      statusKey: 'pending',
       completed: false, // TODO: Check review count
     },
     {
       id: '4',
-      title: 'Verifieer je bedrijfsgegevens',
-      statusText: company?.is_verified ? 'Klaar' : 'Nog te doen',
+      titleKey: 'verifyCompany',
+      statusKey: company?.is_verified ? 'completed' : 'pending',
       completed: !!company?.is_verified,
     },
   ];

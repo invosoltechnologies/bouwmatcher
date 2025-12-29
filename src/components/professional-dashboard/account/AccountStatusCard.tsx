@@ -1,19 +1,22 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import PulsingDot from '@/components/ui/pulsing-dot';
 
 interface AccountStatusCardProps {
-  status: string;
-  description: string;
+  statusKey: string;
+  descriptionKey: string;
   statusCode: -1 | 1 | 2; // -1: inactive/blocked, 1: verified, 2: in process
 }
 
 export default function AccountStatusCard({
-  status,
-  description,
+  statusKey,
+  descriptionKey,
   statusCode,
 }: AccountStatusCardProps) {
+  const t = useTranslations('common.proDashboard.account.accountStatus');
+
   // Determine pill color based on status code
   const getPillColor = () => {
     switch (statusCode) {
@@ -31,7 +34,7 @@ export default function AccountStatusCard({
   return (
     <Card className='px-5 gap-4'>
       <CardHeader className='p-0 gap-0'>
-        <CardTitle className='text-xl leading-normal'>Accountstatus</CardTitle>
+        <CardTitle className='text-xl leading-normal'>{t('title')}</CardTitle>
       </CardHeader>
       <CardContent className='p-0 space-y-4'>
         <div className='flex items-start gap-2'>
@@ -43,10 +46,10 @@ export default function AccountStatusCard({
           />
           <div>
             <p className='text-muted-foreground font-medium text-sm'>
-              {status}
+              {t(`statuses.${statusKey}` as any)}
             </p>
             <p className='text-muted-foreground text-sm mt-2.5'>
-              {description}
+              {t(`descriptions.${descriptionKey}` as any)}
             </p>
           </div>
         </div>

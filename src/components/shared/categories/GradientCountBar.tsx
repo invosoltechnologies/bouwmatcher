@@ -20,22 +20,22 @@ export default function GradientCountBar({
   label = 'geselecteerd',
 }: GradientCountBarProps) {
   return (
-    <div className='px-6 lg:px-8 py-3 flex items-center justify-between' style={{ background: gradient }}>
-      <p className='text-sm font-medium text-slate-900'>
+    <div className='px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4' style={{ background: gradient }}>
+      <p className='text-xs sm:text-sm font-medium text-slate-900'>
         {selectedCount} {label}
       </p>
-      <div className='flex items-center gap-4'>
+      <div className='flex items-center gap-3 sm:gap-4'>
         {showDeselectButton && selectedCount > 0 && onDeselectAll && (
           <button
             type='button'
             onClick={onDeselectAll}
-            className='text-primary text-sm font-medium hover:text-primary/80'
+            className='text-primary text-xs sm:text-sm font-medium hover:text-primary/80'
           >
             Deselecteer alle
           </button>
         )}
         {showLimit && (
-          <p className='text-sm font-medium text-slate-900'>
+          <p className='text-xs sm:text-sm font-medium text-slate-900 whitespace-nowrap'>
             Limiet: {selectedCount}/{maxLimit}
           </p>
         )}

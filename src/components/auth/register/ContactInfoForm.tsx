@@ -6,9 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { isValidPhoneNumber } from 'react-phone-number-input';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import type { ContactInfoData } from '@/types/auth';
 import { ArrowRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface ContactInfoFormProps {
   onNext: (data: ContactInfoData) => void;
@@ -16,6 +17,8 @@ interface ContactInfoFormProps {
 }
 
 export default function ContactInfoForm({ onNext, defaultValues }: ContactInfoFormProps) {
+  const t = useTranslations('auth.register.contactInfo');
+
   const {
     register,
     handleSubmit,
@@ -32,19 +35,19 @@ export default function ContactInfoForm({ onNext, defaultValues }: ContactInfoFo
   return (
     <div className='w-full max-w-3xl mx-auto'>
       <h1 className='text-lg text-slate-900 md:text-4xl font-normal text-center mb-8 md:mb-14'>
-        Contactgegevens
+        {t('heading')}
       </h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-8'>
         <div className='flex flex-col md:flex-row gap-6'>
           <div className='flex-1'>
             <Label className='block text-sm md:text-xl text-muted-foreground mb-3'>
-              Voornaam
+              {t('firstNameLabel')}
             </Label>
             <Input
-              {...register('firstName', { required: 'Voornaam is verplicht' })}
+              {...register('firstName', { required: t('firstNameRequired') })}
               type='text'
-              placeholder='Jhon'
+              placeholder={t('firstNamePlaceholder')}
               className='py-7 bg-white border-neutral-300 rounded-lg px-4 text-base md:text-xl placeholder:text-slate-300'
               style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
             />
@@ -57,12 +60,12 @@ export default function ContactInfoForm({ onNext, defaultValues }: ContactInfoFo
 
           <div className='flex-1'>
             <Label className='block text-sm md:text-xl text-muted-foreground mb-3'>
-              Achternaam
+              {t('lastNameLabel')}
             </Label>
             <Input
-              {...register('lastName', { required: 'Achternaam is verplicht' })}
+              {...register('lastName', { required: t('lastNameRequired') })}
               type='text'
-              placeholder='Ilya'
+              placeholder={t('lastNamePlaceholder')}
               className='py-7 bg-white border-neutral-300 rounded-lg px-4 text-base md:text-xl placeholder:text-slate-300'
               style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
             />
@@ -76,18 +79,18 @@ export default function ContactInfoForm({ onNext, defaultValues }: ContactInfoFo
 
         <div>
           <Label className='block text-sm md:text-xl text-muted-foreground mb-3'>
-            E-mailadres (zakelijk)
+            {t('emailLabel')}
           </Label>
           <Input
             {...register('email', {
-              required: 'E-mailadres is verplicht',
+              required: t('emailRequired'),
               pattern: {
                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: 'Ongeldig e-mailadres',
+                message: t('emailInvalid'),
               },
             })}
             type='email'
-            placeholder='voorbeeld@bedrijf.nl'
+            placeholder={t('emailPlaceholder')}
             className='py-7 bg-white border-neutral-300 rounded-lg px-4 text-base md:text-xl placeholder:text-slate-300'
             style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
           />
@@ -98,22 +101,21 @@ export default function ContactInfoForm({ onNext, defaultValues }: ContactInfoFo
 
         <div>
           <Label className='block text-sm md:text-xl text-muted-foreground mb-3'>
-            Telefoonnummer
+            {t('phoneLabel')}
           </Label>
           <Controller
             name='phone'
             control={control}
             rules={{
-              required: 'Telefoonnummer is verplicht',
+              required: t('phoneRequired'),
               validate: (value) => {
-                if (!value) return 'Telefoonnummer is verplicht';
-                return isValidPhoneNumber(value) || 'Ongeldig telefoonnummer';
+                if (!value) return t('phoneRequired');
+                return isValidPhoneNumber(value) || t('phoneInvalid');
               },
             }}
             render={({ field }) => (
               <PhoneInput
                 {...field}
-                placeholder='6 12345678'
                 className=' bg-white border-neutral-300 rounded-lg text-base md:text-xl placeholder:text-slate-300'
                 classInput='py-7 px-4 text-base border-neutral-300 md:text-xl placeholder:text-slate-300'
                 style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
@@ -124,14 +126,14 @@ export default function ContactInfoForm({ onNext, defaultValues }: ContactInfoFo
         </div>
 
         <div className='text-sm md:text-lg text-muted-foreground'>
-          Door verder te gaan, ga je akkoord met de{' '}
+          {t('termsText')}{' '}
           <Link
             href='/terms'
             className='font-medium text-primary hover:underline'
           >
-            algemene voorwaarden
+            {t('termsLink')}
           </Link>{' '}
-          van Bouwmatcher
+          {t('termsTextSuffix')}
         </div>
 
         <div className='flex justify-end pt-4'>
@@ -139,7 +141,7 @@ export default function ContactInfoForm({ onNext, defaultValues }: ContactInfoFo
             type='submit'
             className='px-6 py-4 text-base rounded-2xl md:text-lg font-semibold'
           >
-            Wachtwoord instellen
+            {t('submitButton')}
             <ArrowRight className='w-5 h-5 md:h-7 md:w-7' size={20} />
           </Button>
         </div>

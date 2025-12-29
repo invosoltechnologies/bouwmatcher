@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import toast from 'react-hot-toast';
 import RegistrationSteps from '@/components/auth/RegistrationSteps';
 import ContactInfoForm from '@/components/auth/register/ContactInfoForm';
@@ -331,7 +331,7 @@ export default function ProfessionalRegistrationForm() {
     <>
       <RegistrationSteps currentStep={currentStep} />
 
-      <main className='flex-1 flex items-center justify-center px-4 py-12'>
+      <main className='flex-1 flex items-center justify-center px-4 py-8 md:py-12'>
         {currentStep === 1 && (
           <>
             {subStep === 'contact' && (

@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(mkdir:*)",
+      "Bash(npm run lint:*)",
+      "Bash(curl:*)",
+      "Bash(python -m json.tool:*)"
     ],
     "deny": [],
     "ask": []

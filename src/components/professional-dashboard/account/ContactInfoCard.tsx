@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import {
   Card,
   CardHeader,
@@ -26,28 +27,30 @@ export default function ContactInfoCard({
   contactInfo,
   onEdit,
 }: ContactInfoCardProps) {
+  const t = useTranslations('common.proDashboard.account.contactInfo');
+
   const fields = [
-    { label: 'Contactpersoon', value: contactInfo.contactPerson },
-    { label: 'E-mailadres (offertesaanvragen)', value: contactInfo.quotesEmail },
-    { label: 'E-mailadres (facturering)', value: contactInfo.invoicesEmail },
-    { label: 'E-mailadres (algemeen)', value: contactInfo.generalEmail },
-    { label: 'Telefoonnummer', value: contactInfo.phoneNumber },
+    { label: t('contactPerson'), value: contactInfo.contactPerson },
+    { label: t('quotesEmail'), value: contactInfo.quotesEmail },
+    { label: t('invoicesEmail'), value: contactInfo.invoicesEmail },
+    { label: t('generalEmail'), value: contactInfo.generalEmail },
+    { label: t('phoneNumber'), value: contactInfo.phoneNumber },
   ];
 
   return (
-    <Card className='px-5 gap-4'>
+    <Card className='px-6 py-5 gap-5'>
       <CardHeader className='p-0 gap-0'>
-        <CardTitle className='text-xl leading-normal'>
-          Contactgegevens
+        <CardTitle className='text-xl font-medium leading-normal'>
+          {t('title')}
         </CardTitle>
         <CardAction>
           <Button
             variant='outline'
             size='default'
             onClick={onEdit}
-            className='text-primary border-primary font-noramal text-base rounded-xl'
+            className='text-primary border-primary font-medium text-base rounded-xl px-6'
           >
-            Wijzig
+            {t('edit')}
           </Button>
         </CardAction>
       </CardHeader>
@@ -56,14 +59,14 @@ export default function ContactInfoCard({
           {fields.map((field, index) => (
             <div
               key={field.label}
-              className={`flex justify-between items-start py-2.5 ${
+              className={`flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-4 py-3 ${
                 index !== fields.length - 1 ? 'border-b border-b-slate-200' : ''
               }`}
             >
-              <span className='text-muted-foreground text-sm leading-normal font-medium'>
+              <span className='text-muted-foreground text-base leading-normal font-medium min-w-fit'>
                 {field.label}
               </span>
-              <span className='text-secondary-foreground text-sm leading-normal text-right'>
+              <span className='text-secondary-foreground text-base leading-normal text-left sm:text-right break-all'>
                 {field.value}
               </span>
             </div>
