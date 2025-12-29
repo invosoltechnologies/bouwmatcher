@@ -97,6 +97,7 @@ export function transformToAccountStatus(
     descriptionKey,
     statusCode,
     documentRequired,
+    status: profileStatus,
   };
 }
 

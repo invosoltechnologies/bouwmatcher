@@ -43,7 +43,7 @@ export default function SelectedCategoriesSidebar({
 }: SelectedCategoriesSidebarProps) {
   // Get category name from service_categories table field based on locale
   const getCategoryName = (spec: ProfessionalSpecialization) => {
-    if (!spec.service_categories) return spec.name || '';
+    if (!spec.service_categories) return '';
     const catName = locale === 'en'
       ? (spec.service_categories.name_en || spec.service_categories.name_nl)
       : spec.service_categories.name_nl;

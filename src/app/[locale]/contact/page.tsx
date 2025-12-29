@@ -1,3 +1,5 @@
+'use client';
+
 import HeroContact from "@/components/Contact/HeroContact";
 import ContactForm from "@/components/Contact/ContactForm";
 import ContactMethods from "@/components/Contact/ContactMethods";

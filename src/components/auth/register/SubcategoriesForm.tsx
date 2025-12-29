@@ -93,7 +93,7 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
             id: spec.service_categories.id,
             slug: spec.service_categories.slug,
             name_nl: spec.service_categories.name_nl,
-            name_en: spec.service_categories.name_en,
+            name_en: spec.service_categories.name_en ?? undefined,
             icon_url: spec.service_categories.icon_url,
             subcategories: [],
           });

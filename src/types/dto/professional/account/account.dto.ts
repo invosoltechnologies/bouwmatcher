@@ -12,6 +12,7 @@ export interface GetAccountResponse {
       descriptionKey: string;
       statusCode: -1 | 1 | 2;
       documentRequired: boolean;
+      status: string;
     };
     companyInfo: {
       companyName: string;

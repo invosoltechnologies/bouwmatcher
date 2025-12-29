@@ -98,6 +98,7 @@ export interface AccountStatusData {
   descriptionKey: string; // Translation key for description
   statusCode: -1 | 1 | 2; // -1: inactive/blocked, 1: verified, 2: in process
   documentRequired: boolean;
+  status: string; // Actual verification status: 'verified' | 'pending' | 'in_review' | 'unverified' | 'rejected' | 'suspended'
 }
 
 export interface CompanyInfoData {
