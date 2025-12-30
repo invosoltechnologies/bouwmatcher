@@ -149,8 +149,8 @@ export default function OfferteaanvragenPageClient() {
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
         {/* Main Content */}
         <div className="flex-1 min-w-0">
-          {/* Verification Banner - Only show if not verified */}
-          {accountData?.accountData?.accountStatus?.statusCode !== 2 && (
+          {/* Verification Banner - Only show if not verified (statusCode 1 = verified) */}
+          {accountData?.accountData?.accountStatus?.statusCode !== 1 && (
             <VerificationBanner />
           )}
 
