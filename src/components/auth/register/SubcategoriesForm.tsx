@@ -265,7 +265,7 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
           onDeselectAll={deselectAllSubcategories}
           showLimit={true}
           showDeselectButton={true}
-          label={t('selectedLabel')}
+          translationKey='auth.register.subcategories'
         />
 
         {/* Accordion Section with Subcategories */}
@@ -279,7 +279,7 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
             onAccordionChange={setOpenAccordions}
             showPrices={true}
             searchQuery={searchQuery}
-            locale={locale}
+            translationKey='auth.register.subcategories'
           />
         </div>
       </div>

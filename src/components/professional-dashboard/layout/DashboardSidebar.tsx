@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
+import { BriefcaseBusiness } from 'lucide-react';
 import { dashboardNavigation } from '@/config/professional-dashboard';
 import { cn } from '@/lib/utils';
 import { useAccount } from '@/lib/hooks/professional/account/useAccount';
@@ -59,6 +60,36 @@ export default function DashboardSidebar() {
     return t(`common.proDashboard.navigation.${item.id}` as any);
   };
 
+  const renderIcon = (item: typeof dashboardNavigation[0], isActive: boolean) => {
+    if (item.iconType === 'lucide') {
+      // Render lucide-react icon
+      const iconClass = cn(
+        'w-4 h-4 transition-all',
+        isActive ? 'text-white' : 'text-muted-foreground group-hover:text-primary'
+      );
+
+      if (item.icon === 'BriefcaseBusiness') {
+        return <BriefcaseBusiness className={iconClass} />;
+      }
+      return null;
+    }
+
+    // Render SVG image (default)
+    return (
+      <Image
+        src={item.icon}
+        alt={getNavigationLabel(item)}
+        width={16}
+        height={16}
+        className={cn(
+          'w-4 h-4 transition-all',
+          isActive && 'brightness-0 invert',
+          !isActive && 'group-hover:[filter:brightness(0)_saturate(100%)_invert(16%)_sepia(97%)_saturate(2276%)_hue-rotate(213deg)_brightness(93%)_contrast(108%)]'
+        )}
+      />
+    );
+  };
+
   return (
     <aside className="hidden lg:flex lg:max-w-64 w-full bg-white border-r border-slate-200 flex-col h-screen sticky top-0">
       {/* Logo */}
@@ -78,7 +109,8 @@ export default function DashboardSidebar() {
       <nav className="flex-1 px-6 py-8.5">
         <ul className="space-y-2.5">
           {dashboardNavigation.map((item) => {
-            const isActive = pathname === item.href;
+            // Check if pathname ends with the item href (to handle locale prefix like /en/pro-dashboard/account)
+            const isActive = pathname === item.href || pathname.endsWith(item.href);
             const isActionItem = item.type === 'action';
 
             if (isActionItem) {
@@ -93,13 +125,7 @@ export default function DashboardSidebar() {
                       isLoggingOut && 'opacity-50 cursor-not-allowed'
                     )}
                   >
-                    <Image
-                      src={item.icon}
-                      alt={getNavigationLabel(item)}
-                      width={16}
-                      height={16}
-                      className="w-4 h-4 transition-all group-hover:[filter:brightness(0)_saturate(100%)_invert(16%)_sepia(97%)_saturate(2276%)_hue-rotate(213deg)_brightness(93%)_contrast(108%)]"
-                    />
+                    {renderIcon(item, false)}
                     <span>{getNavigationLabel(item)}</span>
                   </button>
                 </li>
@@ -117,17 +143,7 @@ export default function DashboardSidebar() {
                       : 'hover:bg-primary/5 text-muted-foreground hover:text-primary'
                   )}
                 >
-                  <Image
-                    src={item.icon}
-                    alt={getNavigationLabel(item)}
-                    width={16}
-                    height={16}
-                    className={cn(
-                      'w-4 h-4 transition-all',
-                      isActive && 'brightness-0 invert',
-                      !isActive && 'group-hover:[filter:brightness(0)_saturate(100%)_invert(16%)_sepia(97%)_saturate(2276%)_hue-rotate(213deg)_brightness(93%)_contrast(108%)]'
-                    )}
-                  />
+                  {renderIcon(item, isActive)}
                   <span>{getNavigationLabel(item)}</span>
                 </Link>
               </li>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from '@/i18n/navigation';
-import { User, LogOut, ChevronDown } from 'lucide-react';
+import { User, LogOut, ChevronDown, BriefcaseBusiness } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { dashboardNavigation } from '@/config/professional-dashboard';
@@ -105,13 +105,17 @@ export default function UserAvatarDropdown() {
               onClick={() => setOpen(false)}
               className='group flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent transition-colors cursor-pointer'
             >
-              <Image
-                src={item.icon}
-                alt={t(`proDashboard.navigation.${item.id}`)}
-                width={16}
-                height={16}
-                className='w-4 h-4 group-hover:brightness-0 group-hover:invert transition-all'
-              />
+              {item.iconType === 'lucide' && item.icon === 'BriefcaseBusiness' ? (
+                <BriefcaseBusiness className='w-4 h-4 group-hover:text-white transition-colors' />
+              ) : (
+                <Image
+                  src={item.icon}
+                  alt={t(`proDashboard.navigation.${item.id}`)}
+                  width={16}
+                  height={16}
+                  className='w-4 h-4 group-hover:brightness-0 group-hover:invert transition-all'
+                />
+              )}
               <span className='text-sm group-hover:text-white transition-colors'>
                 {t(`proDashboard.navigation.${item.id}`)}
               </span>

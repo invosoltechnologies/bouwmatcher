@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { nl } from 'date-fns/locale';
+import { useTranslations } from 'next-intl';
 
 interface MoreInfoCardProps {
   registrationStatus: string;
@@ -17,14 +18,16 @@ export default function MoreInfoCard({
   businessId,
   memberSince,
 }: MoreInfoCardProps) {
+  const t = useTranslations('common.proDashboard.bedrijfsprofiel.moreInfo');
+
   // Format member since date
   const formatMemberSince = (dateString?: string) => {
-    if (!dateString) return 'December 2024';
+    if (!dateString) return t('defaultDate');
     try {
       const date = new Date(dateString);
       return format(date, 'MMMM yyyy', { locale: nl });
     } catch {
-      return 'December 2024';
+      return t('defaultDate');
     }
   };
 
@@ -33,18 +36,18 @@ export default function MoreInfoCard({
     switch (registrationStatus) {
       case 'verified':
         return {
-          text: 'Geverifieerd',
+          text: t('verified'),
           className: 'bg-accent text-white',
         };
       case 'pending':
       case 'in_review':
         return {
-          text: 'In behandeling',
+          text: t('pending'),
           className: 'bg-orange-500 text-white',
         };
       default:
         return {
-          text: 'Niet geverifieerd',
+          text: t('notVerified'),
           className: 'bg-destructive text-white',
         };
     }
@@ -53,37 +56,37 @@ export default function MoreInfoCard({
   const statusBadge = getStatusBadgeProps();
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className='text-base font-semibold'>Meer informatie</CardTitle>
+    <Card className='p-4 sm:p-5'>
+      <CardHeader className='p-0 mb-3 sm:mb-4'>
+        <CardTitle className='text-base sm:text-lg font-semibold'>{t('title')}</CardTitle>
       </CardHeader>
-      <CardContent className='space-y-4'>
+      <CardContent className='p-0 space-y-3 sm:space-y-4'>
         {/* Registration Status */}
-        <div className='flex items-center justify-between pb-3 border-b'>
-          <span className='text-sm text-muted-foreground'>Registratiestatus</span>
-          <Badge className={`${statusBadge.className} rounded-md px-2 py-1 text-xs`}>
+        <div className='flex items-center justify-between pb-2.5 sm:pb-3 border-b gap-2'>
+          <span className='text-xs sm:text-sm text-muted-foreground'>{t('registrationStatus')}</span>
+          <Badge className={`${statusBadge.className} rounded-md px-2 py-1 text-xs flex-shrink-0`}>
             {statusBadge.text}
           </Badge>
         </div>
 
         {/* Number of Employees */}
-        <div className='flex items-center justify-between pb-3 border-b'>
-          <span className='text-sm text-muted-foreground'>Aantal medewerkers</span>
-          <span className='text-sm font-semibold'>7</span>
+        <div className='flex items-center justify-between pb-2.5 sm:pb-3 border-b gap-2'>
+          <span className='text-xs sm:text-sm text-muted-foreground'>{t('employees')}</span>
+          <span className='text-xs sm:text-sm font-semibold'>7</span>
         </div>
 
         {/* Business ID */}
-        <div className='flex items-center justify-between pb-3 border-b'>
-          <span className='text-sm text-muted-foreground'>Bedrijfs ID</span>
-          <span className='text-sm font-semibold'>{businessId || '70123457'}</span>
+        <div className='flex items-center justify-between pb-2.5 sm:pb-3 border-b gap-2'>
+          <span className='text-xs sm:text-sm text-muted-foreground'>{t('businessId')}</span>
+          <span className='text-xs sm:text-sm font-semibold truncate'>{businessId || '70123457'}</span>
         </div>
 
         {/* Member Since */}
-        <div className='flex items-center justify-between'>
-          <span className='text-sm text-muted-foreground'>Lid sinds</span>
-          <div className='flex items-center gap-1'>
-            <Calendar className='w-4 h-4 text-muted-foreground' />
-            <span className='text-sm font-semibold'>
+        <div className='flex items-center justify-between gap-2'>
+          <span className='text-xs sm:text-sm text-muted-foreground'>{t('memberSince')}</span>
+          <div className='flex items-center gap-1 flex-shrink-0'>
+            <Calendar className='w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground' />
+            <span className='text-xs sm:text-sm font-semibold'>
               {formatMemberSince(memberSince)}
             </span>
           </div>

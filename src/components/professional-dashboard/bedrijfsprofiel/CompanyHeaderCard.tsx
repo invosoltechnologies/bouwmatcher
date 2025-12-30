@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Rating, RatingButton } from '@/components/ui/shadcn-io/rating';
 import { MapPin, Phone, Mail, Building2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import type { CompanyInfoData, ContactInfoData, CompanyRatingSummary } from '@/lib/types/account';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -28,6 +29,7 @@ export default function CompanyHeaderCard({
   onLogoClick,
   onRatingClick,
 }: CompanyHeaderCardProps) {
+  const t = useTranslations('common.proDashboard.bedrijfsprofiel.header');
   const [isLogoHovered, setIsLogoHovered] = useState(false);
   const isOwner = roleInCompany === 'owner';
 
@@ -46,17 +48,17 @@ export default function CompanyHeaderCard({
   };
 
   return (
-    <Card className='px-5 gap-4'>
-      <CardContent className='p-0 flex justify-between items-center'>
-        <div className='flex items-center gap-6.5'>
+    <Card className='px-3 sm:px-5 gap-3 sm:gap-4'>
+      <CardContent className='p-0 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 sm:gap-6'>
+        <div className='flex items-start sm:items-center gap-3 sm:gap-6.5 w-full lg:w-auto'>
           {/* Company Logo with Hover Effect */}
           <div
             className={`relative flex items-center justify-center rounded-lg flex-shrink-0 overflow-hidden group ${
               isOwner ? 'cursor-pointer' : ''
             } ${
               companyInfo.logoUrl
-                ? 'w-[100px] h-[100px]'
-                : 'px-14 py-9.5 bg-slate-100'
+                ? 'w-[60px] h-[60px] sm:w-[80px] sm:h-[80px] lg:w-[100px] lg:h-[100px]'
+                : 'px-8 py-6 sm:px-12 sm:py-8 lg:px-14 lg:py-9.5 bg-slate-100'
             }`}
             onMouseEnter={() => setIsLogoHovered(true)}
             onMouseLeave={() => setIsLogoHovered(false)}
@@ -71,9 +73,9 @@ export default function CompanyHeaderCard({
                 className='object-contain w-full h-full'
               />
             ) : (
-              <Building2 className='w-7 h-9 text-gray-500' />
+              <Building2 className='w-5 h-6 sm:w-6 sm:h-7 lg:w-7 lg:h-9 text-gray-500' />
             )}
-    
+
             {/* Hover Overlay - Only show for owners */}
             {isOwner && isLogoHovered && (
               <div className='absolute inset-0 bg-blue-600/80 flex items-center justify-center transition-all'>
@@ -88,65 +90,65 @@ export default function CompanyHeaderCard({
             )}
           </div>
 
-          <div className='flex-1'>
-            <div className='flex items-center gap-2 mb-2'>
-              <h2 className='text-xl font-normal leading-normal'>
+          <div className='flex-1 min-w-0'>
+            <div className='flex items-center gap-2 mb-1.5 sm:mb-2'>
+              <h2 className='text-lg sm:text-xl font-normal leading-normal truncate'>
                 {companyInfo.companyName}
               </h2>
               <button
                 onClick={onEditClick}
-                className='text-muted-foreground cursor-pointer transition-all group'
-                aria-label='Bewerken'
+                className='text-muted-foreground cursor-pointer transition-all group flex-shrink-0'
+                aria-label={t('editAriaLabel')}
               >
                 <Image
                   src='/icons/edit-pencil.svg'
                   className='mb-1 transition-all group-hover:[filter:brightness(0)_saturate(100%)_invert(15%)_sepia(91%)_saturate(2528%)_hue-rotate(214deg)_brightness(94%)_contrast(107%)]'
-                  alt='Bewerken'
+                  alt={t('editAriaLabel')}
                   width={16}
                   height={16}
                 />
               </button>
             </div>
-            <div className='flex items-center gap-1 text-muted-foreground mb-2'>
-              <MapPin className='w-auto h-4' />
-              <span className='text-sm leading-snug'>
+            <div className='flex items-center gap-1 text-muted-foreground mb-1.5 sm:mb-2'>
+              <MapPin className='w-auto h-3.5 sm:h-4 flex-shrink-0' />
+              <span className='text-xs sm:text-sm leading-snug truncate'>
                 {companyInfo.address}
               </span>
             </div>
-            <div className='flex items-center gap-1 mb-3'>
+            <div className='flex items-center gap-1 mb-2 sm:mb-3 flex-wrap'>
               <div onClick={onRatingClick} className='cursor-pointer'>
                 <Rating defaultValue={ratingSummary?.averageRating || 0}>
                   {Array.from({ length: 5 }).map((_, index) => (
                     <RatingButton
                       className='text-yellow-500'
                       key={index}
-                      size={21}
+                      size={18}
                     />
                   ))}
                 </Rating>
               </div>
 
-              <span className='text-sm text-muted-foreground ml-2'>
+              <span className='text-xs sm:text-sm text-muted-foreground ml-1 sm:ml-2'>
                 {ratingSummary && ratingSummary.totalRatings > 0
                   ? `${ratingSummary.totalRatings} ${
-                      ratingSummary.totalRatings === 1 ? 'review' : 'reviews'
+                      ratingSummary.totalRatings === 1 ? t('review') : t('reviews')
                     }`
-                  : 'Geen reviews'}
+                  : t('noReviews')}
               </span>
             </div>
 
             {/* Show user's own rating if they have rated */}
             {userRating && userRating > 0 && (
-              <div className='flex items-center gap-2 mb-3 bg-blue-50 rounded-lg p-2'>
+              <div className='flex items-center gap-2 mb-2 sm:mb-3 bg-blue-50 rounded-lg p-1.5 sm:p-2'>
                 <span className='text-xs text-primary font-medium'>
-                  Jouw beoordeling:
+                  {t('yourRating')}
                 </span>
                 <Rating defaultValue={userRating}>
                   {Array.from({ length: 5 }).map((_, index) => (
                     <RatingButton
                       className='text-yellow-500 pointer-events-none'
                       key={index}
-                      size={16}
+                      size={14}
                     />
                   ))}
                 </Rating>
@@ -154,8 +156,8 @@ export default function CompanyHeaderCard({
             )}
 
             {(!ratingSummary || ratingSummary.totalRatings === 0) && (
-              <p className='text-xs text-muted-foreground bg-slate-50 rounded-full p-2'>
-                Dit bedrijf heeft zich recent bij Bouwmatcher aangesloten!
+              <p className='text-xs text-muted-foreground bg-slate-50 rounded-full p-1.5 sm:p-2 inline-block'>
+                {t('recentlyJoined')}
               </p>
             )}
           </div>
@@ -163,31 +165,31 @@ export default function CompanyHeaderCard({
 
         {/* Contact Details with Gradient Background */}
         <div
-          className='rounded-xl p-5.5 mb-4'
+          className='rounded-xl p-4 sm:p-5 lg:p-5.5 mb-0 w-full lg:w-auto lg:min-w-[280px]'
           style={{
             background:
               'linear-gradient(90deg, rgba(10, 178, 126, 0.1) 0%, rgba(2, 58, 162, 0.1) 100%)',
           }}
         >
-          <h3 className='text-base font-medium mb-3'>Contactgegevens</h3>
+          <h3 className='text-sm sm:text-base font-medium mb-2 sm:mb-3'>{t('contactInfo')}</h3>
           <div className='flex flex-col gap-2'>
             {companyInfo.businessPhone && companyInfo.businessPhone !== '-' && (
-              <div className='flex items-center gap-3'>
-                <Phone className='w-4.5 h-5.5 text-primary' />
+              <div className='flex items-center gap-2 sm:gap-3'>
+                <Phone className='w-4 h-5 sm:w-4.5 sm:h-5.5 text-primary flex-shrink-0' />
                 <a
                   href={`tel:${companyInfo.businessPhone}`}
-                  className='text-sm text-primary hover:underline'
+                  className='text-xs sm:text-sm text-primary hover:underline truncate'
                 >
                   {companyInfo.businessPhone}
                 </a>
               </div>
             )}
             {companyInfo.businessEmail && companyInfo.businessEmail !== '-' && (
-              <div className='flex items-center gap-3'>
-                <Mail className='w-4.5 h-5.5 text-primary' />
+              <div className='flex items-center gap-2 sm:gap-3'>
+                <Mail className='w-4 h-5 sm:w-4.5 sm:h-5.5 text-primary flex-shrink-0' />
                 <a
                   href={`mailto:${companyInfo.businessEmail}`}
-                  className='text-sm text-primary hover:underline'
+                  className='text-xs sm:text-sm text-primary hover:underline truncate'
                 >
                   {companyInfo.businessEmail}
                 </a>
@@ -195,11 +197,11 @@ export default function CompanyHeaderCard({
             )}
             {/* Share Profile Button */}
             <Button
-              className='w-full rounded-xl py-4 px-13.5 text-base mt-3'
+              className='w-full rounded-xl py-3 sm:py-4 px-6 sm:px-13.5 text-sm sm:text-base mt-2 sm:mt-3'
               size='lg'
               onClick={handleShareClick}
             >
-              Bedrijfsprofiel delen
+              {t('shareProfile')}
             </Button>
           </div>
         </div>

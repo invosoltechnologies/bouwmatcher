@@ -2,6 +2,7 @@
 
 import { Check, Circle } from 'lucide-react';
 import Image from 'next/image';
+import { useLocale, useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import {
   Accordion,
@@ -21,7 +22,7 @@ interface SubcategoryAccordionProps {
   onAccordionChange: (value: string[]) => void;
   showPrices?: boolean;
   searchQuery?: string;
-  locale?: string;
+  translationKey?: string;
 }
 
 export default function SubcategoryAccordion({
@@ -33,8 +34,11 @@ export default function SubcategoryAccordion({
   onAccordionChange,
   showPrices = true,
   searchQuery = '',
-  locale = 'nl',
+  translationKey = 'common.proDashboard.werkgebied',
 }: SubcategoryAccordionProps) {
+  const locale = useLocale();
+  const t = useTranslations(translationKey);
+
   // Get category/subcategory name based on locale
   const getCategoryName = (category: ServiceCategoryWithSubcategories) => {
     return locale === 'en' ? (category.name_en || category.name_nl) : category.name_nl;
@@ -48,8 +52,8 @@ export default function SubcategoryAccordion({
       <div className='text-center py-8 sm:py-12'>
         <p className='text-sm sm:text-base text-slate-500'>
           {searchQuery
-            ? `Geen resultaten gevonden voor "${searchQuery}"`
-            : 'Geen categorieën beschikbaar'}
+            ? t('noResultsFound', { query: searchQuery })
+            : t('noCategoriesAvailable')}
         </p>
       </div>
     );
@@ -112,7 +116,7 @@ export default function SubcategoryAccordion({
                   }}
                   className='text-primary text-xs sm:text-sm font-medium hover:text-primary/80 cursor-pointer'
                 >
-                  Alles selecteren
+                  {t('selectAll')}
                 </span>
               </div>
             </AccordionTrigger>

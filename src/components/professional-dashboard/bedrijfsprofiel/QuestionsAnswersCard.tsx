@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from 'next-intl';
 import AnswerQuestionModal from './AnswerQuestionModal';
 
 interface Question {
@@ -15,29 +16,32 @@ interface QuestionsAnswersCardProps {
   questions: Question[];
 }
 
-const defaultQuestions: Question[] = [
-  {
-    id: 'company_start',
-    question: 'Hoe bent u begonnen met het bedrijf?',
-    answer: null,
-  },
-  {
-    id: 'team_strengths',
-    question: 'Wat zijn de pluspunten van uw team?',
-    answer: null,
-  },
-  {
-    id: 'customer_advice',
-    question: 'Wat is de beste advies voor klanten?',
-    answer: null,
-  },
-];
-
 export default function QuestionsAnswersCard({
-  questions = defaultQuestions,
+  questions,
 }: QuestionsAnswersCardProps) {
+  const t = useTranslations('common.proDashboard.bedrijfsprofiel.questions');
   const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const defaultQuestions: Question[] = [
+    {
+      id: 'company_start',
+      question: t('defaultQuestions.companyStart'),
+      answer: null,
+    },
+    {
+      id: 'team_strengths',
+      question: t('defaultQuestions.teamStrengths'),
+      answer: null,
+    },
+    {
+      id: 'customer_advice',
+      question: t('defaultQuestions.customerAdvice'),
+      answer: null,
+    },
+  ];
+
+  const displayQuestions = questions || defaultQuestions;
 
   const handleAnswerClick = (question: Question) => {
     setSelectedQuestion(question);
@@ -51,27 +55,27 @@ export default function QuestionsAnswersCard({
 
   return (
     <>
-      <Card className='px-5 gap-4'>
+      <Card className='px-4 sm:px-5 gap-3 sm:gap-4'>
         <CardHeader className='p-0'>
-          <CardTitle className='text-lg font-semibold'>Vragen & Antwoord</CardTitle>
+          <CardTitle className='text-base sm:text-lg lg:text-xl font-semibold'>{t('title')}</CardTitle>
         </CardHeader>
         <CardContent className='p-0'>
-          <div className='space-y-4'>
-            {questions.map((question) => (
+          <div className='space-y-3 sm:space-y-4'>
+            {displayQuestions.map((question) => (
               <div
                 key={question.id}
-                className='border border-gray-200 rounded-xl p-4 space-y-3'
+                className='border border-gray-200 rounded-xl p-3 sm:p-4 space-y-2 sm:space-y-3'
               >
                 {/* Question */}
-                <h4 className='text-sm font-medium text-secondary-foreground'>
+                <h4 className='text-sm sm:text-base font-medium text-secondary-foreground'>
                   {question.question}
                 </h4>
 
                 {/* Answer or No Answer State */}
                 {question.answer ? (
-                  <p className='text-sm text-muted-foreground'>{question.answer}</p>
+                  <p className='text-xs sm:text-sm text-muted-foreground'>{question.answer}</p>
                 ) : (
-                  <p className='text-sm text-muted-foreground'>Nog geen antwoord ingediend.</p>
+                  <p className='text-xs sm:text-sm text-muted-foreground'>{t('noAnswer')}</p>
                 )}
 
                 {/* Answer Button */}
@@ -79,9 +83,9 @@ export default function QuestionsAnswersCard({
                   variant='outline'
                   size='sm'
                   onClick={() => handleAnswerClick(question)}
-                  className='rounded-2xl px-4 py-2 text-sm border-primary text-primary'
+                  className='w-full sm:w-auto rounded-2xl px-4 py-2 text-xs sm:text-sm border-primary text-primary'
                 >
-                  Beantwoord
+                  {t('answer')}
                 </Button>
               </div>
             ))}

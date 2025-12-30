@@ -15,6 +15,7 @@ import {
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 import {
   useUploadPortfolioPhoto,
   useDeletePortfolioPhoto,
@@ -31,27 +32,28 @@ interface ProjectPhotosCardProps {
 export default function ProjectPhotosCard({
   photos = [],
 }: ProjectPhotosCardProps) {
+  const t = useTranslations('common.proDashboard.bedrijfsprofiel.photos');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [photoToDelete, setPhotoToDelete] = useState<string | null>(null);
 
   const uploadMutation = useUploadPortfolioPhoto({
     onSuccess: () => {
-      toast.success('Foto succesvol toegevoegd');
+      toast.success(t('uploadSuccess'));
     },
     onError: (error) => {
-      toast.error(error.message || 'Kon foto niet uploaden');
+      toast.error(error.message || t('uploadError'));
     },
   });
 
   const deleteMutation = useDeletePortfolioPhoto({
     onSuccess: () => {
-      toast.success('Foto succesvol verwijderd');
+      toast.success(t('deleteSuccess'));
       setDeleteDialogOpen(false);
       setPhotoToDelete(null);
     },
     onError: (error) => {
-      toast.error(error.message || 'Kon foto niet verwijderen');
+      toast.error(error.message || t('deleteError'));
     },
   });
 
@@ -70,14 +72,14 @@ export default function ProjectPhotosCard({
 
     // Validate file type
     if (!ACCEPTED_FILE_TYPES.includes(file.type)) {
-      toast.error('Alleen PNG en JPG bestanden zijn toegestaan');
+      toast.error(t('fileTypeError'));
       event.target.value = '';
       return;
     }
 
     // Validate file size
     if (file.size > MAX_FILE_SIZE) {
-      toast.error('Bestand mag maximaal 5MB groot zijn');
+      toast.error(t('fileSizeError'));
       event.target.value = '';
       return;
     }
@@ -104,28 +106,28 @@ export default function ProjectPhotosCard({
 
   return (
     <>
-      <Card className='px-5 gap-4'>
+      <Card className='px-4 sm:px-5 lg:px-6 gap-3 sm:gap-4'>
         <CardHeader className='p-0'>
           <div className='flex items-center justify-between'>
-            <CardTitle className='text-lg font-semibold'>
-              Projectfoto&apos;s
+            <CardTitle className='text-base sm:text-lg lg:text-xl font-semibold'>
+              {t('title')}
             </CardTitle>
-            <span className='text-sm text-muted-foreground'>
+            <span className='text-xs sm:text-sm text-muted-foreground'>
               {photos.length}/{MAX_PHOTOS}
             </span>
           </div>
         </CardHeader>
         <CardContent  className='p-0'>
-          <div className='grid grid-cols-3 gap-4'>
+          <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4'>
             {/* Upload Button - Show only if less than 6 photos */}
             {showUploadButton && (
               <button
                 onClick={handleAddPhoto}
                 disabled={isLoading}
-                className='aspect-square rounded-xl border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed'
+                className='aspect-square rounded-xl border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-1.5 sm:gap-2 text-muted-foreground hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed'
               >
-                <Plus className='w-8 h-8' />
-                <span className='text-sm'>Foto toevoegen</span>
+                <Plus className='w-6 h-6 sm:w-8 sm:h-8' />
+                <span className='text-xs sm:text-sm'>{t('addPhoto')}</span>
               </button>
             )}
 
@@ -137,7 +139,7 @@ export default function ProjectPhotosCard({
               >
                 <Image
                   src={photoUrl}
-                  alt={`Project photo ${index + 1}`}
+                  alt={t('photoAlt')}
                   fill
                   className='object-cover'
                 />
@@ -150,8 +152,8 @@ export default function ProjectPhotosCard({
                   className='absolute inset-0 flex items-center justify-center bg-blue-600/0 hover:bg-blue-600/80 transition-all opacity-0 hover:opacity-100'
                 >
                   <div className='text-white text-center'>
-                    <Download className='w-6 h-6 mx-auto mb-1' />
-                    <span className='text-sm font-medium'>Download</span>
+                    <Download className='w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1' />
+                    <span className='text-xs sm:text-sm font-medium'>{t('download')}</span>
                   </div>
                 </a>
 
@@ -159,10 +161,10 @@ export default function ProjectPhotosCard({
                 <button
                   onClick={() => handleDeleteClick(photoUrl)}
                   disabled={deleteMutation.isPending}
-                  className='absolute top-2 right-2 p-2 bg-white rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 disabled:opacity-50 z-10'
-                  title='Verwijder foto'
+                  className='absolute top-1.5 right-1.5 sm:top-2 sm:right-2 p-1.5 sm:p-2 bg-white rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 disabled:opacity-50 z-10'
+                  title={t('deletePhotoTitle')}
                 >
-                  <Trash2 className='w-4 h-4 text-red-600' />
+                  <Trash2 className='w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600' />
                 </button>
               </div>
             ))}
@@ -175,7 +177,7 @@ export default function ProjectPhotosCard({
                 key={`empty-${index}`}
                 className='aspect-square rounded-xl bg-slate-100 flex items-center justify-center'
               >
-                <ImageIcon className='w-12 h-12 text-slate-300' />
+                <ImageIcon className='w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-slate-300' />
               </div>
             ))}
           </div>
@@ -196,22 +198,21 @@ export default function ProjectPhotosCard({
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Foto verwijderen</AlertDialogTitle>
+            <AlertDialogTitle>{t('deleteConfirmTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Weet je zeker dat je deze foto wilt verwijderen? Deze actie kan
-              niet ongedaan worden gemaakt.
+              {t('deleteConfirmDescription')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={deleteMutation.isPending}>
-              Annuleren
+              {t('cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
               disabled={deleteMutation.isPending}
               className='bg-red-600 hover:bg-red-700'
             >
-              {deleteMutation.isPending ? 'Verwijderen...' : 'Verwijderen'}
+              {deleteMutation.isPending ? t('deleting') : t('delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

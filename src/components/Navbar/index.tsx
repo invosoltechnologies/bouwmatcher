@@ -1,7 +1,7 @@
 'use client';
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { Search, Menu, X } from "lucide-react";
+import { Search, Menu, X, BriefcaseBusiness, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
@@ -10,7 +10,6 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import UserAvatarDropdown from "./UserAvatarDropdown";
 import { dashboardNavigation } from "@/config/professional-dashboard";
-import { LogOut } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useTranslations } from 'next-intl';
 
@@ -273,13 +272,17 @@ export default function Navbar() {
                             setIsAccountMenuOpen(false);
                           }}
                         >
-                          <Image
-                            src={item.icon}
-                            alt={item.label}
-                            width={16}
-                            height={16}
-                            className='w-4 h-4'
-                          />
+                          {item.iconType === 'lucide' && item.icon === 'BriefcaseBusiness' ? (
+                            <BriefcaseBusiness className='w-4 h-4' />
+                          ) : (
+                            <Image
+                              src={item.icon}
+                              alt={item.label}
+                              width={16}
+                              height={16}
+                              className='w-4 h-4'
+                            />
+                          )}
                           <span>{item.label}</span>
                         </Link>
                       ))}

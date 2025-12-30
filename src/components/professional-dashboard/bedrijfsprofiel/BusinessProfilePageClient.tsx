@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAccount } from '@/lib/hooks/professional/account';
 import { useCompanyRatings } from '@/lib/hooks/professional/ratings';
 import CompanyHeaderCard from './CompanyHeaderCard';
@@ -17,6 +18,7 @@ import CompanyLogoUploadModal from './CompanyLogoUploadModal';
 import CompanyRatingModal from './CompanyRatingModal';
 
 export default function BusinessProfilePageClient() {
+  const t = useTranslations('common.proDashboard.bedrijfsprofiel');
   const { data, isLoading } = useAccount();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
@@ -45,7 +47,7 @@ export default function BusinessProfilePageClient() {
   if (isLoading) {
     return (
       <div className='flex items-center justify-center min-h-[400px]'>
-        <p className='text-muted-foreground'>Laden...</p>
+        <p className='text-muted-foreground'>{t('loading')}</p>
       </div>
     );
   }
@@ -53,7 +55,7 @@ export default function BusinessProfilePageClient() {
   if (!data?.accountData) {
     return (
       <div className='flex items-center justify-center min-h-[400px]'>
-        <p className='text-destructive'>Fout bij het laden van profielgegevens</p>
+        <p className='text-destructive'>{t('errorLoading')}</p>
       </div>
     );
   }
@@ -61,7 +63,7 @@ export default function BusinessProfilePageClient() {
   const accountData = data.accountData;
 
   return (
-    <div className='p-6 space-y-6'>
+    <div className='p-4 sm:p-6 space-y-4 sm:space-y-6'>
       {/* Company Header Card - Full Width */}
       <CompanyHeaderCard
         companyInfo={accountData.companyInfo}
@@ -75,9 +77,9 @@ export default function BusinessProfilePageClient() {
       />
 
       {/* Two Column Layout */}
-      <div className='flex flex-col lg:flex-row gap-6'>
+      <div className='flex flex-col lg:flex-row gap-4 sm:gap-6'>
         {/* Left Column - Main Content */}
-        <div className='flex-1 space-y-6'>
+        <div className='flex-1 space-y-4 sm:space-y-6'>
           <CompanyDescriptionCard
             description={accountData.companyInfo.businessDescription}
             roleInCompany={accountData.roleInCompany}
@@ -89,17 +91,17 @@ export default function BusinessProfilePageClient() {
             questions={[
               {
                 id: 'company_start',
-                question: 'Hoe bent u begonnen met het bedrijf?',
+                question: t('questions.defaultQuestions.companyStart'),
                 answer: accountData.profileAnswers?.company_start || null,
               },
               {
                 id: 'team_strengths',
-                question: 'Wat zijn de pluspunten van uw team?',
+                question: t('questions.defaultQuestions.teamStrengths'),
                 answer: accountData.profileAnswers?.team_strengths || null,
               },
               {
                 id: 'customer_advice',
-                question: 'Wat is de beste advies voor klanten?',
+                question: t('questions.defaultQuestions.customerAdvice'),
                 answer: accountData.profileAnswers?.customer_advice || null,
               },
             ]}
@@ -109,7 +111,7 @@ export default function BusinessProfilePageClient() {
         </div>
 
         {/* Right Column - Sidebar */}
-        <div className='w-full lg:w-80 space-y-6'>
+        <div className='w-full lg:w-80 space-y-4 sm:space-y-6'>
           <ProfileCompletionCard
             completionPercentage={accountData.profileCompletion.percentage}
             tasks={accountData.profileCompletion.tasks}
