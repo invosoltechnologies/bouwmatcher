@@ -41,14 +41,14 @@ export default function AdminSidebar() {
         throw new Error('Failed to logout');
       }
 
-      toast.success(t('common.logoutSuccess'));
+      toast.success(t('common.navbar.logoutSuccess'));
 
       // Redirect to home page
       router.push('/');
       router.refresh();
     } catch (error) {
       console.error('Logout error:', error);
-      toast.error(t('common.logoutError'));
+      toast.error(t('common.navbar.logoutError'));
       setIsLoggingOut(false);
     }
   };
@@ -61,7 +61,7 @@ export default function AdminSidebar() {
 
   const getNavigationLabel = (item: typeof adminNavigation[0]) => {
     if (item.id === 'logout' && isLoggingOut) {
-      return t('common.loggingOut');
+      return t('common.navbar.loggingOut');
     }
     // Use admin-specific translation keys
     return t(`common.adminDashboard.navigation.${item.id}` as any, {

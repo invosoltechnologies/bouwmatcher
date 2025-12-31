@@ -325,6 +325,7 @@
         "additionalInfo": "You can always add more specializations/types you want to receive.",
         "yourCategories": "Your specializations:",
         "searchPlaceholder": "Search project types...",
+        "selected": "selected",
         "selectedLabel": "selected",
         "deselectAll": "Deselect all",
         "selectAll": "Select all",
