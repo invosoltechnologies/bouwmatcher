@@ -176,8 +176,19 @@
   /* Custom container */
   .custom-container {
     max-width: 1236px;
+    width: 100%;
     margin: 0 auto;
     padding-left: 24px;
     padding-right: 24px;
+  }
+
+  /* Hide scrollbar for horizontal scroll */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
   }
 }

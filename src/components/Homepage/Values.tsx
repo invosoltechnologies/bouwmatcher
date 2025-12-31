@@ -1,22 +1,56 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import ValuesShape from './ValuesShape';
+import { ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/navigation';
 
-export default function Values() {
-  const ctaButtons = (
+export interface ValueItem {
+  id: number;
+  icon: string;
+  title: string;
+  description: string;
+  position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+}
+
+export interface ValuesProps {
+  heading?: string;
+  description?: string;
+  centerText?: string;
+  values?: ValueItem[];
+  ctaButtons?: ReactNode;
+  showCTA?: boolean;
+}
+
+export default function Values({
+  heading,
+  description,
+  centerText,
+  values,
+  ctaButtons,
+  showCTA = true,
+}: ValuesProps) {
+  const t = useTranslations('homepage.values');
+  const router = useRouter();
+
+  const defaultCTAButtons = (
     <>
       <Button
         variant='default'
         size='lg'
         className='bg-primary hover:bg-primary/90 text-white font-medium px-6 py-4 rounded-[12px] text-base'
+        onClick={() => router.push('/auth')}
       >
-        Word een professional
+        {t('ctaPrimary')}
       </Button>
       <Button
         variant='default'
         size='lg'
         className='bg-accent hover:bg-accent/90 text-white font-medium px-6 py-4 rounded-[12px] text-base'
+        onClick={() => router.push('/#project-form')}
       >
-        Vind een professional
+        {t('ctaSecondary')}
       </Button>
     </>
   );
@@ -25,21 +59,23 @@ export default function Values() {
     <section className='py-16 px-4'>
       <div className='max-w-7xl mx-auto'>
         <div className='text-center mb-12'>
-          <h2 className='text-5xl font-normal text-foreground mb-5'>
-            De matchmaker voor al jouw bouwprojecten
+          <h2 className='text-[32px] md:text-5xl font-normal text-foreground mb-2 md:mb-5'>
+            {heading || t('heading')}
           </h2>
-          <p className='text-muted-foreground text-2xl'>
-            Voor iedereen die zonder zorgen een vakman wil inschakelen.
+          <p className='text-muted-foreground text-base md:text-2xl'>
+            {description || t('description')}
           </p>
         </div>
 
         <div className='mb-12'>
-          <ValuesShape />
+          <ValuesShape values={values} centerText={centerText || t('centerText')} />
         </div>
 
-        <div className='flex flex-col sm:flex-row gap-4 justify-center items-center'>
-          {ctaButtons}
-        </div>
+        {showCTA && (
+          <div className='flex flex-col sm:flex-row gap-4 justify-center items-center'>
+            {ctaButtons || defaultCTAButtons}
+          </div>
+        )}
       </div>
     </section>
   );
