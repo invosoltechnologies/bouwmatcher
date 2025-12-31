@@ -25,6 +25,25 @@ export default function Navbar() {
   const { user, loading } = useAuth();
   const router = useRouter();
 
+  const handleCategoriesClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const isHomePage = pathname === '/' || pathname === '/en' || pathname === '/nl';
+
+    if (isHomePage) {
+      // If already on homepage, just scroll to categories section
+      const categoriesSection = document.getElementById('categories-section');
+      if (categoriesSection) {
+        categoriesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } else {
+      // If on another page, navigate to homepage with hash
+      router.push('/#categories-section');
+    }
+
+    // Close mobile menu if open
+    setIsMobileMenuOpen(false);
+  };
+
   const handleLogout = async () => {
     if (isLoggingOut) return;
 
@@ -111,6 +130,7 @@ export default function Navbar() {
             <div className='hidden lg:flex items-center space-x-8'>
               <Link
                 href='/categories'
+                onClick={handleCategoriesClick}
                 className='text-foreground hover:text-primary transition-colors font-medium'
               >
                 {t('categories')}
@@ -204,11 +224,11 @@ export default function Navbar() {
             {/* Navigation Links */}
             <Link
               href='/categories'
+              onClick={handleCategoriesClick}
               className={`text-foreground hover:text-primary transition-all duration-200 font-medium text-base py-4 px-0 border-b border-gray-200 transform ${
                 isMobileMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
               }`}
               style={{ transitionDelay: '50ms' }}
-              onClick={() => setIsMobileMenuOpen(false)}
             >
               {t('categories')}
             </Link>

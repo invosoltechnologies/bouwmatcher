@@ -1,3 +1,7 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Hero from "@/components/Homepage/Hero";
 import CTASection from "@/components/Homepage/CTASection";
 import FAQSection from "@/components/Homepage/FAQSection";
@@ -10,12 +14,34 @@ import Values from "@/components/Homepage/Values";
 import DefaultLayout from "@/components/DefaultLayout";
 
 export default function Home() {
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    // Check if there's a hash in the URL
+    const hash = window.location.hash;
+    if (hash) {
+      // Remove the # from the hash
+      const elementId = hash.substring(1);
+      // Wait a bit for the page to fully render
+      setTimeout(() => {
+        const element = document.getElementById(elementId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }, [searchParams]);
+
   return (
     <DefaultLayout>
       <Hero />
-      <ProcessSection />
+      <div id="process-section">
+        <ProcessSection />
+      </div>
       <Values />
-      <ServicesSection />
+      <div id="categories-section">
+        <ServicesSection />
+      </div>
       <PartnersSection />
       <StatsSection />
       <ReviewsSection />

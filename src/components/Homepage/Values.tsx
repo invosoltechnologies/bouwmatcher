@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import ValuesShape from './ValuesShape';
 import { ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/navigation';
 
 export interface ValueItem {
   id: number;
@@ -31,6 +32,7 @@ export default function Values({
   showCTA = true,
 }: ValuesProps) {
   const t = useTranslations('homepage.values');
+  const router = useRouter();
 
   const defaultCTAButtons = (
     <>
@@ -38,6 +40,7 @@ export default function Values({
         variant='default'
         size='lg'
         className='bg-primary hover:bg-primary/90 text-white font-medium px-6 py-4 rounded-[12px] text-base'
+        onClick={() => router.push('/auth')}
       >
         {t('ctaPrimary')}
       </Button>
@@ -45,6 +48,7 @@ export default function Values({
         variant='default'
         size='lg'
         className='bg-accent hover:bg-accent/90 text-white font-medium px-6 py-4 rounded-[12px] text-base'
+        onClick={() => router.push('/#project-form')}
       >
         {t('ctaSecondary')}
       </Button>
