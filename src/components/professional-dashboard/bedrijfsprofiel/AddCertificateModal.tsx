@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useTranslations } from 'next-intl';
 import GlassyModal from '@/components/ui/glassy-modal';
 import { useUploadCertificate } from '@/lib/hooks/professional/account/useCertificates';
 import { toast } from 'react-hot-toast';
@@ -35,6 +36,7 @@ export default function AddCertificateModal({
   isOpen,
   onClose,
 }: AddCertificateModalProps) {
+  const t = useTranslations('common.proDashboard.bedrijfsprofiel.modals.addCertificate');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [issueDate, setIssueDate] = useState<Date | undefined>();
@@ -49,11 +51,11 @@ export default function AddCertificateModal({
 
   const uploadMutation = useUploadCertificate({
     onSuccess: () => {
-      toast.success('Certificaat succesvol toegevoegd');
+      toast.success(t('success'));
       handleClose();
     },
     onError: (error) => {
-      toast.error(error.message || 'Kon certificaat niet uploaden');
+      toast.error(error.message || t('error'));
     },
   });
 
@@ -73,14 +75,14 @@ export default function AddCertificateModal({
 
     // Validate file type
     if (!ACCEPTED_FILE_TYPES.includes(file.type)) {
-      toast.error('Alleen JPG, PNG en PDF bestanden zijn toegestaan');
+      toast.error(t('fileTypeError'));
       event.target.value = '';
       return;
     }
 
     // Validate file size
     if (file.size > MAX_FILE_SIZE) {
-      toast.error('Bestand mag maximaal 10MB groot zijn');
+      toast.error(t('fileSizeError'));
       event.target.value = '';
       return;
     }
@@ -91,23 +93,23 @@ export default function AddCertificateModal({
   const onSubmit = (data: CertificateFormData) => {
     // Validate file
     if (!selectedFile) {
-      toast.error('Selecteer een bestand');
+      toast.error(t('selectFileError'));
       return;
     }
 
     // Validate dates
     if (!issueDate) {
-      toast.error('Selecteer een uitgiftedatum');
+      toast.error(t('selectIssueDateError'));
       return;
     }
 
     if (!expiryDate) {
-      toast.error('Selecteer een vervaldatum');
+      toast.error(t('selectExpiryDateError'));
       return;
     }
 
     if (issueDate >= expiryDate) {
-      toast.error('Vervaldatum moet na de uitgiftedatum zijn');
+      toast.error(t('invalidDateRangeError'));
       return;
     }
 
@@ -122,66 +124,66 @@ export default function AddCertificateModal({
   };
 
   return (
-    <GlassyModal isOpen={isOpen} onClose={handleClose} title="Certificaten & Kwaliteitsmarken">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 w-full">
+    <GlassyModal isOpen={isOpen} onClose={handleClose} title={t('title')} className="max-w-sm sm:max-w-md lg:max-w-lg">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4 w-full p-4 sm:p-6">
         {/* Title */}
         <div>
-          <Label htmlFor="title" className="text-sm font-medium text-secondary-foreground">
-            Eigen titel
+          <Label htmlFor="title" className="text-xs sm:text-sm font-medium text-secondary-foreground">
+            {t('titleLabel')}
           </Label>
           <Input
             id="title"
-            {...register('title', { required: 'Titel is verplicht' })}
-            className="mt-1.5 rounded-xl border-gray-300"
-            placeholder="Bijv. VCA Certificaat"
+            {...register('title', { required: t('titleRequired') })}
+            className="mt-1.5 rounded-xl border-gray-300 text-sm sm:text-base"
+            placeholder={t('titlePlaceholder')}
           />
           {errors.title && (
-            <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
+            <p className="mt-1 text-xs sm:text-sm text-red-600">{errors.title.message}</p>
           )}
         </div>
 
         {/* Issuing Organization */}
         <div>
-          <Label htmlFor="issuing_organization" className="text-sm font-medium text-secondary-foreground">
-            Uitgevende organisatie
+          <Label htmlFor="issuing_organization" className="text-xs sm:text-sm font-medium text-secondary-foreground">
+            {t('organizationLabel')}
           </Label>
           <Input
             id="issuing_organization"
             {...register('issuing_organization', {
-              required: 'Uitgevende organisatie is verplicht',
+              required: t('organizationRequired'),
             })}
-            className="mt-1.5 rounded-xl border-gray-300"
-            placeholder="Bijv. SSVV"
+            className="mt-1.5 rounded-xl border-gray-300 text-sm sm:text-base"
+            placeholder={t('organizationPlaceholder')}
           />
           {errors.issuing_organization && (
-            <p className="mt-1 text-sm text-red-600">
+            <p className="mt-1 text-xs sm:text-sm text-red-600">
               {errors.issuing_organization.message}
             </p>
           )}
         </div>
 
         {/* Date Fields Row */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {/* Issue Date */}
           <div>
-            <Label className="text-sm font-medium text-secondary-foreground">
-              Uitgiftedatum
+            <Label className="text-xs sm:text-sm font-medium text-secondary-foreground">
+              {t('issueDateLabel')}
             </Label>
             <Popover>
               <PopoverTrigger asChild>
                 <button
                   type="button"
                   className={cn(
-                    'w-full mt-1.5 px-4 py-2 flex items-center justify-start gap-2 text-left font-normal border border-gray-300 rounded-xl bg-white hover:ring-2 hover:ring-primary hover:border-primary transition-all outline-none',
+                    'w-full mt-1.5 px-3 sm:px-4 py-2 flex items-center justify-start gap-2 text-left font-normal border border-gray-300 rounded-xl bg-white hover:ring-2 hover:ring-primary hover:border-primary transition-all outline-none',
                     !issueDate && 'text-muted-foreground'
                   )}
                 >
-                  <CalendarIcon className="h-4 w-4 flex-shrink-0" />
-                  <span className="text-sm">
+                  <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm">
                     {issueDate ? (
                       format(issueDate, 'dd/MM/yyyy', { locale: nl })
                     ) : (
-                      'dd/mm/yyyy'
+                      t('datePlaceholder')
                     )}
                   </span>
                 </button>
@@ -199,24 +201,24 @@ export default function AddCertificateModal({
 
           {/* Expiry Date */}
           <div>
-            <Label className="text-sm font-medium text-secondary-foreground">
-              Geldig t/m
+            <Label className="text-xs sm:text-sm font-medium text-secondary-foreground">
+              {t('expiryDateLabel')}
             </Label>
             <Popover>
               <PopoverTrigger asChild>
                 <button
                   type="button"
                   className={cn(
-                    'w-full mt-1.5 px-4 py-2 flex items-center justify-start gap-2 text-left font-normal border border-gray-300 rounded-xl bg-white hover:ring-2 hover:ring-primary hover:border-primary transition-all outline-none',
+                    'w-full mt-1.5 px-3 sm:px-4 py-2 flex items-center justify-start gap-2 text-left font-normal border border-gray-300 rounded-xl bg-white hover:ring-2 hover:ring-primary hover:border-primary transition-all outline-none',
                     !expiryDate && 'text-muted-foreground'
                   )}
                 >
-                  <CalendarIcon className="h-4 w-4 flex-shrink-0" />
-                  <span className="text-sm">
+                  <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                  <span className="text-xs sm:text-sm">
                     {expiryDate ? (
                       format(expiryDate, 'dd/MM/yyyy', { locale: nl })
                     ) : (
-                      'dd/mm/yyyy'
+                      t('datePlaceholder')
                     )}
                   </span>
                 </button>
@@ -238,28 +240,28 @@ export default function AddCertificateModal({
 
         {/* File Upload */}
         <div>
-          <Label className="text-sm font-medium text-secondary-foreground">
-            Bestand
+          <Label className="text-xs sm:text-sm font-medium text-secondary-foreground">
+            {t('fileLabel')}
           </Label>
           <div
             onClick={() => fileInputRef.current?.click()}
-            className="mt-1.5 border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-all"
+            className="mt-1.5 border-2 border-dashed border-gray-300 rounded-xl p-4 sm:p-6 flex flex-col items-center justify-center cursor-pointer hover:border-primary hover:bg-primary/5 transition-all"
           >
             {selectedFile ? (
               <div className="flex items-center gap-2">
-                <File className="w-5 h-5 text-primary" />
-                <span className="text-sm text-secondary-foreground">
+                <File className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                <span className="text-xs sm:text-sm text-secondary-foreground truncate max-w-[200px] sm:max-w-full">
                   {selectedFile.name}
                 </span>
               </div>
             ) : (
               <>
-                <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                <p className="text-sm text-secondary-foreground">
-                  Klik om bestand te selecteren
+                <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400 mb-2" />
+                <p className="text-xs sm:text-sm text-secondary-foreground">
+                  {t('filePrompt')}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  JPG, PNG of PDF - max 10MB
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                  {t('fileRequirements')}
                 </p>
               </>
             )}
@@ -274,22 +276,22 @@ export default function AddCertificateModal({
         </div>
 
         {/* Buttons */}
-        <div className="flex items-center justify-end gap-3 pt-4">
+        <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4">
           <Button
             type="button"
             variant="outline"
             onClick={handleClose}
             disabled={uploadMutation.isPending}
-            className="rounded-xl"
+            className="w-full sm:w-auto rounded-xl py-2.5 sm:py-3 px-4 sm:px-6 text-sm sm:text-base"
           >
-            Annuleren
+            {t('cancel')}
           </Button>
           <Button
             type="submit"
             disabled={uploadMutation.isPending}
-            className="rounded-xl bg-primary text-white hover:bg-primary/90"
+            className="w-full sm:w-auto rounded-xl bg-primary text-white hover:bg-primary/90 py-2.5 sm:py-3 px-4 sm:px-6 text-sm sm:text-base"
           >
-            {uploadMutation.isPending ? 'Uploaden...' : 'Opslaan'}
+            {uploadMutation.isPending ? t('uploading') : t('save')}
           </Button>
         </div>
       </form>

@@ -24,6 +24,41 @@ export default function HeroLegal() {
   const isCookiesPage = pathname.includes('/cookies-policy');
   const isDisclaimerPage = pathname.includes('/disclaimer');
 
+  // Get dynamic heading and description based on current page
+  const getPageContent = () => {
+    if (isPrivacyPage) {
+      return {
+        heading: t('privacyHeading'),
+        description: t('privacyDescription')
+      };
+    }
+    if (isTermsPage) {
+      return {
+        heading: t('termsHeading'),
+        description: t('termsDescription')
+      };
+    }
+    if (isCookiesPage) {
+      return {
+        heading: t('cookiesHeading'),
+        description: t('cookiesDescription')
+      };
+    }
+    if (isDisclaimerPage) {
+      return {
+        heading: t('disclaimerHeading'),
+        description: t('disclaimerDescription')
+      };
+    }
+    // Default to Legal Center
+    return {
+      heading: t('heading'),
+      description: t('description')
+    };
+  };
+
+  const { heading, description } = getPageContent();
+
   return (
     <section className='pt-30 md:pt-[168px] pb-20 md:pb-48 relative'>
       {/* Background div with gradient and blur */}
@@ -46,11 +81,11 @@ export default function HeroLegal() {
 
             {/* Main Heading */}
             <h1 className='text-3xl md:text-4xl lg:text-5xl font-display font-normal leading-tight mb-4 md:mb-6'>
-              {t('heading')}
+              {heading}
             </h1>
 
             <p className='text-base md:text-2xl leading-relaxed text-[#555555E5] mb-6 md:mb-8'>
-              {t('description')}
+              {description}
             </p>
 
             {/* Language Selection */}

@@ -2,6 +2,7 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 interface CompanyDescriptionCardProps {
   description: string;
@@ -14,25 +15,26 @@ export default function CompanyDescriptionCard({
   roleInCompany,
   onEditClick,
 }: CompanyDescriptionCardProps) {
+  const t = useTranslations('common.proDashboard.bedrijfsprofiel.description');
   const isOwner = roleInCompany === 'owner';
 
   return (
-    <Card className='px-5 gap-4'>
+    <Card className='px-4 sm:px-5 gap-3 sm:gap-4'>
       <CardHeader className='p-0'>
         <div className='flex items-center justify-between'>
-          <CardTitle className='text-lg font-semibold'>
-            Bedrijfsomschrijving
+          <CardTitle className='text-base sm:text-lg lg:text-xl font-semibold'>
+            {t('title')}
           </CardTitle>
           {isOwner && (
             <button
               onClick={onEditClick}
-              className='text-muted-foreground hover:text-primary transition-colors cursor-pointer group'
-              aria-label='Bewerken'
+              className='text-muted-foreground hover:text-primary transition-colors cursor-pointer group flex-shrink-0'
+              aria-label={t('edit')}
             >
               <Image
                 src='/icons/edit-pencil.svg'
                 className='mb-1 transition-all group-hover:[filter:brightness(0)_saturate(100%)_invert(15%)_sepia(91%)_saturate(2528%)_hue-rotate(214deg)_brightness(94%)_contrast(107%)]'
-                alt='Bewerken'
+                alt={t('edit')}
                 width={16}
                 height={16}
               />
@@ -41,10 +43,10 @@ export default function CompanyDescriptionCard({
         </div>
       </CardHeader>
       <CardContent className='p-0'>
-        <p className='text-sm text-secondary-foreground leading-relaxed'>
+        <p className='text-sm sm:text-base text-secondary-foreground leading-relaxed'>
           {description && description !== '-'
             ? description
-            : 'Geen bedrijfsomschrijving beschikbaar. Klik op het potlood pictogram om een omschrijving toe te voegen.'}
+            : t('emptyState')}
         </p>
       </CardContent>
     </Card>

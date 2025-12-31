@@ -3,6 +3,7 @@ export interface NavigationItem {
   label: string;
   href: string;
   icon: string;
+  iconType?: 'svg' | 'lucide'; // Optional: defaults to 'svg'
   type: 'link' | 'action';
 }
 
@@ -22,10 +23,11 @@ export const dashboardNavigation: NavigationItem[] = [
     type: 'link',
   },
   {
-    id: 'werkgebied',
-    label: 'Werkgebied',
-    href: '/pro-dashboard/werkgebied',
-    icon: '/icons/professional-dashboard/werkgebied.svg',
+    id: 'work-specialties',
+    label: 'Work Specialties',
+    href: '/pro-dashboard/work-specialties',
+    icon: 'BriefcaseBusiness',
+    iconType: 'lucide',
     type: 'link',
   },
   {
@@ -72,9 +74,9 @@ export const pageConfigs: Record<string, PageConfig> = {
     title: 'Bedrijfsprofiel',
     description: 'Beheer je bedrijfsinformatie, foto’s en reviews',
   },
-  werkgebied: {
-    title: 'Services',
-    description: 'Beheer je regio’s, straal en rubrieken',
+  'work-specialties': {
+    title: 'Work Specialties',
+    description: 'Manage your specializations and services',
   },
   faq: {
     title: 'FAQ',

@@ -8,6 +8,14 @@ import { useTranslations } from 'next-intl';
 
 export default function HeroContact() {
   const t = useTranslations('contact.hero');
+
+  const scrollToContactForm = () => {
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+      contactForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <section className='pt-30 md:pt-[168px] pb-56 relative'>
       {/* Background div with gradient and blur */}
@@ -88,6 +96,7 @@ export default function HeroContact() {
             </div>
             {/* CTA Button - Desktop only */}
             <Button
+              onClick={scrollToContactForm}
               size={null}
               className='hidden md:flex text-lg h-auto px-10 py-4 items-center font-semibold rounded-2xl gap-2'
               style={{
@@ -146,6 +155,7 @@ export default function HeroContact() {
 
             {/* CTA Button - Mobile only, below image */}
             <Button
+              onClick={scrollToContactForm}
               size={null}
               className='md:hidden flex text-base h-auto px-8 py-3 items-center justify-center font-semibold rounded-2xl gap-2 mt-8 w-full'
               style={{

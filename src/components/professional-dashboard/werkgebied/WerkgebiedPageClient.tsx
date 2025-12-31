@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import toast from 'react-hot-toast';
 import { Loader } from '@/components/ui/loader';
@@ -8,6 +9,7 @@ import CategorySearch from '@/components/shared/categories/CategorySearch';
 import GradientCountBar from '@/components/shared/categories/GradientCountBar';
 import SubcategoryAccordion from '@/components/shared/categories/SubcategoryAccordion';
 import SelectedCategoriesSidebar from '@/components/shared/categories/SelectedCategoriesSidebar';
+import SelectedCategoriesCart from '@/components/shared/categories/SelectedCategoriesCart';
 import TipsBestPracticesCard from './TipsBestPracticesCard';
 import MonthStatsCard from './MonthStatsCard';
 import type {
@@ -20,6 +22,8 @@ import type {
 const MAX_CATEGORIES = 6;
 
 export default function WerkgebiedPageClient() {
+  const t = useTranslations('common.proDashboard.werkgebied');
+
   const [allCategories, setAllCategories] = useState<ServiceCategory[]>([]);
   const [categories, setCategories] = useState<ServiceCategoryWithSubcategories[]>([]);
   const [selectedSpecializations, setSelectedSpecializations] = useState<ProfessionalSpecialization[]>([]);
@@ -124,27 +128,27 @@ export default function WerkgebiedPageClient() {
         setOpenAccordions(categoriesArray.map(cat => cat.id.toString()));
       } catch (error) {
         console.error('Error fetching data:', error);
-        toast.error('Kon gegevens niet laden');
+        toast.error(t('errorLoading'));
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [t]);
 
   const handleCategorySelect = async (category: ServiceCategory) => {
     // Check if category is already selected
     const isSelected = selectedSpecializations.some((s) => s.service_category_id === category.id);
 
     if (isSelected) {
-      toast('Dit vakgebied is al toegevoegd');
+      toast(t('categoryAlreadyAdded'));
       return;
     }
 
     // Check max limit
     if (selectedSpecializations.length >= MAX_CATEGORIES) {
-      toast.error(`Je kunt maximaal ${MAX_CATEGORIES} vakgebieden selecteren`);
+      toast.error(t('maxCategoriesError', { max: MAX_CATEGORIES }));
       return;
     }
 
@@ -162,13 +166,13 @@ export default function WerkgebiedPageClient() {
 
       if (!response.ok) throw new Error('Failed to add specialization');
 
-      toast.success('Vakgebied toegevoegd');
+      toast.success(t('categoryAdded'));
 
       // Refresh the page data
       window.location.reload();
     } catch (error) {
       console.error('Error adding specialization:', error);
-      toast.error('Kon vakgebied niet toevoegen');
+      toast.error(t('errorAdding'));
     } finally {
       setIsSaving(false);
     }
@@ -188,13 +192,13 @@ export default function WerkgebiedPageClient() {
 
       // Update UI after successful deletion
       setSelectedSpecializations((prev) => prev.filter((s) => s.id !== specializationId));
-      toast.success('Vakgebied verwijderd');
+      toast.success(t('categoryRemoved'));
 
       // Refresh to update subcategories
       window.location.reload();
     } catch (error) {
       console.error('Error deleting specialization:', error);
-      toast.error('Kon vakgebied niet verwijderen');
+      toast.error(t('errorRemoving'));
     } finally {
       setIsSaving(false);
     }
@@ -239,10 +243,10 @@ export default function WerkgebiedPageClient() {
         throw new Error('Failed to update priorities');
       }
 
-      toast.success('Volgorde bijgewerkt');
+      toast.success(t('orderUpdated'));
     } catch (error) {
       console.error('Error updating priorities:', error);
-      toast.error('Kon volgorde niet bijwerken');
+      toast.error(t('errorUpdatingOrder'));
     } finally {
       setIsSaving(false);
     }
@@ -299,7 +303,7 @@ export default function WerkgebiedPageClient() {
 
   const handleSave = async () => {
     if (selectedSubcategories.size === 0) {
-      toast.error('Selecteer minimaal 1 type project');
+      toast.error(t('minSelectionError'));
       return;
     }
 
@@ -310,15 +314,16 @@ export default function WerkgebiedPageClient() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           subcategoryIds: Array.from(selectedSubcategories),
+          skipStepUpdate: true, // Don't update current_step when saving from dashboard
         }),
       });
 
       if (!response.ok) throw new Error('Failed to save subcategories');
 
-      toast.success('Type projecten opgeslagen');
+      toast.success(t('saveSuccess'));
     } catch (error) {
       console.error('Error saving subcategories:', error);
-      toast.error('Kon wijzigingen niet opslaan');
+      toast.error(t('errorSaving'));
     } finally {
       setIsSaving(false);
     }
@@ -338,14 +343,14 @@ export default function WerkgebiedPageClient() {
   if (isLoading) {
     return (
       <div className='flex items-center justify-center min-h-[400px]'>
-        <Loader fullScreen text='Werkgebied laden...' />
+        <Loader fullScreen text={t('loading')} />
       </div>
     );
   }
 
   return (
-    <div className='p-6 space-y-6'>
-      {isSaving && <Loader fullScreen text='Bezig met opslaan...' />}
+    <div className='lg:p-6 lg:space-y-6'>
+      {isSaving && <Loader fullScreen text={t('saving')} />}
 
       {/* Two Column Layout */}
       <div className='flex flex-col lg:flex-row gap-6'>
@@ -360,7 +365,7 @@ export default function WerkgebiedPageClient() {
               <CategorySearch
                 value={searchQuery}
                 onChange={setSearchQuery}
-                placeholder='Zoek en voeg vakgebieden toe...'
+                placeholder={t('searchPlaceholder')}
                 isDropdown={true}
                 isListFiltered={false}
                 categories={allCategories}
@@ -377,13 +382,13 @@ export default function WerkgebiedPageClient() {
                 onDeselectAll={deselectAllSubcategories}
                 showLimit={true}
                 showDeselectButton={true}
-                label='geselecteerd'
+                label={t('selected')}
               />
             )}
 
             {/* Accordion Section with Subcategories */}
             {categories.length > 0 ? (
-              <div className='p-6 pt-6'>
+              <div className='lg:p-6 px-4 py-6'>
                 <SubcategoryAccordion
                   categories={filteredCategories}
                   selectedSubcategoryIds={selectedSubcategories}
@@ -398,7 +403,7 @@ export default function WerkgebiedPageClient() {
             ) : (
               <div className='p-6 text-center py-12'>
                 <p className='text-slate-500 mb-4'>
-                  Geen vakgebieden geselecteerd. Voeg vakgebieden toe via de zoekbalk hierboven.
+                  {t('noCategories')}
                 </p>
               </div>
             )}
@@ -414,17 +419,27 @@ export default function WerkgebiedPageClient() {
                 disabled={selectedSubcategories.size === 0 || isSaving}
                 size={null}
               >
-                {isSaving ? 'Opslaan...' : 'Wijzigingen opslaan'}
+                {isSaving ? t('savingButton') : t('saveButton')}
               </Button>
             </div>
           )}
+
+          {/* Tips & Best Practices Card (Mobile) */}
+          <div className='lg:hidden'>
+            <TipsBestPracticesCard />
+          </div>
+
+          {/* Deze maand Stats Card (Mobile) */}
+          <div className='lg:hidden'>
+            <MonthStatsCard />
+          </div>
         </div>
 
-        {/* Right Column - Sidebar */}
-        <div className='w-full lg:w-[380px] space-y-6'>
+        {/* Right Column - Sidebar (Desktop only) */}
+        <div className='hidden lg:block w-full lg:w-[380px] space-y-6'>
           {/* Selected Categories Sidebar */}
           <SelectedCategoriesSidebar
-            title='Gekozen vakgebieden'
+            title={t('selectedCategories')}
             selectedSpecializations={selectedSpecializations}
             maxCategories={MAX_CATEGORIES}
             onRemove={removeCategory}
@@ -434,17 +449,37 @@ export default function WerkgebiedPageClient() {
             draggedIndex={draggedIndex}
             isDraggable={true}
             showReorderButton={true}
-            onReorderClick={() => toast('Sleep de vakgebieden om te herschikken')}
+            onReorderClick={() => toast(t('dragToReorder'))}
             showInfoCard={true}
             emptyStateIcon='/icons/services/renovatie.svg'
           />
 
-          {/* Tips & Best Practices Card */}
+          {/* Tips & Best Practices Card (Desktop) */}
           <TipsBestPracticesCard />
 
-          {/* Deze maand Stats Card */}
+          {/* Deze maand Stats Card (Desktop) */}
           <MonthStatsCard />
         </div>
+      </div>
+
+      {/* Floating Cart (Mobile/Tablet only) */}
+      <div className='lg:hidden'>
+        <SelectedCategoriesCart
+          title={t('selectedCategories')}
+          selectedSpecializations={selectedSpecializations}
+          maxCategories={MAX_CATEGORIES}
+          onRemove={removeCategory}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
+          draggedIndex={draggedIndex}
+          isDraggable={true}
+          showReorderButton={true}
+          onReorderClick={() => toast(t('dragToReorder'))}
+          showInfoCard={true}
+          emptyStateIcon='/icons/services/renovatie.svg'
+          onProceed={handleSave}
+        />
       </div>
     </div>
   );

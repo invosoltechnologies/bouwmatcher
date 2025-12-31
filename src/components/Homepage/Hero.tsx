@@ -7,6 +7,14 @@ import { useTranslations } from 'next-intl';
 
 export default function Hero() {
   const t = useTranslations('homepage.hero');
+
+  const scrollToProcess = () => {
+    const processSection = document.getElementById('process-section');
+    if (processSection) {
+      processSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <section className='relative min-h-screen pt-32 md:pt-[168px]'>
       {/* Background div with gradient and blur */}
@@ -57,7 +65,7 @@ export default function Hero() {
 
           {/* CTA Button - Below image, centered */}
           <div className='flex justify-center'>
-            <Button size='lg' className='text-base h-auto px-8 py-3 rounded-xl'>
+            <Button onClick={scrollToProcess} size='lg' className='text-base h-auto px-8 py-3 rounded-xl'>
               {t('ctaButton')}
             </Button>
           </div>
@@ -83,7 +91,7 @@ export default function Hero() {
             </h1>
 
             {/* CTA Button */}
-            <Button size='lg' className='text-lg h-auto px-9.5 py-4'>
+            <Button onClick={scrollToProcess} size='lg' className='text-lg h-auto px-9.5 py-4'>
               {t('ctaButton')}
             </Button>
           </div>
@@ -124,7 +132,7 @@ export default function Hero() {
         </div>
 
         {/* Project Form */}
-        <div className='mt-8 md:mt-16'>
+        <div id="project-form" className='mt-8 md:mt-16'>
           <ProjectForm mode='home' />
         </div>
 

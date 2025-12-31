@@ -9,7 +9,7 @@ export default function Contact() {
   return (
     <DefaultLayout>
       <HeroContact />
-      <section className='pt-0 pb-16 bg-white'>
+      <section id="contact-form" className='pt-0 pb-16 bg-white'>
         <div className='custom-container'>
           <ContactForm />
         </div>

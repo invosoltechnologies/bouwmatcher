@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from 'next-intl';
 import GlassyModal from '@/components/ui/glassy-modal';
 import { Loader2 } from 'lucide-react';
 import { useUpdateProfileAnswers } from '@/lib/hooks/professional/account/useProfileAnswers';
@@ -24,21 +25,22 @@ export default function AnswerQuestionModal({
   onClose,
   question,
 }: AnswerQuestionModalProps) {
+  const t = useTranslations('common.proDashboard.bedrijfsprofiel.modals.answerQuestion');
   const [answer, setAnswer] = useState(question.answer || '');
 
   const updateAnswersMutation = useUpdateProfileAnswers({
     onSuccess: () => {
-      toast.success('Antwoord succesvol opgeslagen');
+      toast.success(t('success'));
       onClose();
     },
     onError: (error) => {
-      toast.error(error.message || 'Kon antwoord niet opslaan');
+      toast.error(error.message || t('error'));
     },
   });
 
   const handleSubmit = () => {
     if (!answer.trim()) {
-      toast.error('Vul een antwoord in');
+      toast.error(t('validationError'));
       return;
     }
 
@@ -51,11 +53,11 @@ export default function AnswerQuestionModal({
   const isLoading = updateAnswersMutation.isPending;
 
   return (
-    <GlassyModal isOpen={isOpen} onClose={onClose} title='Vragen & Antwoord' className='max-w-md'>
-      <div className='space-y-6'>
+    <GlassyModal isOpen={isOpen} onClose={onClose} title={t('title')} className='max-w-sm sm:max-w-md'>
+      <div className='space-y-4 sm:space-y-6 p-4 sm:p-6'>
         {/* Question */}
         <div>
-          <h3 className='text-sm font-medium text-secondary-foreground mb-4'>
+          <h3 className='text-sm sm:text-base font-medium text-secondary-foreground mb-4'>
             {question.question}
           </h3>
         </div>
@@ -66,35 +68,35 @@ export default function AnswerQuestionModal({
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
             disabled={isLoading}
-            className='w-full min-h-32 p-3 border border-gray-300 rounded-xl text-sm text-secondary-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed resize-none'
-            placeholder='Typ hier uw antwoord...'
+            className='w-full min-h-[100px] sm:min-h-32 p-3 border border-gray-300 rounded-xl text-sm sm:text-base text-secondary-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed resize-none'
+            placeholder={t('placeholder')}
           />
         </div>
 
         {/* Action Buttons */}
-        <div className='flex justify-end gap-3'>
+        <div className='flex flex-col sm:flex-row justify-end gap-3'>
           <Button
             type='button'
             variant='ghost'
             onClick={onClose}
             disabled={isLoading}
-            className='rounded-xl text-primary'
+            className='w-full sm:w-auto rounded-xl text-primary py-2.5 sm:py-3 px-4 sm:px-6 text-sm sm:text-base'
           >
-            Annuleren
+            {t('cancel')}
           </Button>
           <Button
             type='button'
             onClick={handleSubmit}
             disabled={isLoading}
-            className='rounded-xl bg-primary hover:bg-primary/90 text-white'
+            className='w-full sm:w-auto rounded-xl bg-primary hover:bg-primary/90 text-white py-2.5 sm:py-3 px-4 sm:px-6 text-sm sm:text-base'
           >
             {isLoading ? (
               <>
-                <Loader2 className='w-4 h-4 mr-2 animate-spin' />
-                Opslaan...
+                <Loader2 className='w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-spin' />
+                {t('saving')}
               </>
             ) : (
-              'Opslaan'
+              t('save')
             )}
           </Button>
         </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useLocale } from 'next-intl';
 import { Search, Check } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
@@ -41,6 +42,12 @@ export default function CategorySearch({
   onCategorySelect,
 }: CategorySearchProps) {
   const [open, setOpen] = useState(false);
+  const locale = useLocale();
+
+  // Get category name based on locale
+  const getCategoryName = (category: ServiceCategory) => {
+    return locale === 'en' ? (category.name_en || category.name_nl) : category.name_nl;
+  };
 
   // Dropdown/Combobox mode (for dashboard - select from dropdown)
   if (isDropdown) {
@@ -73,10 +80,11 @@ export default function CategorySearch({
                 <CommandGroup>
                   {categories.map((category) => {
                     const isSelected = selectedIds.includes(category.id);
+                    const categoryName = getCategoryName(category);
                     return (
                       <CommandItem
                         key={category.id}
-                        value={category.name_nl}
+                        value={categoryName}
                         onSelect={() => {
                           onCategorySelect?.(category);
                           onChange(''); // Clear search after selection
@@ -87,13 +95,13 @@ export default function CategorySearch({
                           {category.icon_url && (
                             <Image
                               src={category.icon_url}
-                              alt={category.name_nl}
+                              alt={categoryName}
                               width={24}
                               height={24}
                               className='shrink-0'
                             />
                           )}
-                          <span className='flex-1'>{category.name_nl}</span>
+                          <span className='flex-1'>{categoryName}</span>
                           <Check
                             className={cn(
                               'w-5 h-5 shrink-0',

@@ -2,9 +2,11 @@
 import { Button } from '@/components/ui/button';
 import ProcessSteps, { ProcessStep } from '@/components/ui/process-steps';
 import { useTranslations } from 'next-intl';
+import { useRouter } from '@/i18n/navigation';
 
 export default function ProcessSection() {
   const t = useTranslations('homepage.process');
+  const router = useRouter();
 
   const processSteps: ProcessStep[] = [
     {
@@ -43,6 +45,7 @@ export default function ProcessSection() {
         variant='default'
         size='lg'
         className='bg-primary hover:bg-primary/90 text-white font-medium px-6 py-4 rounded-[12px] text-base'
+        onClick={() => router.push('/auth')}
       >
         {t('ctaPrimary')}
       </Button>
@@ -50,6 +53,7 @@ export default function ProcessSection() {
         variant='default'
         size='lg'
         className='bg-accent hover:bg-accent/90 text-white font-medium px-6 py-4 rounded-[12px] text-base'
+        onClick={() => router.push('/#project-form')}
       >
         {t('ctaSecondary')}
       </Button>
