@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import Hero from "@/components/Homepage/Hero";
 import CTASection from "@/components/Homepage/CTASection";
 import FAQSection from "@/components/Homepage/FAQSection";
@@ -14,8 +13,6 @@ import Values from "@/components/Homepage/Values";
 import DefaultLayout from "@/components/DefaultLayout";
 
 export default function Home() {
-  const searchParams = useSearchParams();
-
   useEffect(() => {
     // Check if there's a hash in the URL
     const hash = window.location.hash;
@@ -30,7 +27,7 @@ export default function Home() {
         }
       }, 100);
     }
-  }, [searchParams]);
+  }, []);
 
   return (
     <DefaultLayout>
