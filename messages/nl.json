@@ -1227,6 +1227,87 @@
         }
       }
     },
+    "adminDashboard": {
+      "navigation": {
+        "dashboard": "Dashboard",
+        "professionals": "Professionals",
+        "companies": "Bedrijven",
+        "verification": "Verificatie",
+        "reviews": "Reviews",
+        "projects": "Projecten",
+        "service-categories": "Servicecategorieën",
+        "home": "Home",
+        "logout": "Uitloggen"
+      },
+      "adminBadge": "Admin",
+      "pages": {
+        "dashboard": {
+          "title": "Admin Dashboard",
+          "description": "Overzicht van platformstatistieken en recente activiteit"
+        },
+        "professionals": {
+          "title": "Professionals Beheer",
+          "description": "Beheer professionele profielen en verificatie"
+        },
+        "companies": {
+          "title": "Bedrijven Beheer",
+          "description": "Beheer bedrijfsprofielen en verificatie"
+        },
+        "verification": {
+          "title": "Verificatiewachtrij",
+          "description": "Bekijk en keur openstaande verificaties goed"
+        },
+        "reviews": {
+          "title": "Reviews Beheer",
+          "description": "Monitor en modereer gebruikersbeoordelingen"
+        },
+        "projects": {
+          "title": "Projecten Beheer",
+          "description": "Bekijk en beheer alle platformprojecten"
+        },
+        "service-categories": {
+          "title": "Servicecategorieën",
+          "description": "Beheer servicecategorieën en subcategorieën"
+        }
+      },
+      "stats": {
+        "totalProfessionals": "Totaal professionals",
+        "verificationRate": "Verificatiepercentage",
+        "averageRating": "Gemiddelde beoordeling",
+        "activeProjects": "Actieve projecten",
+        "pendingVerifications": "Wachtende verificaties",
+        "serviceCategories": "Servicecategorieën"
+      },
+      "recentProfessionals": "Recente professionals",
+      "recentProfessionalsDesc": "Laatst geregistreerde professionals",
+      "tableHeaders": {
+        "professional": "Professional",
+        "categories": "Categorieën",
+        "status": "Status",
+        "rating": "Beoordeling",
+        "registered": "Geregistreerd",
+        "actions": "Acties"
+      },
+      "status": {
+        "verified": "Geverifieerd",
+        "pending": "In afwachting",
+        "in_review": "In beoordeling",
+        "unverified": "Niet geverifieerd",
+        "rejected": "Afgewezen"
+      },
+      "viewProfile": "Bekijken",
+      "viewAllProfessionals": "Bekijk alle professionals",
+      "recentReviews": "Recente beoordelingen",
+      "recentReviewsDesc": "Laatst toegevoegde reviews",
+      "viewAllReviews": "Bekijk alle beoordelingen",
+      "serviceCategories": "Servicecategorieën",
+      "serviceCategoriesDesc": "Aantal professionals per categorie",
+      "active": "Actief",
+      "inactive": "Inactief",
+      "professional": "professional",
+      "professionals": "professionals",
+      "viewAllCategories": "Bekijk alle categorieën"
+    },
     "footer": {
       "description": "Het vertrouwde platform voor het matchen van bouwers en projecten.",
       "helpTitle": "Help",

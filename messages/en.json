@@ -1229,6 +1229,87 @@
         }
       }
     },
+    "adminDashboard": {
+      "navigation": {
+        "dashboard": "Dashboard",
+        "professionals": "Professionals",
+        "companies": "Companies",
+        "verification": "Verification",
+        "reviews": "Reviews",
+        "projects": "Projects",
+        "service-categories": "Service Categories",
+        "home": "Home",
+        "logout": "Log out"
+      },
+      "adminBadge": "Admin",
+      "pages": {
+        "dashboard": {
+          "title": "Admin Dashboard",
+          "description": "Overview of platform statistics and recent activity"
+        },
+        "professionals": {
+          "title": "Professionals Management",
+          "description": "Manage professional profiles and verification"
+        },
+        "companies": {
+          "title": "Companies Management",
+          "description": "Manage company profiles and verification"
+        },
+        "verification": {
+          "title": "Verification Queue",
+          "description": "Review and approve pending verifications"
+        },
+        "reviews": {
+          "title": "Reviews Management",
+          "description": "Monitor and moderate user reviews"
+        },
+        "projects": {
+          "title": "Projects Management",
+          "description": "View and manage all platform projects"
+        },
+        "service-categories": {
+          "title": "Service Categories",
+          "description": "Manage service categories and subcategories"
+        }
+      },
+      "stats": {
+        "totalProfessionals": "Total Professionals",
+        "verificationRate": "Verification Rate",
+        "averageRating": "Average Rating",
+        "activeProjects": "Active Projects",
+        "pendingVerifications": "Pending Verifications",
+        "serviceCategories": "Service Categories"
+      },
+      "recentProfessionals": "Recent Professionals",
+      "recentProfessionalsDesc": "Recently registered professionals",
+      "tableHeaders": {
+        "professional": "Professional",
+        "categories": "Categories",
+        "status": "Status",
+        "rating": "Rating",
+        "registered": "Registered",
+        "actions": "Actions"
+      },
+      "status": {
+        "verified": "Verified",
+        "pending": "Pending",
+        "in_review": "In Review",
+        "unverified": "Unverified",
+        "rejected": "Rejected"
+      },
+      "viewProfile": "View",
+      "viewAllProfessionals": "View all professionals",
+      "recentReviews": "Recent Reviews",
+      "recentReviewsDesc": "Recently added reviews",
+      "viewAllReviews": "View all reviews",
+      "serviceCategories": "Service Categories",
+      "serviceCategoriesDesc": "Number of professionals per category",
+      "active": "Active",
+      "inactive": "Inactive",
+      "professional": "professional",
+      "professionals": "professionals",
+      "viewAllCategories": "View all categories"
+    },
     "footer": {
       "description": "The trusted platform for matching builders and projects.",
       "helpTitle": "Help",
