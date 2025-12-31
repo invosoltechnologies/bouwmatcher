@@ -582,147 +582,150 @@ function WorkAreaFormContent({ onNext, initialData }: WorkAreaFormProps) {
   const defaultCenter = coordinates || { lat: 52.3676, lng: 4.9041 };
 
   return (
-    <div className='w-full px-4'>
+    <div className='custom-container'>
       {/* Main Card */}
       <div
         className='bg-white/95 rounded-3xl overflow-hidden'
         style={{ boxShadow: '0px 12px 36px 0px #023AA21F' }}
       >
-        {/* Map Panel - Top on mobile, full width */}
-        <div className='w-full h-[300px] sm:h-[350px] lg:h-[450px] overflow-hidden relative'>
-          <Map
-            defaultCenter={defaultCenter}
-            defaultZoom={coordinates ? 11 : 6}
-            mapId='bf51a910020fa25a'
-            gestureHandling='greedy'
-            disableDefaultUI={true}
-            mapTypeId={mapTypeId}
-            clickableIcons={false}
-          >
-            <MapComponent
-              center={coordinates || defaultCenter}
-              mapTypeId={mapTypeId}
-              onClick={handleMapClick}
-              radius={selectedRadius}
-            >
-              {coordinates && (
-                <Marker position={coordinates} title={selectedLocation} />
-              )}
-            </MapComponent>
-          </Map>
+        {/* Desktop: Two Column Layout | Mobile: Stacked Layout */}
+        <div className='flex flex-col lg:flex-row'>
+          {/* Form Panel - Left on desktop, bottom on mobile */}
+          <div className='order-2 lg:order-1 lg:w-[45%] p-4 sm:p-6 lg:p-8 space-y-6 flex flex-col justify-center'>
+            {/* Header */}
+            <div className='text-center lg:text-left'>
+              <h1 className='text-2xl sm:text-3xl lg:text-4xl font-normal text-slate-900 mb-2'>
+                {t('heading')}
+              </h1>
+              <p className='text-sm sm:text-base lg:text-lg text-muted-foreground'>
+                {t('description')}
+              </p>
+            </div>
 
-          {/* Top Right Controls */}
-          <div className='absolute top-3 right-3 flex flex-col gap-2'>
-            <button
-              onClick={handleGetCurrentLocation}
-              disabled={isLoadingLocation}
-              className='bg-primary text-white p-2.5 rounded-lg shadow-lg hover:bg-primary/90 transition-colors disabled:opacity-50'
-              title='Gebruik huidige locatie'
-            >
-              {isLoadingLocation ? (
-                <div className='w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin' />
-              ) : (
-                <LocateFixed className='w-5 h-5' />
-              )}
-            </button>
+            {/* Location Search */}
+            <div className='space-y-2 sm:space-y-3'>
+              <Label className='text-sm sm:text-base lg:text-lg text-slate-900'>
+                {t('locationLabel')}
+              </Label>
+              <PlacesAutocompleteInput
+                onPlaceSelect={handlePlaceSelect}
+                inputValue={inputValue}
+                setInputValue={setInputValue}
+                t={t}
+              />
+            </div>
 
-            {/* Map Type Toggle */}
-            <button
-              onClick={() =>
-                setMapTypeId((prev) =>
-                  prev === 'roadmap'
-                    ? 'satellite'
-                    : prev === 'satellite'
-                    ? 'terrain'
-                    : 'roadmap'
-                )
-              }
-              className='bg-white text-slate-900 p-2.5 rounded-lg shadow-lg hover:bg-neutral-50 transition-colors'
-              title={`${t('switchToMap')} ${
-                mapTypeId === 'roadmap'
-                  ? t('mapTypeSatellite')
-                  : mapTypeId === 'satellite'
-                  ? t('mapTypeTerrain')
-                  : t('mapTypeRoadmap')
-              }`}
-            >
-              <svg
-                className='w-5 h-5'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7'
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
+            {/* Radius Selection */}
+            <div className='space-y-2 sm:space-y-3'>
+              <Label className='text-sm sm:text-base lg:text-lg text-slate-900'>
+                {t('radiusLabel')}
+              </Label>
+              <div className='flex flex-wrap gap-2 sm:gap-3'>
+                {RADIUS_OPTIONS.map((option) => (
+                  <button
+                    key={option.value}
+                    type='button'
+                    onClick={() => setSelectedRadius(option.value)}
+                    className={cn(
+                      'px-3.5 sm:px-6 py-2 sm:py-3 cursor-pointer rounded-full text-sm sm:text-base font-medium transition-all',
+                      selectedRadius === option.value
+                        ? 'bg-primary text-white'
+                        : 'bg-white text-slate-900 border border-neutral-300 hover:border-primary'
+                    )}
+                    style={
+                      selectedRadius !== option.value
+                        ? { boxShadow: '0px 2px 6.5px 0px #0000001A' }
+                        : undefined
+                    }
+                  >
+                    {t(option.key)}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-        {/* Form Panel - Below map */}
-        <div className='p-4 sm:p-6 pt-10 lg:p-8 space-y-6'>
-          {/* Header */}
-          <div className='text-center sm:text-left'>
-            <h1 className='text-2xl sm:text-3xl lg:text-4xl font-normal text-slate-900 mb-2'>
-              {t('heading')}
-            </h1>
-            <p className='text-sm sm:text-base lg:text-lg text-muted-foreground'>
-              {t('description')}
-            </p>
-          </div>
-
-          {/* Location Search */}
-          <div className='space-y-2 sm:space-y-3'>
-            <Label className='text-sm sm:text-base lg:text-lg text-slate-900'>
-              {t('locationLabel')}
-            </Label>
-            <PlacesAutocompleteInput
-              onPlaceSelect={handlePlaceSelect}
-              inputValue={inputValue}
-              setInputValue={setInputValue}
-              t={t}
-            />
-          </div>
-
-          {/* Radius Selection */}
-          <div className='space-y-2 sm:space-y-3'>
-            <Label className='text-sm sm:text-base lg:text-lg text-slate-900'>
-              {t('radiusLabel')}
-            </Label>
-            <div className='flex flex-wrap gap-2 sm:gap-3'>
-              {RADIUS_OPTIONS.map((option) => (
-                <button
-                  key={option.value}
-                  type='button'
-                  onClick={() => setSelectedRadius(option.value)}
-                  className={cn(
-                    'px-3.5 sm:px-6 py-2 sm:py-3 cursor-pointer rounded-full text-sm sm:text-base font-medium transition-all',
-                    selectedRadius === option.value
-                      ? 'bg-primary text-white'
-                      : 'bg-white text-slate-900 border border-neutral-300 hover:border-primary'
-                  )}
-                  style={
-                    selectedRadius !== option.value
-                      ? { boxShadow: '0px 2px 6.5px 0px #0000001A' }
-                      : undefined
-                  }
-                >
-                  {t(option.key)}
-                </button>
-              ))}
+            {/* Privacy Message - Always visible */}
+            <div className='bg-emerald-50 p-3 sm:p-4 border border-accent rounded-md'>
+              <p className='text-sm sm:text-base text-emerald-800 flex items-start gap-2'>
+                <Compass className='w-5 h-5 sm:w-6 sm:h-6 shrink-0 mt-0.5' />
+                <span>{t('privacyMessage')}</span>
+              </p>
             </div>
           </div>
 
-          {/* Privacy Message - Always visible */}
-          <div className='bg-emerald-50 p-3 sm:p-4 border border-accent rounded-md'>
-            <p className='text-sm sm:text-base text-emerald-800 flex items-start gap-2'>
-              <Compass className='w-5 h-5 sm:w-6 sm:h-6 shrink-0 mt-0.5' />
-              <span>{t('privacyMessage')}</span>
-            </p>
+          {/* Map Panel - Right on desktop, top on mobile */}
+          <div className='order-1 lg:order-2 lg:w-[55%] h-[300px] sm:h-[350px] lg:h-auto relative lg:m-8'>
+            <Map
+              defaultCenter={defaultCenter}
+              defaultZoom={coordinates ? 11 : 6}
+              mapId='bf51a910020fa25a'
+              gestureHandling='greedy'
+              disableDefaultUI={true}
+              mapTypeId={mapTypeId}
+              clickableIcons={false}
+            >
+              <MapComponent
+                center={coordinates || defaultCenter}
+                mapTypeId={mapTypeId}
+                onClick={handleMapClick}
+                radius={selectedRadius}
+              >
+                {coordinates && (
+                  <Marker position={coordinates} title={selectedLocation} />
+                )}
+              </MapComponent>
+            </Map>
+
+            {/* Top Right Controls */}
+            <div className='absolute top-3 right-3 flex flex-col gap-2'>
+              <button
+                onClick={handleGetCurrentLocation}
+                disabled={isLoadingLocation}
+                className='bg-primary text-white p-2.5 rounded-lg shadow-lg hover:bg-primary/90 transition-colors disabled:opacity-50'
+                title='Gebruik huidige locatie'
+              >
+                {isLoadingLocation ? (
+                  <div className='w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin' />
+                ) : (
+                  <LocateFixed className='w-5 h-5' />
+                )}
+              </button>
+
+              {/* Map Type Toggle */}
+              <button
+                onClick={() =>
+                  setMapTypeId((prev) =>
+                    prev === 'roadmap'
+                      ? 'satellite'
+                      : prev === 'satellite'
+                      ? 'terrain'
+                      : 'roadmap'
+                  )
+                }
+                className='bg-white text-slate-900 p-2.5 rounded-lg shadow-lg hover:bg-neutral-50 transition-colors'
+                title={`${t('switchToMap')} ${
+                  mapTypeId === 'roadmap'
+                    ? t('mapTypeSatellite')
+                    : mapTypeId === 'satellite'
+                    ? t('mapTypeTerrain')
+                    : t('mapTypeRoadmap')
+                }`}
+              >
+                <svg
+                  className='w-5 h-5'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7'
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>

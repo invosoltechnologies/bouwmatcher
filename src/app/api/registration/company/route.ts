@@ -28,6 +28,13 @@ export async function POST(request: NextRequest) {
       country,
       businessIdType,
       businessIdFormatted,
+      // Optional fields from API
+      vatNumber,
+      phone,
+      email,
+      website,
+      employees,
+      description,
     } = body;
 
     if (!companyName || !kvkNumber || !postalCode || !houseNumber || !street || !city || !country || !businessIdType) {
@@ -66,6 +73,14 @@ export async function POST(request: NextRequest) {
           street_name: street,
           city: city,
           full_address: `${street} ${houseNumber}, ${postalCode} ${city}`,
+          // Additional fields from API
+          vat_number: vatNumber,
+          business_phone: phone,
+          business_email: email,
+          website: website,
+          employee_count: employees ? String(employees) : null,
+          business_description: description,
+          // Standard fields
           created_by: user.id,
           is_active: true,
           verification_status: 'pending',
@@ -90,7 +105,8 @@ export async function POST(request: NextRequest) {
       .from('professional_profiles')
       .update({
         company_id: companyId,
-        role_in_company: existingCompany ? 'employee' : 'owner',
+        role_in_company: 'owner',
+        is_verified: 'verified',
         joined_company_at: new Date().toISOString(),
         profile_completed: true,
         current_step: 6,

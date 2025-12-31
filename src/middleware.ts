@@ -60,6 +60,8 @@ export async function middleware(request: NextRequest) {
   const isAuthPage = pathnameWithoutLocale.startsWith('/auth');
   const isProDashboard = pathnameWithoutLocale.startsWith('/pro-dashboard');
   const isDashboard = pathnameWithoutLocale.startsWith('/dashboard');
+  const isAdminDashboard = pathnameWithoutLocale.startsWith('/admin-dashboard');
+  const isAdminLoginPage = pathnameWithoutLocale === '/auth/admin-login';
 
   // Define public routes that don't require authentication
   const publicRoutes = [
@@ -83,9 +85,14 @@ export async function middleware(request: NextRequest) {
 
   // If user is not signed in
   if (!user) {
-    // Allow access to public routes and auth pages
+    // Allow access to public routes, auth pages (including admin login)
     if (isPublicRoute || isAuthPage) {
       return supabaseResponse;
+    }
+
+    // If trying to access admin dashboard, redirect to admin login
+    if (isAdminDashboard) {
+      return NextResponse.redirect(new URL(`/${locale}/auth/admin-login`, request.url));
     }
 
     // Redirect to login if trying to access protected routes
@@ -94,7 +101,31 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // User is signed in - check profile completion status
+  // Check if user is admin
+  const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@bouwmatcher.be';
+  const isUserAdmin = user.email === ADMIN_EMAIL;
+
+  // If user is trying to access admin dashboard
+  if (isAdminDashboard) {
+    if (!isUserAdmin) {
+      // Non-admin trying to access admin dashboard - redirect to admin login
+      return NextResponse.redirect(new URL(`/${locale}/auth/admin-login`, request.url));
+    }
+    // Admin user - allow access
+    return supabaseResponse;
+  }
+
+  // If admin is trying to access other pages (except admin login), redirect to admin dashboard
+  if (isUserAdmin && !isAdminLoginPage && !isPublicRoute) {
+    return NextResponse.redirect(new URL(`/${locale}/admin-dashboard`, request.url));
+  }
+
+  // If admin is already logged in and accessing admin login, redirect to dashboard
+  if (isUserAdmin && isAdminLoginPage) {
+    return NextResponse.redirect(new URL(`/${locale}/admin-dashboard`, request.url));
+  }
+
+  // User is signed in (non-admin) - check profile completion status
   const { data: profiles } = await supabase
     .from('professional_profiles')
     .select('profile_completed, current_step')

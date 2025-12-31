@@ -59,12 +59,18 @@ export default function Navbar() {
       }
 
       toast.success(t('logoutSuccess'));
+
+      // Close menus
       setIsMobileMenuOpen(false);
       setIsAccountMenuOpen(false);
 
-      // Redirect to home page
+      // Redirect to home page and reload to clear auth state
       router.push('/');
-      router.refresh();
+
+      // Use window.location.reload() to ensure complete state reset
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     } catch (error) {
       console.error('Logout error:', error);
       toast.error(t('logoutError'));

@@ -35,9 +35,16 @@ export default function UserAvatarDropdown() {
 
       toast.success(t('navbar.logoutSuccess'));
 
-      // Redirect to home page
+      // Close the dropdown
+      setOpen(false);
+
+      // Redirect to home page and reload to clear auth state
       router.push('/');
-      router.refresh();
+
+      // Use window.location.reload() to ensure complete state reset
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     } catch (error) {
       console.error('Logout error:', error);
       toast.error(t('navbar.logoutError'));

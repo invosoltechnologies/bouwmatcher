@@ -33,7 +33,7 @@ export const dashboardNavigation: NavigationItem[] = [
   {
     id: 'faq',
     label: 'FAQ',
-    href: '/pro-dashboard/faq-specialisten',
+    href: '/faq-specialisten',
     icon: '/icons/professional-dashboard/faq.svg',
     type: 'link',
   },

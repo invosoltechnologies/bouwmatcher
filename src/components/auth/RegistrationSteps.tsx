@@ -69,7 +69,7 @@ export default function RegistrationSteps({ currentStep }: RegistrationStepsProp
           scrollSnapType: 'x mandatory',
         }}
       >
-        <div className='flex items-start justify-between min-w-[600px] md:min-w-0'>
+        <div className='flex items-start justify-between min-w-[600px] md:min-w-0 md:max-w-5xl md:mx-auto'>
           {stepsWithStatus.map((step, index) => (
             <div
               key={step.number}
