@@ -176,7 +176,10 @@
       "oauthFailed": "OAuth authenticatie mislukt. Probeer het opnieuw.",
       "profileCreationFailed": "Kon profiel niet aanmaken. Neem contact op met support.",
       "oauthCallbackFailed": "Er ging iets mis tijdens het inloggen. Probeer het opnieuw.",
-      "genericError": "Er is een fout opgetreden tijdens het inloggen."
+      "genericError": "Er is een fout opgetreden tijdens het inloggen.",
+      "logoutSuccess": "Succesvol uitgelogd",
+      "logoutError": "Kon niet uitloggen. Probeer het opnieuw.",
+      "loggingOut": "Bezig met uitloggen..."
     },
     "register": {
       "steps": {
