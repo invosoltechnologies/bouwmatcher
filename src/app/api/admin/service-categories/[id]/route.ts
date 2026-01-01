@@ -12,22 +12,8 @@ export async function PATCH(
     const categoryId = parseInt(id);
     const body: UpdateCategoryDTO = await request.json();
 
-    // Validate category exists and is not deleted
-    const { data: existingCategory, error: fetchError } = await supabase
-      .from('service_categories')
-      .select('id')
-      .eq('id', categoryId)
-      .eq('is_deleted', false)
-      .single();
-
-    if (fetchError || !existingCategory) {
-      return NextResponse.json(
-        { error: 'Category not found' },
-        { status: 404 }
-      );
-    }
-
-    // Update category
+    // Update category directly (Supabase will return null if not found)
+    // This combines validation and update in a single query
     const { data: updatedCategory, error } = await supabase
       .from('service_categories')
       .update({
@@ -38,6 +24,7 @@ export async function PATCH(
         updated_at: new Date().toISOString(),
       })
       .eq('id', categoryId)
+      .eq('is_deleted', false)
       .select(`
         id,
         slug,
@@ -50,7 +37,14 @@ export async function PATCH(
       `)
       .single();
 
-    if (error) {
+    if (error || !updatedCategory) {
+      // Check if it's a not found error or actual error
+      if (error?.code === 'PGRST116') {
+        return NextResponse.json(
+          { error: 'Category not found' },
+          { status: 404 }
+        );
+      }
       console.error('Error updating service category:', error);
       return NextResponse.json(
         { error: 'Failed to update service category' },
@@ -58,24 +52,14 @@ export async function PATCH(
       );
     }
 
-    // Get professional count for updated category
-    const { count, error: countError } = await supabase
-      .from('professional_specializations')
-      .select('id', { count: 'exact' })
-      .eq('service_category_id', categoryId);
-
-    if (countError) {
-      console.error(`Error counting specializations for category ${categoryId}:`, countError);
-    }
-
-    const categoryWithCount = {
-      ...updatedCategory,
-      professional_count: count || 0,
-    };
-
+    // Return immediately without counting (frontend can refresh to get counts)
+    // This makes the update much faster and prevents connection pool exhaustion
     return NextResponse.json({
       message: 'Category updated successfully',
-      category: categoryWithCount,
+      category: {
+        ...updatedCategory,
+        professional_count: 0, // Frontend will refresh and get real count
+      },
     });
   } catch (error) {
     console.error('Error in admin service categories PATCH route:', error);
@@ -95,43 +79,56 @@ export async function DELETE(
     const { id } = await params;
     const categoryId = parseInt(id);
 
-    // Validate category exists and is not deleted
-    const { data: existingCategory, error: fetchError } = await supabase
-      .from('service_categories')
-      .select('id, is_active')
-      .eq('id', categoryId)
-      .eq('is_deleted', false)
-      .single();
-
-    if (fetchError || !existingCategory) {
-      return NextResponse.json(
-        { error: 'Category not found' },
-        { status: 404 }
-      );
-    }
-
-    // Check if category is inactive before deletion
-    if (existingCategory.is_active) {
-      return NextResponse.json(
-        {
-          error: 'Category must be deactivated before deletion',
-          code: 'CATEGORY_STILL_ACTIVE',
-        },
-        { status: 400 }
-      );
-    }
-
-    // Soft delete the category
-    const { error } = await supabase
+    // Soft delete the category (only if inactive and not already deleted)
+    // Using .select() to verify the operation succeeded
+    const { data: deletedCategory, error } = await supabase
       .from('service_categories')
       .update({
         is_deleted: true,
         deleted_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
-      .eq('id', categoryId);
+      .eq('id', categoryId)
+      .eq('is_deleted', false)
+      .eq('is_active', false)
+      .select('id')
+      .single();
 
-    if (error) {
+    if (error || !deletedCategory) {
+      // Check if it's because category is still active or not found
+      if (error?.code === 'PGRST116') {
+        // No rows matched - either not found, already deleted, or still active
+        const { data: checkCategory } = await supabase
+          .from('service_categories')
+          .select('is_active, is_deleted')
+          .eq('id', categoryId)
+          .single();
+
+        if (!checkCategory) {
+          return NextResponse.json(
+            { error: 'Category not found' },
+            { status: 404 }
+          );
+        }
+
+        if (checkCategory.is_deleted) {
+          return NextResponse.json(
+            { error: 'Category already deleted' },
+            { status: 400 }
+          );
+        }
+
+        if (checkCategory.is_active) {
+          return NextResponse.json(
+            {
+              error: 'Category must be deactivated before deletion',
+              code: 'CATEGORY_STILL_ACTIVE',
+            },
+            { status: 400 }
+          );
+        }
+      }
+
       console.error('Error soft deleting service category:', error);
       return NextResponse.json(
         { error: 'Failed to delete service category' },
