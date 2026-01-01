@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Star, Eye } from 'lucide-react';
+import { Star, MoreHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -36,16 +36,27 @@ export default function ProfessionalsTable({
   ): { bg: string; text: string } => {
     switch (status) {
       case 'verified':
-        return { bg: 'bg-green-50', text: 'text-green-700' };
+        return { bg: 'bg-green-100', text: 'text-green-700' };
       case 'pending':
-        return { bg: 'bg-yellow-50', text: 'text-yellow-700' };
+        return { bg: 'bg-slate-100', text: 'text-slate-700' };
       case 'in_review':
-        return { bg: 'bg-blue-50', text: 'text-blue-700' };
+        return { bg: 'bg-slate-100', text: 'text-slate-700' };
       case 'rejected':
-        return { bg: 'bg-red-50', text: 'text-red-700' };
+        return { bg: 'bg-red-100', text: 'text-red-700' };
       default:
-        return { bg: 'bg-gray-50', text: 'text-gray-700' };
+        return { bg: 'bg-slate-100', text: 'text-slate-700' };
     }
+  };
+
+  const getCategoryColor = (category: string, index: number) => {
+    const colors = [
+      { bg: 'bg-blue-100', text: 'text-blue-700' },
+      { bg: 'bg-green-100', text: 'text-green-700' },
+      { bg: 'bg-purple-100', text: 'text-purple-700' },
+      { bg: 'bg-yellow-100', text: 'text-yellow-700' },
+      { bg: 'bg-red-100', text: 'text-red-700' },
+    ];
+    return colors[index % colors.length];
   };
 
   const formatDate = (dateString: string) => {
@@ -58,40 +69,44 @@ export default function ProfessionalsTable({
   };
 
   return (
-    <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-slate-200">
-        <h2 className="text-lg md:text-xl font-semibold text-secondary-foreground">
+      <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-slate-900">
           {t('recentProfessionals', { defaultValue: 'Recente professionals' })}
         </h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          {t('recentProfessionalsDesc', {
-            defaultValue: 'Laatst geregistreerde professionals',
+        <Button
+          variant="default"
+          size="sm"
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+        >
+          {t('viewAllProfessionals', {
+            defaultValue: 'Bekijk alle professionals',
           })}
-        </p>
+        </Button>
       </div>
 
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="bg-slate-50">
             <tr>
-              <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                {t('tableHeaders.professional', { defaultValue: 'Professional' })}
+              <th className="text-left px-6 py-3 text-xs font-medium text-slate-600">
+                {t('tableHeaders.professional', { defaultValue: 'Professioneel' })}
               </th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <th className="text-left px-6 py-3 text-xs font-medium text-slate-600">
                 {t('tableHeaders.categories', { defaultValue: 'Categorieën' })}
               </th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <th className="text-left px-6 py-3 text-xs font-medium text-slate-600">
                 {t('tableHeaders.status', { defaultValue: 'Status' })}
               </th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <th className="text-left px-6 py-3 text-xs font-medium text-slate-600">
                 {t('tableHeaders.rating', { defaultValue: 'Beoordeling' })}
               </th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                {t('tableHeaders.registered', { defaultValue: 'Aangemeld' })}
+              <th className="text-left px-6 py-3 text-xs font-medium text-slate-600">
+                {t('tableHeaders.registered', { defaultValue: 'Aangesloten' })}
               </th>
-              <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <th className="text-left px-6 py-3 text-xs font-medium text-slate-600">
                 {t('tableHeaders.actions', { defaultValue: 'Acties' })}
               </th>
             </tr>
@@ -135,18 +150,26 @@ export default function ProfessionalsTable({
 
                   {/* Categories */}
                   <td className="px-6 py-4">
-                    <div className="flex flex-wrap gap-1">
-                      {professional.categories.slice(0, 2).map((category, idx) => (
-                        <Badge
-                          key={idx}
-                          variant="secondary"
-                          className="text-xs"
-                        >
-                          {category}
-                        </Badge>
-                      ))}
+                    <div className="flex flex-wrap gap-1.5">
+                      {professional.categories.slice(0, 2).map((category, idx) => {
+                        const categoryColor = getCategoryColor(category, idx);
+                        return (
+                          <Badge
+                            key={idx}
+                            className={cn(
+                              'text-xs font-medium border-0 px-2.5 py-0.5',
+                              categoryColor.bg,
+                              categoryColor.text
+                            )}
+                          >
+                            {category}
+                          </Badge>
+                        );
+                      })}
                       {professional.categories.length > 2 && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge
+                          className="text-xs font-medium border-0 px-2.5 py-0.5 bg-slate-100 text-slate-700"
+                        >
                           +{professional.categories.length - 2}
                         </Badge>
                       )}
@@ -157,10 +180,9 @@ export default function ProfessionalsTable({
                   <td className="px-6 py-4">
                     <Badge
                       className={cn(
-                        'capitalize',
+                        'text-xs font-medium border-0 px-2.5 py-0.5',
                         statusColors.bg,
-                        statusColors.text,
-                        'border-0'
+                        statusColors.text
                       )}
                     >
                       {t(`status.${professional.status}`, {
@@ -171,14 +193,22 @@ export default function ProfessionalsTable({
 
                   {/* Rating */}
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center">
-                        <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                        <span className="ml-1 font-medium text-secondary-foreground">
-                          {professional.rating.toFixed(1)}
-                        </span>
-                      </div>
-                      <span className="text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1.5">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={cn(
+                            'w-4 h-4',
+                            i < Math.floor(professional.rating)
+                              ? 'text-yellow-400 fill-yellow-400'
+                              : 'text-slate-300 fill-slate-300'
+                          )}
+                        />
+                      ))}
+                      <span className="ml-1 text-sm font-medium text-slate-900">
+                        {professional.rating.toFixed(1)}
+                      </span>
+                      <span className="text-sm text-slate-500">
                         ({professional.reviewCount})
                       </span>
                     </div>
@@ -186,39 +216,35 @@ export default function ProfessionalsTable({
 
                   {/* Registered */}
                   <td className="px-6 py-4">
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-sm text-slate-600">
                       {formatDate(professional.registeredAt)}
                     </span>
                   </td>
 
                   {/* Actions */}
                   <td className="px-6 py-4">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => onViewProfile?.(professional.id)}
-                      className="flex items-center gap-2"
-                    >
-                      <Eye className="w-4 h-4" />
-                      <span className="hidden md:inline">
-                        {t('viewProfile', { defaultValue: 'Bekijken' })}
-                      </span>
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => onViewProfile?.(professional.id)}
+                        className="bg-green-600 hover:bg-green-700 text-white text-xs px-3"
+                      >
+                        {t('viewProfile', { defaultValue: 'Verifiëren' })}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="p-1 h-8 w-8"
+                      >
+                        <MoreHorizontal className="w-4 h-4 text-slate-600" />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
-      </div>
-
-      {/* Show all link */}
-      <div className="px-6 py-4 border-t border-slate-200 text-center">
-        <Button variant="link" className="text-primary font-medium">
-          {t('viewAllProfessionals', {
-            defaultValue: 'Bekijk alle professionals',
-          })}
-        </Button>
       </div>
     </div>
   );

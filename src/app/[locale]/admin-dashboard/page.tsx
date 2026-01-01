@@ -1,13 +1,11 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
 import {
-  Users,
+  HardDrive,
   CheckCircle2,
   Star,
-  Briefcase,
-  AlertCircle,
-  FolderTree,
+  UserRoundX,
+  Clock,
 } from 'lucide-react';
 import StatsCard from '@/components/admin-dashboard/StatsCard';
 import ProfessionalsTable from '@/components/admin-dashboard/ProfessionalsTable';
@@ -96,38 +94,6 @@ const mockReviews = [
   },
 ];
 
-const mockCategories = [
-  {
-    id: '1',
-    name: 'Schilder',
-    professionalCount: 45,
-    isActive: true,
-  },
-  {
-    id: '2',
-    name: 'Elektricien',
-    professionalCount: 32,
-    isActive: true,
-  },
-  {
-    id: '3',
-    name: 'Loodgieter',
-    professionalCount: 28,
-    isActive: true,
-  },
-  {
-    id: '4',
-    name: 'Aannemer',
-    professionalCount: 15,
-    isActive: true,
-  },
-  {
-    id: '5',
-    name: 'Interieurarchitect',
-    professionalCount: 8,
-    isActive: false,
-  },
-];
 
 export default function AdminDashboardPage() {
   const t = useTranslations('common.adminDashboard');
@@ -141,34 +107,39 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       {/* Stats Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+      <div className="flex flex-wrap gap-6">
         <StatsCard
-          icon={Users}
+          icon={HardDrive}
           iconColor="text-blue-600"
           iconBgColor="bg-blue-50"
           value={mockStats.totalProfessionals}
-          label={t('stats.totalProfessionals', {
-            defaultValue: 'Totaal professionals',
-          })}
+          label={t('stats.newLeads', { defaultValue: 'Nieuwe leads (30d)' })}
           change={{
-            value: mockStats.professionalsGrowth,
+            value: '12%',
             isPositive: true,
           }}
+          bottomText={t('stats.newLeadsChange', {
+            defaultValue: '+23 versus vorige maand',
+          })}
+          bottomTextColor="text-green-600"
         />
 
         <StatsCard
           icon={CheckCircle2}
           iconColor="text-green-600"
           iconBgColor="bg-green-50"
-          value={mockStats.verificationRate}
+          value={`${mockStats.verificationRate}%`}
           label={t('stats.verificationRate', {
             defaultValue: 'Verificatiepercentage',
           })}
-          suffix="%"
           change={{
-            value: mockStats.verificationGrowth,
+            value: '8%',
             isPositive: true,
           }}
+          bottomText={t('stats.verificationRateDetails', {
+            defaultValue: '150 van 175 goedgekeurd',
+          })}
+          bottomTextColor="text-green-600"
         />
 
         <StatsCard
@@ -179,95 +150,90 @@ export default function AdminDashboardPage() {
           label={t('stats.averageRating', {
             defaultValue: 'Gemiddelde beoordeling',
           })}
-          suffix={`(${mockStats.totalReviews} beoordelingen)`}
+          change={{
+            value: '3%',
+            isPositive: true,
+          }}
+          bottomText={t('stats.averageRatingDetails', {
+            defaultValue: 'Uit 1.234 beoordelingen',
+          })}
+          bottomTextColor="text-amber-600"
         />
 
         <StatsCard
-          icon={Briefcase}
-          iconColor="text-purple-600"
-          iconBgColor="bg-purple-50"
+          icon={UserRoundX}
+          iconColor="text-red-600"
+          iconBgColor="bg-red-50"
           value={mockStats.activeProjects}
-          label={t('stats.activeProjects', {
-            defaultValue: 'Huidige week',
+          label={t('stats.blockedProfessionals', {
+            defaultValue: 'Geblokkeerde professionals',
           })}
           change={{
-            value: mockStats.projectsGrowth,
+            value: '2%',
             isPositive: true,
           }}
+          bottomText={t('stats.blockedProfessionalsChange', {
+            defaultValue: '+1 deze week',
+          })}
+          bottomTextColor="text-green-600"
         />
 
         <StatsCard
-          icon={AlertCircle}
-          iconColor="text-orange-600"
-          iconBgColor="bg-orange-50"
+          icon={Clock}
+          iconColor="text-cyan-600"
+          iconBgColor="bg-cyan-50"
           value={mockStats.pendingVerifications}
-          label={t('stats.pendingVerifications', {
-            defaultValue: 'Huurt aanvullingsverzoek',
+          label={t('stats.moderationQueue', {
+            defaultValue: 'Moderatiewachtrij',
           })}
           change={{
-            value: mockStats.verificationsChange,
+            value: '5%',
             isPositive: true,
           }}
-        />
-
-        <StatsCard
-          icon={FolderTree}
-          iconColor="text-teal-600"
-          iconBgColor="bg-teal-50"
-          value={mockStats.serviceCategories}
-          label={t('stats.serviceCategories', {
-            defaultValue: 'Vacatureaanvraagactiviteit',
+          bottomText={t('stats.moderationQueueDetails', {
+            defaultValue: 'Heeft aandacht nodig',
           })}
+          bottomTextColor="text-red-600"
         />
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - Takes 2/3 width */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Recent Professionals Table */}
-          <ProfessionalsTable
-            professionals={mockProfessionals}
-            onViewProfile={(id) => console.log('View profile:', id)}
-          />
+      {/* Recent Professionals Table - Full Width */}
+      <ProfessionalsTable
+        professionals={mockProfessionals}
+        onViewProfile={(id) => console.log('View profile:', id)}
+      />
 
-          {/* Recent Reviews */}
-          <div className="bg-white rounded-lg border border-slate-200 p-6">
-            <div className="mb-4">
-              <h2 className="text-lg md:text-xl font-semibold text-secondary-foreground">
-                {t('recentReviews', { defaultValue: 'Recente beoordelingen' })}
-              </h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                {t('recentReviewsDesc', {
-                  defaultValue: 'Laatst toegevoegde reviews',
-                })}
-              </p>
-            </div>
+      {/* Bottom Grid - Reviews and Service Categories */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Reviews - Left Column */}
+        <div className="bg-white rounded-lg border border-slate-200 p-6">
+          <div className="mb-4">
+            <h2 className="text-lg md:text-xl font-semibold text-secondary-foreground">
+              {t('recentReviews', { defaultValue: 'Recente beoordelingen' })}
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              {t('recentReviewsDesc', {
+                defaultValue: 'Laatst toegevoegde reviews',
+              })}
+            </p>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {mockReviews.map((review, idx) => (
-                <ReviewCard key={idx} {...review} />
-              ))}
-            </div>
+          <div className="space-y-4">
+            {mockReviews.map((review, idx) => (
+              <ReviewCard key={idx} {...review} />
+            ))}
+          </div>
 
-            {/* Show all link */}
-            <div className="mt-4 pt-4 border-t border-slate-200 text-center">
-              <button className="text-primary font-medium hover:underline">
-                {t('viewAllReviews', { defaultValue: 'Bekijk alles' })}
-              </button>
-            </div>
+          {/* Show all link */}
+          <div className="mt-4 pt-4 border-t border-slate-200 text-center">
+            <button className="text-primary font-medium hover:underline">
+              {t('viewAllReviews', { defaultValue: 'Bekijk alles' })}
+            </button>
           </div>
         </div>
 
-        {/* Right Column - Takes 1/3 width */}
-        <div className="lg:col-span-1">
-          <ServiceCategoriesList
-            categories={mockCategories}
-            onViewAll={(categoryId) =>
-              console.log('View all for category:', categoryId)
-            }
-          />
-        </div>
+        {/* Service Categories - Right Column */}
+        <ServiceCategoriesList />
       </div>
     </div>
   );

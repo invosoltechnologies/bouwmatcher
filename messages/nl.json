@@ -1273,8 +1273,16 @@
       },
       "stats": {
         "totalProfessionals": "Totaal professionals",
+        "newLeads": "Nieuwe leads (30d)",
+        "newLeadsChange": "+23 versus vorige maand",
         "verificationRate": "Verificatiepercentage",
+        "verificationRateDetails": "150 van 175 goedgekeurd",
         "averageRating": "Gemiddelde beoordeling",
+        "averageRatingDetails": "Uit 1.234 beoordelingen",
+        "blockedProfessionals": "Geblokkeerde professionals",
+        "blockedProfessionalsChange": "+1 deze week",
+        "moderationQueue": "Moderatiewachtrij",
+        "moderationQueueDetails": "Heeft aandacht nodig",
         "activeProjects": "Actieve projecten",
         "pendingVerifications": "Wachtende verificaties",
         "serviceCategories": "Servicecategorieën"
@@ -1307,7 +1315,13 @@
       "inactive": "Inactief",
       "professional": "professional",
       "professionals": "professionals",
-      "viewAllCategories": "Bekijk alle categorieën"
+      "viewAllCategories": "Bekijk alle categorieën",
+      "addCategory": "Categorie toevoegen",
+      "popular": "Populair",
+      "lessUsed": "Minder gebruikt",
+      "categoryEdit": "Bewerken",
+      "categoryDelete": "Verwijderen",
+      "viewAll": "Bekijk alles"
     },
     "footer": {
       "description": "Het vertrouwde platform voor het matchen van bouwers en projecten.",

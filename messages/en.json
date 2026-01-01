@@ -1275,8 +1275,16 @@
       },
       "stats": {
         "totalProfessionals": "Total Professionals",
+        "newLeads": "New leads (30d)",
+        "newLeadsChange": "+23 versus previous month",
         "verificationRate": "Verification Rate",
+        "verificationRateDetails": "150 out of 175 approved",
         "averageRating": "Average Rating",
+        "averageRatingDetails": "From 1,234 reviews",
+        "blockedProfessionals": "Blocked professionals",
+        "blockedProfessionalsChange": "+1 this week",
+        "moderationQueue": "Moderation queue",
+        "moderationQueueDetails": "Needs attention",
         "activeProjects": "Active Projects",
         "pendingVerifications": "Pending Verifications",
         "serviceCategories": "Service Categories"
@@ -1309,7 +1317,13 @@
       "inactive": "Inactive",
       "professional": "professional",
       "professionals": "professionals",
-      "viewAllCategories": "View all categories"
+      "viewAllCategories": "View all categories",
+      "addCategory": "Add Category",
+      "popular": "Popular",
+      "lessUsed": "Less Used",
+      "categoryEdit": "Edit",
+      "categoryDelete": "Delete",
+      "viewAll": "View all"
     },
     "footer": {
       "description": "The trusted platform for matching builders and projects.",
