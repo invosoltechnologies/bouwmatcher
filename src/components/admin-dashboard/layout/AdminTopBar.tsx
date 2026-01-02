@@ -20,6 +20,11 @@ export default function AdminTopBar() {
     section = 'dashboard';
   }
 
+  // Handle nested routes (e.g., /admin-dashboard/service-categories/form)
+  if (pathname.includes('/service-categories/form')) {
+    section = 'service-categories-form';
+  }
+
   // Get page config - use translation with fallback to config
   const config = adminPageConfigs[section];
   const pageTitle = t(`${section}.title` as any, {

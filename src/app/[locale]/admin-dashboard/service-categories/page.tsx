@@ -63,13 +63,11 @@ export default function ServiceCategoriesPage() {
 
   // Handlers
   const handleAddCategory = () => {
-    setSelectedCategory(null);
-    setFormDialogOpen(true);
+    window.location.href = `/${locale}/admin-dashboard/service-categories/form`;
   };
 
   const handleEditCategory = (category: ServiceCategory) => {
-    setSelectedCategory(category);
-    setFormDialogOpen(true);
+    window.location.href = `/${locale}/admin-dashboard/service-categories/form?id=${category.id}`;
   };
 
   const handleFormSubmit = async (data: CreateCategoryDTO | UpdateCategoryDTO) => {
@@ -135,17 +133,6 @@ export default function ServiceCategoriesPage() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-slate-900">
-          {locale === 'nl' ? 'Servicecategorieën' : 'Service Categories'}
-        </h1>
-        <p className="text-slate-600 mt-2">
-          {locale === 'nl'
-            ? 'Beheer alle servicecategorieën op het platform'
-            : 'Manage all service categories on the platform'}
-        </p>
-      </div>
 
       {/* Filters and Actions */}
       <div className="bg-white rounded-lg border border-slate-200 p-4 space-y-4">

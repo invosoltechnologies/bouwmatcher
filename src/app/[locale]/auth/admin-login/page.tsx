@@ -97,7 +97,7 @@ export default function AdminLoginPage() {
                   },
                 })}
                 type="email"
-                placeholder="admin@bouwmatcher.be"
+                placeholder="username"
                 className="h-12 md:h-14 lg:h-[60px] bg-white border-neutral-300 rounded-lg px-4 md:px-6 lg:px-7 text-base md:text-lg lg:text-xl font-medium"
                 style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
                 disabled={isLoading}

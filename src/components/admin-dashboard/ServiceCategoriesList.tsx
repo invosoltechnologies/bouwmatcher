@@ -46,13 +46,11 @@ export default function ServiceCategoriesList() {
   };
 
   const handleAddCategory = () => {
-    setSelectedCategory(null);
-    setFormDialogOpen(true);
+    router.push(`/${locale}/admin-dashboard/service-categories/form`);
   };
 
   const handleEditCategory = (category: ServiceCategory) => {
-    setSelectedCategory(category);
-    setFormDialogOpen(true);
+    router.push(`/${locale}/admin-dashboard/service-categories/form?id=${category.id}`);
   };
 
   const handleFormSubmit = async (data: CreateCategoryDTO | UpdateCategoryDTO) => {
@@ -207,7 +205,7 @@ export default function ServiceCategoriesList() {
         <div className="px-6 py-4 border-t border-slate-200">
           <button
             onClick={handleViewAll}
-            className="text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+            className="text-sm text-primary cursor-pointer hover:text-primary/80 font-medium transition-colors"
           >
             {t('viewAll', { defaultValue: 'Bekijk alles' })} →
           </button>
@@ -322,7 +320,7 @@ function CategoryListItem({
                   setMenuOpen(false);
                   onEdit(category);
                 }}
-                className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2 first:rounded-t-lg"
+                className="w-full text-left cursor-pointer px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2 first:rounded-t-lg"
               >
                 <Edit2 className="w-4 h-4" />
                 {locale === 'nl' ? 'Bewerken' : 'Edit'}

@@ -177,7 +177,7 @@ function TableRowActions({
               setMenuOpen(false);
               onEdit(category);
             }}
-            className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2 first:rounded-t-lg"
+            className="w-full text-left px-4 cursor-pointer py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2 first:rounded-t-lg"
           >
             <Edit2 className="w-4 h-4" />
             {locale === 'nl' ? 'Bewerken' : 'Edit'}
