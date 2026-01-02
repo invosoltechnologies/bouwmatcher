@@ -60,6 +60,10 @@ export default function CategoryMultiStepForm({ categoryId, locale }: CategoryMu
         {currentStep === 1 && (
           <CategoryInfoStep
             existingData={existingData?.category}
+            rootQuestionData={existingData?.rootQuestion ? {
+              question_text_nl: existingData.rootQuestion.question_text_nl,
+              question_text_en: existingData.rootQuestion.question_text_en,
+            } : undefined}
             onComplete={handleStep1Complete}
             onCancel={handleCancel}
           />

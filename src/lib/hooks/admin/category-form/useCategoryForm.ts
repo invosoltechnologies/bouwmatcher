@@ -40,6 +40,59 @@ export function useCreateCategoryDraft() {
 }
 
 /**
+ * Hook to update category basic info
+ */
+export function useUpdateCategory() {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    void,
+    Error,
+    { categoryId: number; name_nl: string; name_en: string; slug: string }
+  >({
+    mutationFn: async ({ categoryId, name_nl, name_en, slug }) => {
+      return apiClient.patch<void>(
+        `/api/admin/service-categories/${categoryId}`,
+        { name_nl, name_en, slug }
+      );
+    },
+    onSuccess: (_, variables) => {
+      // Invalidate category data
+      queryClient.invalidateQueries({
+        queryKey: categoryFormKeys.fullData(variables.categoryId),
+      });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'service-categories'] });
+    },
+  });
+}
+
+/**
+ * Hook to update root question
+ */
+export function useUpdateRootQuestion() {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    void,
+    Error,
+    { categoryId: number; question_text_nl: string; question_text_en: string }
+  >({
+    mutationFn: async ({ categoryId, question_text_nl, question_text_en }) => {
+      return apiClient.patch<void>(
+        `/api/admin/service-categories/${categoryId}/root-question`,
+        { question_text_nl, question_text_en }
+      );
+    },
+    onSuccess: (_, variables) => {
+      // Invalidate category data
+      queryClient.invalidateQueries({
+        queryKey: categoryFormKeys.fullData(variables.categoryId),
+      });
+    },
+  });
+}
+
+/**
  * Hook to upload category icon
  */
 export function useUploadCategoryIcon() {

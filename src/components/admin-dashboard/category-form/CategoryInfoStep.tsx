@@ -7,18 +7,23 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import FormNavigation from './FormNavigation';
 import { CategoryInfoFormData, CategoryDraftResponse } from '@/types/admin/category-form';
-import { useCreateCategoryDraft, useUploadCategoryIcon } from '@/lib/hooks/admin/category-form';
+import { useCreateCategoryDraft, useUpdateCategory, useUpdateRootQuestion, useUploadCategoryIcon } from '@/lib/hooks/admin/category-form';
 import { useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
 
 interface CategoryInfoStepProps {
   existingData?: CategoryDraftResponse;
+  rootQuestionData?: {
+    question_text_nl: string;
+    question_text_en: string;
+  };
   onComplete: (categoryId: number) => void;
   onCancel: () => void;
 }
 
 export default function CategoryInfoStep({
   existingData,
+  rootQuestionData,
   onComplete,
   onCancel,
 }: CategoryInfoStepProps) {
@@ -27,13 +32,15 @@ export default function CategoryInfoStep({
     name_nl: existingData?.name_nl || '',
     name_en: existingData?.name_en || '',
     slug: existingData?.slug || '',
-    root_question_text_nl: '',
-    root_question_text_en: '',
+    root_question_text_nl: rootQuestionData?.question_text_nl || '',
+    root_question_text_en: rootQuestionData?.question_text_en || '',
   });
   const [iconFile, setIconFile] = useState<File | null>(null);
   const [iconPreview, setIconPreview] = useState<string | null>(existingData?.icon_url || null);
 
   const createCategoryMutation = useCreateCategoryDraft();
+  const updateCategoryMutation = useUpdateCategory();
+  const updateRootQuestionMutation = useUpdateRootQuestion();
   const uploadIconMutation = useUploadCategoryIcon();
 
   // Auto-generate slug from name_nl
@@ -98,6 +105,32 @@ export default function CategoryInfoStep({
       if (existingData) {
         categoryId = existingData.id;
 
+        // Update category basic info if changed
+        if (
+          formData.name_nl !== existingData.name_nl ||
+          formData.name_en !== existingData.name_en ||
+          formData.slug !== existingData.slug
+        ) {
+          await updateCategoryMutation.mutateAsync({
+            categoryId,
+            name_nl: formData.name_nl,
+            name_en: formData.name_en,
+            slug: formData.slug,
+          });
+        }
+
+        // Update root question if changed
+        if (
+          formData.root_question_text_nl !== rootQuestionData?.question_text_nl ||
+          formData.root_question_text_en !== rootQuestionData?.question_text_en
+        ) {
+          await updateRootQuestionMutation.mutateAsync({
+            categoryId,
+            question_text_nl: formData.root_question_text_nl,
+            question_text_en: formData.root_question_text_en,
+          });
+        }
+
         // Upload icon if changed
         if (iconFile) {
           const formDataObj = new FormData();
@@ -148,7 +181,7 @@ export default function CategoryInfoStep({
     }
   };
 
-  const isLoading = createCategoryMutation.isPending || uploadIconMutation.isPending;
+  const isLoading = createCategoryMutation.isPending || updateCategoryMutation.isPending || updateRootQuestionMutation.isPending || uploadIconMutation.isPending;
 
   return (
     <div className="bg-white rounded-lg border p-6">

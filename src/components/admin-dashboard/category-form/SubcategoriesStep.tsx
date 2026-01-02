@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import FormNavigation from './FormNavigation';
@@ -58,6 +58,36 @@ export default function SubcategoriesStep({
   });
 
   const createSubcategoryMutation = useCreateSubcategory();
+
+  // Update state when existingData changes (e.g., when navigating back and forth)
+  useEffect(() => {
+    if (existingData && existingData.length > 0) {
+      setSubcategories(existingData.map((sub) => ({
+        name_nl: sub.name_nl,
+        name_en: sub.name_en,
+        slug: sub.slug,
+        description_nl: sub.description_nl || '',
+        description_en: sub.description_en || '',
+        price_particulier: sub.price_particulier,
+        price_zakelijk: sub.price_zakelijk,
+        questions: sub.questions.map((q) => ({
+          question_text_nl: q.question_text_nl,
+          question_text_en: q.question_text_en,
+          question_type: q.question_type,
+          is_required: q.is_required,
+          placeholder_nl: q.placeholder_nl || '',
+          placeholder_en: q.placeholder_en || '',
+          help_text_nl: q.help_text_nl || '',
+          help_text_en: q.help_text_en || '',
+          options: q.options.map((opt) => ({
+            option_label_nl: opt.option_label_nl,
+            option_label_en: opt.option_label_en,
+            option_value: opt.option_value,
+          })),
+        })),
+      })));
+    }
+  }, [existingData]);
 
   function createEmptySubcategory(): SubcategoryFormData {
     return {

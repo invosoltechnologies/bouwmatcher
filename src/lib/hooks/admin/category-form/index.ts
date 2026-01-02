@@ -1,5 +1,7 @@
 export {
   useCreateCategoryDraft,
+  useUpdateCategory,
+  useUpdateRootQuestion,
   useUploadCategoryIcon,
   useCreateSubcategory,
   useCategoryFullData,

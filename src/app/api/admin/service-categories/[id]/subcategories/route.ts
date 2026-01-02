@@ -59,10 +59,10 @@ export async function POST(
       return NextResponse.json({ error: 'Category not found' }, { status: 404 });
     }
 
-    // Check if subcategory slug already exists
+    // Check if subcategory slug already exists in this category
     const { data: existingSubcategory, error: checkError } = await supabase
       .from('service_subcategories')
-      .select('id')
+      .select('id, service_category_id')
       .eq('slug', slug)
       .single();
 
@@ -74,11 +74,48 @@ export async function POST(
       );
     }
 
-    if (existingSubcategory) {
+    // If slug exists and belongs to the same category, it's the same subcategory being re-saved
+    // Allow it to continue (it will be skipped later)
+    if (existingSubcategory && existingSubcategory.service_category_id !== parseInt(categoryId)) {
       return NextResponse.json(
-        { error: 'A subcategory with this slug already exists' },
+        { error: 'A subcategory with this slug already exists in another category' },
         { status: 409 }
       );
+    }
+
+    // If subcategory already exists in this category, skip creation and return the existing one
+    if (existingSubcategory && existingSubcategory.service_category_id === parseInt(categoryId)) {
+      const { data: existingSubcategoryFull, error: fetchError } = await supabase
+        .from('service_subcategories')
+        .select('*')
+        .eq('id', existingSubcategory.id)
+        .single();
+
+      if (fetchError) {
+        console.error('Error fetching existing subcategory:', fetchError);
+        return NextResponse.json(
+          { error: 'Failed to fetch existing subcategory' },
+          { status: 500 }
+        );
+      }
+
+      const response: SubcategoryResponse = {
+        id: existingSubcategoryFull.id,
+        name_nl: existingSubcategoryFull.name_nl,
+        name_en: existingSubcategoryFull.name_en,
+        slug: existingSubcategoryFull.slug,
+        description_nl: existingSubcategoryFull.description_nl,
+        description_en: existingSubcategoryFull.description_en,
+        price_particulier: parseFloat(existingSubcategoryFull.price_particulier),
+        price_zakelijk: parseFloat(existingSubcategoryFull.price_zakelijk),
+        icon_url: existingSubcategoryFull.icon_url,
+        sort_order: existingSubcategoryFull.sort_order,
+        service_category_id: existingSubcategoryFull.service_category_id,
+        created_at: existingSubcategoryFull.created_at,
+        updated_at: existingSubcategoryFull.updated_at,
+      };
+
+      return NextResponse.json(response, { status: 200 });
     }
 
     // Create subcategory
