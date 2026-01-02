@@ -1444,7 +1444,8 @@
         "status": "Status",
         "rating": "Beoordeling",
         "registered": "Geregistreerd",
-        "actions": "Acties"
+        "actions": "Acties",
+        "searchPlaceholder": "Zoeken..."
       },
       "status": {
         "verified": "Geverifieerd",
@@ -1454,6 +1455,7 @@
         "rejected": "Afgewezen"
       },
       "viewProfile": "Bekijken",
+      "verify": "Verifiëren",
       "viewAllProfessionals": "Bekijk alle professionals",
       "recentReviews": "Recente beoordelingen",
       "recentReviewsDesc": "Laatst toegevoegde reviews",

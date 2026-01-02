@@ -1446,7 +1446,8 @@
         "status": "Status",
         "rating": "Rating",
         "registered": "Registered",
-        "actions": "Actions"
+        "actions": "Actions",
+        "searchPlaceholder": "Search..."
       },
       "status": {
         "verified": "Verified",
@@ -1456,6 +1457,7 @@
         "rejected": "Rejected"
       },
       "viewProfile": "View",
+      "verify": "Verify",
       "viewAllProfessionals": "View all professionals",
       "recentReviews": "Recent Reviews",
       "recentReviewsDesc": "Recently added reviews",
