@@ -11,13 +11,14 @@ import { getQuestionsForStep } from '@/data/generalQuestions';
 import TopBar from '@/components/TopBar';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, ArrowRight, MapPin } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import type { QuestionWithOptions } from '@/types/questionnaire';
 import { RadioGroup } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import PhotoUploadModal from '@/components/Questionnaire/PhotoUploadModal';
 import OTPVerification from '@/components/Questionnaire/OTPVerification';
+import { LocationMapSelector, type LocationData } from '@/components/Questionnaire/LocationMapSelector';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { isValidPhoneNumber } from 'react-phone-number-input';
 
@@ -48,7 +49,6 @@ export default function CreateProjectContent() {
   const [isSaving, setIsSaving] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const [showOTPVerification, setShowOTPVerification] = useState(false);
-  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const totalSteps = 8;
 
   const currentQuestion = currentQuestions[currentQuestionIndex] || null;
@@ -390,119 +390,32 @@ export default function CreateProjectContent() {
     }
   };
 
-  // Get user's current location and reverse geocode to address
-  const handleUseCurrentLocation = async () => {
-    if (!navigator.geolocation) {
-      toast.error('Geolocatie wordt niet ondersteund door uw browser');
-      return;
-    }
-
-    setIsLoadingLocation(true);
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const { latitude, longitude } = position.coords;
-
-          // Call our geocode API to get address from coordinates
-          const response = await fetch(
-            `/api/geocode?lat=${latitude}&lng=${longitude}`
-          );
-
-          if (!response.ok) {
-            throw new Error('Geocoding failed');
-          }
-
-          const data = await response.json();
-
-          if (data.addressComponents) {
-            // Parse address components
-            const components = data.addressComponents;
-
-            let postcode = '';
-            let city = '';
-            let streetName = '';
-            let streetNumber = '';
-
-            components.forEach(
-              (component: {
-                types: string[];
-                long_name: string;
-                short_name: string;
-              }) => {
-                if (component.types.includes('postal_code')) {
-                  postcode = component.long_name;
-                }
-                if (component.types.includes('locality')) {
-                  city = component.long_name;
-                }
-                if (component.types.includes('route')) {
-                  streetName = component.long_name;
-                }
-                if (component.types.includes('street_number')) {
-                  streetNumber = component.long_name;
-                }
-              }
-            );
-
-            // Auto-fill the location fields
-            setAnswers({
-              ...answers,
-              project_postcode: postcode,
-              project_city: city,
-              project_street_name: streetName,
-              project_street_number: streetNumber,
-            });
-          }
-        } catch (error) {
-          console.error('Error geocoding location:', error);
-          toast.error('Kon adres niet ophalen van uw locatie');
-        } finally {
-          setIsLoadingLocation(false);
-        }
-      },
-      (error) => {
-        console.error('Geolocation error:', error);
-        toast.error(
-          'Kon uw locatie niet ophalen. Controleer uw browser-instellingen.'
-        );
-        setIsLoadingLocation(false);
-      }
-    );
-  };
 
   // Special rendering for Step 6 (all location fields together)
   const renderStep6LocationFields = () => {
-    return (
-      <div className='w-full max-w-[680px] mx-auto space-y-4'>
-        {/* Use Current Location Button */}
-        <Button
-          type='button'
-          variant='outline'
-          onClick={handleUseCurrentLocation}
-          disabled={isLoadingLocation}
-          className='w-full flex items-center text-base md:text-lg justify-center gap-2 px-4 py-2 md:py-4 md:px-6 rounded-lg border-2 border-primary text-primary hover:bg-primary font-medium'
-        >
-          <MapPin className='w-4 h-4 md:w-5 md:h-5' />
-          {isLoadingLocation
-            ? t('loadingLocation')
-            : t('useCurrentLocation')}
-        </Button>
+    const handleLocationSelect = (location: LocationData) => {
+      // Map location data to question answers
+      setAnswers({
+        ...answers,
+        project_postcode: location.postcode,
+        project_city: location.city,
+        project_street_name: location.streetName,
+        project_street_number: location.streetNumber,
+      });
+      toast.success(locale === 'nl' ? 'Locatie opgeslagen!' : 'Location saved!');
+    };
 
-        {/* Location input fields */}
-        {currentQuestions.map((question) => (
-          <Input
-            key={question.id}
-            type='text'
-            value={answers[question.id] || ''}
-            onChange={(e) =>
-              setAnswers({ ...answers, [question.id]: e.target.value })
-            }
-            placeholder={getLocalizedText(question.placeholder_nl, question.placeholder_en)}
-            className='w-full placeholder:text-neutral-400 text-secondary-foreground font-medium py-2 px-4 rounded-lg text-base md:py-4 md:px-6 md:rounded-xl h-auto md:text-lg'
-          />
-        ))}
-      </div>
+    return (
+      <LocationMapSelector
+        onLocationSelect={handleLocationSelect}
+        initialLocation={{
+          postcode: answers['project_postcode'] || '',
+          city: answers['project_city'] || '',
+          streetName: answers['project_street_name'] || '',
+          streetNumber: answers['project_street_number'] || '',
+        }}
+        disabled={isSaving}
+      />
     );
   };
 
@@ -669,7 +582,7 @@ export default function CreateProjectContent() {
             <OTPVerification
               phoneNumber={allAnswers['lead_phone'] || ''}
               draftId={draftId!}
-              onVerify={(projectId) => {
+              onVerify={(projectId, accessToken) => {
                 // Project created successfully!
                 console.log('Project created:', projectId);
                 toast.success(
@@ -678,7 +591,8 @@ export default function CreateProjectContent() {
                 // Clear form data after successful project creation
                 clearFormData();
                 localStorage.removeItem('projectSessionToken');
-                router.push('/dashboard');
+                // Redirect to project status page with access token
+                router.push(`/project-status?token=${accessToken}`);
               }}
               onBack={() => setShowOTPVerification(false)}
             />

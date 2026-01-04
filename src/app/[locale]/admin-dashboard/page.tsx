@@ -73,7 +73,7 @@ export default function AdminDashboardPage() {
       id: professional.id,
       name: `${professional.first_name} ${professional.last_name}`,
       email: professional.email,
-      avatar: professional.profile_picture_url,
+      avatar: professional.profile_picture_url || undefined,
       categories: professional.specializations || [],
       status: professional.status,
       rating: professional.rating,

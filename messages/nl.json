@@ -1562,6 +1562,70 @@
       "cookies": "Cookiebeleid",
       "disclaimer": "Disclaimer",
       "companyNumber": "Ondernemingsnummer - BE 1024.216.268"
+    },
+    "projectStatus": {
+      "title": "Wat is de huidige status van je project?",
+      "loading": "Project gegevens laden...",
+      "status": "Status",
+      "requestedOn": "Aangevraagd op",
+      "errorLoadingProject": "Kon projectgegevens niet laden",
+      "noProjectFound": "Geen project gevonden. Controleer de link en probeer het opnieuw.",
+      "steps": {
+        "waiting": "Wachten op offertes",
+        "selected": "Vakspecialist gekozen",
+        "inProgress": "In uitvoering",
+        "completed": "Project afgerond"
+      },
+      "updateStatus": "Update projectstatus",
+      "statuses": {
+        "pending_quotes": {
+          "label": "Wachten op offertes",
+          "description": "Ik ben aan het wachten op offertes van vakspecialisten"
+        },
+        "specialist_selected": {
+          "label": "Vakspecialist gekozen",
+          "description": "Ik heb een vakspecialist geselecteerd"
+        },
+        "in_progress": {
+          "label": "In uitvoering",
+          "description": "Het werk is begonnen"
+        },
+        "completed": {
+          "label": "Project afgerond",
+          "description": "Het project is voltooid"
+        }
+      },
+      "buttons": {
+        "back": "Terug",
+        "updateStatus": "Status bijwerken",
+        "updating": "Bijwerken..."
+      },
+      "validation": {
+        "selectStatus": "Selecteer alstublieft een status",
+        "invalidToken": "Ongeldig toegangstoken"
+      },
+      "errors": {
+        "failedToUpdate": "Kon projectstatus niet bijwerken"
+      },
+      "messages": {
+        "success": "Projectstatus succesvol bijgewerkt!"
+      },
+      "alert": {
+        "title": "Controleer je e-mail voor offertes van specialisten",
+        "description": "Lokale specialisten nemen per e-mail contact met je op. Vergelijk hun offertes om je probleem sneller op te lossen.",
+        "point1": {
+          "title": "Nieuwe offertes komen per e-mail binnen.",
+          "description": "Open je inbox om reacties van specialisten op je aanvraag te zien."
+        },
+        "point2": {
+          "title": "Niets gezien? Check Spam/Reclame en zoek op \"Bouwmatcher\".",
+          "description": "Voeg afzenders toe aan je contacten."
+        },
+        "point3": {
+          "title": "Snel reageren = beter aanbod.",
+          "description": "Stel je vragen of geef je beschikbaarheid door, snelle reacties helpen met lagere prijzen en eerdere planning."
+        }
+      }
     }
   }
 }

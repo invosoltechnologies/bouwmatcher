@@ -1564,6 +1564,70 @@
       "cookies": "Cookie policy",
       "disclaimer": "Disclaimer",
       "companyNumber": "Company number - BE 1024.216.268"
+    },
+    "projectStatus": {
+      "title": "What is the current status of your project?",
+      "loading": "Loading project details...",
+      "status": "Status",
+      "requestedOn": "Requested on",
+      "errorLoadingProject": "Failed to load project details",
+      "noProjectFound": "No project found. Please check the link and try again.",
+      "steps": {
+        "waiting": "Waiting for quotes",
+        "selected": "Specialist selected",
+        "inProgress": "In progress",
+        "completed": "Project completed"
+      },
+      "updateStatus": "Update project status",
+      "statuses": {
+        "pending_quotes": {
+          "label": "Waiting for quotes",
+          "description": "I am waiting for quotes from specialists"
+        },
+        "specialist_selected": {
+          "label": "Specialist selected",
+          "description": "I have selected a specialist"
+        },
+        "in_progress": {
+          "label": "In progress",
+          "description": "The work has started"
+        },
+        "completed": {
+          "label": "Project completed",
+          "description": "The project is completed"
+        }
+      },
+      "buttons": {
+        "back": "Back",
+        "updateStatus": "Update status",
+        "updating": "Updating..."
+      },
+      "validation": {
+        "selectStatus": "Please select a status",
+        "invalidToken": "Invalid access token"
+      },
+      "errors": {
+        "failedToUpdate": "Failed to update project status"
+      },
+      "messages": {
+        "success": "Project status updated successfully!"
+      },
+      "alert": {
+        "title": "Check your email for quotes from specialists",
+        "description": "Local specialists will contact you by email. Compare their quotes to solve your problem faster.",
+        "point1": {
+          "title": "New quotes arrive via email.",
+          "description": "Check your inbox for responses from specialists to your request."
+        },
+        "point2": {
+          "title": "Don't see anything? Check Spam/Promotions and search for \"Bouwmatcher\".",
+          "description": "Add senders to your contacts."
+        },
+        "point3": {
+          "title": "Quick response = better offers.",
+          "description": "Ask questions or provide your availability. Quick responses help with lower prices and earlier scheduling."
+        }
+      }
     }
   }
 }

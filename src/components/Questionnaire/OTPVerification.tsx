@@ -8,7 +8,7 @@ import { useTranslations } from "next-intl";
 interface OTPVerificationProps {
   phoneNumber: string;
   draftId: string;
-  onVerify: (projectId: string) => void;
+  onVerify: (projectId: string, accessToken: string) => void;
   onBack: () => void;
 }
 
@@ -115,8 +115,8 @@ export default function OTPVerification({ phoneNumber, draftId, onVerify, onBack
         return;
       }
 
-      // Success! Call onVerify with project ID
-      onVerify(data.projectId);
+      // Success! Call onVerify with project ID and access token
+      onVerify(data.projectId, data.accessToken);
     } catch (err) {
       console.error('Error verifying OTP:', err);
       setError('Failed to verify OTP');
