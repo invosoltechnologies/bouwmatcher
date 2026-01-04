@@ -127,6 +127,29 @@ export async function POST(
       });
     }
 
+    // Check if professional is trying to rate their own company (prevent self-rating)
+    const { data: companyData } = await supabase
+      .from('professional_companies')
+      .select('id')
+      .eq('id', companyId)
+      .single();
+
+    if (companyData) {
+      // Check if the rater's company matches the company being rated
+      const { data: raterCompany } = await supabase
+        .from('professional_profiles')
+        .select('company_id')
+        .eq('id', profileData.id)
+        .single();
+
+      if (raterCompany?.company_id === companyId) {
+        return NextResponse.json(
+          { error: 'Cannot rate your own company' },
+          { status: 403 }
+        );
+      }
+    }
+
     // Check if user already rated this company
     const { data: existingRating } = await supabase
       .from('professional_company_ratings')

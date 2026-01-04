@@ -461,7 +461,7 @@ export default function CreateProjectContent() {
           variant='outline'
           onClick={handleUseCurrentLocation}
           disabled={isLoadingLocation}
-          className='w-full flex items-center text-base md:text-lg justify-center gap-2 px-4 py-2 md:py-4 md:px-6 rounded-lg border-2 border-primary text-primary hover:bg-primary/5 font-medium'
+          className='w-full flex items-center text-base md:text-lg justify-center gap-2 px-4 py-2 md:py-4 md:px-6 rounded-lg border-2 border-primary text-primary hover:bg-primary font-medium'
         >
           <MapPin className='w-4 h-4 md:w-5 md:h-5' />
           {isLoadingLocation

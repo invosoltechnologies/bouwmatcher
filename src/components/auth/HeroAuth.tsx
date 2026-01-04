@@ -81,7 +81,7 @@ export default function HeroAuth() {
         </div>
 
         {/* Desktop Layout */}
-        <div className='hidden lg:flex gap-8 items-center w-full'>
+        <div className='hidden lg:flex gap-8 lg:gap-28 items-center w-full'>
           {/* Left Content */}
           <div className='flex-1'>
             {/* Main Heading */}

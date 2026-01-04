@@ -35,6 +35,8 @@ export async function POST(request: NextRequest) {
       website,
       employees,
       description,
+      // Verification source: true if selected from API search results
+      isFromApi = false,
     } = body;
 
     if (!companyName || !kvkNumber || !postalCode || !houseNumber || !street || !city || !country || !businessIdType) {
@@ -101,12 +103,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Link user to company via company_id in professional_profiles
+    // Determine verification status based on whether company was found via API
+    const verificationStatus = isFromApi ? 'verified' : 'pending';
+    const isActive = isFromApi ? true : false;
+
     const { error: updateError } = await supabase
       .from('professional_profiles')
       .update({
         company_id: companyId,
         role_in_company: 'owner',
-        is_verified: 'verified',
+        is_verified: verificationStatus,
+        is_active: isActive,
         joined_company_at: new Date().toISOString(),
         profile_completed: true,
         current_step: 6,

@@ -227,5 +227,6 @@ export function transformAccountData(rawData: AccountDataRaw): AccountData {
     certificates: rawData.profile.certificates || [],
     profilePictureUrl: rawData.profile.profile_picture_url || null,
     profileAnswers: rawData.profile.profile_answers || null,
+    professionalProfileId: rawData.profile.id,
   };
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import {
   HardDrive,
   CheckCircle2,
@@ -11,58 +12,8 @@ import StatsCard from '@/components/admin-dashboard/StatsCard';
 import ProfessionalsTable from '@/components/admin-dashboard/ProfessionalsTable';
 import ReviewCard from '@/components/admin-dashboard/ReviewCard';
 import ServiceCategoriesList from '@/components/admin-dashboard/ServiceCategoriesList';
+import { useProfessionals } from '@/lib/hooks/admin/professionals';
 import { useTranslations } from 'next-intl';
-
-// Temporary mock data - will be replaced with API call
-const mockStats = {
-  totalProfessionals: 247,
-  professionalsGrowth: '+12%',
-  verificationRate: 89.2,
-  verificationGrowth: '+3.5%',
-  averageRating: 4.7,
-  totalReviews: 534,
-  activeProjects: 12,
-  projectsGrowth: '+3.2%',
-  pendingVerifications: 18,
-  verificationsChange: '+5.5%',
-  serviceCategories: 24,
-};
-
-const mockProfessionals = [
-  {
-    id: '1',
-    name: 'Jan Janssen',
-    email: 'jan@example.com',
-    avatar: undefined,
-    categories: ['Schilder', 'Stukadoor'],
-    status: 'verified' as const,
-    rating: 4.8,
-    reviewCount: 23,
-    registeredAt: '2024-12-15',
-  },
-  {
-    id: '2',
-    name: 'Sara Johnson',
-    email: 'sara@example.com',
-    avatar: undefined,
-    categories: ['Installatiewerk', 'Loodgieter'],
-    status: 'pending' as const,
-    rating: 4.2,
-    reviewCount: 8,
-    registeredAt: '2024-12-18',
-  },
-  {
-    id: '3',
-    name: 'Mike Wilson',
-    email: 'mike@example.com',
-    avatar: undefined,
-    categories: ['Loodgieter', 'Riool'],
-    status: 'in_review' as const,
-    rating: 3.1,
-    reviewCount: 15,
-    registeredAt: '2024-12-20',
-  },
-];
 
 const mockReviews = [
   {
@@ -97,12 +48,64 @@ const mockReviews = [
 
 export default function AdminDashboardPage() {
   const t = useTranslations('common.adminDashboard');
+  const { data, isLoading } = useProfessionals({
+    limit: 5,
+    sortBy: 'created_at',
+    sortOrder: 'desc',
+  });
 
-  // In the future, this will fetch real data from the API
-  // const { data: stats, isLoading } = useQuery({
-  //   queryKey: ['admin-stats'],
-  //   queryFn: () => fetch('/api/admin/stats').then(res => res.json()),
-  // });
+  // Transform API response and compute stats
+  const { transformedProfessionals, stats } = useMemo(() => {
+    if (!data?.professionals) {
+      return {
+        transformedProfessionals: [],
+        stats: {
+          totalProfessionals: 0,
+          verificationRate: 0,
+          averageRating: 0,
+          pendingVerifications: 0,
+        },
+      };
+    }
+
+    const professionals = data.professionals;
+    const transformed = professionals.map((professional) => ({
+      id: professional.id,
+      name: `${professional.first_name} ${professional.last_name}`,
+      email: professional.email,
+      avatar: professional.profile_picture_url,
+      categories: professional.specializations || [],
+      status: professional.status,
+      rating: professional.rating,
+      reviewCount: professional.review_count,
+      registeredAt: new Date(professional.created_at).toISOString().split('T')[0],
+    }));
+
+    // Calculate statistics
+    const verified = professionals.filter((p) => p.status === 'verified').length;
+    const verificationRate = professionals.length > 0
+      ? Math.round((verified / professionals.length) * 100 * 10) / 10
+      : 0;
+
+    const totalRating = professionals.reduce((sum, p) => sum + p.rating, 0);
+    const averageRating = professionals.length > 0
+      ? Math.round((totalRating / professionals.length) * 10) / 10
+      : 0;
+
+    const pending = professionals.filter((p) =>
+      p.status === 'pending' || p.status === 'in_review'
+    ).length;
+
+    return {
+      transformedProfessionals: transformed,
+      stats: {
+        totalProfessionals: data.total,
+        verificationRate,
+        averageRating,
+        pendingVerifications: pending,
+      },
+    };
+  }, [data]);
 
   return (
     <div className="space-y-6">
@@ -112,7 +115,7 @@ export default function AdminDashboardPage() {
           icon={HardDrive}
           iconColor="text-blue-600"
           iconBgColor="bg-blue-50"
-          value={mockStats.totalProfessionals}
+          value={stats.totalProfessionals}
           label={t('stats.newLeads', { defaultValue: 'Nieuwe leads (30d)' })}
           change={{
             value: '12%',
@@ -128,7 +131,7 @@ export default function AdminDashboardPage() {
           icon={CheckCircle2}
           iconColor="text-green-600"
           iconBgColor="bg-green-50"
-          value={`${mockStats.verificationRate}%`}
+          value={`${stats.verificationRate}%`}
           label={t('stats.verificationRate', {
             defaultValue: 'Verificatiepercentage',
           })}
@@ -146,7 +149,7 @@ export default function AdminDashboardPage() {
           icon={Star}
           iconColor="text-yellow-600"
           iconBgColor="bg-yellow-50"
-          value={mockStats.averageRating}
+          value={stats.averageRating}
           label={t('stats.averageRating', {
             defaultValue: 'Gemiddelde beoordeling',
           })}
@@ -164,7 +167,7 @@ export default function AdminDashboardPage() {
           icon={UserRoundX}
           iconColor="text-red-600"
           iconBgColor="bg-red-50"
-          value={mockStats.activeProjects}
+          value={stats.pendingVerifications}
           label={t('stats.blockedProfessionals', {
             defaultValue: 'Geblokkeerde professionals',
           })}
@@ -182,7 +185,7 @@ export default function AdminDashboardPage() {
           icon={Clock}
           iconColor="text-cyan-600"
           iconBgColor="bg-cyan-50"
-          value={mockStats.pendingVerifications}
+          value={stats.pendingVerifications}
           label={t('stats.moderationQueue', {
             defaultValue: 'Moderatiewachtrij',
           })}
@@ -199,7 +202,7 @@ export default function AdminDashboardPage() {
 
       {/* Recent Professionals Table - Full Width */}
       <ProfessionalsTable
-        professionals={mockProfessionals}
+        professionals={transformedProfessionals}
         onViewProfile={(id) => console.log('View profile:', id)}
       />
 

@@ -23,7 +23,7 @@ interface Professional {
   email: string;
   avatar?: string;
   categories: string[];
-  status: 'verified' | 'pending' | 'in_review' | 'unverified' | 'rejected';
+  status: 'verified' | 'pending' | 'in_review' | 'unverified' | 'rejected' | 'suspended';
   rating: number;
   reviewCount: number;
   registeredAt: string;
@@ -52,6 +52,8 @@ export default function ProfessionalsTable({
         return { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' };
       case 'rejected':
         return { bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' };
+      case 'suspended':
+        return { bg: 'bg-red-100', text: 'text-red-800', border: 'border-red-300' };
       case 'unverified':
         return { bg: 'bg-slate-100', text: 'text-slate-600', border: 'border-slate-200' };
       default:
@@ -293,8 +295,6 @@ export default function ProfessionalsTable({
           </h2>
           <Button
             variant="default"
-            size="sm"
-            className="h-9 bg-blue-600 hover:bg-blue-700 text-white"
           >
             {t('viewAllProfessionals', {
               defaultValue: 'Bekijk alle professionals',
