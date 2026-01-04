@@ -420,7 +420,7 @@
       "hero": {
         "heading": "FAQ voor",
         "headingAccent": "klanten",
-        "description":"FAQ voor specialisten • FAQ voor klanten",
+        "description": "FAQ voor specialisten • FAQ voor klanten",
         "ctaButton1": "FAQ voor specialisten",
         "ctaButton2": "FAQ voor klanten"
       },
@@ -652,10 +652,8 @@
       "section1List8": "Diensten: de door Bouwmatcher aangeboden matchingdiensten tussen Gebruikers en Leveranciers.",
       "section1List9": "Partner: bedrijven of organisaties die met Bouwmatcher een samenwerkingsverband aangaan buiten het leverancierscontract.",
       "section1Outro": "Review: een beoordeling van een Leverancier door een Gebruiker.",
-
       "section2Title": "2. Voorwerp van het contract",
       "section2Para1": "Bouwmatcher stelt een online platform ter beschikking dat fungeert als bemiddelaar tussen Gebruikers en Leveranciers. Bouwmatcher is geen partij bij de overeenkomsten die tussen hen tot stand komen en draagt geen verantwoordelijkheid voor de uitvoering, naleving of kwaliteit ervan. Bouwmatcher biedt geen garantie op het aantal offertes, de kwaliteit van Leveranciers of de uiteindelijke uitvoering van de werken.",
-
       "section3Title": "3. Inschrijving en accountbeheer",
       "section3List1": "Een Gebruiker registreert zich door het indienen van een Offerteaanvraag.",
       "section3List2": "Een Leverancier registreert zich via een Bestelbon of via het Extranet.",
@@ -667,7 +665,6 @@
       "section4List2": "Offerteaanvragen uitsluitend worden gedaan met een reële aankoopintentie;",
       "section4List3": "aanvragen niet louter worden gebruikt om offertes van concurrenten te vergelijken zonder intentie tot aankoop.",
       "section4Para1": "De Gebruiker is aansprakelijk voor de juistheid van alle door hem verstrekte gegevens.",
-
       "section5Title": "5. Verplichtingen van Leveranciers",
       "section5Intro": "De Leverancier verbindt zich ertoe:",
       "section5List1": "Offerteaanvragen binnen 48 uur na ontvangst op te volgen;",
@@ -676,7 +673,6 @@
       "section5List4": "respectvol en professioneel te communiceren met Gebruikers;",
       "section5List5": "de kwaliteit en uitvoering van zijn diensten te waarborgen.",
       "section5Para1": "Bouwmatcher kan sancties opleggen of accounts schorsen bij herhaaldelijke klachten of schendingen van deze voorwaarden.",
-
       "section6Title": "6. Vergoeding en betaling",
       "section6List1": "Voor Gebruikers zijn de diensten van Bouwmatcher kosteloos.",
       "section6List2": "Leveranciers betalen een vergoeding via Creditpacks of via facturatie.",
@@ -684,7 +680,6 @@
       "section6List4": "Facturen zijn betaalbaar via domiciliëring of automatische incasso, tenzij schriftelijk anders overeengekomen.",
       "section6List5": "Bij wanbetaling kan Bouwmatcher de toegang tot het Extranet opschorten.",
       "section6List6": "Laattijdige betalingen geven aanleiding tot 1% nalatigheidsintrest per maand, vermeerderd met een forfaitaire schadevergoeding van 15% van het openstaande bedrag (minimum €50).",
-
       "section7Title": "7. Protesten en retourbeleid",
       "section7Para1": "Een Leverancier kan binnen tien (10) kalenderdagen na ontvangst van een Offerteaanvraag een Protest indienen via het Extranet. Protesten zijn enkel geldig indien:",
       "section7List1": "de Gebruiker geen reële aankoopintentie heeft;",
@@ -692,41 +687,32 @@
       "section7List3": "de aanvraag buiten de vooraf overeengekomen criteria valt;",
       "section7List4": "de aanvraag identiek is aan een reeds eerder ontvangen aanvraag binnen twee weken.",
       "section7Para2": "Bouwmatcher beslist autonoom en finaal over de gegrondheid van een Protest. Bij goedkeuring wordt compensatie uitsluitend toegekend in de vorm van credits.",
-
       "section8Title": "8. Reviews en feedback",
       "section8List1": "Reviews moeten eerlijk, respectvol en gebaseerd zijn op eigen ervaring.",
       "section8List2": "Bouwmatcher kan reviews verwijderen die ongepast, misleidend of beledigend zijn.",
       "section8List3": "Het plaatsen van valse of gemanipuleerde reviews is verboden.",
       "section8List4": "Leveranciers kunnen gemotiveerde verzoeken tot verwijdering van een review indienen.",
-
       "section9Title": "9. Intellectueel eigendom",
       "section9List1": "Alle intellectuele eigendomsrechten verbonden aan het platform, de software, logo’s, teksten, beelden en ontwerpen behoren uitsluitend toe aan Bouwmatcher.",
       "section9List2": "Het is verboden deze zonder voorafgaande schriftelijke toestemming te gebruiken, kopiëren of verspreiden.",
       "section9Para1": "Gebruikers en Leveranciers behouden de rechten op eigen geplaatste inhoud, maar verlenen Bouwmatcher een beperkte, niet-exclusieve licentie om deze te gebruiken voor promotie- en publicatiedoeleinden.",
-
       "section10Title": "10. Aansprakelijkheid",
       "section10List1": "Bouwmatcher is niet aansprakelijk voor schade die voortvloeit uit overeenkomsten of transacties tussen Gebruikers en Leveranciers.",
       "section10List2": "Bouwmatcher garandeert geen continuïteit, minimum aantal offertes of kwaliteit van de aangeboden diensten.",
       "section10Para1": "Storingen van het internet, virussen, technische defecten of fouten in de gegevens vallen niet onder de aansprakelijkheid van Bouwmatcher.",
-
       "section11Title": "11. Overmacht",
       "section11Para1": "Bouwmatcher kan niet aansprakelijk worden gesteld voor tekortkomingen door omstandigheden buiten haar redelijke controle, waaronder maar niet beperkt tot netwerkstoringen, stakingen, natuurrampen, pandemieën of overheidsmaatregelen.",
-
       "section12Title": "12. Duur, opschorting en beëindiging",
       "section12List1": "Bouwmatcher kan het Contract met onmiddellijke ingang beëindigen bij wanbetaling, fraude, misbruik of schending van deze voorwaarden.",
       "section12List2": "Reeds betaalde bedragen worden niet teruggestort.",
       "section12List3": "Leveranciers kunnen hun contract beëindigen met een opzegtermijn van twee (2) weken.",
       "section12Para1": "Bouwmatcher kan accounts tijdelijk of definitief schorsen bij vermoeden van fraude of misbruik.",
-
       "section13Title": "13. Bescherming van persoonsgegevens",
       "section13Para1": "Bouwmatcher verwerkt persoonsgegevens conform haar Privacybeleid en Cookiebeleid, gepubliceerd op de website. Gebruikers en Leveranciers hebben recht op inzage, rectificatie en verwijdering van hun gegevens. Klachten kunnen worden ingediend bij de Gegevensbeschermingsautoriteit.",
-
       "section14Title": "14. Wijzigingen van de voorwaarden",
       "section14Para1": "Bouwmatcher behoudt zich het recht voor deze Algemene Voorwaarden te allen tijde te wijzigen. De gewijzigde voorwaarden worden gepubliceerd op de website en zijn bindend vanaf de datum van publicatie. Het verder gebruik van het platform geldt als aanvaarding van de nieuwe voorwaarden.",
-
       "section15Title": "15. Toepasselijk recht en bevoegde rechtbank",
       "section15Para1": "Op deze Algemene Voorwaarden is uitsluitend Belgisch recht van toepassing. Geschillen behoren tot de exclusieve bevoegdheid van de rechtbanken van Leuven. Partijen verbinden zich ertoe eerst te trachten geschillen minnelijk te regelen.",
-
       "section16Title": "16. Contactgegevens"
     },
     "cookies": {
@@ -742,16 +728,76 @@
       "section3Title": "3. Overzicht van gebruikte cookies",
       "section3Para1": "Voor een volledig overzicht van alle cookies die wij gebruiken, kun je terecht in je cookievoorkeuren. Hier kun je ook je toestemming wijzigen of intrekken.",
       "cookieTable": {
-        "header": ["Cookie", "Type", "Uitgever", "Doel / Functie", "Bewaartermijn"],
-        "phpsessid": ["PHPSESSID", "Functioneel", "Bouwmatcher", "Houdt sessie-informatie bij zodat formulieren werken.", "Sessie"],
-        "cookieConsent": ["CookieConsent", "Functioneel", "Bouwmatcher", "Onthoudt jouw cookie-instellingen.", "1 jaar"],
-        "ga": ["_ga", "Analytisch", "Google Analytics", "Analyseert bezoekersgedrag en websitegebruik.", "2 jaar"],
-        "gid": ["_gid", "Analytisch", "Google Analytics", "Analyseert bezoekersgedrag en websitegebruik.", "24 uur"],
-        "fbp": ["_fbp", "Marketing", "Facebook / Meta", "Houdt bij welke pagina's je bezoekt voor statistieken.", "3 maanden"],
-        "fr": ["fr", "Marketing", "Facebook / Meta", "Toont relevante advertenties op Facebook & Instagram.", "3 maanden"],
-        "liSugr": ["li_sugr", "Marketing", "LinkedIn", "Browser-ID cookie voor LinkedIn Ads.", "90 dagen"],
-        "bcookie": ["bcookie", "Marketing", "LinkedIn", "Gebruikt voor advertentietargeting.", "1 jaar"],
-        "uetvid": ["_uetvid", "Marketing", "Microsoft Ads", "Helpt advertenties af te stemmen op jouw interesses.", "13 maanden"]
+        "header": [
+          "Cookie",
+          "Type",
+          "Uitgever",
+          "Doel / Functie",
+          "Bewaartermijn"
+        ],
+        "phpsessid": [
+          "PHPSESSID",
+          "Functioneel",
+          "Bouwmatcher",
+          "Houdt sessie-informatie bij zodat formulieren werken.",
+          "Sessie"
+        ],
+        "cookieConsent": [
+          "CookieConsent",
+          "Functioneel",
+          "Bouwmatcher",
+          "Onthoudt jouw cookie-instellingen.",
+          "1 jaar"
+        ],
+        "ga": [
+          "_ga",
+          "Analytisch",
+          "Google Analytics",
+          "Analyseert bezoekersgedrag en websitegebruik.",
+          "2 jaar"
+        ],
+        "gid": [
+          "_gid",
+          "Analytisch",
+          "Google Analytics",
+          "Analyseert bezoekersgedrag en websitegebruik.",
+          "24 uur"
+        ],
+        "fbp": [
+          "_fbp",
+          "Marketing",
+          "Facebook / Meta",
+          "Houdt bij welke pagina's je bezoekt voor statistieken.",
+          "3 maanden"
+        ],
+        "fr": [
+          "fr",
+          "Marketing",
+          "Facebook / Meta",
+          "Toont relevante advertenties op Facebook & Instagram.",
+          "3 maanden"
+        ],
+        "liSugr": [
+          "li_sugr",
+          "Marketing",
+          "LinkedIn",
+          "Browser-ID cookie voor LinkedIn Ads.",
+          "90 dagen"
+        ],
+        "bcookie": [
+          "bcookie",
+          "Marketing",
+          "LinkedIn",
+          "Gebruikt voor advertentietargeting.",
+          "1 jaar"
+        ],
+        "uetvid": [
+          "_uetvid",
+          "Marketing",
+          "Microsoft Ads",
+          "Helpt advertenties af te stemmen op jouw interesses.",
+          "13 maanden"
+        ]
       },
       "section4Title": "4. Cookies beheren of verwijderen",
       "section4Para1": "Je kan je voorkeuren op elk moment aanpassen via de cookie-instellingen onderaan onze website.",
@@ -768,9 +814,29 @@
     "saving": "Opslaan...",
     "loading": "Laden...",
     "locationHeading": "Wat is de projectlocatie?",
+    "contactHeading": "Vul hier jouw gegevens in",
     "useCurrentLocation": "Gebruik mijn huidige locatie",
     "loadingLocation": "Locatie ophalen...",
-    "errorLoadingQuestions": "Er is een fout opgetreden bij het laden van de vragen."
+    "errorLoadingQuestions": "Er is een fout opgetreden bij het laden van de vragen.",
+    "otpVerification": {
+      "heading": "Verifieer jouw telefoonnummer",
+      "description": "Er is zojuist een SMS met een 6-cijferige code verzonden naar",
+      "enterCode": "Voer de code in",
+      "resendCode": "Code niet ontvangen?",
+      "resendButton": "Opnieuw verzenden",
+      "submitButton": "Ontvang offertes",
+      "previousButton": "Vorige",
+      "resendingCode": "Code verzenden...",
+      "submitting": "Verzenden...",
+      "invalidCode": "Ongeldige code. Probeer het opnieuw.",
+      "codeSent": "Code verzonden!",
+      "verificationFailed": "Verificatie mislukt. Probeer het opnieuw.",
+      "resendTimer": "Opnieuw verzenden over {seconds} seconden",
+      "codeExpired": "Code verlopen. Vraag een nieuwe code aan.",
+      "invalidPhone": "Ongeldig telefoonnummer",
+      "verificationSuccess": "Telefoonnummer geverifieerd!"
+    },
+    "requiredFieldsError": "Vul alle velden in"
   },
   "common": {
     "topbar": {

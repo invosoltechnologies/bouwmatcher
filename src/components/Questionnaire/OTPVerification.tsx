@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SMS_CONFIG } from "@/lib/config";
+import { useTranslations } from "next-intl";
 
 interface OTPVerificationProps {
   phoneNumber: string;
@@ -12,6 +13,7 @@ interface OTPVerificationProps {
 }
 
 export default function OTPVerification({ phoneNumber, draftId, onVerify, onBack }: OTPVerificationProps) {
+  const t = useTranslations('questionnaire.otpVerification');
   const [otp, setOtp] = useState('');
   const [countdown, setCountdown] = useState<number>(SMS_CONFIG.otpDisplayCountdownSeconds);
   const [canResend, setCanResend] = useState(false);
@@ -129,7 +131,7 @@ export default function OTPVerification({ phoneNumber, draftId, onVerify, onBack
     <div className='w-full max-w-[680px] mx-auto'>
       {/* Title */}
       <h2 className='text-2xl md:text-4xl font-normal leading-10 text-center text-foreground mb-6 md:mb-12'>
-        Verifieer jouw telefoonnummer
+        {t('heading')}
       </h2>
 
       {/* OTP Card */}
@@ -141,18 +143,16 @@ export default function OTPVerification({ phoneNumber, draftId, onVerify, onBack
         }}
       >
         <h3 className='text-xl md:text-2xl font-semibold text-foreground mb-3.5'>
-          Voer de {SMS_CONFIG.otpLength}-cijferige code in
+          {t('enterCode')}
         </h3>
 
         <p className='text-sm md:text-base text-gray-600 mb-3.5 md:mb-9'>
-          Er is zojuist een <span className='font-semibold'>SMS</span> met een{' '}
-          {SMS_CONFIG.otpLength}-cijferige code verzonden naar{' '}
-          <span className='font-semibold'>{maskedPhone}</span>.{' '}
+          {t('description')} <span className='font-semibold'>{maskedPhone}</span>.{' '}
           <button
             onClick={onBack}
             className='text-primary hover:underline font-medium'
           >
-            Wijzigen
+            {t('resendCode')}
           </button>
         </p>
 
@@ -164,7 +164,7 @@ export default function OTPVerification({ phoneNumber, draftId, onVerify, onBack
             inputMode='numeric'
             value={otp}
             onChange={handleOtpChange}
-            placeholder='Voer de code in'
+            placeholder={t('enterCode')}
             className='max-w-48 bg-white text-center text-xl md:text-2xl tracking-wide md:tracking-widest font-semibold placeholder:font-light'
             maxLength={SMS_CONFIG.otpLength}
           />
@@ -183,13 +183,13 @@ export default function OTPVerification({ phoneNumber, draftId, onVerify, onBack
               onClick={handleResend}
               className='text-primary cursor-pointer hover:underline font-medium'
             >
-              Geen code ontvangen? Opnieuw verzenden
+              {t('resendCode')} {t('resendButton')}
             </button>
           ) : (
             <p>
-              Geen code ontvangen?{' '}
+              {t('resendCode')}{' '}
               <span className='text-primary font-medium'>
-                Opnieuw verzenden over {countdown} seconden
+                {t('resendTimer', { seconds: countdown })}
               </span>
             </p>
           )}
@@ -203,7 +203,7 @@ export default function OTPVerification({ phoneNumber, draftId, onVerify, onBack
           onClick={onBack}
           className='text-primary font-medium text-sm md:text-base flex items-center gap-2'
         >
-          Vorige
+          {t('previousButton')}
         </Button>
 
         <Button
@@ -211,7 +211,7 @@ export default function OTPVerification({ phoneNumber, draftId, onVerify, onBack
           disabled={otp.length !== SMS_CONFIG.otpLength || isVerifying}
           className='bg-primary hover:bg-primary/90 text-white font-medium text-sm px-4 py-2 md:text-base md:px-8 md:py-4 rounded-lg md:rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
         >
-          {isVerifying ? 'Verifiëren...' : 'Ontvang offertes'}
+          {isVerifying ? t('submitting') : t('submitButton')}
         </Button>
       </div>
     </div>

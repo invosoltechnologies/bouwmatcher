@@ -654,10 +654,8 @@
       "section1List8": "Services: the matching services offered by Bouwmatcher between Users and Suppliers.",
       "section1List9": "Partner: companies or organizations that enter into a cooperation with Bouwmatcher outside the supplier agreement.",
       "section1Outro": "Review: an evaluation of a Supplier by a User.",
-
       "section2Title": "2. Subject of the Contract",
       "section2Para1": "Bouwmatcher provides an online platform that acts as an intermediary between Users and Suppliers. Bouwmatcher is not a party to the agreements concluded between Users and Suppliers and bears no responsibility for their execution, compliance, or quality. Bouwmatcher does not guarantee the number of quotations, the quality of Suppliers, or the final execution of works.",
-
       "section3Title": "3. Registration and Account Management",
       "section3List1": "A User registers by submitting a Quotation Request.",
       "section3List2": "A Supplier registers via an Order Form or through the Extranet.",
@@ -669,7 +667,6 @@
       "section4List2": "Quotation Requests are submitted with a genuine intent to purchase;",
       "section4List3": "requests are not used solely to compare competitors’ offers without purchase intent.",
       "section4Para1": "The User is liable for the accuracy of all data provided.",
-
       "section5Title": "5. Obligations of Suppliers",
       "section5Intro": "The Supplier commits to:",
       "section5List1": "following up on Quotation Requests within 48 hours of receipt;",
@@ -678,7 +675,6 @@
       "section5List4": "communicating respectfully and professionally with Users;",
       "section5List5": "ensuring the quality and execution of their services.",
       "section5Para1": "Bouwmatcher may impose sanctions or suspend accounts in case of repeated complaints or violations of these terms.",
-
       "section6Title": "6. Fees and Payment",
       "section6List1": "The services of Bouwmatcher are free of charge for Users.",
       "section6List2": "Suppliers pay a fee via Credit Packs or invoicing.",
@@ -686,7 +682,6 @@
       "section6List4": "Invoices are payable via direct debit or automatic collection, unless otherwise agreed in writing.",
       "section6List5": "In case of non-payment, Bouwmatcher may suspend access to the Extranet.",
       "section6List6": "Late payments incur a default interest of 1% per month, plus a fixed compensation of 15% of the outstanding amount (minimum €50).",
-
       "section7Title": "7. Complaints and Return Policy",
       "section7Para1": "A Supplier may submit a complaint within ten (10) calendar days after receiving a Quotation Request via the Extranet. Complaints are only valid if:",
       "section7List1": "the User has no genuine purchase intent;",
@@ -694,41 +689,32 @@
       "section7List3": "the request falls outside the pre-agreed criteria;",
       "section7List4": "the request is identical to one received within the previous two weeks.",
       "section7Para2": "Bouwmatcher decides autonomously and definitively on the validity of a complaint. Approved compensation is granted exclusively in the form of credits.",
-
       "section8Title": "8. Reviews and Feedback",
       "section8List1": "Reviews must be honest, respectful, and based on personal experience.",
       "section8List2": "Bouwmatcher may remove reviews that are inappropriate, misleading, or offensive.",
       "section8List3": "Posting false or manipulated reviews is prohibited.",
       "section8List4": "Suppliers may submit reasoned requests for review removal.",
-
       "section9Title": "9. Intellectual Property",
       "section9List1": "All intellectual property rights related to the platform, software, logos, texts, images, and designs belong exclusively to Bouwmatcher.",
       "section9List2": "Use, reproduction, or distribution without prior written consent is prohibited.",
       "section9Para1": "Users and Suppliers retain rights to their own content but grant Bouwmatcher a limited, non-exclusive license to use it for promotional and publication purposes.",
-
       "section10Title": "10. Liability",
       "section10List1": "Bouwmatcher is not liable for damages arising from agreements or transactions between Users and Suppliers.",
       "section10List2": "Bouwmatcher does not guarantee continuity, a minimum number of quotations, or service quality.",
       "section10Para1": "Internet outages, viruses, technical failures, or data errors are not covered by Bouwmatcher’s liability.",
-
       "section11Title": "11. Force Majeure",
       "section11Para1": "Bouwmatcher cannot be held liable for failures caused by circumstances beyond its reasonable control, including but not limited to network failures, strikes, natural disasters, pandemics, or governmental measures.",
-
       "section12Title": "12. Duration, Suspension, and Termination",
       "section12List1": "Bouwmatcher may terminate the Contract with immediate effect in cases of non-payment, fraud, abuse, or breach of these terms.",
       "section12List2": "Paid amounts are non-refundable.",
       "section12List3": "Suppliers may terminate their contract with a notice period of two (2) weeks.",
       "section12Para1": "Bouwmatcher may temporarily or permanently suspend accounts in case of suspected fraud or abuse.",
-
       "section13Title": "13. Protection of Personal Data",
       "section13Para1": "Bouwmatcher processes personal data in accordance with its Privacy Policy and Cookie Policy published on the website. Users and Suppliers have the right to access, correct, and delete their data. Complaints may be filed with the Data Protection Authority.",
-
       "section14Title": "14. Amendments to the Terms",
       "section14Para1": "Bouwmatcher reserves the right to amend these General Terms and Conditions at any time. Updated terms are binding from the date of publication. Continued use of the platform constitutes acceptance of the amended terms.",
-
       "section15Title": "15. Governing Law and Jurisdiction",
       "section15Para1": "These General Terms and Conditions are governed exclusively by Belgian law. Any disputes fall under the exclusive jurisdiction of the courts of Leuven. Parties agree to first attempt an amicable settlement.",
-
       "section16Title": "16. Contact Details"
     },
     "cookies": {
@@ -744,16 +730,76 @@
       "section3Title": "3. Overview of cookies we use",
       "section3Para1": "For a complete overview of all cookies we use, you can visit your cookie preferences. Here you can also change or withdraw your consent.",
       "cookieTable": {
-        "header": ["Cookie", "Type", "Provider", "Purpose / Function", "Retention Period"],
-        "phpsessid": ["PHPSESSID", "Functional", "Bouwmatcher", "Keeps track of session information so forms work correctly.", "Session"],
-        "cookieConsent": ["CookieConsent", "Functional", "Bouwmatcher", "Remembers your cookie settings.", "1 year"],
-        "ga": ["_ga", "Analytical", "Google Analytics", "Analyzes visitor behavior and website usage.", "2 years"],
-        "gid": ["_gid", "Analytical", "Google Analytics", "Analyzes visitor behavior and website usage.", "24 hours"],
-        "fbp": ["_fbp", "Marketing", "Facebook / Meta", "Tracks which pages you visit for statistics.", "3 months"],
-        "fr": ["fr", "Marketing", "Facebook / Meta", "Shows relevant advertisements on Facebook & Instagram.", "3 months"],
-        "liSugr": ["li_sugr", "Marketing", "LinkedIn", "Browser ID cookie for LinkedIn Ads.", "90 days"],
-        "bcookie": ["bcookie", "Marketing", "LinkedIn", "Used for advertisement targeting.", "1 year"],
-        "uetvid": ["_uetvid", "Marketing", "Microsoft Ads", "Helps tailor advertisements to your interests.", "13 months"]
+        "header": [
+          "Cookie",
+          "Type",
+          "Provider",
+          "Purpose / Function",
+          "Retention Period"
+        ],
+        "phpsessid": [
+          "PHPSESSID",
+          "Functional",
+          "Bouwmatcher",
+          "Keeps track of session information so forms work correctly.",
+          "Session"
+        ],
+        "cookieConsent": [
+          "CookieConsent",
+          "Functional",
+          "Bouwmatcher",
+          "Remembers your cookie settings.",
+          "1 year"
+        ],
+        "ga": [
+          "_ga",
+          "Analytical",
+          "Google Analytics",
+          "Analyzes visitor behavior and website usage.",
+          "2 years"
+        ],
+        "gid": [
+          "_gid",
+          "Analytical",
+          "Google Analytics",
+          "Analyzes visitor behavior and website usage.",
+          "24 hours"
+        ],
+        "fbp": [
+          "_fbp",
+          "Marketing",
+          "Facebook / Meta",
+          "Tracks which pages you visit for statistics.",
+          "3 months"
+        ],
+        "fr": [
+          "fr",
+          "Marketing",
+          "Facebook / Meta",
+          "Shows relevant advertisements on Facebook & Instagram.",
+          "3 months"
+        ],
+        "liSugr": [
+          "li_sugr",
+          "Marketing",
+          "LinkedIn",
+          "Browser ID cookie for LinkedIn Ads.",
+          "90 days"
+        ],
+        "bcookie": [
+          "bcookie",
+          "Marketing",
+          "LinkedIn",
+          "Used for advertisement targeting.",
+          "1 year"
+        ],
+        "uetvid": [
+          "_uetvid",
+          "Marketing",
+          "Microsoft Ads",
+          "Helps tailor advertisements to your interests.",
+          "13 months"
+        ]
       },
       "section4Title": "4. Managing or deleting cookies",
       "section4Para1": "You can adjust your preferences at any time via the cookie settings at the bottom of our website.",
@@ -770,9 +816,29 @@
     "saving": "Saving...",
     "loading": "Loading...",
     "locationHeading": "What is the project location?",
+    "contactHeading": "Fill in your details",
     "useCurrentLocation": "Use my current location",
     "loadingLocation": "Fetching location...",
-    "errorLoadingQuestions": "An error occurred while loading the questions."
+    "errorLoadingQuestions": "An error occurred while loading the questions.",
+    "otpVerification": {
+      "heading": "Verify your phone number",
+      "description": "An SMS with a 6-digit code has just been sent to",
+      "enterCode": "Enter the code",
+      "resendCode": "Did not receive the code?",
+      "resendButton": "Resend",
+      "submitButton": "Receive quotes",
+      "previousButton": "Previous",
+      "resendingCode": "Sending code...",
+      "submitting": "Submitting...",
+      "invalidCode": "Invalid code. Please try again.",
+      "codeSent": "Code sent!",
+      "verificationFailed": "Verification failed. Please try again.",
+      "resendTimer": "Resend in {seconds} seconds",
+      "codeExpired": "Code expired. Request a new code.",
+      "invalidPhone": "Invalid phone number",
+      "verificationSuccess": "Phone number verified!"
+    },
+    "requiredFieldsError": "Fill in all fields"
   },
   "common": {
     "topbar": {

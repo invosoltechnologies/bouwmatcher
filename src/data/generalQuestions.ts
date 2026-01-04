@@ -17,6 +17,8 @@
  * Order: array index = display order (change order by reordering array)
  */
 
+import { EXECUTION_DATE_OPTIONS } from './executionDates';
+
 export interface QuestionOption {
   value: string;          // Value saved to database
   labelNl: string;
@@ -66,12 +68,11 @@ export const STEP_3: Question[] = [
     type: 'radio',
     fieldName: 'execution_timing',
     required: true,
-    options: [
-      { value: 'within_1_month', labelNl: 'Binnen 1 maand', labelEn: 'Within 1 month' },
-      { value: '1_to_3_months', labelNl: 'Over 1 tot 3 maanden', labelEn: 'In 1-3 months' },
-      { value: '3_to_6_months', labelNl: 'Over 3 tot 6 maanden', labelEn: 'In 3-6 months' },
-      { value: 'no_preference', labelNl: 'Geen voorkeur', labelEn: 'No preference' },
-    ],
+    options: EXECUTION_DATE_OPTIONS.map((opt) => ({
+      value: opt.value,
+      labelNl: opt.labelNl,
+      labelEn: opt.labelEn,
+    })),
   },
 ];
 

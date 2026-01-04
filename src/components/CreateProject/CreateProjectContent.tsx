@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
+import toast from 'react-hot-toast';
+import { useProjectForm } from '@/contexts/ProjectFormContext';
 import QuestionnaireNavbar from '@/components/Questionnaire/QuestionnaireNavbar';
 import QuestionnaireRadio from '@/components/Questionnaire/QuestionnaireRadio';
 import { getQuestionsForStep } from '@/data/generalQuestions';
@@ -16,6 +18,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import PhotoUploadModal from '@/components/Questionnaire/PhotoUploadModal';
 import OTPVerification from '@/components/Questionnaire/OTPVerification';
+import { PhoneInput } from '@/components/ui/phone-input';
+import { isValidPhoneNumber } from 'react-phone-number-input';
 
 export default function CreateProjectContent() {
   const router = useRouter();
@@ -23,6 +27,8 @@ export default function CreateProjectContent() {
   const draftId = searchParams.get('draft');
   const locale = useLocale();
   const t = useTranslations('questionnaire');
+  const tAuth = useTranslations('auth.register.contactInfo');
+  const { formData: savedFormData, clearFormData } = useProjectForm();
 
   const [currentStep, setCurrentStep] = useState(1);
   const [currentQuestions, setCurrentQuestions] = useState<
@@ -115,7 +121,21 @@ export default function CreateProjectContent() {
 
           setCurrentQuestions(convertedQuestions);
           setCurrentQuestionIndex(0);
-          setAnswers({});
+
+          // Pre-fill data from saved form if available
+          const newAnswers: Record<string, string> = {};
+
+          // For Step 3: preselect execution date if saved
+          if (step === 3 && savedFormData.executionDate) {
+            newAnswers['project_execution_timing'] = savedFormData.executionDate;
+          }
+
+          // For Step 6: prefill postcode if saved
+          if (step === 6 && savedFormData.postcode) {
+            newAnswers['project_postcode'] = savedFormData.postcode;
+          }
+
+          setAnswers(newAnswers);
         }
       } else if (step === 8) {
         // Step 8: Verification step
@@ -123,7 +143,7 @@ export default function CreateProjectContent() {
       }
     } catch (error) {
       console.error('Error loading questions:', error);
-      alert('Er is een fout opgetreden bij het laden van de vragen.');
+      toast.error('Er is een fout opgetreden bij het laden van de vragen.');
     } finally {
       setIsLoading(false);
     }
@@ -158,7 +178,7 @@ export default function CreateProjectContent() {
       }
     } catch (error) {
       console.error('Error loading follow-up questions:', error);
-      alert('Er is een fout opgetreden.');
+      toast.error('Er is een fout opgetreden.');
     } finally {
       setIsLoading(false);
     }
@@ -259,7 +279,7 @@ export default function CreateProjectContent() {
 
     if (nextStep > totalSteps) {
       // All steps completed
-      alert('Formulier voltooid!');
+      toast.success('Formulier voltooid!');
       return;
     }
 
@@ -282,7 +302,7 @@ export default function CreateProjectContent() {
 
     // Validate answer
     if (currentQuestion.is_required && !selectedAnswer) {
-      alert('Dit veld is verplicht');
+      toast.error('Dit veld is verplicht');
       return;
     }
 
@@ -373,7 +393,7 @@ export default function CreateProjectContent() {
   // Get user's current location and reverse geocode to address
   const handleUseCurrentLocation = async () => {
     if (!navigator.geolocation) {
-      alert('Geolocatie wordt niet ondersteund door uw browser');
+      toast.error('Geolocatie wordt niet ondersteund door uw browser');
       return;
     }
 
@@ -436,14 +456,14 @@ export default function CreateProjectContent() {
           }
         } catch (error) {
           console.error('Error geocoding location:', error);
-          alert('Kon adres niet ophalen van uw locatie');
+          toast.error('Kon adres niet ophalen van uw locatie');
         } finally {
           setIsLoadingLocation(false);
         }
       },
       (error) => {
         console.error('Geolocation error:', error);
-        alert(
+        toast.error(
           'Kon uw locatie niet ophalen. Controleer uw browser-instellingen.'
         );
         setIsLoadingLocation(false);
@@ -465,8 +485,8 @@ export default function CreateProjectContent() {
         >
           <MapPin className='w-4 h-4 md:w-5 md:h-5' />
           {isLoadingLocation
-            ? 'Locatie ophalen...'
-            : 'Gebruik mijn huidige locatie'}
+            ? t('loadingLocation')
+            : t('useCurrentLocation')}
         </Button>
 
         {/* Location input fields */}
@@ -488,20 +508,83 @@ export default function CreateProjectContent() {
 
   // Special rendering for Step 7 (all contact fields together)
   const renderStep7ContactFields = () => {
-    return (
-      <div className='w-full max-w-[680px] mx-auto space-y-4'>
-        {currentQuestions.map((question) => (
+    // Separate questions by field type
+    const renderFieldForQuestion = (question: QuestionWithOptions) => {
+      const fieldName = question.fieldName;
+      const value = answers[question.id] || '';
+
+      // Phone field - use PhoneInput component
+      if (fieldName === 'phone') {
+        return (
+          <div key={question.id} className='w-full'>
+            <label className='block text-sm md:text-base text-muted-foreground mb-2 md:mb-3 font-medium'>
+              {getLocalizedText(question.question_text_nl, question.question_text_en)}
+            </label>
+            <PhoneInput
+              value={value}
+              onChange={(phoneValue) =>
+                setAnswers({ ...answers, [question.id]: phoneValue })
+              }
+              className='bg-white border-neutral-300 rounded-lg text-base md:text-xl'
+              classInput='py-7 px-4 text-base border-neutral-300 md:text-xl'
+              style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
+              error={
+                value && !isValidPhoneNumber(value) ? tAuth('phoneInvalid') : undefined
+              }
+            />
+          </div>
+        );
+      }
+
+      // Email field - use Input with email validation
+      if (fieldName === 'email') {
+        const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+        const emailError =
+          value && !emailRegex.test(value) ? tAuth('emailInvalid') : undefined;
+
+        return (
+          <div key={question.id} className='w-full'>
+            <label className='block text-sm md:text-base text-muted-foreground mb-2 md:mb-3 font-medium'>
+              {getLocalizedText(question.question_text_nl, question.question_text_en)}
+            </label>
+            <Input
+              type='email'
+              value={value}
+              onChange={(e) =>
+                setAnswers({ ...answers, [question.id]: e.target.value })
+              }
+              placeholder={getLocalizedText(question.placeholder_nl, question.placeholder_en)}
+              className='w-full placeholder:text-neutral-400 text-secondary-foreground font-medium py-4 px-4 rounded-lg md:rounded-xl h-auto md:text-lg border-neutral-300'
+              style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
+            />
+            {emailError && <p className='text-red-500 text-sm mt-1'>{emailError}</p>}
+          </div>
+        );
+      }
+
+      // Default text fields (firstName, lastName, company_name, etc.)
+      return (
+        <div key={question.id} className='w-full'>
+          <label className='block text-sm md:text-base text-muted-foreground mb-2 md:mb-3 font-medium'>
+            {getLocalizedText(question.question_text_nl, question.question_text_en)}
+          </label>
           <Input
-            key={question.id}
             type='text'
-            value={answers[question.id] || ''}
+            value={value}
             onChange={(e) =>
               setAnswers({ ...answers, [question.id]: e.target.value })
             }
             placeholder={getLocalizedText(question.placeholder_nl, question.placeholder_en)}
-            className='w-full placeholder:text-neutral-400 text-secondary-foreground font-medium py-2 px-4 rounded-lg md:py-4 md:px-6 md:rounded-xl h-auto md:text-lg'
+            className='w-full placeholder:text-neutral-400 text-secondary-foreground font-medium py-4 px-4 rounded-lg md:rounded-xl h-auto md:text-lg border-neutral-300'
+            style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
           />
-        ))}
+        </div>
+      );
+    };
+
+    return (
+      <div className='w-full max-w-[680px] mx-auto space-y-6'>
+        {currentQuestions.map((question) => renderFieldForQuestion(question))}
       </div>
     );
   };
@@ -589,9 +672,12 @@ export default function CreateProjectContent() {
               onVerify={(projectId) => {
                 // Project created successfully!
                 console.log('Project created:', projectId);
-                alert(
+                toast.success(
                   'Project succesvol ingediend! U ontvangt binnenkort offertes.'
                 );
+                // Clear form data after successful project creation
+                clearFormData();
+                localStorage.removeItem('projectSessionToken');
                 router.push('/dashboard');
               }}
               onBack={() => setShowOTPVerification(false)}
@@ -606,7 +692,7 @@ export default function CreateProjectContent() {
               {currentStep === 6 ? (
                 <>
                   <h2 className='text-2xl md:text-4xl font-normal leading-10 text-center text-foreground  mb-4 md:mb-8'>
-                    Wat is de projectlocatie?
+                    {t('locationHeading')}
                   </h2>
 
                   {/* All location fields */}
@@ -623,11 +709,11 @@ export default function CreateProjectContent() {
                       className='text-primary font-medium text-sm md:text-base flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
                       <ArrowLeft className='w-4 h-4 md:w-5 md:h-5' />
-                      Vorige
+                      {t('previous')}
                     </Button>
 
                     <p className='text-xs md:text-sm text-gray-500 text-center'>
-                      Stap {currentStep} van {totalSteps}
+                      {t('stepCounter', { current: currentStep, total: totalSteps })}
                     </p>
 
                     <Button
@@ -637,7 +723,7 @@ export default function CreateProjectContent() {
                           q.is_required ? answers[q.id]?.trim() : true
                         );
                         if (!allFilled) {
-                          alert('Vul alle velden in');
+                          toast.error(t('requiredFieldsError'));
                           return;
                         }
                         await moveToNextStep();
@@ -646,7 +732,7 @@ export default function CreateProjectContent() {
                       className='bg-primary hover:bg-primary/90 text-white font-medium text-sm px-4 py-2 md:text-base md:px-8 md:py-4 rounded-lg md:rounded-xl w-auto flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
                       size={null}
                     >
-                      {isSaving ? 'Opslaan...' : 'Volgende'}
+                      {isSaving ? t('saving') : t('next')}
                       <ArrowRight className='w-4 h-4 md:w-5 md:h-5' />
                     </Button>
                   </div>
@@ -654,7 +740,7 @@ export default function CreateProjectContent() {
               ) : currentStep === 7 ? (
                 <>
                   <h2 className='text-2xl md:text-4xl font-normal leading-10 text-center text-foreground mb-8'>
-                    Vul hier jouw gegevens in
+                    {t('contactHeading')}
                   </h2>
 
                   {/* All contact fields */}
@@ -669,22 +755,45 @@ export default function CreateProjectContent() {
                       className='text-primary font-medium text-sm md:text-base flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
                       <ArrowLeft className='w-4 h-4 md:w-5 md:h-5' />
-                      Vorige
+                      {t('previous')}
                     </Button>
 
                     <p className='text-xs md:text-sm text-gray-500 text-center'>
-                      Stap {currentStep} van {totalSteps}
+                      {t('stepCounter', { current: currentStep, total: totalSteps })}
                     </p>
 
                     <Button
                       onClick={async () => {
-                        // Validate all required fields
+                        // Validate all required fields are filled
                         const allFilled = currentQuestions.every((q) =>
                           q.is_required ? answers[q.id]?.trim() : true
                         );
                         if (!allFilled) {
-                          alert('Vul alle velden in');
+                          toast.error(t('requiredFieldsError'));
                           return;
+                        }
+
+                        // Validate phone number if present
+                        const phoneQuestion = currentQuestions.find(
+                          (q) => q.fieldName === 'phone'
+                        );
+                        if (phoneQuestion && answers[phoneQuestion.id]) {
+                          if (!isValidPhoneNumber(answers[phoneQuestion.id])) {
+                            toast.error(tAuth('phoneInvalid'));
+                            return;
+                          }
+                        }
+
+                        // Validate email if present
+                        const emailQuestion = currentQuestions.find(
+                          (q) => q.fieldName === 'email'
+                        );
+                        if (emailQuestion && answers[emailQuestion.id]) {
+                          const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+                          if (!emailRegex.test(answers[emailQuestion.id])) {
+                            toast.error(tAuth('emailInvalid'));
+                            return;
+                          }
                         }
 
                         // Save Step 7 answers
@@ -697,7 +806,7 @@ export default function CreateProjectContent() {
                       disabled={isSaving}
                       className='bg-primary hover:bg-primary/90 text-white font-medium text-sm px-4 py-2 md:text-base md:px-8 md:py-4 rounded-lg md:rounded-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
                     >
-                      {isSaving ? 'Opslaan...' : 'Ontvang offertes'}
+                      {isSaving ? t('saving') : t('otpVerification.submitButton')}
                       <ArrowRight className='w-4 h-4 md:w-5 md:h-5' />
                     </Button>
                   </div>
