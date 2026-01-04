@@ -100,6 +100,7 @@ export async function POST(request: NextRequest) {
         .insert({
           source_draft_id: draftId,
           service_category_id: draft.service_category_id,
+          subcategory_id: draft.subcategory_id,
           request_type: draft.request_type,
           execution_timing: draft.execution_timing,
           execution_date: draft.execution_timing,

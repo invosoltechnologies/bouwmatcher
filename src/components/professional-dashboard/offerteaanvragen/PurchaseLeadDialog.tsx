@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useTranslations } from 'next-intl';
 import { usePurchaseLead } from '@/lib/hooks/professional/leads';
 import { PurchaseLeadDialogData } from '@/types/models/payment.model';
 import { Loader2 } from 'lucide-react';
@@ -25,6 +26,7 @@ export default function PurchaseLeadDialog({
   onOpenChange,
   data,
 }: PurchaseLeadDialogProps) {
+  const t = useTranslations('common.proDashboard.offerteaanvragen.purchaseDialog');
   const { mutate: purchaseLead, isPending } = usePurchaseLead();
 
   if (!data) return null;
@@ -40,10 +42,10 @@ export default function PurchaseLeadDialog({
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
-            Ontgrendel contactgegevens
+            {t('title')}
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
-            Bevestig je aankoop om toegang te krijgen tot de contactinformatie van deze lead.
+            {t('description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -51,21 +53,21 @@ export default function PurchaseLeadDialog({
           {/* Lead Information */}
           <div className="bg-slate-50 rounded-lg p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Opdracht:</span>
+              <span className="text-sm text-muted-foreground">{t('assignment')}</span>
               <span className="text-sm font-medium text-foreground">
                 {data.categoryName} in {data.city}
               </span>
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Klant:</span>
+              <span className="text-sm text-muted-foreground">{t('customer')}</span>
               <span className="text-sm font-medium text-foreground">
                 {data.customerName}
               </span>
             </div>
 
             <div className="border-t border-slate-200 pt-3 flex items-center justify-between">
-              <span className="text-sm font-semibold text-foreground">Totaal te betalen:</span>
+              <span className="text-sm font-semibold text-foreground">{t('totalAmount')}</span>
               <Badge className="bg-primary text-primary-foreground px-4 py-2 text-base font-semibold rounded-2xl">
                 {formattedPrice}
               </Badge>
@@ -75,20 +77,20 @@ export default function PurchaseLeadDialog({
           {/* Payment Information */}
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">
-              Door op &ldquo;Doorgaan naar betaling&rdquo; te klikken, wordt je doorgestuurd naar een beveiligde Stripe-betaalpagina.
+              {t('paymentInfo')}
             </p>
             <ul className="space-y-1.5 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
                 <span className="text-green-600 mt-0.5">✓</span>
-                <span>Na succesvolle betaling krijg je direct toegang tot de contactgegevens</span>
+                <span>{t('benefit1')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-green-600 mt-0.5">✓</span>
-                <span>Betaal veilig met iDEAL of creditcard</span>
+                <span>{t('benefit2')}</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-green-600 mt-0.5">✓</span>
-                <span>Eenmalige betaling - geen verborgen kosten</span>
+                <span>{t('benefit3')}</span>
               </li>
             </ul>
           </div>
@@ -100,7 +102,7 @@ export default function PurchaseLeadDialog({
             onClick={() => onOpenChange(false)}
             disabled={isPending}
           >
-            Annuleren
+            {t('cancel')}
           </Button>
           <Button
             className="bg-accent text-accent-foreground hover:bg-accent/90"
@@ -110,10 +112,10 @@ export default function PurchaseLeadDialog({
             {isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Bezig met laden...
+                {t('loading')}
               </>
             ) : (
-              'Doorgaan naar betaling'
+              t('proceed')
             )}
           </Button>
         </DialogFooter>

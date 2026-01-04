@@ -185,12 +185,19 @@ const ProjectStatusDetails = ({
           {createdDate && (
             <div className='flex items-start gap-2'>
               <Calendar className='w-4 h-4 mt-0.5' />
-              <span>{t('requestedOn')} {createdDate}</span>
+              <span>
+                {t('requestedOn')} {createdDate}
+              </span>
             </div>
           )}
           {location && (
             <div className='flex items-center gap-2'>
-              <Image src='/icons/map-pin.svg' alt='Location' width={9} height={9} />
+              <Image
+                src='/icons/map-pin.svg'
+                alt='Location'
+                width={9}
+                height={9}
+              />
               <span>{location}</span>
             </div>
           )}
@@ -209,7 +216,9 @@ const ProjectStatusDetails = ({
           <span className='text-base font-medium text-secondary-foreground'>
             {t('status')}:{' '}
           </span>
-          <span className='text-base font-semibold text-primary'>{t(`statusLabel.${status}`)}</span>
+          <span className='text-base font-semibold text-primary'>
+            {t(`statusLabel.${status}`)}
+          </span>
         </div>
 
         {/* Progress Steps */}
@@ -240,7 +249,9 @@ const ProjectStatusDetails = ({
           <div
             className='absolute top-7 left-0 h-1 bg-primary rounded-full transition-all duration-500'
             style={{
-              width: `calc(${(currentStep / (steps.length - 1)) * 100}% + 12px)`,
+              width: `calc(${
+                (currentStep / (steps.length - 1)) * 100
+              }% + 80px)`,
               zIndex: 0,
             }}
           />
@@ -255,10 +266,12 @@ const ProjectStatusDetails = ({
                 style={{ zIndex: 2 }}
               >
                 <div
-                  className={`relative w-6 h-6 rounded-full flex items-center justify-center mb-4 transition-all border-2 ${
+                  className={`relative w-6 h-6 -top-4 rounded-full flex items-center justify-center transition-all border-2 ${
                     index <= currentStep
                       ? 'bg-primary border-primary ripple-active'
                       : 'bg-white border-gray-300'
+                  } ${index === 0 ? '-left-6' : ''} ${
+                    index === 3 ? 'left-6' : ''
                   }`}
                 >
                   {index < currentStep && (
