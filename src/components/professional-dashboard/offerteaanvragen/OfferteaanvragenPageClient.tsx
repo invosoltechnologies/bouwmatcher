@@ -53,10 +53,20 @@ export default function OfferteaanvragenPageClient() {
     if (dateRange?.from) {
       filtered = filtered.filter(lead => {
         const leadDate = new Date(lead.created_at);
+
+        // Set start of day for 'from' date
+        const startDate = new Date(dateRange.from!);
+        startDate.setHours(0, 0, 0, 0);
+
         if (dateRange.to) {
-          return leadDate >= dateRange.from! && leadDate <= dateRange.to;
+          // Set end of day for 'to' date
+          const endDate = new Date(dateRange.to);
+          endDate.setHours(23, 59, 59, 999);
+
+          return leadDate >= startDate && leadDate <= endDate;
         }
-        return leadDate >= dateRange.from!;
+
+        return leadDate >= startDate;
       });
     }
 
@@ -96,7 +106,7 @@ export default function OfferteaanvragenPageClient() {
         title,
         author,
         date,
-        isLocked: true, // All leads are locked by default (need payment to unlock)
+        isLocked: lead.is_locked, // Use the actual locked status from API
         hasPhotos: lead.has_photos,
         photoCount: lead.has_photos ? 3 : 0, // We don't have exact count, using placeholder
         isAvailable: true, // Lead is available if it's in the list
