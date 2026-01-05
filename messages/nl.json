@@ -1294,6 +1294,31 @@
           "cancel": "Annuleren",
           "proceed": "Doorgaan naar betaling",
           "loading": "Bezig met laden..."
+        },
+        "leadDetailsSidebar": {
+          "projectStatusTitle": "Offerteaanvraag status",
+          "currentStatus": "Projectstatus:",
+          "statusPendingQuotes": "Status bijwerken",
+          "statusSpecialistSelected": "Offerte verstuurd",
+          "statusInProgress": "Werkzaamheden gestart",
+          "statusCompleted": "Project afgerond",
+          "statusUnknown": "Project geannuleerd",
+          "noteTitle": "Let op:",
+          "noteDescription": "Er kan een review gevraagd worden als een project is afgerond.",
+          "reviewsTitle": "Hoe ontvang ik reviews van tevreden klanten?",
+          "step1Title": "Reageer binnen 8 uur",
+          "step1Description": "Neem snel contact op met de klant",
+          "step2Title": "Bel eerst, mail kort",
+          "step2Description": "Stuur een samenvatting met volgende stappen",
+          "step3Title": "Status bijwerken & review vragen",
+          "step3Description": "Houd je klanten op de hoogte van de voortgang",
+          "tipsTitle": "Tips",
+          "tip1": "Neem binnen 8 uur contact op",
+          "tip2": "Bel indien mogelijk; anders een korte e-mail",
+          "tip3": "Volg teeds op door de status bij te werken.",
+          "helpTitle": "Hulp nodig?",
+          "helpDescription": "Ons support team staat klaar om je te helpen met al je vragen over offerteaanvragen.",
+          "contactButton": "Contact opnemen"
         }
       }
     },

@@ -1296,6 +1296,31 @@
           "cancel": "Cancel",
           "proceed": "Proceed to payment",
           "loading": "Loading..."
+        },
+        "leadDetailsSidebar": {
+          "projectStatusTitle": "Quote request status",
+          "currentStatus": "Project status:",
+          "statusPendingQuotes": "Update status",
+          "statusSpecialistSelected": "Quote sent",
+          "statusInProgress": "Work started",
+          "statusCompleted": "Project completed",
+          "statusUnknown": "Project cancelled",
+          "noteTitle": "Note:",
+          "noteDescription": "A review can be requested when a project is completed.",
+          "reviewsTitle": "How do I receive reviews from satisfied customers?",
+          "step1Title": "Respond within 8 hours",
+          "step1Description": "Contact the customer quickly",
+          "step2Title": "Call first, email briefly",
+          "step2Description": "Send a summary with next steps",
+          "step3Title": "Update status & ask for review",
+          "step3Description": "Keep your customers informed of progress",
+          "tipsTitle": "Tips",
+          "tip1": "Contact within 8 hours",
+          "tip2": "Call if possible; otherwise a short email",
+          "tip3": "Always follow up by updating the status.",
+          "helpTitle": "Need help?",
+          "helpDescription": "Our support team is ready to help you with all your questions about quote requests.",
+          "contactButton": "Contact us"
         }
       }
     },

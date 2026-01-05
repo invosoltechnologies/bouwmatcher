@@ -11,6 +11,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardAction }
 import { useLeadDetails } from '@/lib/hooks/professional/leads';
 import { useAccount } from '@/lib/hooks/professional/account';
 import PurchaseLeadDialog from './PurchaseLeadDialog';
+import LeadDetailsSidebar from './LeadDetailsSidebar';
 import { PurchaseLeadDialogData } from '@/types/models/payment.model';
 
 interface LeadDetailsViewProps {
@@ -350,9 +351,9 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
           </Card>
         </div>
 
-        {/* Right Column - Empty for now (will add sidebar content later) - Hidden on mobile */}
+        {/* Right Column - Sidebar - Hidden on mobile */}
         <div className="hidden lg:block lg:w-80">
-          {/* Placeholder for future sidebar content */}
+          <LeadDetailsSidebar isLocked={is_locked} status={lead.status} />
         </div>
       </div>
 
