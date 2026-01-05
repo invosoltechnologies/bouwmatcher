@@ -292,6 +292,7 @@ export default function ProfessionalRegistrationForm() {
           country: data.country,
           businessIdType: data.businessIdType,
           businessIdFormatted: data.businessIdFormatted,
+          isFromApi: data.isFromApi,
         }),
       });
 

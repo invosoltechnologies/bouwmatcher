@@ -77,6 +77,7 @@ export async function middleware(request: NextRequest) {
     '/service',
     '/blog',
     '/create-project',
+    '/project-status', // Public project status page - accessible with token query param
   ];
 
   const isPublicRoute = publicRoutes.some(route =>

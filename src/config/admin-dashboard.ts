@@ -116,4 +116,8 @@ export const adminPageConfigs: Record<string, PageConfig> = {
     title: 'Service Categories',
     description: 'Manage service categories and subcategories',
   },
+  'service-categories-form': {
+    title: 'Category Form',
+    description: 'Create or edit a service category',
+  },
 };

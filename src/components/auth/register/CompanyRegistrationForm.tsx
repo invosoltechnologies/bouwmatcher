@@ -52,6 +52,8 @@ export interface CompanyData {
   website?: string;
   employees?: number;
   description?: string;
+  // Verification source
+  isFromApi: boolean; // true if selected from search results, false if manually entered
 }
 
 type FormMode = 'search' | 'manual';
@@ -168,7 +170,12 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
 
   // Submit form
   const onSubmit = (data: CompanyData) => {
-    onNext(data);
+    // Add isFromApi flag: true if company was selected from search results, false if manually entered
+    const dataWithVerificationSource = {
+      ...data,
+      isFromApi: searchResults.some(result => result.kvkNumber === data.kvkNumber),
+    };
+    onNext(dataWithVerificationSource);
   };
 
   return (

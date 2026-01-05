@@ -21,8 +21,8 @@ type Props = {
 // Note: The lang attribute is managed by the middleware and [locale] routing
 export default function RootLayout({ children }: Props) {
   return (
-    <html lang="nl" suppressHydrationWarning>
-      <body className={`${leagueSpartan.variable} ${montserrat.variable} antialiased`}>
+    <html lang="nl" suppressHydrationWarning suppressContentEditableWarning>
+      <body className={`${leagueSpartan.variable} ${montserrat.variable} antialiased`} suppressHydrationWarning>
         {children}
       </body>
     </html>

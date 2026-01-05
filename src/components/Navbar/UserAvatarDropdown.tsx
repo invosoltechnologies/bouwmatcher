@@ -73,7 +73,7 @@ export default function UserAvatarDropdown() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button className='flex items-center gap-2 relative rounded-full hover:opacity-80 transition-all'>
+        <button className='flex items-center gap-2 relative cursor-pointer rounded-full hover:opacity-80 transition-all'>
           <div className='w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0 overflow-hidden'>
             {avatarUrl ? (
               <Image

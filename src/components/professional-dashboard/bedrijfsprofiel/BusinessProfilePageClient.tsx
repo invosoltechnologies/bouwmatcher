@@ -36,7 +36,7 @@ export default function BusinessProfilePageClient() {
   const userRating = useMemo(() => {
     if (!ratingsData?.ratings || !data?.accountData) return null;
     // Find rating by matching the professional profile ID (not company ID)
-    const profileId = data.accountData.companyInfo.companyId;
+    const profileId = data.accountData.professionalProfileId;
     return (
       ratingsData.ratings.find(
         (r) => r.rated_by_profile_id === profileId
@@ -71,7 +71,6 @@ export default function BusinessProfilePageClient() {
         onEditClick={() => setIsEditModalOpen(true)}
         roleInCompany={accountData.roleInCompany}
         onLogoClick={() => setIsLogoModalOpen(true)}
-        onRatingClick={() => setIsRatingModalOpen(true)}
         ratingSummary={ratingsLoading ? undefined : ratingsData?.summary}
         userRating={userRating?.rating || null}
       />

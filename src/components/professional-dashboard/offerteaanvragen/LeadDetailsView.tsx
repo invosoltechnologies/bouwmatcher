@@ -3,12 +3,15 @@
 import { useState } from 'react';
 import { Lock, Image as ImageIcon } from 'lucide-react';
 import { format } from 'date-fns';
-import { nl } from 'date-fns/locale';
+import { nl, enUS } from 'date-fns/locale';
+import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardAction } from '@/components/ui/card';
 import { useLeadDetails } from '@/lib/hooks/professional/leads';
+import { useAccount } from '@/lib/hooks/professional/account';
 import PurchaseLeadDialog from './PurchaseLeadDialog';
+import LeadDetailsSidebar from './LeadDetailsSidebar';
 import { PurchaseLeadDialogData } from '@/types/models/payment.model';
 
 interface LeadDetailsViewProps {
@@ -17,16 +20,23 @@ interface LeadDetailsViewProps {
 }
 
 export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProps) {
+  const t = useTranslations('common.proDashboard.offerteaanvragen.leadDetails');
+  const locale = useLocale();
+  const dateLocale = locale === 'nl' ? nl : enUS;
   const { data, isLoading, error } = useLeadDetails(leadId);
+  const { data: accountData } = useAccount();
   const [showPurchaseDialog, setShowPurchaseDialog] = useState(false);
   const [purchaseDialogData, setPurchaseDialogData] = useState<PurchaseLeadDialogData | null>(null);
+
+  // Check if account is verified
+  const isVerified = accountData?.accountData?.accountStatus?.status === 'verified';
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Lead details laden...</p>
+          <p className="text-muted-foreground">{t('loading')}</p>
         </div>
       </div>
     );
@@ -39,7 +49,7 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
 
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-center max-w-md">
+        <div className="text-center max-w-md px-4">
           {isVerificationError ? (
             <>
               <div className="mb-4">
@@ -47,26 +57,26 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
                   <Lock className="w-8 h-8 text-yellow-600" />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
-                  Verificatie vereist
+                  {t('verificationRequired')}
                 </h3>
                 <p className="text-muted-foreground mb-4">
-                  Je moet geverifieerd zijn om lead details te bekijken. Voltooi de verificatie om toegang te krijgen tot interessante aanvragen.
+                  {t('verificationMessage')}
                 </p>
               </div>
-              <div className="flex gap-3 justify-center">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button onClick={onClose} variant="outline">
-                  Terug naar overzicht
+                  {t('backToOverview')}
                 </Button>
                 <Button onClick={() => window.location.href = '/pro-dashboard/profiel'}>
-                  Verificatie voltooien
+                  {t('verificationButton')}
                 </Button>
               </div>
             </>
           ) : (
             <>
-              <p className="text-destructive mb-2">Er is een fout opgetreden</p>
+              <p className="text-destructive mb-2">{t('error')}</p>
               <Button onClick={onClose} variant="outline">
-                Terug naar overzicht
+                {t('backToOverview')}
               </Button>
             </>
           )}
@@ -76,8 +86,8 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
   }
 
   const { lead, photos, is_locked } = data;
-  const categoryName = lead.service_categories?.name_nl || 'Project';
-  const city = lead.city || 'Onbekende locatie';
+  const categoryName = (locale === 'nl' ? lead.service_categories?.name_nl : lead.service_categories?.name_en) || 'Project';
+  const city = lead.city || (locale === 'nl' ? 'Onbekende locatie' : 'Unknown location');
 
   // Format price from backend (already calculated based on request type)
   const formattedPrice = lead.lead_price
@@ -105,42 +115,44 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
         <Card>
           <CardContent>
             <h3 className="font-semibold text-foreground mb-3">
-              Wil je reageren op deze opdracht?
+              {t('unlockWarningTitle')}
             </h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Ontgrendel de contactgegevens door je account te verifiëren en het toegangstarief te betalen.
+              {t('unlockWarningDescription')}
             </p>
             <ul className="space-y-2 mb-4">
               <li className="flex items-start gap-2 text-sm text-muted-foreground">
                 <span className="text-green-600 mt-0.5">✓</span>
-                <span>Bevestig je e-mail en bedrijfsgegevens.</span>
+                <span>{t('unlockStep1')}</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-muted-foreground">
                 <span className="text-green-600 mt-0.5">✓</span>
-                <span>Betaal voor het aangegeven tarief per opdracht – geen verborgen kosten.</span>
+                <span>{t('unlockStep2')}</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-muted-foreground">
                 <span className="text-green-600 mt-0.5">✓</span>
-                <span>Na betaling zie je de contactgegevens en kun je meteen reageren.</span>
+                <span>{t('unlockStep3')}</span>
               </li>
             </ul>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 className="bg-accent text-accent-foreground hover:bg-accent/90 px-6 rounded-lg"
                 onClick={handleUnlockClick}
               >
-                Ontgrendel contactgegevens
+                {t('unlockButton')}
               </Button>
-              <Button variant="outline" className="px-6 rounded-lg text-primary">
-                Account verifiëren
-              </Button>
+              {!isVerified && (
+                <Button variant="outline" className="px-6 rounded-lg text-primary">
+                  {t('verifyAccountButton')}
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
       )}
 
-      {/* Two Column Layout */}
-      <div className="flex gap-6">
+      {/* Two Column Layout - Responsive */}
+      <div className="flex flex-col lg:flex-row gap-6">
         {/* Left Column - Main Content */}
         <div className="flex-1 space-y-4">
           {/* Combined Card: Header + Request Details */}
@@ -148,8 +160,8 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
             <CardHeader className="border-b border-b-slate-200">
               <div className="flex items-center gap-2">
                 {is_locked && <Lock className="h-4 w-4 text-muted-foreground" />}
-                <CardTitle className="text-xl">
-                  {categoryName} in {city}
+                <CardTitle className="text-lg sm:text-xl">
+                  {categoryName} {locale === 'nl' ? 'in' : 'in'} {city}
                 </CardTitle>
               </div>
               <CardDescription>
@@ -165,54 +177,44 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
             </CardHeader>
 
             <CardContent>
-              <h3 className="font-semibold text-foreground mb-4">Opdracht</h3>
+              <h3 className="font-semibold text-foreground mb-4">{t('requestTitle')}</h3>
 
               <div className="space-y-4">
                 {/* Description */}
                 <div>
-                  <p className="text-sm font-medium text-foreground mb-2">Omschrijving:</p>
+                  <p className="text-sm font-medium text-foreground mb-2">{t('description')}</p>
                   <p className="text-sm text-muted-foreground">
-                    {lead.description || 'Ik ben op zoek naar gevelreparatie, reiniging en voegen.'}
+                    {lead.description || (locale === 'nl' ? 'Geen omschrijving beschikbaar' : 'No description available')}
                   </p>
                 </div>
 
                 {/* Info Grid - Using Badge/Gray Background Design */}
                 <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-muted-foreground min-w-[140px]">Categorie:</span>
-                    <Badge variant="secondary" className="bg-muted text-muted-foreground font-normal">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <span className="text-sm text-muted-foreground min-w-[140px]">{t('category')}</span>
+                    <Badge variant="secondary" className="bg-muted text-muted-foreground font-normal w-fit">
                       {categoryName}
                     </Badge>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-muted-foreground min-w-[140px]">Soort aanvraag:</span>
-                    <Badge variant="secondary" className="bg-muted text-muted-foreground font-normal capitalize">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <span className="text-sm text-muted-foreground min-w-[140px]">{t('requestType')}</span>
+                    <Badge variant="secondary" className="bg-muted text-muted-foreground font-normal capitalize w-fit">
                       {lead.request_type}
                     </Badge>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-muted-foreground min-w-[140px]">Uitvoeringsdatum:</span>
-                    <Badge variant="secondary" className="bg-muted text-muted-foreground font-normal">
-                      {lead.execution_timing === 'within_1_month' && 'Binnen 1 maand'}
-                      {lead.execution_timing === 'within_3_months' && 'Binnen 3 maanden'}
-                      {lead.execution_timing === 'within_6_months' && 'Binnen 6 maanden'}
-                      {!lead.execution_timing && 'Binnen 1 maand'}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <span className="text-sm text-muted-foreground min-w-[140px]">{t('executionTiming')}</span>
+                    <Badge variant="secondary" className="bg-muted text-muted-foreground font-normal w-fit">
+                      {lead.execution_timing ? t(`executionTimings.${lead.execution_timing}`) : t('executionTimings.within_1_month')}
                     </Badge>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-muted-foreground min-w-[140px]">Type:</span>
-                    <Badge variant="secondary" className="bg-muted text-muted-foreground font-normal">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <span className="text-sm text-muted-foreground min-w-[140px]">{t('type')}</span>
+                    <Badge variant="secondary" className="bg-muted text-muted-foreground font-normal w-fit">
                       {categoryName}
-                    </Badge>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-muted-foreground min-w-[140px]">Oppervlakte gevel:</span>
-                    <Badge variant="secondary" className="bg-muted text-muted-foreground font-normal">
-                      40-70 m²
                     </Badge>
                   </div>
                 </div>
@@ -223,10 +225,10 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
           {/* Remark Section */}
           <Card>
             <CardContent>
-              <h3 className="font-semibold text-foreground mb-3">Opmerking</h3>
+              <h3 className="font-semibold text-foreground mb-3">{t('remarkTitle')}</h3>
               <div className="bg-slate-50 rounded-lg p-3">
                 <p className="text-sm text-muted-foreground">
-                  {lead.description || 'We willen een verklaring in de badkamer laten herstellen.'}
+                  {lead.description || (locale === 'nl' ? 'Geen opmerking beschikbaar' : 'No remark available')}
                 </p>
               </div>
             </CardContent>
@@ -235,7 +237,7 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
           {/* Contact Information - Locked/Unlocked */}
           <Card>
             <CardContent>
-              <h3 className="font-semibold text-foreground mb-4">Contactinformatie</h3>
+              <h3 className="font-semibold text-foreground mb-4">{t('contactInfoTitle')}</h3>
 
               {is_locked && (
                 <div
@@ -244,44 +246,44 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
                 >
                   <Lock className="h-4 w-4 text-foreground mt-0.5 flex-shrink-0" />
                   <p className="text-sm text-foreground">
-                    Contactgegevens verborgen – ontgrendel om te bekijken.
+                    {t('contactLocked')}
                   </p>
                 </div>
               )}
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Naam:</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('name')}</p>
                   <p className="text-sm font-medium text-foreground">
                     {lead.first_name}, {lead.last_name}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Telefoon:</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('phone')}</p>
                   <p className="text-sm font-medium text-foreground">{lead.phone}</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">E-mail:</p>
-                  <p className="text-sm font-medium text-foreground">{lead.email}</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('email')}</p>
+                  <p className="text-sm font-medium text-foreground break-all">{lead.email}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Adres:</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('address')}</p>
                   <p className="text-sm font-medium text-foreground">
                     {lead.street_name || lead.street_number}
                   </p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Postcode:</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('postcode')}</p>
                   <p className="text-sm font-medium text-foreground">{lead.postcode}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Plaats:</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('city')}</p>
                   <p className="text-sm font-medium text-foreground">{lead.city}</p>
                 </div>
               </div>
@@ -291,17 +293,17 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
           {/* Photos Section */}
           <Card>
             <CardContent>
-              <h3 className="font-semibold text-foreground mb-4">Foto&apos;s</h3>
+              <h3 className="font-semibold text-foreground mb-4">{t('photosTitle')}</h3>
 
               {photos.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
                   <ImageIcon className="h-12 w-12 text-muted-foreground mb-2" />
                   <p className="text-sm text-muted-foreground">
-                    Er zijn geen foto&apos;s toegevoegd
+                    {t('noPhotos')}
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {photos.map((photo) => (
                     <div
                       key={photo.id}
@@ -323,25 +325,25 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
           {/* Offer Details */}
           <Card>
             <CardContent>
-              <h3 className="font-semibold text-foreground mb-4">Offerte details</h3>
+              <h3 className="font-semibold text-foreground mb-4">{t('offerDetailsTitle')}</h3>
 
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Offerte ID:</span>
-                  <span className="text-sm font-medium text-foreground">
+                  <span className="text-sm text-muted-foreground">{t('offerId')}</span>
+                  <span className="text-sm font-medium text-foreground break-all">
                     {lead.id.slice(0, 13).toUpperCase()}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Datum:</span>
+                  <span className="text-sm text-muted-foreground">{t('date')}</span>
                   <span className="text-sm font-medium text-foreground">
-                    {format(new Date(lead.created_at), 'd MMM yyyy', { locale: nl })}
+                    {format(new Date(lead.created_at), 'd MMM yyyy', { locale: dateLocale })}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Tijdstip:</span>
+                  <span className="text-sm text-muted-foreground">{t('time')}</span>
                   <span className="text-sm font-medium text-foreground">
-                    {format(new Date(lead.created_at), 'HH:mm', { locale: nl })}
+                    {format(new Date(lead.created_at), 'HH:mm', { locale: dateLocale })}
                   </span>
                 </div>
               </div>
@@ -349,9 +351,9 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
           </Card>
         </div>
 
-        {/* Right Column - Empty for now (will add sidebar content later) */}
-        <div className="w-80">
-          {/* Placeholder for future sidebar content */}
+        {/* Right Column - Sidebar - Hidden on mobile */}
+        <div className="hidden lg:block lg:w-80">
+          <LeadDetailsSidebar isLocked={is_locked} status={lead.status} />
         </div>
       </div>
 

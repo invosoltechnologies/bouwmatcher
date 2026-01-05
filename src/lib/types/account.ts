@@ -90,6 +90,7 @@ export interface AccountData {
   certificates: Certificate[];
   profilePictureUrl: string | null;
   profileAnswers: Record<string, string> | null;
+  professionalProfileId: string;
 }
 
 // Frontend display types

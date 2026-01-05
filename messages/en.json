@@ -176,7 +176,10 @@
       "oauthFailed": "OAuth authentication failed. Please try again.",
       "profileCreationFailed": "Could not create profile. Please contact support.",
       "oauthCallbackFailed": "Something went wrong during login. Please try again.",
-      "genericError": "An error occurred during login."
+      "genericError": "An error occurred during login.",
+      "logoutSuccess": "Successfully logged out",
+      "logoutError": "Could not log out. Please try again.",
+      "loggingOut": "Logging out..."
     },
     "register": {
       "steps": {
@@ -651,10 +654,8 @@
       "section1List8": "Services: the matching services offered by Bouwmatcher between Users and Suppliers.",
       "section1List9": "Partner: companies or organizations that enter into a cooperation with Bouwmatcher outside the supplier agreement.",
       "section1Outro": "Review: an evaluation of a Supplier by a User.",
-
       "section2Title": "2. Subject of the Contract",
       "section2Para1": "Bouwmatcher provides an online platform that acts as an intermediary between Users and Suppliers. Bouwmatcher is not a party to the agreements concluded between Users and Suppliers and bears no responsibility for their execution, compliance, or quality. Bouwmatcher does not guarantee the number of quotations, the quality of Suppliers, or the final execution of works.",
-
       "section3Title": "3. Registration and Account Management",
       "section3List1": "A User registers by submitting a Quotation Request.",
       "section3List2": "A Supplier registers via an Order Form or through the Extranet.",
@@ -666,7 +667,6 @@
       "section4List2": "Quotation Requests are submitted with a genuine intent to purchase;",
       "section4List3": "requests are not used solely to compare competitors’ offers without purchase intent.",
       "section4Para1": "The User is liable for the accuracy of all data provided.",
-
       "section5Title": "5. Obligations of Suppliers",
       "section5Intro": "The Supplier commits to:",
       "section5List1": "following up on Quotation Requests within 48 hours of receipt;",
@@ -675,7 +675,6 @@
       "section5List4": "communicating respectfully and professionally with Users;",
       "section5List5": "ensuring the quality and execution of their services.",
       "section5Para1": "Bouwmatcher may impose sanctions or suspend accounts in case of repeated complaints or violations of these terms.",
-
       "section6Title": "6. Fees and Payment",
       "section6List1": "The services of Bouwmatcher are free of charge for Users.",
       "section6List2": "Suppliers pay a fee via Credit Packs or invoicing.",
@@ -683,7 +682,6 @@
       "section6List4": "Invoices are payable via direct debit or automatic collection, unless otherwise agreed in writing.",
       "section6List5": "In case of non-payment, Bouwmatcher may suspend access to the Extranet.",
       "section6List6": "Late payments incur a default interest of 1% per month, plus a fixed compensation of 15% of the outstanding amount (minimum €50).",
-
       "section7Title": "7. Complaints and Return Policy",
       "section7Para1": "A Supplier may submit a complaint within ten (10) calendar days after receiving a Quotation Request via the Extranet. Complaints are only valid if:",
       "section7List1": "the User has no genuine purchase intent;",
@@ -691,41 +689,32 @@
       "section7List3": "the request falls outside the pre-agreed criteria;",
       "section7List4": "the request is identical to one received within the previous two weeks.",
       "section7Para2": "Bouwmatcher decides autonomously and definitively on the validity of a complaint. Approved compensation is granted exclusively in the form of credits.",
-
       "section8Title": "8. Reviews and Feedback",
       "section8List1": "Reviews must be honest, respectful, and based on personal experience.",
       "section8List2": "Bouwmatcher may remove reviews that are inappropriate, misleading, or offensive.",
       "section8List3": "Posting false or manipulated reviews is prohibited.",
       "section8List4": "Suppliers may submit reasoned requests for review removal.",
-
       "section9Title": "9. Intellectual Property",
       "section9List1": "All intellectual property rights related to the platform, software, logos, texts, images, and designs belong exclusively to Bouwmatcher.",
       "section9List2": "Use, reproduction, or distribution without prior written consent is prohibited.",
       "section9Para1": "Users and Suppliers retain rights to their own content but grant Bouwmatcher a limited, non-exclusive license to use it for promotional and publication purposes.",
-
       "section10Title": "10. Liability",
       "section10List1": "Bouwmatcher is not liable for damages arising from agreements or transactions between Users and Suppliers.",
       "section10List2": "Bouwmatcher does not guarantee continuity, a minimum number of quotations, or service quality.",
       "section10Para1": "Internet outages, viruses, technical failures, or data errors are not covered by Bouwmatcher’s liability.",
-
       "section11Title": "11. Force Majeure",
       "section11Para1": "Bouwmatcher cannot be held liable for failures caused by circumstances beyond its reasonable control, including but not limited to network failures, strikes, natural disasters, pandemics, or governmental measures.",
-
       "section12Title": "12. Duration, Suspension, and Termination",
       "section12List1": "Bouwmatcher may terminate the Contract with immediate effect in cases of non-payment, fraud, abuse, or breach of these terms.",
       "section12List2": "Paid amounts are non-refundable.",
       "section12List3": "Suppliers may terminate their contract with a notice period of two (2) weeks.",
       "section12Para1": "Bouwmatcher may temporarily or permanently suspend accounts in case of suspected fraud or abuse.",
-
       "section13Title": "13. Protection of Personal Data",
       "section13Para1": "Bouwmatcher processes personal data in accordance with its Privacy Policy and Cookie Policy published on the website. Users and Suppliers have the right to access, correct, and delete their data. Complaints may be filed with the Data Protection Authority.",
-
       "section14Title": "14. Amendments to the Terms",
       "section14Para1": "Bouwmatcher reserves the right to amend these General Terms and Conditions at any time. Updated terms are binding from the date of publication. Continued use of the platform constitutes acceptance of the amended terms.",
-
       "section15Title": "15. Governing Law and Jurisdiction",
       "section15Para1": "These General Terms and Conditions are governed exclusively by Belgian law. Any disputes fall under the exclusive jurisdiction of the courts of Leuven. Parties agree to first attempt an amicable settlement.",
-
       "section16Title": "16. Contact Details"
     },
     "cookies": {
@@ -741,16 +730,76 @@
       "section3Title": "3. Overview of cookies we use",
       "section3Para1": "For a complete overview of all cookies we use, you can visit your cookie preferences. Here you can also change or withdraw your consent.",
       "cookieTable": {
-        "header": ["Cookie", "Type", "Provider", "Purpose / Function", "Retention Period"],
-        "phpsessid": ["PHPSESSID", "Functional", "Bouwmatcher", "Keeps track of session information so forms work correctly.", "Session"],
-        "cookieConsent": ["CookieConsent", "Functional", "Bouwmatcher", "Remembers your cookie settings.", "1 year"],
-        "ga": ["_ga", "Analytical", "Google Analytics", "Analyzes visitor behavior and website usage.", "2 years"],
-        "gid": ["_gid", "Analytical", "Google Analytics", "Analyzes visitor behavior and website usage.", "24 hours"],
-        "fbp": ["_fbp", "Marketing", "Facebook / Meta", "Tracks which pages you visit for statistics.", "3 months"],
-        "fr": ["fr", "Marketing", "Facebook / Meta", "Shows relevant advertisements on Facebook & Instagram.", "3 months"],
-        "liSugr": ["li_sugr", "Marketing", "LinkedIn", "Browser ID cookie for LinkedIn Ads.", "90 days"],
-        "bcookie": ["bcookie", "Marketing", "LinkedIn", "Used for advertisement targeting.", "1 year"],
-        "uetvid": ["_uetvid", "Marketing", "Microsoft Ads", "Helps tailor advertisements to your interests.", "13 months"]
+        "header": [
+          "Cookie",
+          "Type",
+          "Provider",
+          "Purpose / Function",
+          "Retention Period"
+        ],
+        "phpsessid": [
+          "PHPSESSID",
+          "Functional",
+          "Bouwmatcher",
+          "Keeps track of session information so forms work correctly.",
+          "Session"
+        ],
+        "cookieConsent": [
+          "CookieConsent",
+          "Functional",
+          "Bouwmatcher",
+          "Remembers your cookie settings.",
+          "1 year"
+        ],
+        "ga": [
+          "_ga",
+          "Analytical",
+          "Google Analytics",
+          "Analyzes visitor behavior and website usage.",
+          "2 years"
+        ],
+        "gid": [
+          "_gid",
+          "Analytical",
+          "Google Analytics",
+          "Analyzes visitor behavior and website usage.",
+          "24 hours"
+        ],
+        "fbp": [
+          "_fbp",
+          "Marketing",
+          "Facebook / Meta",
+          "Tracks which pages you visit for statistics.",
+          "3 months"
+        ],
+        "fr": [
+          "fr",
+          "Marketing",
+          "Facebook / Meta",
+          "Shows relevant advertisements on Facebook & Instagram.",
+          "3 months"
+        ],
+        "liSugr": [
+          "li_sugr",
+          "Marketing",
+          "LinkedIn",
+          "Browser ID cookie for LinkedIn Ads.",
+          "90 days"
+        ],
+        "bcookie": [
+          "bcookie",
+          "Marketing",
+          "LinkedIn",
+          "Used for advertisement targeting.",
+          "1 year"
+        ],
+        "uetvid": [
+          "_uetvid",
+          "Marketing",
+          "Microsoft Ads",
+          "Helps tailor advertisements to your interests.",
+          "13 months"
+        ]
       },
       "section4Title": "4. Managing or deleting cookies",
       "section4Para1": "You can adjust your preferences at any time via the cookie settings at the bottom of our website.",
@@ -767,9 +816,29 @@
     "saving": "Saving...",
     "loading": "Loading...",
     "locationHeading": "What is the project location?",
+    "contactHeading": "Fill in your details",
     "useCurrentLocation": "Use my current location",
     "loadingLocation": "Fetching location...",
-    "errorLoadingQuestions": "An error occurred while loading the questions."
+    "errorLoadingQuestions": "An error occurred while loading the questions.",
+    "otpVerification": {
+      "heading": "Verify your phone number",
+      "description": "An SMS with a 6-digit code has just been sent to",
+      "enterCode": "Enter the code",
+      "resendCode": "Did not receive the code?",
+      "resendButton": "Resend",
+      "submitButton": "Receive quotes",
+      "previousButton": "Previous",
+      "resendingCode": "Sending code...",
+      "submitting": "Submitting...",
+      "invalidCode": "Invalid code. Please try again.",
+      "codeSent": "Code sent!",
+      "verificationFailed": "Verification failed. Please try again.",
+      "resendTimer": "Resend in {seconds} seconds",
+      "codeExpired": "Code expired. Request a new code.",
+      "invalidPhone": "Invalid phone number",
+      "verificationSuccess": "Phone number verified!"
+    },
+    "requiredFieldsError": "Fill in all fields"
   },
   "common": {
     "topbar": {
@@ -1227,6 +1296,31 @@
           "cancel": "Cancel",
           "proceed": "Proceed to payment",
           "loading": "Loading..."
+        },
+        "leadDetailsSidebar": {
+          "projectStatusTitle": "Quote request status",
+          "currentStatus": "Project status:",
+          "statusPendingQuotes": "Update status",
+          "statusSpecialistSelected": "Quote sent",
+          "statusInProgress": "Work started",
+          "statusCompleted": "Project completed",
+          "statusUnknown": "Project cancelled",
+          "noteTitle": "Note:",
+          "noteDescription": "A review can be requested when a project is completed.",
+          "reviewsTitle": "How do I receive reviews from satisfied customers?",
+          "step1Title": "Respond within 8 hours",
+          "step1Description": "Contact the customer quickly",
+          "step2Title": "Call first, email briefly",
+          "step2Description": "Send a summary with next steps",
+          "step3Title": "Update status & ask for review",
+          "step3Description": "Keep your customers informed of progress",
+          "tipsTitle": "Tips",
+          "tip1": "Contact within 8 hours",
+          "tip2": "Call if possible; otherwise a short email",
+          "tip3": "Always follow up by updating the status.",
+          "helpTitle": "Need help?",
+          "helpDescription": "Our support team is ready to help you with all your questions about quote requests.",
+          "contactButton": "Contact us"
         }
       }
     },
@@ -1271,12 +1365,166 @@
         "service-categories": {
           "title": "Service Categories",
           "description": "Manage service categories and subcategories"
+        },
+        "service-categories-form": {
+          "title": "Category Form",
+          "description": "Create or edit a service category"
+        }
+      },
+      "categoryForm": {
+        "createTitle": "Add New Category",
+        "editTitle": "Edit Category",
+        "createDescription": "Create a new service category with subcategories and questions",
+        "editDescription": "Modify the service category details",
+        "step1": {
+          "title": "Category Information",
+          "description": "Enter the basic information for the new service category",
+          "categoryNameNl": "Category Name (Dutch)",
+          "categoryNameNlPlaceholder": "E.g. Demolition Work",
+          "categoryNameEn": "Category Name (English)",
+          "categoryNameEnPlaceholder": "E.g. Demolition",
+          "slug": "Slug",
+          "slugPlaceholder": "demolition-work",
+          "slugHelp": "Auto-generated, but can be edited. Must not contain spaces.",
+          "rootQuestionTitle": "Root Question",
+          "rootQuestionDescription": "This question will be shown first to users, with subcategories as answer options",
+          "rootQuestionNl": "Root Question (Dutch)",
+          "rootQuestionEn": "Root Question (English)",
+          "rootQuestionNlPlaceholder": "E.g. What type of demolition work are you looking for?",
+          "rootQuestionEnPlaceholder": "E.g. What type of demolition work are you looking for?",
+          "icon": "Icon (optional)",
+          "iconUpload": "Upload icon",
+          "iconFormats": "PNG, JPG or SVG (max 2MB)",
+          "iconRemove": "Remove",
+          "iconCurrent": "Current icon",
+          "required": "Required field",
+          "fillAllFields": "Fill in all required fields",
+          "categoryUpdated": "Category updated",
+          "categoryCreated": "Category created",
+          "slugExists": "A category with this slug already exists. Choose a different slug.",
+          "error": "An error occurred. Please try again.",
+          "fileTypeError": "Only PNG, JPG and SVG files are allowed",
+          "fileSizeError": "File is too large. Maximum size is 2MB"
+        },
+        "step2": {
+          "title": "Subcategories & Questions",
+          "description": "Add subcategories with related questions for users",
+          "nameNl": "Name (Dutch)",
+          "nameNlPlaceholder": "E.g. Complete demolition house/building",
+          "nameEn": "Name (English)",
+          "nameEnPlaceholder": "E.g. Complete demolition house/building",
+          "slug": "Slug",
+          "slugHelp": "Auto-generated, but editable. Must not contain spaces.",
+          "descriptionNl": "Description (Dutch)",
+          "descriptionNlPlaceholder": "Optional description...",
+          "descriptionEn": "Description (English)",
+          "descriptionEnPlaceholder": "Optional description...",
+          "priceB2C": "Price B2C (Private)",
+          "priceB2B": "Price B2B (Business)",
+          "questions": "Questions for this subcategory",
+          "questionsDescription": "Add questions that users must answer for this service",
+          "addQuestion": "Add question",
+          "addFirstQuestion": "Add first question",
+          "noQuestionsYet": "No questions added yet",
+          "addSubcategory": "Add subcategory",
+          "newSubcategory": "New subcategory",
+          "question": "Question",
+          "questionTextNl": "Question text (Dutch)",
+          "questionTextNlPlaceholder": "E.g. How large is the project?",
+          "questionTextEn": "Question text (English)",
+          "questionTextEnPlaceholder": "E.g. How large is the project?",
+          "questionType": "Type",
+          "radio": "Radio (single choice)",
+          "checkbox": "Checkbox (multiple choices)",
+          "text": "Text input",
+          "textarea": "Text area",
+          "select": "Dropdown",
+          "date": "Date",
+          "required": "Required field",
+          "answerOptions": "Answer options",
+          "addOption": "Add option",
+          "labelNl": "Label NL",
+          "labelEn": "Label EN",
+          "clickToAdd": "Click \"Add option\" to add answer options",
+          "minOneSubcategory": "Add at least one subcategory",
+          "fillAllRequired": "Fill in all required fields",
+          "pricesGreaterThanZero": "Prices must be greater than 0",
+          "minOneQuestion": "Add at least one question",
+          "minTwoOptions": "Add at least 2 options",
+          "fillBothLabels": "Fill in both labels",
+          "allCreated": "All subcategories created successfully!",
+          "subcategoryExists": "A subcategory with this slug already exists. Change the slug.",
+          "savingError": "An error occurred while saving. Please try again.",
+          "saveCategory": "Save category",
+          "subcategoryCard": {
+            "newSubcategory": "New subcategory",
+            "question": "question",
+            "questions": "questions",
+            "nameNl": "Name (Dutch)",
+            "nameNlPlaceholder": "E.g. Complete demolition house/building",
+            "nameEn": "Name (English)",
+            "nameEnPlaceholder": "E.g. Complete demolition house/building",
+            "slug": "Slug",
+            "slugPlaceholder": "complete-demolition-house-building",
+            "slugHelp": "Auto-generated, but editable. Must not contain spaces.",
+            "descriptionNl": "Description (Dutch)",
+            "descriptionNlPlaceholder": "Optional description...",
+            "descriptionEn": "Description (English)",
+            "descriptionEnPlaceholder": "Optional description...",
+            "priceB2C": "Price B2C (Private)",
+            "priceB2B": "Price B2B (Business)",
+            "questionsTitle": "Questions for this subcategory",
+            "questionsDescription": "Add questions that users must answer for this service",
+            "addQuestion": "Add question",
+            "noQuestions": "No questions added yet",
+            "addFirstQuestion": "Add first question"
+          },
+          "questionFieldset": {
+            "question": "Question",
+            "questionTextNl": "Question text (Dutch)",
+            "questionTextNlPlaceholder": "E.g. How large is the project?",
+            "questionTextEn": "Question text (English)",
+            "questionTextEnPlaceholder": "E.g. How large is the project?",
+            "type": "Type",
+            "typeRadio": "Radio (single choice)",
+            "typeCheckbox": "Checkbox (multiple choices)",
+            "typeText": "Text input",
+            "typeTextarea": "Text area",
+            "typeSelect": "Dropdown",
+            "typeDate": "Date",
+            "required": "Required field",
+            "optionsTitle": "Answer options",
+            "addOption": "Add option",
+            "labelNl": "Label NL",
+            "labelEn": "Label EN",
+            "noOptions": "Click \"Add option\" to add answer options"
+          }
+        },
+        "navigation": {
+          "cancel": "Cancel",
+          "previous": "Previous",
+          "next": "Next",
+          "complete": "Complete",
+          "saving": "Saving...",
+          "loading": "Loading..."
+        },
+        "progress": {
+          "categoryInfo": "Category information",
+          "subcategoriesQuestions": "Subcategories & Questions"
         }
       },
       "stats": {
         "totalProfessionals": "Total Professionals",
+        "newLeads": "New leads (30d)",
+        "newLeadsChange": "+23 versus previous month",
         "verificationRate": "Verification Rate",
+        "verificationRateDetails": "150 out of 175 approved",
         "averageRating": "Average Rating",
+        "averageRatingDetails": "From 1,234 reviews",
+        "blockedProfessionals": "Blocked professionals",
+        "blockedProfessionalsChange": "+1 this week",
+        "moderationQueue": "Moderation queue",
+        "moderationQueueDetails": "Needs attention",
         "activeProjects": "Active Projects",
         "pendingVerifications": "Pending Verifications",
         "serviceCategories": "Service Categories"
@@ -1289,7 +1537,8 @@
         "status": "Status",
         "rating": "Rating",
         "registered": "Registered",
-        "actions": "Actions"
+        "actions": "Actions",
+        "searchPlaceholder": "Search..."
       },
       "status": {
         "verified": "Verified",
@@ -1299,6 +1548,7 @@
         "rejected": "Rejected"
       },
       "viewProfile": "View",
+      "verify": "Verify",
       "viewAllProfessionals": "View all professionals",
       "recentReviews": "Recent Reviews",
       "recentReviewsDesc": "Recently added reviews",
@@ -1309,7 +1559,13 @@
       "inactive": "Inactive",
       "professional": "professional",
       "professionals": "professionals",
-      "viewAllCategories": "View all categories"
+      "viewAllCategories": "View all categories",
+      "addCategory": "Add Category",
+      "popular": "Popular",
+      "lessUsed": "Less Used",
+      "categoryEdit": "Edit",
+      "categoryDelete": "Delete",
+      "viewAll": "View all"
     },
     "footer": {
       "description": "The trusted platform for matching builders and projects.",
@@ -1333,6 +1589,70 @@
       "cookies": "Cookie policy",
       "disclaimer": "Disclaimer",
       "companyNumber": "Company number - BE 1024.216.268"
+    },
+    "projectStatus": {
+      "title": "What is the current status of your project?",
+      "loading": "Loading project details...",
+      "status": "Status",
+      "requestedOn": "Requested on",
+      "errorLoadingProject": "Failed to load project details",
+      "noProjectFound": "No project found. Please check the link and try again.",
+      "steps": {
+        "waiting": "Waiting for quotes",
+        "selected": "Specialist selected",
+        "inProgress": "In progress",
+        "completed": "Project completed"
+      },
+      "updateStatus": "Update project status",
+      "statuses": {
+        "pending_quotes": {
+          "label": "Waiting for quotes",
+          "description": "I am waiting for quotes from specialists"
+        },
+        "specialist_selected": {
+          "label": "Specialist selected",
+          "description": "I have selected a specialist"
+        },
+        "in_progress": {
+          "label": "In progress",
+          "description": "The work has started"
+        },
+        "completed": {
+          "label": "Project completed",
+          "description": "The project is completed"
+        }
+      },
+      "buttons": {
+        "back": "Back",
+        "updateStatus": "Update status",
+        "updating": "Updating..."
+      },
+      "validation": {
+        "selectStatus": "Please select a status",
+        "invalidToken": "Invalid access token"
+      },
+      "errors": {
+        "failedToUpdate": "Failed to update project status"
+      },
+      "messages": {
+        "success": "Project status updated successfully!"
+      },
+      "alert": {
+        "title": "Check your email for quotes from specialists",
+        "description": "Local specialists will contact you by email. Compare their quotes to solve your problem faster.",
+        "point1": {
+          "title": "New quotes arrive via email.",
+          "description": "Check your inbox for responses from specialists to your request."
+        },
+        "point2": {
+          "title": "Don't see anything? Check Spam/Promotions and search for \"Bouwmatcher\".",
+          "description": "Add senders to your contacts."
+        },
+        "point3": {
+          "title": "Quick response = better offers.",
+          "description": "Ask questions or provide your availability. Quick responses help with lower prices and earlier scheduling."
+        }
+      }
     }
   }
 }

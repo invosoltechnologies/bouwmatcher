@@ -88,10 +88,17 @@ export async function GET() {
           id,
           name_nl,
           name_en
+        ),
+        service_subcategories (
+          id,
+          name_nl,
+          name_en,
+          price_particulier,
+          price_zakelijk
         )
       `)
       .in('subcategory_id', subcategoryIds)
-      .eq('status', 'pending_quotes')
+      .in('status', ['pending_quotes', 'specialist_selected', 'in_progress', 'completed'])
       .not('latitude', 'is', null)
       .not('longitude', 'is', null)
       .order('created_at', { ascending: false });
@@ -103,6 +110,19 @@ export async function GET() {
         { status: 500 }
       );
     }
+
+    // Get professional's purchased leads
+    const { data: purchases, error: purchasesError } = await supabase
+      .from('professional_lead_purchases')
+      .select('project_id')
+      .eq('professional_id', profile.id);
+
+    if (purchasesError) {
+      console.error('Error fetching purchases:', purchasesError);
+      // Continue without purchases data
+    }
+
+    const purchasedLeadIds = new Set(purchases?.map(p => p.project_id) || []);
 
     // Filter projects by geographic proximity using Haversine formula
     const serviceRadiusKm = profile.service_radius_km || 10;
@@ -130,7 +150,8 @@ export async function GET() {
         professionalLon,
         parseFloat(project.latitude),
         parseFloat(project.longitude)
-      )
+      ),
+      is_locked: !purchasedLeadIds.has(project.id)
     }));
 
     // Sort by created_at (newest first)

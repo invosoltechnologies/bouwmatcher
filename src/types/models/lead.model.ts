@@ -17,6 +17,7 @@ export interface Lead {
   created_at: string;
   execution_timing: string | null;
   distance?: number;
+  is_locked: boolean;
   service_categories?: {
     id: number;
     name_nl: string;

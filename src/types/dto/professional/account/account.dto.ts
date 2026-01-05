@@ -43,6 +43,7 @@ export interface GetAccountResponse {
     certificates: Certificate[];
     profilePictureUrl: string | null;
     profileAnswers: Record<string, string> | null;
+    professionalProfileId: string; // Professional profile UUID for rating lookups
   };
 }
 

@@ -17,7 +17,6 @@ interface CompanyHeaderCardProps {
   ratingSummary?: CompanyRatingSummary;
   userRating?: number | null;
   onLogoClick?: () => void;
-  onRatingClick?: () => void;
 }
 
 export default function CompanyHeaderCard({
@@ -27,7 +26,6 @@ export default function CompanyHeaderCard({
   ratingSummary,
   userRating,
   onLogoClick,
-  onRatingClick,
 }: CompanyHeaderCardProps) {
   const t = useTranslations('common.proDashboard.bedrijfsprofiel.header');
   const [isLogoHovered, setIsLogoHovered] = useState(false);
@@ -116,11 +114,11 @@ export default function CompanyHeaderCard({
               </span>
             </div>
             <div className='flex items-center gap-1 mb-2 sm:mb-3 flex-wrap'>
-              <div onClick={onRatingClick} className='cursor-pointer'>
+              <div>
                 <Rating defaultValue={ratingSummary?.averageRating || 0}>
                   {Array.from({ length: 5 }).map((_, index) => (
                     <RatingButton
-                      className='text-yellow-500'
+                      className='text-yellow-500 pointer-events-none'
                       key={index}
                       size={18}
                     />
