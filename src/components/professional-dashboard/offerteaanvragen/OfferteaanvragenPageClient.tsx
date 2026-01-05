@@ -45,9 +45,11 @@ export default function OfferteaanvragenPageClient() {
 
   // Filter and transform leads based on search criteria
   const filteredLeads = useMemo(() => {
-    if (!data?.leads) return [];
+    if (!data) return [];
 
-    let filtered = data.leads;
+    // Combine locked and unlocked leads for filtering
+    const allLeads = [...(data.lockedLeads || []), ...(data.unlockedLeads || [])];
+    let filtered = allLeads;
 
     // Filter by date range
     if (dateRange?.from) {
@@ -88,7 +90,7 @@ export default function OfferteaanvragenPageClient() {
     }
 
     return filtered;
-  }, [data?.leads, dateRange, projectType, searchQuery]);
+  }, [data, dateRange, projectType, searchQuery]);
 
   // Transform leads to quotation request format
   const quotationRequests = useMemo(() => {
@@ -110,6 +112,9 @@ export default function OfferteaanvragenPageClient() {
         hasPhotos: lead.has_photos,
         photoCount: lead.has_photos ? 3 : 0, // We don't have exact count, using placeholder
         isAvailable: true, // Lead is available if it's in the list
+        assignmentStatus: lead.assignment_status || 'available',
+        projectStatus: lead.status,
+        isVisibilityActive: lead.isVisibilityActive !== false, // Default to true for locked leads
       };
     });
   }, [filteredLeads, locale, dateLocale]);
@@ -233,6 +238,9 @@ export default function OfferteaanvragenPageClient() {
                       hasPhotos={request.hasPhotos}
                       photoCount={request.photoCount}
                       isAvailable={request.isAvailable}
+                      assignmentStatus={request.assignmentStatus}
+                      projectStatus={request.projectStatus}
+                      isVisibilityActive={request.isVisibilityActive}
                     />
                   </div>
                 ))}

@@ -1210,7 +1210,11 @@
         "quotationCard": {
           "locked": "Vergrendeld",
           "photos": "foto's",
-          "notAvailable": "Niet meer beschikbaar"
+          "notAvailable": "Niet meer beschikbaar",
+          "assignmentStatus": {
+            "assignedToMe": "Aan mij toegewezen",
+            "acquiredByAnother": "Verworven door ander"
+          }
         },
         "sidebar": {
           "reviewsTitle": "Hoe ontvang ik reviews van tevreden klanten?",
@@ -1300,6 +1304,7 @@
           "currentStatus": "Projectstatus:",
           "statusPendingQuotes": "Status bijwerken",
           "statusSpecialistSelected": "Offerte verstuurd",
+          "statusAssignedToMe": "Aan mij toegewezen",
           "statusInProgress": "Werkzaamheden gestart",
           "statusCompleted": "Project afgerond",
           "statusUnknown": "Project geannuleerd",
@@ -1599,7 +1604,8 @@
         "waiting": "Wachten op offertes",
         "selected": "Vakspecialist gekozen",
         "inProgress": "In uitvoering",
-        "completed": "Project afgerond"
+        "completed": "Project afgerond",
+        "cancelled": "Project geannuleerd"
       },
       "updateStatus": "Update projectstatus",
       "statuses": {
@@ -1618,6 +1624,10 @@
         "completed": {
           "label": "Project afgerond",
           "description": "Het project is voltooid"
+        },
+        "cancelled": {
+          "label": "Project geannuleerd",
+          "description": "Ik wil deze aanvraag annuleren"
         }
       },
       "buttons": {
@@ -1627,7 +1637,10 @@
       },
       "validation": {
         "selectStatus": "Selecteer alstublieft een status",
-        "invalidToken": "Ongeldig toegangstoken"
+        "invalidToken": "Ongeldig toegangstoken",
+        "noLeadPurchases": "Ten minste één professional moet deze lead kopen voordat u een specialist selecteert",
+        "notSpecialistSelected": "U moet een specialist selecteren voordat het project in uitvoering kan zijn",
+        "notInProgress": "Het project moet in uitvoering zijn voordat het als voltooid kan worden gemarkeerd"
       },
       "errors": {
         "failedToUpdate": "Kon projectstatus niet bijwerken"

@@ -107,6 +107,13 @@ export async function POST(request: NextRequest) {
     const verificationStatus = isFromApi ? 'verified' : 'pending';
     const isActive = isFromApi ? true : false;
 
+    // Get user email to populate quotes_email and invoices_email
+    const { data: userEmail } = await supabase
+      .from('professional_profiles')
+      .select('email')
+      .eq('user_id', user.id)
+      .single();
+
     const { error: updateError } = await supabase
       .from('professional_profiles')
       .update({
@@ -117,6 +124,8 @@ export async function POST(request: NextRequest) {
         joined_company_at: new Date().toISOString(),
         profile_completed: true,
         current_step: 6,
+        quotes_email: userEmail?.email || null,
+        invoices_email: userEmail?.email || null,
       })
       .eq('user_id', user.id);
 

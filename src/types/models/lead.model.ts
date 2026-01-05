@@ -18,6 +18,10 @@ export interface Lead {
   execution_timing: string | null;
   distance?: number;
   is_locked: boolean;
+  assigned_professional_id?: string | null;
+  assignment_status?: 'available' | 'assigned_to_me' | 'acquired_by_another';
+  is_assigned_to_me?: boolean;
+  isVisibilityActive?: boolean;
   service_categories?: {
     id: number;
     name_nl: string;
@@ -33,7 +37,8 @@ export interface Lead {
 }
 
 export interface LeadsResponse {
-  leads: Lead[];
+  lockedLeads: Lead[];
+  unlockedLeads: Lead[];
 }
 
 export interface LeadDetails extends Lead {

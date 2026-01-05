@@ -44,6 +44,7 @@ const fallbackTranslations_EN: Record<string, string> = {
   'statusLabel.specialist_selected': 'Specialist selected',
   'statusLabel.in_progress': 'In progress',
   'statusLabel.completed': 'Project completed',
+  'statusLabel.cancelled': 'Project cancelled',
   'alert.title': 'Check your email for quotes from specialists',
   'alert.description': 'Local specialists will contact you by email. Compare their quotes to solve your problem faster.',
   'alert.point1.title': 'New quotes arrive via email.',
@@ -71,6 +72,7 @@ const fallbackTranslations_NL: Record<string, string> = {
   'statusLabel.specialist_selected': 'Vakspecialist gekozen',
   'statusLabel.in_progress': 'In uitvoering',
   'statusLabel.completed': 'Project afgerond',
+  'statusLabel.cancelled': 'Project geannuleerd',
   'alert.title': 'Controleer uw e-mail op offertes van specialisten',
   'alert.description': 'Lokale specialisten zullen u per e-mail contacteren. Vergelijk hun offertes om uw probleem sneller op te lossen.',
   'alert.point1.title': 'Nieuwe offertes komen via e-mail aan.',
@@ -209,99 +211,103 @@ const ProjectStatusDetails = ({
         className='rounded-lg py-8 px-7.5 mb-6'
         style={{
           background:
-            'linear-gradient(90deg, rgba(10, 178, 126, 0.10) 0%, rgba(2, 58, 162, 0.10) 100%)',
+            status === 'cancelled'
+              ? 'linear-gradient(90deg, rgba(239, 68, 68, 0.10) 0%, rgba(220, 38, 38, 0.10) 100%)'
+              : 'linear-gradient(90deg, rgba(10, 178, 126, 0.10) 0%, rgba(2, 58, 162, 0.10) 100%)',
         }}
       >
         <div className='mb-6'>
           <span className='text-base font-medium text-secondary-foreground'>
             {t('status')}:{' '}
           </span>
-          <span className='text-base font-semibold text-primary'>
+          <span className={`text-base font-semibold ${status === 'cancelled' ? 'text-red-600' : 'text-primary'}`}>
             {t(`statusLabel.${status}`)}
           </span>
         </div>
 
-        {/* Progress Steps */}
-        <div className='relative pt-8 pb-4'>
-          <style>{`
-            @keyframes ripple {
-              0% {
-                box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 59, 130, 246), 0.7);
+        {/* Progress Steps - Only show if not cancelled */}
+        {status !== 'cancelled' && (
+          <div className='relative pt-8  pb-4'>
+            <style>{`
+              @keyframes ripple {
+                0% {
+                  box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 59, 130, 246), 0.7);
+                }
+                70% {
+                  box-shadow: 0 0 0 8px rgba(var(--primary-rgb, 59, 130, 246), 0);
+                }
+                100% {
+                  box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 59, 130, 246), 0);
+                }
               }
-              70% {
-                box-shadow: 0 0 0 8px rgba(var(--primary-rgb, 59, 130, 246), 0);
+              .ripple-active {
+                animation: ripple 2s infinite;
               }
-              100% {
-                box-shadow: 0 0 0 0 rgba(var(--primary-rgb, 59, 130, 246), 0);
-              }
-            }
-            .ripple-active {
-              animation: ripple 2s infinite;
-            }
-          `}</style>
+            `}</style>
 
-          {/* Background Progress Line */}
-          <div
-            className='absolute top-7 left-0 right-0 h-1 bg-gray-300 rounded-full'
-            style={{ zIndex: 0 }}
-          />
-          {/* Filled Progress Line */}
-          <div
-            className='absolute top-7 left-0 h-1 bg-primary rounded-full transition-all duration-500'
-            style={{
-              width: `calc(${
-                (currentStep / (steps.length - 1)) * 100
-              }% + 80px)`,
-              zIndex: 0,
-            }}
-          />
+            {/* Background Progress Line */}
+            <div
+              className='absolute top-7 left-0 right-0 h-1 bg-gray-300 rounded-full'
+              style={{ zIndex: 0 }}
+            />
+            {/* Filled Progress Line */}
+            <div
+              className='absolute top-7 left-0 h-1 bg-primary rounded-full transition-all duration-500'
+              style={{
+                width: `calc(${
+                  (currentStep / (steps.length - 1)) * 100
+                }% + 0px)`,
+                zIndex: 0,
+              }}
+            />
 
-          {/* Steps Container - no padding, edge to edge */}
-          <div className='relative flex justify-between'>
-            {/* Step Dots */}
-            {steps.map((step, index) => (
-              <div
-                key={index}
-                className='flex flex-col items-center relative'
-                style={{ zIndex: 2 }}
-              >
+            {/* Steps Container - no padding, edge to edge */}
+            <div className='relative flex justify-between'>
+              {/* Step Dots */}
+              {steps.map((step, index) => (
                 <div
-                  className={`relative w-6 h-6 -top-4 rounded-full flex items-center justify-center transition-all border-2 ${
-                    index <= currentStep
-                      ? 'bg-primary border-primary ripple-active'
-                      : 'bg-white border-gray-300'
-                  } ${index === 0 ? '-left-6' : ''} ${
-                    index === 3 ? 'left-6' : ''
-                  }`}
+                  key={index}
+                  className='flex flex-col items-center relative'
+                  style={{ zIndex: 2 }}
                 >
-                  {index < currentStep && (
-                    <svg
-                      className='w-3.5 h-3.5 text-white'
-                      fill='currentColor'
-                      viewBox='0 0 20 20'
-                    >
-                      <path
-                        fillRule='evenodd'
-                        d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
-                        clipRule='evenodd'
-                      />
-                    </svg>
-                  )}
+                  <div
+                    className={`relative w-6 h-6 -top-4 rounded-full flex items-center justify-center transition-all border-2 ${
+                      index <= currentStep
+                        ? 'bg-primary border-primary ripple-active'
+                        : 'bg-white border-gray-300'
+                    } ${index === 0 ? '-left-6' : ''} ${
+                      index === 3 ? 'left-6' : ''
+                    }`}
+                  >
+                    {index < currentStep && (
+                      <svg
+                        className='w-3.5 h-3.5 text-white'
+                        fill='currentColor'
+                        viewBox='0 0 20 20'
+                      >
+                        <path
+                          fillRule='evenodd'
+                          d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+                          clipRule='evenodd'
+                        />
+                      </svg>
+                    )}
+                  </div>
+                  <span
+                    className={`text-xs text-center leading-tight ${
+                      index <= currentStep
+                        ? 'text-primary font-semibold'
+                        : 'text-gray-500 font-normal'
+                    }`}
+                    style={{ maxWidth: '70px' }}
+                  >
+                    {step.label}
+                  </span>
                 </div>
-                <span
-                  className={`text-xs text-center leading-tight ${
-                    index <= currentStep
-                      ? 'text-primary font-semibold'
-                      : 'text-gray-500 font-normal'
-                  }`}
-                  style={{ maxWidth: '70px' }}
-                >
-                  {step.label}
-                </span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Alert Box - Always show info for now, customize based on status later */}

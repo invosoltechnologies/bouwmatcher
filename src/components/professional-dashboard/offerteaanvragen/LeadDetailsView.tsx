@@ -353,7 +353,11 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
 
         {/* Right Column - Sidebar - Hidden on mobile */}
         <div className="hidden lg:block lg:w-80">
-          <LeadDetailsSidebar isLocked={is_locked} status={lead.status} />
+          <LeadDetailsSidebar
+            isLocked={is_locked}
+            status={lead.status}
+            isAssignedToMe={lead.is_assigned_to_me}
+          />
         </div>
       </div>
 

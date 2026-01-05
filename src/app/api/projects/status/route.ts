@@ -62,6 +62,7 @@ export async function GET(request: NextRequest) {
     if (project.status === 'specialist_selected') currentStep = 1;
     else if (project.status === 'in_progress') currentStep = 2;
     else if (project.status === 'completed') currentStep = 3;
+    else if (project.status === 'cancelled') currentStep = 4;
 
     // Build full address
     const addressParts = [];
@@ -72,6 +73,23 @@ export async function GET(request: NextRequest) {
     const location = [street, project.postcode, project.city]
       .filter(Boolean)
       .join(', ') || 'Onbekend';
+
+    // Check if project has any lead purchases
+    const { data: leadPurchases, error: leadError } = await supabase
+      .from('professional_lead_purchases')
+      .select('id, payment_status')
+      .eq('project_id', project.id)
+      .eq('payment_status', 'completed');
+
+    const hasLeadPurchases = !leadError && leadPurchases && leadPurchases.length > 0;
+
+    // Debug logging
+    console.log(`Project ${project.id} - Lead purchases query:`, {
+      projectId: project.id,
+      leadPurchases: leadPurchases,
+      leadError: leadError,
+      hasLeadPurchases: hasLeadPurchases,
+    });
 
     return NextResponse.json({
       id: project.id,
@@ -87,6 +105,7 @@ export async function GET(request: NextRequest) {
       serviceCategory: project.service_category_id,
       description: project.description,
       requestType: project.request_type,
+      hasLeadPurchases,
     });
   } catch (error) {
     console.error('Error fetching project:', error);
@@ -120,6 +139,7 @@ export async function PATCH(request: NextRequest) {
       'specialist_selected',
       'in_progress',
       'completed',
+      'cancelled',
     ];
     if (!validStatuses.includes(status)) {
       return NextResponse.json(
@@ -131,7 +151,7 @@ export async function PATCH(request: NextRequest) {
     // Fetch project first to verify token and ownership
     const { data: project, error: fetchError } = await supabase
       .from('projects')
-      .select('id, access_token_expires_at')
+      .select('id, status, access_token_expires_at')
       .eq('access_token', token)
       .single();
 
@@ -151,6 +171,51 @@ export async function PATCH(request: NextRequest) {
           { status: 401 }
         );
       }
+    }
+
+    // Validate status transitions based on business rules
+    const currentStatus = project.status;
+
+    // Check if project has lead purchases (required for specialist_selected)
+    if (status === 'specialist_selected' && currentStatus === 'pending_quotes') {
+      const { data: leadPurchases, error: leadError } = await supabase
+        .from('professional_lead_purchases')
+        .select('id, payment_status')
+        .eq('project_id', project.id)
+        .eq('payment_status', 'completed');
+
+      const hasLeadPurchases = !leadError && leadPurchases && leadPurchases.length > 0;
+
+      // Debug logging
+      console.log(`Project ${project.id} - PATCH: Checking lead purchases:`, {
+        projectId: project.id,
+        leadPurchases: leadPurchases,
+        leadError: leadError,
+        hasLeadPurchases: hasLeadPurchases,
+      });
+
+      if (!hasLeadPurchases) {
+        return NextResponse.json(
+          { error: 'At least one professional must purchase this lead before selecting a specialist' },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Validate transition to 'in_progress'
+    if (status === 'in_progress' && currentStatus !== 'specialist_selected') {
+      return NextResponse.json(
+        { error: 'Project must have a specialist selected before it can be in progress' },
+        { status: 400 }
+      );
+    }
+
+    // Validate transition to 'completed'
+    if (status === 'completed' && currentStatus !== 'in_progress') {
+      return NextResponse.json(
+        { error: 'Project must be in progress before it can be marked as completed' },
+        { status: 400 }
+      );
     }
 
     // Update project status
