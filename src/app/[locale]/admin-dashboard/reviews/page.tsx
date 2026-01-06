@@ -1,11 +1,11 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Star, Filter, Search } from 'lucide-react';
 import StatsCard from '@/components/admin-dashboard/StatsCard';
 import ReviewCard from '@/components/admin-dashboard/ReviewCard';
 import { ReviewRejectionModal } from '@/components/admin-dashboard/ReviewRejectionModal';
-import { usePendingReviews, useReviewApproval } from '@/lib/hooks/admin/reviews';
+import { useAllReviews, useReviewApproval } from '@/lib/hooks/admin/reviews';
 import { useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
@@ -16,48 +16,69 @@ type ReviewStatus = 'pending' | 'approved' | 'rejected' | 'all';
 
 export default function AdminReviewsPage() {
   const t = useTranslations('common.adminDashboard.reviews');
-  const [activeTab, setActiveTab] = useState<ReviewStatus>('pending');
+  const [activeTab, setActiveTab] = useState<ReviewStatus>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
   const [showRejectionModal, setShowRejectionModal] = useState(false);
   const [loadingReviewId, setLoadingReviewId] = useState<string | null>(null);
   const [offset, setOffset] = useState(0);
+  const [allStats, setAllStats] = useState({
+    pending: 0,
+    approved: 0,
+    rejected: 0,
+    total: 0,
+  });
   const LIMIT = 10;
 
-  const { data: reviewsData, isLoading: reviewsLoading, refetch } = usePendingReviews(LIMIT, offset);
+  const { data: reviewsData, isLoading: reviewsLoading, refetch } = useAllReviews(
+    LIMIT,
+    offset,
+    activeTab !== 'all' ? activeTab : undefined
+  );
   const reviewApprovalMutation = useReviewApproval();
 
+  // Fetch stats from all reviews endpoint
+  const fetchStats = async () => {
+    try {
+      const [pendingRes, approvedRes, rejectedRes, allRes] = await Promise.all([
+        fetch('/api/admin/reviews/all?limit=1&offset=0&status=pending'),
+        fetch('/api/admin/reviews/all?limit=1&offset=0&status=approved'),
+        fetch('/api/admin/reviews/all?limit=1&offset=0&status=rejected'),
+        fetch('/api/admin/reviews/all?limit=1&offset=0'),
+      ]);
+
+      const pendingData = await pendingRes.json();
+      const approvedData = await approvedRes.json();
+      const rejectedData = await rejectedRes.json();
+      const allData = await allRes.json();
+
+      setAllStats({
+        pending: pendingData.total || 0,
+        approved: approvedData.total || 0,
+        rejected: rejectedData.total || 0,
+        total: allData.total || 0,
+      });
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
   // Transform and filter reviews
-  const { displayedReviews, stats } = useMemo(() => {
+  const { displayedReviews } = useMemo(() => {
     if (!reviewsData?.reviews) {
       return {
         displayedReviews: [],
-        stats: {
-          pending: 0,
-          approved: 0,
-          rejected: 0,
-          total: 0,
-        },
       };
     }
 
     const reviews = reviewsData.reviews;
 
-    // Calculate stats
-    const stats = {
-      pending: reviews.filter(r => r.approval_status === 'pending').length,
-      approved: reviews.filter(r => r.approval_status === 'approved').length,
-      rejected: reviews.filter(r => r.approval_status === 'rejected').length,
-      total: reviews.length,
-    };
-
-    // Filter by tab
-    let filtered = reviews;
-    if (activeTab !== 'all') {
-      filtered = reviews.filter(r => r.approval_status === activeTab);
-    }
-
     // Filter by search query
+    let filtered = reviews;
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(r =>
@@ -69,9 +90,8 @@ export default function AdminReviewsPage() {
 
     return {
       displayedReviews: filtered,
-      stats,
     };
-  }, [reviewsData, activeTab, searchQuery]);
+  }, [reviewsData, searchQuery]);
 
   const handleApprove = async (reviewId: string) => {
     setLoadingReviewId(reviewId);
@@ -80,10 +100,11 @@ export default function AdminReviewsPage() {
         reviewId,
         action: 'approve',
       });
-      toast.success('Review approved successfully');
-      refetch();
+      toast.success('Beoordeling goedgekeurd');
+      await refetch();
+      await fetchStats();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to approve review');
+      toast.error(error instanceof Error ? error.message : 'Goedkeuring mislukt');
     } finally {
       setLoadingReviewId(null);
     }
@@ -99,12 +120,13 @@ export default function AdminReviewsPage() {
         action: 'reject',
         rejectionReason: reason,
       });
-      toast.success('Review rejected successfully');
+      toast.success('Beoordeling afgewezen');
       setShowRejectionModal(false);
       setSelectedReviewId(null);
-      refetch();
+      await refetch();
+      await fetchStats();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to reject review');
+      toast.error(error instanceof Error ? error.message : 'Afwijzing mislukt');
     } finally {
       setLoadingReviewId(null);
     }
@@ -117,13 +139,21 @@ export default function AdminReviewsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Header with Title and Link */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-foreground">Recent beoordelingen</h1>
+        <a href="/admin-dashboard/reviews" className="text-primary hover:underline text-sm font-medium">
+          Bekijk alles
+        </a>
+      </div>
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <StatsCard
           icon={Star}
           iconColor="text-yellow-600"
           iconBgColor="bg-yellow-50"
-          value={stats.pending}
+          value={allStats.pending}
           label="Pending Reviews"
           topText="In Afwachting"
         />
@@ -131,7 +161,7 @@ export default function AdminReviewsPage() {
           icon={Star}
           iconColor="text-green-600"
           iconBgColor="bg-green-50"
-          value={stats.approved}
+          value={allStats.approved}
           label="Approved Reviews"
           topText="Goedgekeurd"
         />
@@ -139,7 +169,7 @@ export default function AdminReviewsPage() {
           icon={Star}
           iconColor="text-red-600"
           iconBgColor="bg-red-50"
-          value={stats.rejected}
+          value={allStats.rejected}
           label="Rejected Reviews"
           topText="Afgewezen"
         />
@@ -147,7 +177,7 @@ export default function AdminReviewsPage() {
           icon={Star}
           iconColor="text-blue-600"
           iconBgColor="bg-blue-50"
-          value={stats.total}
+          value={allStats.total}
           label="Total Reviews"
           topText="Totaal"
         />
@@ -191,25 +221,25 @@ export default function AdminReviewsPage() {
               value="pending"
               className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none bg-transparent"
             >
-              Pending ({stats.pending})
+              Pending ({allStats.pending})
             </TabsTrigger>
             <TabsTrigger
               value="approved"
               className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none bg-transparent"
             >
-              Approved ({stats.approved})
+              Approved ({allStats.approved})
             </TabsTrigger>
             <TabsTrigger
               value="rejected"
               className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none bg-transparent"
             >
-              Rejected ({stats.rejected})
+              Rejected ({allStats.rejected})
             </TabsTrigger>
             <TabsTrigger
               value="all"
               className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none bg-transparent"
             >
-              All ({stats.total})
+              All ({allStats.total})
             </TabsTrigger>
           </TabsList>
 

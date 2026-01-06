@@ -12,14 +12,17 @@ import StatsCard from '@/components/admin-dashboard/StatsCard';
 import ProfessionalsTable from '@/components/admin-dashboard/ProfessionalsTable';
 import ReviewCard from '@/components/admin-dashboard/ReviewCard';
 import ServiceCategoriesList from '@/components/admin-dashboard/ServiceCategoriesList';
+import { ReviewRejectionModal } from '@/components/admin-dashboard/ReviewRejectionModal';
 import { useProfessionals } from '@/lib/hooks/admin/professionals';
-import { usePendingReviews, useReviewApproval } from '@/lib/hooks/admin/reviews';
+import { useAllReviews, useReviewApproval, type Review } from '@/lib/hooks/admin/reviews';
 import { useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
 
 export default function AdminDashboardPage() {
   const t = useTranslations('common.adminDashboard');
   const [loadingReviewId, setLoadingReviewId] = useState<string | null>(null);
+  const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
+  const [showRejectionModal, setShowRejectionModal] = useState(false);
 
   const { data, isLoading } = useProfessionals({
     limit: 5,
@@ -27,7 +30,7 @@ export default function AdminDashboardPage() {
     sortOrder: 'desc',
   });
 
-  const { data: reviewsData, isLoading: reviewsLoading } = usePendingReviews(20, 0);
+  const { data: reviewsData, isLoading: reviewsLoading, refetch: refetchReviews } = useAllReviews(4, 0);
   const reviewApprovalMutation = useReviewApproval();
 
   // Transform API response and compute stats
@@ -207,21 +210,19 @@ export default function AdminDashboardPage() {
                 Geen beoordelingen in afwachting van goedkeuring
               </div>
             ) : (
-              reviewsData.reviews.map((review) => (
+              reviewsData.reviews.map((review: Review) => (
                 <ReviewCard
                   key={review.id}
                   id={review.id}
                   rating={review.rating}
                   reviewText={review.review_text || ''}
-                  reviewerName={
-                    review.rated_by_user_type === 'personal_user'
-                      ? 'Huiseigenaar'
-                      : review.professional?.first_name || 'Onbekend'
-                  }
-                  professionalName={review.professional?.first_name || 'Onbekend'}
-                  companyName={review.company?.company_name}
+                  reviewerName={review.reviewer_name || 'Unknown'}
+                  professionalName={review.professional_name || ''}
+                  companyName={review.company_name}
                   date={review.created_at}
                   status={review.approval_status || 'pending'}
+                  rejectionReason={review.rejection_reason}
+                  approvedAt={review.approved_at}
                   isAdmin={true}
                   isLoading={loadingReviewId === review.id}
                   onApprove={async (reviewId) => {
@@ -232,6 +233,7 @@ export default function AdminDashboardPage() {
                         action: 'approve',
                       });
                       toast.success('Beoordeling goedgekeurd!');
+                      await refetchReviews();
                     } catch (error) {
                       toast.error(
                         error instanceof Error
@@ -242,23 +244,9 @@ export default function AdminDashboardPage() {
                       setLoadingReviewId(null);
                     }
                   }}
-                  onReject={async (reviewId) => {
-                    try {
-                      setLoadingReviewId(reviewId);
-                      await reviewApprovalMutation.mutateAsync({
-                        reviewId,
-                        action: 'reject',
-                      });
-                      toast.success('Beoordeling afgewezen!');
-                    } catch (error) {
-                      toast.error(
-                        error instanceof Error
-                          ? error.message
-                          : 'Afwijzing mislukt'
-                      );
-                    } finally {
-                      setLoadingReviewId(null);
-                    }
+                  onShowRejectionModal={() => {
+                    setSelectedReviewId(review.id);
+                    setShowRejectionModal(true);
                   }}
                 />
               ))
@@ -278,6 +266,38 @@ export default function AdminDashboardPage() {
         {/* Service Categories - Right Column */}
         <ServiceCategoriesList />
       </div>
+
+      {/* Rejection Modal */}
+      <ReviewRejectionModal
+        isOpen={showRejectionModal}
+        onClose={() => {
+          setShowRejectionModal(false);
+          setSelectedReviewId(null);
+        }}
+        onConfirm={async (reason) => {
+          if (!selectedReviewId) return;
+
+          try {
+            setLoadingReviewId(selectedReviewId);
+            await reviewApprovalMutation.mutateAsync({
+              reviewId: selectedReviewId,
+              action: 'reject',
+              rejectionReason: reason,
+            });
+            toast.success('Beoordeling afgewezen!');
+            setShowRejectionModal(false);
+            setSelectedReviewId(null);
+            await refetchReviews();
+          } catch (error) {
+            toast.error(
+              error instanceof Error ? error.message : 'Afwijzing mislukt'
+            );
+          } finally {
+            setLoadingReviewId(null);
+          }
+        }}
+        isLoading={loadingReviewId === selectedReviewId}
+      />
     </div>
   );
 }

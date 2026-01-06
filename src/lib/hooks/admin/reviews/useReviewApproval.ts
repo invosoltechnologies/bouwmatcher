@@ -42,9 +42,12 @@ export function useReviewApproval() {
   return useMutation({
     mutationFn: approveReview,
     onSuccess: () => {
-      // Invalidate pending reviews queries
+      // Invalidate all review queries to ensure immediate UI updates
       queryClient.invalidateQueries({
-        queryKey: ['adminReviews', 'pending'],
+        queryKey: ['adminReviews'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['adminAllReviews'],
       });
     },
   });
