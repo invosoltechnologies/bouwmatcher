@@ -63,7 +63,16 @@ export async function GET(request: NextRequest) {
         company_id,
         professional:professional_profiles(id, first_name, last_name, email),
         company:professional_companies(id, company_name),
-        project:projects(id, first_name, last_name, personal_user_id)
+        project:projects(
+          id,
+          first_name,
+          last_name,
+          personal_user_id,
+          service_category_id,
+          subcategory_id,
+          service_category:service_categories(id, name_nl, name_en),
+          subcategory:service_subcategories(id, name_nl, name_en)
+        )
       `,
         { count: 'exact' }
       );
@@ -93,6 +102,12 @@ export async function GET(request: NextRequest) {
         ? `${review.project.first_name || ''} ${review.project.last_name || ''}`.trim()
         : null;
 
+      // Get category and subcategory names
+      const categoryName = review.project?.service_category?.name_nl || null;
+      const subcategoryName = review.project?.subcategory?.name_nl || null;
+      const categoryId = review.project?.service_category_id || null;
+      const subcategoryId = review.project?.subcategory_id || null;
+
       return {
         ...review,
         professional_name: review.professional
@@ -102,6 +117,10 @@ export async function GET(request: NextRequest) {
         company_name: review.company?.company_name,
         reviewer_name: projectOwnerName || (review.rated_by_user_type === 'personal_user' ? 'Klant' : 'Professional'),
         project_owner_name: projectOwnerName,
+        category_name: categoryName,
+        subcategory_name: subcategoryName,
+        category_id: categoryId,
+        subcategory_id: subcategoryId,
       };
     });
 

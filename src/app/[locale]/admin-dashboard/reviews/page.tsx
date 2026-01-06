@@ -1,27 +1,51 @@
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
-import { Star, Filter, Search } from 'lucide-react';
+import { Star, Search, X, CheckCircle, XCircle } from 'lucide-react';
 import StatsCard from '@/components/admin-dashboard/StatsCard';
-import ReviewCard from '@/components/admin-dashboard/ReviewCard';
+import ReviewsTable from '@/components/admin-dashboard/ReviewsTable';
 import { ReviewRejectionModal } from '@/components/admin-dashboard/ReviewRejectionModal';
 import { useAllReviews, useReviewApproval } from '@/lib/hooks/admin/reviews';
 import { useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 type ReviewStatus = 'pending' | 'approved' | 'rejected' | 'all';
 
+interface ServiceCategory {
+  id: number;
+  name_nl: string;
+  name_en: string;
+}
+
+interface ServiceSubcategory {
+  id: number;
+  name_nl: string;
+  name_en: string;
+  service_category_id: number;
+}
+
 export default function AdminReviewsPage() {
   const t = useTranslations('common.adminDashboard.reviews');
-  const [activeTab, setActiveTab] = useState<ReviewStatus>('all');
+  const [activeStatus, setActiveStatus] = useState<ReviewStatus>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
   const [showRejectionModal, setShowRejectionModal] = useState(false);
   const [loadingReviewId, setLoadingReviewId] = useState<string | null>(null);
   const [offset, setOffset] = useState(0);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>('all');
+  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string>('all');
+  const [categories, setCategories] = useState<ServiceCategory[]>([]);
+  const [subcategories, setSubcategories] = useState<ServiceSubcategory[]>([]);
+  const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(new Set());
   const [allStats, setAllStats] = useState({
     pending: 0,
     approved: 0,
@@ -33,7 +57,7 @@ export default function AdminReviewsPage() {
   const { data: reviewsData, isLoading: reviewsLoading, refetch } = useAllReviews(
     LIMIT,
     offset,
-    activeTab !== 'all' ? activeTab : undefined
+    activeStatus !== 'all' ? activeStatus : undefined
   );
   const reviewApprovalMutation = useReviewApproval();
 
@@ -65,7 +89,39 @@ export default function AdminReviewsPage() {
 
   useEffect(() => {
     fetchStats();
+    fetchCategories();
   }, []);
+
+  // Fetch categories
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/service-categories');
+      const data = await response.json();
+      setCategories(data.serviceCategories || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  // Fetch subcategories when category changes
+  useEffect(() => {
+    if (selectedCategoryId && selectedCategoryId !== 'all') {
+      fetchSubcategories(selectedCategoryId);
+    } else {
+      setSubcategories([]);
+      setSelectedSubcategoryId('all');
+    }
+  }, [selectedCategoryId]);
+
+  const fetchSubcategories = async (categoryId: string) => {
+    try {
+      const response = await fetch(`/api/service-subcategories?categoryIds=${categoryId}`);
+      const data = await response.json();
+      setSubcategories(data.subcategories || []);
+    } catch (error) {
+      console.error('Error fetching subcategories:', error);
+    }
+  };
 
   // Transform and filter reviews
   const { displayedReviews } = useMemo(() => {
@@ -77,21 +133,35 @@ export default function AdminReviewsPage() {
 
     const reviews = reviewsData.reviews;
 
-    // Filter by search query
+    // Filter by search query, category, and subcategory
     let filtered = reviews;
+
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(r =>
         r.professional_name?.toLowerCase().includes(query) ||
         r.company_name?.toLowerCase().includes(query) ||
-        r.reviewer_name?.toLowerCase().includes(query)
+        r.reviewer_name?.toLowerCase().includes(query) ||
+        r.review_text?.toLowerCase().includes(query)
+      );
+    }
+
+    if (selectedCategoryId && selectedCategoryId !== 'all') {
+      filtered = filtered.filter(r =>
+        r.category_id?.toString() === selectedCategoryId
+      );
+    }
+
+    if (selectedSubcategoryId && selectedSubcategoryId !== 'all') {
+      filtered = filtered.filter(r =>
+        r.subcategory_id?.toString() === selectedSubcategoryId
       );
     }
 
     return {
       displayedReviews: filtered,
     };
-  }, [reviewsData, searchQuery]);
+  }, [reviewsData, searchQuery, selectedCategoryId, selectedSubcategoryId]);
 
   const handleApprove = async (reviewId: string) => {
     setLoadingReviewId(reviewId);
@@ -103,6 +173,7 @@ export default function AdminReviewsPage() {
       toast.success('Beoordeling goedgekeurd');
       await refetch();
       await fetchStats();
+      setSelectedRowIds(new Set());
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Goedkeuring mislukt');
     } finally {
@@ -125,6 +196,7 @@ export default function AdminReviewsPage() {
       setSelectedReviewId(null);
       await refetch();
       await fetchStats();
+      setSelectedRowIds(new Set());
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Afwijzing mislukt');
     } finally {
@@ -137,168 +209,241 @@ export default function AdminReviewsPage() {
     setShowRejectionModal(true);
   };
 
+  const handleBulkApprove = async (reviewIds: string[]) => {
+    try {
+      for (const reviewId of reviewIds) {
+        await reviewApprovalMutation.mutateAsync({
+          reviewId,
+          action: 'approve',
+        });
+      }
+      toast.success(`${reviewIds.length} beoordelingen goedgekeurd`);
+      await refetch();
+      await fetchStats();
+      setSelectedRowIds(new Set());
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Bulk goedkeuring mislukt');
+    }
+  };
+
+  const handleBulkReject = (reviewIds: string[]) => {
+    if (reviewIds.length > 0) {
+      setSelectedReviewId(reviewIds[0]);
+      setShowRejectionModal(true);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      {/* Header with Title and Link */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-foreground">Recent beoordelingen</h1>
-        <a href="/admin-dashboard/reviews" className="text-primary hover:underline text-sm font-medium">
-          Bekijk alles
-        </a>
+      {/* Stats Cards Section */}
+      <div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div onClick={() => setActiveStatus('all')} className="w-full">
+            <StatsCard
+              icon={Star}
+              iconColor="text-blue-600"
+              iconBgColor="bg-blue-50"
+              value={allStats.total}
+              label="Alle Beoordelingen"
+              topText="Totaal"
+              borderColor="border-blue-300"
+              isActive={activeStatus === 'all'}
+            />
+          </div>
+          <div onClick={() => setActiveStatus('pending')} className="w-full">
+            <StatsCard
+              icon={Star}
+              iconColor="text-amber-600"
+              iconBgColor="bg-amber-50"
+              value={allStats.pending}
+              label="In Afwachting"
+              topText="Te Beoordelen"
+              borderColor="border-amber-300"
+              isActive={activeStatus === 'pending'}
+            />
+          </div>
+          <div onClick={() => setActiveStatus('approved')} className="w-full">
+            <StatsCard
+              icon={Star}
+              iconColor="text-emerald-600"
+              iconBgColor="bg-emerald-50"
+              value={allStats.approved}
+              label="Goedgekeurd"
+              topText="Geaccepteerd"
+              borderColor="border-emerald-300"
+              isActive={activeStatus === 'approved'}
+            />
+          </div>
+          <div onClick={() => setActiveStatus('rejected')} className="w-full">
+            <StatsCard
+              icon={Star}
+              iconColor="text-red-600"
+              iconBgColor="bg-red-50"
+              value={allStats.rejected}
+              label="Afgewezen"
+              topText="Geweigerd"
+              borderColor="border-red-300"
+              isActive={activeStatus === 'rejected'}
+            />
+          </div>
+        </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatsCard
-          icon={Star}
-          iconColor="text-yellow-600"
-          iconBgColor="bg-yellow-50"
-          value={allStats.pending}
-          label="Pending Reviews"
-          topText="In Afwachting"
-        />
-        <StatsCard
-          icon={Star}
-          iconColor="text-green-600"
-          iconBgColor="bg-green-50"
-          value={allStats.approved}
-          label="Approved Reviews"
-          topText="Goedgekeurd"
-        />
-        <StatsCard
-          icon={Star}
-          iconColor="text-red-600"
-          iconBgColor="bg-red-50"
-          value={allStats.rejected}
-          label="Rejected Reviews"
-          topText="Afgewezen"
-        />
-        <StatsCard
-          icon={Star}
-          iconColor="text-blue-600"
-          iconBgColor="bg-blue-50"
-          value={allStats.total}
-          label="Total Reviews"
-          topText="Totaal"
-        />
-      </div>
+      {/* Filters and Search Section */}
+      <div className="bg-white rounded-lg border border-slate-200 p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row gap-3 items-end">
+          {/* Search Input */}
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-3.5 w-4 h-4 text-slate-400" />
+            <Input
+              placeholder="Zoeken op naam, bedrijf, of review..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setOffset(0);
+              }}
+              className="pl-10 bg-slate-50 border-slate-300"
+            />
+          </div>
 
-      {/* Search and Filter */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Search by company, professional, or reviewer name..."
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
+          {/* Category Filter */}
+          <Select
+            value={selectedCategoryId}
+            onValueChange={(value) => {
+              setSelectedCategoryId(value);
               setOffset(0);
             }}
-            className="pl-10"
-          />
+          >
+            <SelectTrigger className="w-full sm:w-[180px] bg-slate-50 border-slate-300">
+              <SelectValue placeholder="Categorie" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Alle categorieën</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category.id} value={category.id.toString()}>
+                  {category.name_nl}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Subcategory Filter */}
+          <Select
+            value={selectedSubcategoryId}
+            onValueChange={(value) => {
+              setSelectedSubcategoryId(value);
+              setOffset(0);
+            }}
+            disabled={selectedCategoryId === 'all'}
+          >
+            <SelectTrigger className="w-full sm:w-[180px] bg-slate-50 border-slate-300">
+              <SelectValue placeholder="Subcategorie" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Alle subcategorieën</SelectItem>
+              {subcategories.map((subcategory) => (
+                <SelectItem key={subcategory.id} value={subcategory.id.toString()}>
+                  {subcategory.name_nl}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Reset Filters Button */}
+          {(selectedCategoryId !== 'all' || selectedSubcategoryId !== 'all' || searchQuery) && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setSearchQuery('');
+                setSelectedCategoryId('all');
+                setSelectedSubcategoryId('all');
+                setOffset(0);
+              }}
+              className="gap-2 whitespace-nowrap"
+            >
+              <X className="w-4 h-4" />
+              Reset
+            </Button>
+          )}
         </div>
-        <Button
-          variant="outline"
-          className="gap-2"
-        >
-          <Filter className="w-4 h-4" />
-          Filter
-        </Button>
+
+        {/* Bulk Actions Bar */}
+        {selectedRowIds.size > 0 && (
+          <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <span className="text-sm font-medium text-blue-900">
+              {selectedRowIds.size} beoordeling{selectedRowIds.size !== 1 ? 'en' : ''} geselecteerd
+            </span>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                onClick={() => handleBulkApprove(Array.from(selectedRowIds))}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2"
+              >
+                <CheckCircle className="w-4 h-4" />
+                Goedkeuren
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => handleBulkReject(Array.from(selectedRowIds))}
+                className="bg-red-600 hover:bg-red-700 text-white gap-2"
+              >
+                <XCircle className="w-4 h-4" />
+                Afwijzen
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Tabs */}
-      <div className="bg-white rounded-lg border border-slate-200">
-        <Tabs
-          value={activeTab}
-          onValueChange={(value) => {
-            setActiveTab(value as ReviewStatus);
-            setOffset(0);
-          }}
-          className="w-full"
-        >
-          <TabsList className="w-full justify-start border-b rounded-none bg-transparent p-4">
-            <TabsTrigger
-              value="pending"
-              className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none bg-transparent"
-            >
-              Pending ({allStats.pending})
-            </TabsTrigger>
-            <TabsTrigger
-              value="approved"
-              className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none bg-transparent"
-            >
-              Approved ({allStats.approved})
-            </TabsTrigger>
-            <TabsTrigger
-              value="rejected"
-              className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none bg-transparent"
-            >
-              Rejected ({allStats.rejected})
-            </TabsTrigger>
-            <TabsTrigger
-              value="all"
-              className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none bg-transparent"
-            >
-              All ({allStats.total})
-            </TabsTrigger>
-          </TabsList>
-
-          <div className="p-6">
-            {reviewsLoading ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">Loading reviews...</p>
-              </div>
-            ) : displayedReviews.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">No reviews found</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {displayedReviews.map((review) => (
-                  <ReviewCard
-                    key={review.id}
-                    id={review.id}
-                    rating={review.rating}
-                    reviewText={review.review_text || ''}
-                    reviewerName={review.reviewer_name || 'Unknown'}
-                    professionalName={review.professional_name || ''}
-                    companyName={review.company_name}
-                    date={review.created_at}
-                    status={review.approval_status || 'pending'}
-                    rejectionReason={review.rejection_reason}
-                    approvedAt={review.approved_at}
-                    isAdmin={true}
-                    isLoading={loadingReviewId === review.id}
-                    onApprove={handleApprove}
-                    onShowRejectionModal={() => handleShowRejectionModal(review.id)}
-                  />
-                ))}
-              </div>
-            )}
+      {/* Table Section */}
+      <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+        {reviewsLoading ? (
+          <div className="text-center py-12">
+            <p className="text-slate-500">Beoordelingen laden...</p>
           </div>
-        </Tabs>
+        ) : displayedReviews.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-slate-500">Geen beoordelingen gevonden</p>
+          </div>
+        ) : (
+          <ReviewsTable
+            reviews={displayedReviews}
+            onApprove={handleApprove}
+            onReject={handleShowRejectionModal}
+            onBulkApprove={handleBulkApprove}
+            onBulkReject={handleBulkReject}
+            loadingReviewId={loadingReviewId}
+            selectedRowIds={selectedRowIds}
+            onSelectionChange={setSelectedRowIds}
+          />
+        )}
       </div>
 
       {/* Pagination */}
       {!reviewsLoading && displayedReviews.length > 0 && (
-        <div className="flex justify-between items-center">
-          <Button
-            variant="outline"
-            onClick={() => setOffset(Math.max(0, offset - LIMIT))}
-            disabled={offset === 0}
-          >
-            Previous
-          </Button>
-          <span className="text-sm text-muted-foreground">
-            Page {Math.floor(offset / LIMIT) + 1}
+        <div className="flex items-center justify-between bg-white rounded-lg border border-slate-200 p-4">
+          <span className="text-sm text-slate-600">
+            Pagina {Math.floor(offset / LIMIT) + 1}
           </span>
-          <Button
-            variant="outline"
-            onClick={() => setOffset(offset + LIMIT)}
-            disabled={displayedReviews.length < LIMIT}
-          >
-            Next
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setOffset(Math.max(0, offset - LIMIT))}
+              disabled={offset === 0}
+            >
+              Vorige
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setOffset(offset + LIMIT)}
+              disabled={displayedReviews.length < LIMIT}
+            >
+              Volgende
+            </Button>
+          </div>
         </div>
       )}
 

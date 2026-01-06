@@ -21,11 +21,27 @@ export interface Review extends CompanyRating {
   company_name?: string;
   reviewer_name?: string;
   project_owner_name?: string;
+  category_name?: string;
+  subcategory_name?: string;
+  category_id?: number;
+  subcategory_id?: number;
   project?: {
     id: string;
     first_name?: string;
     last_name?: string;
     personal_user_id?: string;
+    service_category_id?: number;
+    subcategory_id?: number;
+    service_category?: {
+      id: number;
+      name_nl?: string;
+      name_en?: string;
+    };
+    subcategory?: {
+      id: number;
+      name_nl?: string;
+      name_en?: string;
+    };
   };
 }
 
