@@ -1,6 +1,15 @@
 -- WARNING: This schema is for context only and is not meant to be run.
 -- Table order and constraints may not be valid for execution.
 
+CREATE TABLE public.admin_users (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  email character varying NOT NULL UNIQUE,
+  role character varying NOT NULL DEFAULT 'admin'::character varying CHECK (role::text = ANY (ARRAY['super_admin'::character varying, 'admin'::character varying, 'moderator'::character varying]::text[])),
+  is_active boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT admin_users_pkey PRIMARY KEY (id)
+);
 CREATE TABLE public.companies (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   company_name character varying NOT NULL,
@@ -18,6 +27,23 @@ CREATE TABLE public.companies (
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
   CONSTRAINT companies_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.contact_submissions (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name character varying NOT NULL,
+  email character varying NOT NULL,
+  phone character varying,
+  subject character varying NOT NULL,
+  category character varying NOT NULL CHECK (category::text = ANY (ARRAY['general'::character varying, 'quote'::character varying, 'support'::character varying, 'partnership'::character varying, 'complaint'::character varying]::text[])),
+  message text NOT NULL,
+  file_url character varying,
+  file_name character varying,
+  status character varying DEFAULT 'new'::character varying CHECK (status::text = ANY (ARRAY['new'::character varying, 'in_progress'::character varying, 'resolved'::character varying, 'spam'::character varying]::text[])),
+  replied_at timestamp with time zone,
+  notes text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT contact_submissions_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.personal_users (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -90,9 +116,29 @@ CREATE TABLE public.professional_company_ratings (
   review_text text,
   created_at timestamp without time zone,
   updated_at timestamp without time zone,
+  project_id uuid,
+  professional_id uuid,
+  rated_by_user_type character varying DEFAULT 'personal_user'::character varying,
   CONSTRAINT professional_company_ratings_pkey PRIMARY KEY (id),
   CONSTRAINT professional_company_ratings_company_id_fkey FOREIGN KEY (company_id) REFERENCES public.professional_companies(id),
-  CONSTRAINT professional_company_ratings_rated_by_profile_id_fkey FOREIGN KEY (rated_by_profile_id) REFERENCES public.professional_profiles(id)
+  CONSTRAINT professional_company_ratings_rated_by_profile_id_fkey FOREIGN KEY (rated_by_profile_id) REFERENCES public.professional_profiles(id),
+  CONSTRAINT professional_company_ratings_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id),
+  CONSTRAINT professional_company_ratings_professional_id_fkey FOREIGN KEY (professional_id) REFERENCES public.professional_profiles(id)
+);
+CREATE TABLE public.professional_lead_purchases (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  professional_id uuid NOT NULL,
+  project_id uuid NOT NULL,
+  amount_paid numeric NOT NULL,
+  payment_status character varying DEFAULT 'completed'::character varying,
+  payment_method character varying,
+  transaction_id character varying,
+  purchased_at timestamp with time zone DEFAULT now(),
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT professional_lead_purchases_pkey PRIMARY KEY (id),
+  CONSTRAINT professional_lead_purchases_professional_id_fkey FOREIGN KEY (professional_id) REFERENCES public.professional_profiles(id),
+  CONSTRAINT professional_lead_purchases_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id)
 );
 CREATE TABLE public.professional_profiles (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -190,10 +236,14 @@ CREATE TABLE public.project_drafts (
   verification_expires_at timestamp with time zone,
   phone_verified boolean DEFAULT false,
   phone_verified_at timestamp with time zone,
+  subcategory_id bigint,
+  latitude numeric,
+  longitude numeric,
   CONSTRAINT project_drafts_pkey PRIMARY KEY (id),
   CONSTRAINT project_drafts_service_category_id_fkey FOREIGN KEY (service_category_id) REFERENCES public.service_categories(id),
   CONSTRAINT project_drafts_personal_user_id_fkey FOREIGN KEY (personal_user_id) REFERENCES public.personal_users(id),
-  CONSTRAINT project_drafts_company_id_fkey FOREIGN KEY (company_id) REFERENCES public.companies(id)
+  CONSTRAINT project_drafts_company_id_fkey FOREIGN KEY (company_id) REFERENCES public.companies(id),
+  CONSTRAINT project_drafts_subcategory_id_fkey FOREIGN KEY (subcategory_id) REFERENCES public.service_subcategories(id)
 );
 CREATE TABLE public.project_form_answers (
   id character varying NOT NULL,
@@ -220,8 +270,10 @@ CREATE TABLE public.project_form_question_options (
   order_index integer NOT NULL DEFAULT 1,
   is_active boolean DEFAULT true,
   created_at timestamp with time zone DEFAULT now(),
+  subcategory_id bigint,
   CONSTRAINT project_form_question_options_pkey PRIMARY KEY (id),
-  CONSTRAINT project_form_question_options_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.project_form_questions(id)
+  CONSTRAINT project_form_question_options_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.project_form_questions(id),
+  CONSTRAINT project_form_question_options_subcategory_id_fkey FOREIGN KEY (subcategory_id) REFERENCES public.service_subcategories(id)
 );
 CREATE TABLE public.project_form_questions (
   id character varying NOT NULL,
@@ -242,10 +294,12 @@ CREATE TABLE public.project_form_questions (
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
   step_number integer DEFAULT 1,
+  service_subcategory_id bigint,
   CONSTRAINT project_form_questions_pkey PRIMARY KEY (id),
   CONSTRAINT project_form_questions_service_category_id_fkey FOREIGN KEY (service_category_id) REFERENCES public.service_categories(id),
   CONSTRAINT project_form_questions_parent_question_id_fkey FOREIGN KEY (parent_question_id) REFERENCES public.project_form_questions(id),
-  CONSTRAINT fk_parent_option FOREIGN KEY (parent_option_id) REFERENCES public.project_form_question_options(id)
+  CONSTRAINT fk_parent_option FOREIGN KEY (parent_option_id) REFERENCES public.project_form_question_options(id),
+  CONSTRAINT project_form_questions_service_subcategory_id_fkey FOREIGN KEY (service_subcategory_id) REFERENCES public.service_subcategories(id)
 );
 CREATE TABLE public.project_form_steps (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -277,6 +331,20 @@ CREATE TABLE public.project_photos (
   CONSTRAINT project_photos_pkey PRIMARY KEY (id),
   CONSTRAINT project_photos_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id),
   CONSTRAINT project_photos_project_draft_id_fkey FOREIGN KEY (project_draft_id) REFERENCES public.project_drafts(id)
+);
+CREATE TABLE public.project_professionals (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  project_id uuid NOT NULL,
+  professional_id uuid NOT NULL,
+  assignment_type character varying NOT NULL,
+  professional_email character varying NOT NULL,
+  assigned_at timestamp without time zone DEFAULT now(),
+  is_active boolean DEFAULT true,
+  created_at timestamp without time zone DEFAULT now(),
+  updated_at timestamp without time zone DEFAULT now(),
+  CONSTRAINT project_professionals_pkey PRIMARY KEY (id),
+  CONSTRAINT project_professionals_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id),
+  CONSTRAINT project_professionals_professional_id_fkey FOREIGN KEY (professional_id) REFERENCES public.professional_profiles(id)
 );
 CREATE TABLE public.project_progress (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -318,11 +386,19 @@ CREATE TABLE public.projects (
   phone_verified_at timestamp with time zone,
   access_token character varying UNIQUE,
   access_token_expires_at timestamp with time zone,
+  subcategory_id bigint,
+  latitude numeric,
+  longitude numeric,
+  assigned_professional_id uuid,
+  cancellation_reason text,
+  cancelled_at timestamp without time zone,
   CONSTRAINT projects_pkey PRIMARY KEY (id),
   CONSTRAINT projects_service_category_id_fkey FOREIGN KEY (service_category_id) REFERENCES public.service_categories(id),
   CONSTRAINT projects_personal_user_id_fkey FOREIGN KEY (personal_user_id) REFERENCES public.personal_users(id),
   CONSTRAINT projects_company_id_fkey FOREIGN KEY (company_id) REFERENCES public.companies(id),
-  CONSTRAINT projects_source_draft_id_fkey FOREIGN KEY (source_draft_id) REFERENCES public.project_drafts(id)
+  CONSTRAINT projects_source_draft_id_fkey FOREIGN KEY (source_draft_id) REFERENCES public.project_drafts(id),
+  CONSTRAINT projects_subcategory_id_fkey FOREIGN KEY (subcategory_id) REFERENCES public.service_subcategories(id),
+  CONSTRAINT projects_assigned_professional_id_fkey FOREIGN KEY (assigned_professional_id) REFERENCES public.professional_profiles(id)
 );
 CREATE TABLE public.service_categories (
   id bigint NOT NULL DEFAULT nextval('service_categories_id_seq'::regclass),
@@ -332,6 +408,9 @@ CREATE TABLE public.service_categories (
   name_nl character varying,
   name_en character varying,
   icon_url text,
+  is_active boolean NOT NULL DEFAULT true,
+  is_deleted boolean NOT NULL DEFAULT false,
+  deleted_at timestamp with time zone,
   CONSTRAINT service_categories_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.service_subcategories (
