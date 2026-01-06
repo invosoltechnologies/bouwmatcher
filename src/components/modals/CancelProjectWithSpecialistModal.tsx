@@ -72,7 +72,7 @@ export function CancelProjectWithSpecialistModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md lg:max-w-2xl">
+      <DialogContent className="sm:max-w-md lg:max-w-2xl bg-white/95 backdrop-blur-sm border border-white/20 shadow-2xl">
         <DialogHeader>
           <DialogTitle>Cancel Project & Leave Review</DialogTitle>
           <DialogDescription>
@@ -82,6 +82,14 @@ export function CancelProjectWithSpecialistModal({
         </DialogHeader>
 
         <form className="space-y-4 sm:space-y-6 p-4 sm:p-6 max-h-[60vh] overflow-y-auto">
+          {/* Professional Email Display */}
+          <div className="bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200">
+            <p className="text-xs sm:text-sm text-muted-foreground mb-1">Professional Email</p>
+            <p className="text-sm sm:text-base font-medium text-foreground break-all">
+              {professionalEmail}
+            </p>
+          </div>
+
           {/* Cancellation Reason */}
           <div>
             <label className="text-sm sm:text-base font-medium mb-2 block">
