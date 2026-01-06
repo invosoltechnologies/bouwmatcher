@@ -62,7 +62,8 @@ export async function GET(request: NextRequest) {
         professional_id,
         company_id,
         professional:professional_profiles(id, first_name, last_name, email),
-        company:professional_companies(id, company_name)
+        company:professional_companies(id, company_name),
+        project:projects(id, first_name, last_name, personal_user_id)
       `,
         { count: 'exact' }
       );
@@ -86,15 +87,23 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform reviews to flatten professional and company data
-    const transformedReviews = (reviews || []).map((review: any) => ({
-      ...review,
-      professional_name: review.professional
-        ? `${review.professional.first_name} ${review.professional.last_name}`
-        : 'Unknown',
-      professional_email: review.professional?.email,
-      company_name: review.company?.company_name,
-      reviewer_name: review.rated_by_user_type === 'personal_user' ? 'Customer' : 'Professional',
-    }));
+    const transformedReviews = (reviews || []).map((review: any) => {
+      // Get project owner name from project data
+      const projectOwnerName = review.project
+        ? `${review.project.first_name || ''} ${review.project.last_name || ''}`.trim()
+        : null;
+
+      return {
+        ...review,
+        professional_name: review.professional
+          ? `${review.professional.first_name} ${review.professional.last_name}`
+          : 'Unknown',
+        professional_email: review.professional?.email,
+        company_name: review.company?.company_name,
+        reviewer_name: projectOwnerName || (review.rated_by_user_type === 'personal_user' ? 'Klant' : 'Professional'),
+        project_owner_name: projectOwnerName,
+      };
+    });
 
     return NextResponse.json({
       reviews: transformedReviews,

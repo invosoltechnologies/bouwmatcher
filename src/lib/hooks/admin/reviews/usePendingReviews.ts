@@ -16,6 +16,17 @@ export interface Company {
 export interface PendingReview extends CompanyRating {
   professional?: Professional;
   company?: Company;
+  professional_name?: string;
+  professional_email?: string;
+  company_name?: string;
+  reviewer_name?: string;
+  project_owner_name?: string;
+  project?: {
+    id: string;
+    first_name?: string;
+    last_name?: string;
+    personal_user_id?: string;
+  };
 }
 
 export interface PendingReviewsResponse {

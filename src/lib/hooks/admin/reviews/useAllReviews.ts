@@ -20,6 +20,13 @@ export interface Review extends CompanyRating {
   professional_email?: string;
   company_name?: string;
   reviewer_name?: string;
+  project_owner_name?: string;
+  project?: {
+    id: string;
+    first_name?: string;
+    last_name?: string;
+    personal_user_id?: string;
+  };
 }
 
 export interface AllReviewsResponse {
