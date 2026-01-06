@@ -25,7 +25,7 @@ export async function GET(
       );
     }
 
-    // Fetch aggregate rating from company table (calculated by database trigger)
+    // Fetch aggregate rating from company table
     const { data: companyData, error: companyError } = await supabase
       .from('professional_companies')
       .select('aggregate_rating, total_ratings')
@@ -40,11 +40,21 @@ export async function GET(
       );
     }
 
+    // Fallback: If aggregate_rating is not set in DB, calculate from approved ratings
+    let avgRating = companyData?.aggregate_rating || 0;
+    let totalRatings = companyData?.total_ratings || 0;
+
+    if ((avgRating === 0 || avgRating === null) && ratings && ratings.length > 0) {
+      avgRating = ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
+      totalRatings = ratings.length;
+      console.log(`Calculated aggregate from approved ratings: ${avgRating} (${totalRatings} ratings)`);
+    }
+
     return NextResponse.json({
       ratings: ratings || [],
       summary: {
-        averageRating: companyData?.aggregate_rating || 0,
-        totalRatings: companyData?.total_ratings || 0,
+        averageRating: avgRating,
+        totalRatings: totalRatings,
       },
     });
   } catch (error) {

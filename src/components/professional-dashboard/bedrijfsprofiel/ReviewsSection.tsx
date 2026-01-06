@@ -78,35 +78,6 @@ export default function ReviewsSection({ companyId }: ReviewsSectionProps) {
           </>
         ) : (
           <div className='space-y-4'>
-            {/* Rating Summary */}
-            {summary && (
-              <div className='bg-amber-50 border border-amber-200 rounded-lg p-3 sm:p-4'>
-                <div className='flex items-center gap-3'>
-                  <div className='flex items-center gap-1'>
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={cn(
-                          'w-4 h-4',
-                          i < Math.round(summary.averageRating)
-                            ? 'text-yellow-400 fill-yellow-400'
-                            : 'text-gray-300 fill-gray-300'
-                        )}
-                      />
-                    ))}
-                  </div>
-                  <div>
-                    <p className='font-semibold text-sm text-secondary-foreground'>
-                      {summary.averageRating.toFixed(1)} / 5
-                    </p>
-                    <p className='text-xs text-muted-foreground'>
-                      {summary.totalRatings} {summary.totalRatings === 1 ? 'beoordeling' : 'beoordelingen'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Reviews List */}
             {ratings.map((rating) => (
               <div key={rating.id} className='border border-slate-200 rounded-lg p-3 sm:p-4'>

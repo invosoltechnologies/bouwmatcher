@@ -114,14 +114,24 @@ export async function PATCH(
             approvedRatings.reduce((sum, r) => sum + r.rating, 0) / approvedRatings.length;
 
           // Update company aggregate rating
-          await supabase
+          const { error: updateError } = await supabase
             .from('professional_companies')
             .update({
               aggregate_rating: Math.round(avgRating * 10) / 10,
               total_ratings: approvedRatings.length,
             })
             .eq('id', company.id);
+
+          if (updateError) {
+            console.error('Error updating aggregate rating:', updateError);
+          } else {
+            console.log(`✅ Updated company ${company.id} aggregate rating to ${Math.round(avgRating * 10) / 10}`);
+          }
+        } else {
+          console.warn(`No approved ratings found for company ${company.id}`, ratingsError);
         }
+      } else {
+        console.warn(`Company not found for review: ${updatedReview.company_id}`, companyError);
       }
     }
 
