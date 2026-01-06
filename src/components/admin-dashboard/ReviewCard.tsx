@@ -1,23 +1,36 @@
-import { Star } from 'lucide-react';
+import { Star, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface ReviewCardProps {
+  id?: string;
   rating: number;
   reviewText: string;
   reviewerName: string;
   professionalName: string;
+  companyName?: string;
   date: string;
-  status?: 'pending' | 'approved' | 'flagged';
+  status?: 'pending' | 'approved' | 'rejected';
+  isAdmin?: boolean;
+  onApprove?: (reviewId: string) => Promise<void>;
+  onReject?: (reviewId: string) => Promise<void>;
+  isLoading?: boolean;
 }
 
 export default function ReviewCard({
+  id,
   rating,
   reviewText,
   reviewerName,
   professionalName,
+  companyName,
   date,
   status = 'approved',
+  isAdmin = false,
+  onApprove,
+  onReject,
+  isLoading = false,
 }: ReviewCardProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -43,10 +56,10 @@ export default function ReviewCard({
             In afwachting
           </Badge>
         );
-      case 'flagged':
+      case 'rejected':
         return (
           <Badge className="bg-red-50 text-red-700 border-0 capitalize">
-            Gemarkeerd
+            Afgewezen
           </Badge>
         );
       case 'approved':
@@ -92,13 +105,49 @@ export default function ReviewCard({
       </p>
 
       {/* Footer */}
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
-        <div>
-          <span className="font-medium">{reviewerName}</span>
-          <span className="mx-1">•</span>
-          <span>{professionalName}</span>
+      <div className="flex flex-col gap-3 text-xs text-muted-foreground">
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="font-medium">{reviewerName}</span>
+            <span className="mx-1">•</span>
+            <span>{companyName || professionalName}</span>
+          </div>
+          <span>{formatDate(date)}</span>
         </div>
-        <span>{formatDate(date)}</span>
+
+        {/* Admin Action Buttons */}
+        {isAdmin && status === 'pending' && id && (
+          <div className="flex gap-2 pt-2 border-t border-slate-200">
+            <Button
+              size="sm"
+              variant="ghost"
+              className="flex-1 h-8 text-green-600 hover:bg-green-50 hover:text-green-700"
+              onClick={() => onApprove?.(id)}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+              ) : (
+                <CheckCircle2 className="w-3 h-3 mr-1" />
+              )}
+              Goedkeuren
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="flex-1 h-8 text-red-600 hover:bg-red-50 hover:text-red-700"
+              onClick={() => onReject?.(id)}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+              ) : (
+                <XCircle className="w-3 h-3 mr-1" />
+              )}
+              Afwijzen
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

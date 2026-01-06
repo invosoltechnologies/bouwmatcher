@@ -82,6 +82,7 @@ export async function POST(request: NextRequest) {
         rating,
         review_text: reviewText,
         rated_by_user_type: 'personal_user',
+        approval_status: 'pending',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })

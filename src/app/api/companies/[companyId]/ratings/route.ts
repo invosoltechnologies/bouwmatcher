@@ -9,11 +9,12 @@ export async function GET(
     const supabase = await createClient();
     const { companyId } = await params;
 
-    // Fetch all ratings for the company
+    // Fetch only approved ratings for the company
     const { data: ratings, error: ratingsError } = await supabase
       .from('professional_company_ratings')
       .select('*')
       .eq('company_id', companyId)
+      .eq('approval_status', 'approved')
       .order('created_at', { ascending: false });
 
     if (ratingsError) {
@@ -173,6 +174,7 @@ export async function POST(
         rated_by_profile_id: profileData.id,
         rating,
         review_text: reviewText || null,
+        approval_status: 'pending',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })

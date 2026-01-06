@@ -85,7 +85,7 @@ export default function BusinessProfilePageClient() {
             onEditClick={() => setIsDescriptionModalOpen(true)}
           />
           <ProjectPhotosCard photos={accountData.portfolioPhotos} />
-          <ReviewsSection />
+          <ReviewsSection companyId={companyId} />
           <QuestionsAnswersCard
             questions={[
               {

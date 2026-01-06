@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
   HardDrive,
   CheckCircle2,
@@ -13,46 +13,22 @@ import ProfessionalsTable from '@/components/admin-dashboard/ProfessionalsTable'
 import ReviewCard from '@/components/admin-dashboard/ReviewCard';
 import ServiceCategoriesList from '@/components/admin-dashboard/ServiceCategoriesList';
 import { useProfessionals } from '@/lib/hooks/admin/professionals';
+import { usePendingReviews, useReviewApproval } from '@/lib/hooks/admin/reviews';
 import { useTranslations } from 'next-intl';
-
-const mockReviews = [
-  {
-    rating: 5,
-    reviewText:
-      'Uitstekend loodgieterswerk! John was professioneel, op tijd en heeft het gebruik van het nieuwe systeem aan mij uitgelegd. Een echte top!',
-    reviewerName: 'Emily Davis',
-    professionalName: 'John Smith',
-    date: '2024-12-28',
-    status: 'approved' as const,
-  },
-  {
-    rating: 1,
-    reviewText:
-      'Over het algemeen tevreden. Het duurde iets langer dan verwacht maar het resultaat was de moeite waard.',
-    professionalName: 'Jane Pro',
-    reviewerName: 'Mike Anderson',
-    date: '2024-12-25',
-    status: 'pending' as const,
-  },
-  {
-    rating: 4,
-    reviewText:
-      'Over het algemeen tevreden. Het duurde iets langer dan verwacht maar het resultaat was de moeite waard.',
-    reviewerName: 'Lisa Andrews',
-    professionalName: 'Bob Builder',
-    date: '2024-12-23',
-    status: 'approved' as const,
-  },
-];
-
+import toast from 'react-hot-toast';
 
 export default function AdminDashboardPage() {
   const t = useTranslations('common.adminDashboard');
+  const [loadingReviewId, setLoadingReviewId] = useState<string | null>(null);
+
   const { data, isLoading } = useProfessionals({
     limit: 5,
     sortBy: 'created_at',
     sortOrder: 'desc',
   });
+
+  const { data: reviewsData, isLoading: reviewsLoading } = usePendingReviews(20, 0);
+  const reviewApprovalMutation = useReviewApproval();
 
   // Transform API response and compute stats
   const { transformedProfessionals, stats } = useMemo(() => {
@@ -216,23 +192,87 @@ export default function AdminDashboardPage() {
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
               {t('recentReviewsDesc', {
-                defaultValue: 'Laatst toegevoegde reviews',
+                defaultValue: 'Wachtende goedkeuring',
               })}
             </p>
           </div>
 
           <div className="space-y-4">
-            {mockReviews.map((review, idx) => (
-              <ReviewCard key={idx} {...review} />
-            ))}
+            {reviewsLoading ? (
+              <div className="py-8 text-center text-muted-foreground">
+                Beoordelingen laden...
+              </div>
+            ) : !reviewsData?.reviews || reviewsData.reviews.length === 0 ? (
+              <div className="py-8 text-center text-muted-foreground">
+                Geen beoordelingen in afwachting van goedkeuring
+              </div>
+            ) : (
+              reviewsData.reviews.map((review) => (
+                <ReviewCard
+                  key={review.id}
+                  id={review.id}
+                  rating={review.rating}
+                  reviewText={review.review_text || ''}
+                  reviewerName={
+                    review.rated_by_user_type === 'personal_user'
+                      ? 'Huiseigenaar'
+                      : review.professional?.first_name || 'Onbekend'
+                  }
+                  professionalName={review.professional?.first_name || 'Onbekend'}
+                  companyName={review.company?.company_name}
+                  date={review.created_at}
+                  status={review.approval_status || 'pending'}
+                  isAdmin={true}
+                  isLoading={loadingReviewId === review.id}
+                  onApprove={async (reviewId) => {
+                    try {
+                      setLoadingReviewId(reviewId);
+                      await reviewApprovalMutation.mutateAsync({
+                        reviewId,
+                        action: 'approve',
+                      });
+                      toast.success('Beoordeling goedgekeurd!');
+                    } catch (error) {
+                      toast.error(
+                        error instanceof Error
+                          ? error.message
+                          : 'Goedkeuring mislukt'
+                      );
+                    } finally {
+                      setLoadingReviewId(null);
+                    }
+                  }}
+                  onReject={async (reviewId) => {
+                    try {
+                      setLoadingReviewId(reviewId);
+                      await reviewApprovalMutation.mutateAsync({
+                        reviewId,
+                        action: 'reject',
+                      });
+                      toast.success('Beoordeling afgewezen!');
+                    } catch (error) {
+                      toast.error(
+                        error instanceof Error
+                          ? error.message
+                          : 'Afwijzing mislukt'
+                      );
+                    } finally {
+                      setLoadingReviewId(null);
+                    }
+                  }}
+                />
+              ))
+            )}
           </div>
 
           {/* Show all link */}
-          <div className="mt-4 pt-4 border-t border-slate-200 text-center">
-            <button className="text-primary font-medium hover:underline">
-              {t('viewAllReviews', { defaultValue: 'Bekijk alles' })}
-            </button>
-          </div>
+          {reviewsData && reviewsData.total > 0 && (
+            <div className="mt-4 pt-4 border-t border-slate-200 text-center">
+              <button className="text-primary font-medium hover:underline">
+                {t('viewAllReviews', { defaultValue: 'Alle beoordelingen bekijken' })} ({reviewsData.total})
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Service Categories - Right Column */}
