@@ -140,13 +140,15 @@ export interface ProfileCompletionData {
 export interface CompanyRating {
   id: string;
   company_id: string;
-  rated_by_profile_id: string | null;
   professional_id: string | null;
   project_id: string | null;
   rated_by_user_type: 'personal_user' | 'professional' | null;
   rating: number;
   review_text: string | null;
   approval_status: 'pending' | 'approved' | 'rejected' | null;
+  approved_at: string | null;
+  approved_by: string | null;
+  rejection_reason: string | null;
   created_at: string;
   updated_at: string;
 }

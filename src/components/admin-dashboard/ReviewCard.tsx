@@ -12,9 +12,12 @@ interface ReviewCardProps {
   companyName?: string;
   date: string;
   status?: 'pending' | 'approved' | 'rejected';
+  rejectionReason?: string | null;
+  approvedAt?: string | null;
   isAdmin?: boolean;
   onApprove?: (reviewId: string) => Promise<void>;
-  onReject?: (reviewId: string) => Promise<void>;
+  onReject?: (reviewId: string, reason: string) => Promise<void>;
+  onShowRejectionModal?: () => void;
   isLoading?: boolean;
 }
 
@@ -27,9 +30,12 @@ export default function ReviewCard({
   companyName,
   date,
   status = 'approved',
+  rejectionReason,
+  approvedAt,
   isAdmin = false,
   onApprove,
   onReject,
+  onShowRejectionModal,
   isLoading = false,
 }: ReviewCardProps) {
   const formatDate = (dateString: string) => {
@@ -115,6 +121,21 @@ export default function ReviewCard({
           <span>{formatDate(date)}</span>
         </div>
 
+        {/* Rejection Reason (for rejected reviews) */}
+        {status === 'rejected' && rejectionReason && (
+          <div className="bg-red-50 border border-red-200 rounded p-2 mt-2">
+            <p className="text-xs font-medium text-red-700 mb-1">Afwijzingsreden:</p>
+            <p className="text-xs text-red-600">{rejectionReason}</p>
+          </div>
+        )}
+
+        {/* Approved timestamp (for approved reviews) */}
+        {status === 'approved' && approvedAt && (
+          <div className="text-xs text-muted-foreground">
+            Goedgekeurd op {new Date(approvedAt).toLocaleDateString('nl-NL')}
+          </div>
+        )}
+
         {/* Admin Action Buttons */}
         {isAdmin && status === 'pending' && id && (
           <div className="flex gap-2 pt-2 border-t border-slate-200">
@@ -136,7 +157,7 @@ export default function ReviewCard({
               size="sm"
               variant="ghost"
               className="flex-1 h-8 text-red-600 hover:bg-red-50 hover:text-red-700"
-              onClick={() => onReject?.(id)}
+              onClick={() => onShowRejectionModal?.()}
               disabled={isLoading}
             >
               {isLoading ? (

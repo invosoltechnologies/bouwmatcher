@@ -1558,6 +1558,56 @@
       "recentReviews": "Recent Reviews",
       "recentReviewsDesc": "Recently added reviews",
       "viewAllReviews": "View all reviews",
+      "reviews": {
+        "title": "Reviews Management",
+        "pendingCount": "Pending Reviews",
+        "approvedCount": "Approved Reviews",
+        "rejectedCount": "Rejected Reviews",
+        "totalCount": "Total Reviews",
+        "searchPlaceholder": "Search by company, professional, or reviewer name...",
+        "tabs": {
+          "pending": "Pending",
+          "approved": "Approved",
+          "rejected": "Rejected",
+          "all": "All"
+        },
+        "noReviews": "No reviews found",
+        "loading": "Loading reviews...",
+        "pagination": {
+          "previous": "Previous",
+          "next": "Next",
+          "page": "Page"
+        },
+        "rejectionModal": {
+          "title": "Reject Review",
+          "description": "Please provide a reason for rejecting this review. The reason will be stored for administrative tracking purposes.",
+          "reasonLabel": "Rejection Reason",
+          "reasonPlaceholder": "Explain why this review is being rejected (e.g., inappropriate content, spam, offensive language, etc.)...",
+          "minCharacters": "minimum characters required",
+          "note": "This action will mark the review as rejected and the reason will be stored for administrative records.",
+          "confirmButton": "Confirm Rejection",
+          "cancelButton": "Cancel"
+        },
+        "actions": {
+          "approve": "Approve",
+          "reject": "Reject",
+          "approved": "Approved",
+          "rejected": "Rejected"
+        },
+        "messages": {
+          "approveSuccess": "Review approved successfully",
+          "rejectSuccess": "Review rejected successfully",
+          "approveFailed": "Failed to approve review",
+          "rejectFailed": "Failed to reject review"
+        },
+        "statusBadges": {
+          "pending": "Pending",
+          "approved": "Approved",
+          "rejected": "Rejected"
+        },
+        "rejectionReason": "Rejection reason",
+        "approvedDate": "Approved on"
+      },
       "serviceCategories": "Service Categories",
       "serviceCategoriesDesc": "Number of professionals per category",
       "active": "Active",

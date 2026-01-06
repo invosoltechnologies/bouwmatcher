@@ -110,7 +110,7 @@ export async function POST(
           updated_at: new Date().toISOString(),
         })
         .eq('id', ratingId)
-        .eq('rated_by_profile_id', profileData.id)
+        .eq('professional_id', profileData.id)
         .select()
         .single();
 
@@ -156,7 +156,7 @@ export async function POST(
       .from('professional_company_ratings')
       .select('id')
       .eq('company_id', companyId)
-      .eq('rated_by_profile_id', profileData.id)
+      .eq('professional_id', profileData.id)
       .maybeSingle();
 
     if (existingRating) {
@@ -171,7 +171,7 @@ export async function POST(
       .from('professional_company_ratings')
       .insert({
         company_id: companyId,
-        rated_by_profile_id: profileData.id,
+        professional_id: profileData.id,
         rating,
         review_text: reviewText || null,
         approval_status: 'pending',

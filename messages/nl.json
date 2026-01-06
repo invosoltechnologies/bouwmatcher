@@ -1556,6 +1556,56 @@
       "recentReviews": "Recente beoordelingen",
       "recentReviewsDesc": "Laatst toegevoegde reviews",
       "viewAllReviews": "Bekijk alle beoordelingen",
+      "reviews": {
+        "title": "Beheer beoordelingen",
+        "pendingCount": "In afwachting",
+        "approvedCount": "Goedgekeurd",
+        "rejectedCount": "Afgewezen",
+        "totalCount": "Totaal",
+        "searchPlaceholder": "Zoeken op bedrijf, professional of beoordelaar...",
+        "tabs": {
+          "pending": "In afwachting",
+          "approved": "Goedgekeurd",
+          "rejected": "Afgewezen",
+          "all": "Alles"
+        },
+        "noReviews": "Geen beoordelingen gevonden",
+        "loading": "Beoordelingen laden...",
+        "pagination": {
+          "previous": "Vorige",
+          "next": "Volgende",
+          "page": "Pagina"
+        },
+        "rejectionModal": {
+          "title": "Beoordeling afwijzen",
+          "description": "Geef een reden op voor het afwijzen van deze beoordeling. De reden wordt opgeslagen voor administratieve doeleinden.",
+          "reasonLabel": "Afwijzingsreden",
+          "reasonPlaceholder": "Leg uit waarom deze beoordeling wordt afgewezen (bijv. ongepast inhoud, spam, beledigende taal, enz.)...",
+          "minCharacters": "minimale karakters vereist",
+          "note": "Deze actie markeert de beoordeling als afgewezen en de reden wordt opgeslagen voor administratieve records.",
+          "confirmButton": "Afwijzing bevestigen",
+          "cancelButton": "Annuleren"
+        },
+        "actions": {
+          "approve": "Goedkeuren",
+          "reject": "Afwijzen",
+          "approved": "Goedgekeurd",
+          "rejected": "Afgewezen"
+        },
+        "messages": {
+          "approveSuccess": "Beoordeling met succes goedgekeurd",
+          "rejectSuccess": "Beoordeling met succes afgewezen",
+          "approveFailed": "Kan beoordeling niet goedkeuren",
+          "rejectFailed": "Kan beoordeling niet afwijzen"
+        },
+        "statusBadges": {
+          "pending": "In afwachting",
+          "approved": "Goedgekeurd",
+          "rejected": "Afgewezen"
+        },
+        "rejectionReason": "Afwijzingsreden",
+        "approvedDate": "Goedgekeurd op"
+      },
       "serviceCategories": "Servicecategorieën",
       "serviceCategoriesDesc": "Aantal professionals per categorie",
       "active": "Actief",

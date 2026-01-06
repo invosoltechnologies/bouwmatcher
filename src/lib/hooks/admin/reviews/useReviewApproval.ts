@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 interface ApproveReviewParams {
   reviewId: string;
   action: 'approve' | 'reject';
+  rejectionReason?: string;
 }
 
 interface ApproveReviewResponse {
@@ -12,14 +13,19 @@ interface ApproveReviewResponse {
 }
 
 async function approveReview(params: ApproveReviewParams): Promise<ApproveReviewResponse> {
-  const { reviewId, action } = params;
+  const { reviewId, action, rejectionReason } = params;
+
+  const body: any = { action };
+  if (action === 'reject' && rejectionReason) {
+    body.rejectionReason = rejectionReason;
+  }
 
   const response = await fetch(`/api/admin/reviews/${reviewId}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ action }),
+    body: JSON.stringify(body),
   });
 
   if (!response.ok) {

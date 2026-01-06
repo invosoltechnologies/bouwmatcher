@@ -25,18 +25,18 @@ export async function PATCH(
 
     // Check if user is admin
     const { data: adminUser } = await supabase
-      .from('personal_users')
-      .select('id, is_admin')
-      .eq('user_id', user.id)
+      .from('admin_users')
+      .select('id, role, is_active')
+      .eq('email', user.email)
       .single();
 
-    if (!adminUser?.is_admin) {
+    if (!adminUser || !adminUser.is_active) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const { reviewId } = await params;
     const body = await request.json();
-    const { action } = body;
+    const { action, rejectionReason } = body;
 
     // Validate action
     if (!['approve', 'reject'].includes(action)) {
@@ -46,15 +46,34 @@ export async function PATCH(
       );
     }
 
+    // Validate rejection reason if rejecting
+    if (action === 'reject' && (!rejectionReason || rejectionReason.trim().length < 10)) {
+      return NextResponse.json(
+        { error: 'Rejection reason must be at least 10 characters' },
+        { status: 400 }
+      );
+    }
+
     const approvalStatus = action === 'approve' ? 'approved' : 'rejected';
+    const now = new Date().toISOString();
+
+    // Prepare update object
+    const updateObject: any = {
+      approval_status: approvalStatus,
+      updated_at: now,
+    };
+
+    if (action === 'approve') {
+      updateObject.approved_at = now;
+      updateObject.approved_by = adminUser.id;
+    } else if (action === 'reject') {
+      updateObject.rejection_reason = rejectionReason.trim();
+    }
 
     // Update review status
     const { data: updatedReview, error: updateError } = await supabase
       .from('professional_company_ratings')
-      .update({
-        approval_status: approvalStatus,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateObject)
       .eq('id', reviewId)
       .select()
       .single();

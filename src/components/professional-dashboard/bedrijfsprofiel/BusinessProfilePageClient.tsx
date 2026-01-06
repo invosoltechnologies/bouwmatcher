@@ -39,7 +39,7 @@ export default function BusinessProfilePageClient() {
     const profileId = data.accountData.professionalProfileId;
     return (
       ratingsData.ratings.find(
-        (r) => r.rated_by_profile_id === profileId
+        (r) => r.professional_id === profileId
       ) || null
     );
   }, [ratingsData, data]);

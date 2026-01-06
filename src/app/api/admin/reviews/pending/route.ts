@@ -24,14 +24,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if user is admin (you can add more sophisticated role check if needed)
+    // Check if user is admin
     const { data: adminUser } = await supabase
-      .from('personal_users')
-      .select('id, is_admin')
-      .eq('user_id', user.id)
+      .from('admin_users')
+      .select('id, role, is_active')
+      .eq('email', user.email)
       .single();
 
-    if (!adminUser?.is_admin) {
+    if (!adminUser || !adminUser.is_active) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -51,6 +51,8 @@ export async function GET(request: NextRequest) {
         rating,
         review_text,
         approval_status,
+        approved_at,
+        rejection_reason,
         created_at,
         updated_at,
         project_id,
@@ -74,8 +76,19 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Transform reviews to flatten professional and company data
+    const transformedReviews = (reviews || []).map((review: any) => ({
+      ...review,
+      professional_name: review.professional
+        ? `${review.professional.first_name} ${review.professional.last_name}`
+        : 'Unknown',
+      professional_email: review.professional?.email,
+      company_name: review.company?.company_name,
+      reviewer_name: review.rated_by_user_type === 'personal_user' ? 'Customer' : 'Professional',
+    }));
+
     return NextResponse.json({
-      reviews: reviews || [],
+      reviews: transformedReviews,
       total: count || 0,
       limit,
       offset,

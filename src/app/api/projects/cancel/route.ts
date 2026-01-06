@@ -54,8 +54,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Step 2: If review provided, validate and find professional
-    let professionalId: string | null = null;
+    // Step 2: If review provided, validate and create rating
     if (review) {
       if (!review.rating || review.rating < 1 || review.rating > 5) {
         return NextResponse.json(
@@ -84,18 +83,17 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      professionalId = professional.id;
-
       // Create review record
       const { error: reviewError } = await supabase
         .from('professional_company_ratings')
         .insert({
           company_id: professional.company_id,
           professional_id: professional.id,
-          rated_by_profile_id: null, // Personal user, not a professional
           project_id: projectId,
           rating: review.rating,
           review_text: review.reviewText,
+          rated_by_user_type: 'personal_user',
+          approval_status: 'pending',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         });
