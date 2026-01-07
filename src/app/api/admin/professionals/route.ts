@@ -79,7 +79,9 @@ export async function GET(request: NextRequest) {
           id,
           company_name,
           is_verified,
-          verification_status
+          verification_status,
+          aggregate_rating,
+          total_ratings
         )
         `,
         { count: 'exact' }
@@ -155,35 +157,12 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Fetch ratings for all professionals at once
-    const { data: ratings, error: ratingsError } = await supabase
-      .from('professional_company_ratings')
-      .select('company_id, rating')
-      .in(
-        'company_id',
-        professionals.filter((p) => p.company_id).map((p) => p.company_id!)
-      );
-
-    if (ratingsError && ratingsError.code !== 'PGRST116') {
-      console.error('Error fetching ratings:', ratingsError);
-    }
-
-    // Aggregate ratings by company
-    const ratingsByCompany: Record<string, { sum: number; count: number }> = {};
-    if (ratings) {
-      ratings.forEach((rating) => {
-        if (!ratingsByCompany[rating.company_id]) {
-          ratingsByCompany[rating.company_id] = { sum: 0, count: 0 };
-        }
-        ratingsByCompany[rating.company_id].sum += rating.rating;
-        ratingsByCompany[rating.company_id].count += 1;
-      });
-    }
-
     // Transform and filter professionals
+    // Note: Ratings are now fetched from stored aggregates in professional_companies table
     const result: ProfessionalWithStatus[] = professionals
       .map((professional) => {
-        const company = (professional.professional_companies as any)?.[0];
+        // Supabase returns the joined company as an object, not an array
+        const company = professional.professional_companies as any;
         const status = getProfessionalStatus(professional, company);
 
         // Apply status filter if provided
@@ -191,10 +170,14 @@ export async function GET(request: NextRequest) {
           return null;
         }
 
-        const ratingData = company?.id
-          ? ratingsByCompany[company.id]
-          : undefined;
-        const avgRating = ratingData ? ratingData.sum / ratingData.count : 0;
+        // Use stored aggregate ratings from company table
+        // Convert to numbers as they come from DB as strings/numbers
+        const avgRating = company?.aggregate_rating
+          ? Number(company.aggregate_rating)
+          : 0;
+        const reviewCount = company?.total_ratings
+          ? Number(company.total_ratings)
+          : 0;
 
         return {
           id: professional.id,
@@ -208,8 +191,8 @@ export async function GET(request: NextRequest) {
           company_name: company?.company_name,
           categories: categoriesByProfessional[professional.id] || [],
           status,
-          rating: Math.round(avgRating * 10) / 10, // Round to 1 decimal
-          review_count: ratingData?.count || 0,
+          rating: avgRating,
+          review_count: reviewCount,
           created_at: professional.created_at,
           is_active: professional.is_active,
         };
