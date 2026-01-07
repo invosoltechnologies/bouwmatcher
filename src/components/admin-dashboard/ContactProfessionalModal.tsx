@@ -8,8 +8,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
-import { cn } from '@/lib/utils';
+import toast from 'react-hot-toast';
 
 interface ContactProfessionalModalProps {
   isOpen: boolean;
@@ -26,21 +25,28 @@ export function ContactProfessionalModal({
   email,
   phone,
 }: ContactProfessionalModalProps) {
-  const [copiedEmail, setCopiedEmail] = useState(false);
-  const [copiedPhone, setCopiedPhone] = useState(false);
-
   const copyToClipboard = async (text: string, type: 'email' | 'phone') => {
     try {
       await navigator.clipboard.writeText(text);
-      if (type === 'email') {
-        setCopiedEmail(true);
-        setTimeout(() => setCopiedEmail(false), 2000);
-      } else {
-        setCopiedPhone(true);
-        setTimeout(() => setCopiedPhone(false), 2000);
-      }
+      const message = type === 'email' ? 'Email gekopieerd!' : 'Telefoonnummer gekopieerd!';
+      toast.success(message, {
+        position: 'bottom-center',
+        duration: 2000,
+        style: {
+          background: '#10b981',
+          color: '#fff',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          fontSize: '14px',
+          fontWeight: '500',
+        },
+      });
     } catch (err) {
       console.error('Failed to copy:', err);
+      toast.error('Kopiëren mislukt', {
+        position: 'bottom-center',
+        duration: 2000,
+      });
     }
   };
 
@@ -66,10 +72,7 @@ export function ContactProfessionalModal({
               variant="ghost"
               size="sm"
               onClick={() => copyToClipboard(email, 'email')}
-              className={cn(
-                "flex-shrink-0 h-9 w-9 p-0",
-                copiedEmail && "text-green-600"
-              )}
+              className="flex-shrink-0 h-9 w-9 p-0"
             >
               <Copy className="w-4 h-4" />
             </Button>
@@ -88,10 +91,7 @@ export function ContactProfessionalModal({
                 variant="ghost"
                 size="sm"
                 onClick={() => copyToClipboard(phone, 'phone')}
-                className={cn(
-                  "flex-shrink-0 h-9 w-9 p-0",
-                  copiedPhone && "text-green-600"
-                )}
+                className="flex-shrink-0 h-9 w-9 p-0"
               >
                 <Copy className="w-4 h-4" />
               </Button>

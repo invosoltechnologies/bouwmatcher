@@ -17,6 +17,12 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ContactProfessionalModal } from './ContactProfessionalModal';
 import toast from 'react-hot-toast';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Professional {
   id: string;
@@ -47,15 +53,28 @@ export default function ProfessionalsTable({
   const t = useTranslations('common.adminDashboard');
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [selectedProfessional, setSelectedProfessional] = useState<Professional | null>(null);
-  const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
 
   const copyEmail = async (email: string) => {
     try {
       await navigator.clipboard.writeText(email);
-      setCopiedEmail(email);
-      setTimeout(() => setCopiedEmail(null), 2000);
+      toast.success('Email gekopieerd!', {
+        position: 'bottom-center',
+        duration: 2000,
+        style: {
+          background: '#10b981',
+          color: '#fff',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          fontSize: '14px',
+          fontWeight: '500',
+        },
+      });
     } catch (err) {
       console.error('Failed to copy email:', err);
+      toast.error('Kopiëren mislukt', {
+        position: 'bottom-center',
+        duration: 2000,
+      });
     }
   };
 
@@ -132,7 +151,6 @@ export default function ProfessionalsTable({
       },
       cell: ({ row }) => {
         const professional = row.original;
-        const isCopied = copiedEmail === professional.email;
         return (
           <div className='flex items-center gap-4'>
             <div className='w-10 h-10 rounded-full overflow-hidden bg-primary/80 border border-primary flex-shrink-0 relative'>
@@ -157,12 +175,10 @@ export default function ProfessionalsTable({
                 <span className='text-sm text-slate-500'>
                   {professional.email}
                 </span>
-
-                  <Copy
-                    className='h-3.5 w-3.5 text-primary cursor-pointer'
-                    onClick={() => copyEmail(professional.email)}
-                  />
-
+                <Copy
+                  className='h-3.5 w-3.5 text-primary cursor-pointer hover:text-primary/80 transition-colors'
+                  onClick={() => copyEmail(professional.email)}
+                />
               </div>
             </div>
           </div>
@@ -174,6 +190,7 @@ export default function ProfessionalsTable({
       header: t('tableHeaders.categories', { defaultValue: 'Categorieën' }),
       cell: ({ row }) => {
         const categories = row.getValue("categories") as string[];
+        const remainingCategories = categories.slice(2);
         return (
           <div className="flex flex-wrap gap-2">
             {categories.slice(0, 2).map((category, idx) => {
@@ -194,12 +211,37 @@ export default function ProfessionalsTable({
               );
             })}
             {categories.length > 2 && (
-              <Badge
-                variant="secondary"
-                className="text-xs font-medium border px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border-slate-200"
-              >
-                +{categories.length - 2}
-              </Badge>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Badge
+                      variant="secondary"
+                      className="text-xs font-medium border px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border-slate-200 cursor-help"
+                    >
+                      +{categories.length - 2}
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    className="max-w-xs py-3 bg-white border border-primary/40 shadow-lg"
+                    arrowClassName="fill-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)]"
+                    sideOffset={5}
+                  >
+                    <div className="space-y-1">
+                      <p className="font-semibold text-xs mb-2 text-slate-900">Overige categorieën:</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {remainingCategories.map((category, idx) => (
+                          <span
+                            key={idx}
+                            className="text-xs bg-primary text-white px-2 py-0.5 rounded"
+                          >
+                            {category}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             )}
           </div>
         )
