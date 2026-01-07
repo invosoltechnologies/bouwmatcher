@@ -115,31 +115,29 @@ export default function ProfessionalsTable({
       cell: ({ row }) => {
         const professional = row.original;
         return (
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0 relative">
+          <div className='flex items-center gap-4'>
+            <div className='w-10 h-10 rounded-full overflow-hidden bg-primary/80 border border-primary flex-shrink-0 relative'>
               {professional.avatar ? (
                 <Image
                   src={professional.avatar}
                   alt={professional.name}
                   fill
-                  className="object-cover"
+                  className='object-cover'
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-slate-500 font-semibold text-sm bg-slate-100">
+                <div className='w-full h-full flex items-center justify-center text-white capitalize font-semibold text-sm bg-primary/80'>
                   {professional.name.charAt(0)}
                 </div>
               )}
             </div>
             <div>
-              <div className="font-medium text-slate-900">
+              <div className='font-medium text-slate-900'>
                 {professional.name}
               </div>
-              <div className="text-sm text-slate-500">
-                {professional.email}
-              </div>
+              <div className='text-sm text-slate-500'>{professional.email}</div>
             </div>
           </div>
-        )
+        );
       }
     },
     {

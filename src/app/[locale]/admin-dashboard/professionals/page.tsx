@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useDebounce } from '@/hooks/useDebounce';
 
 export default function ProfessionalsPage() {
   const t = useTranslations('common.adminDashboard');
@@ -24,11 +25,14 @@ export default function ProfessionalsPage() {
   const [selectedRating, setSelectedRating] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
+  // Debounce search query to prevent API calls on every keystroke
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
   const { data, isLoading, error } = useProfessionals({
     limit: 50,
     sortBy: 'created_at',
     sortOrder: 'desc',
-    search: searchQuery || undefined,
+    search: debouncedSearchQuery || undefined,
     status: selectedStatus !== 'all' ? selectedStatus : undefined,
   });
 
@@ -40,7 +44,9 @@ export default function ProfessionalsPage() {
       id: professional.id,
       name: `${professional.first_name} ${professional.last_name}`,
       email: professional.email,
-      avatar: professional.profile_picture_url || undefined,
+      avatar: professional.profile_picture_url && professional.profile_picture_url.trim() !== ''
+        ? professional.profile_picture_url
+        : undefined,
       categories: professional.categories?.map((cat) => cat.name) || [],
       status: professional.status,
       rating: professional.rating,
@@ -81,7 +87,8 @@ export default function ProfessionalsPage() {
     return Array.from(categories).sort();
   }, [data]);
 
-  if (isLoading) {
+  // Only show loading on initial load, not during refetches
+  if (isLoading && !data) {
     return (
       <div className="space-y-6 p-6">
         <div className="text-center py-12">
@@ -106,42 +113,45 @@ export default function ProfessionalsPage() {
   return (
     <>
       {/* Filters Section */}
-      <div className="bg-white rounded-t-lg border border-slate-200 border-b-0 p-6 space-y-4">
-        <div className="flex flex-col sm:flex-row gap-3 items-end">
+      <div className='bg-white rounded-t-lg border border-slate-200 border-b-0 p-6 space-y-4'>
+        <div className='flex flex-col sm:flex-row gap-3 items-end'>
           {/* Search Input */}
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-3.5 w-4 h-4 text-slate-400" />
+          <div className='flex-1 relative'>
+            <Search className='absolute left-3 top-2.5 w-4 h-4 text-slate-400' />
             <Input
-              placeholder="Zoeken op naam of e-mail..."
+              placeholder='Zoeken op naam of e-mail...'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-slate-50 border-slate-300"
+              className='pl-10 bg-slate-50 border-slate-300'
             />
           </div>
 
           {/* Status Filter */}
-          <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-            <SelectTrigger className="w-full sm:w-[180px] bg-slate-50 border-slate-300">
-              <SelectValue placeholder="Status" />
+          <Select
+            value={selectedStatus}
+            onValueChange={setSelectedStatus}
+          >
+            <SelectTrigger className='w-full sm:w-[180px] bg-slate-50 border-slate-300' iconWidth={16} iconHeight={16}>
+              <SelectValue placeholder='Status' />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Alle statussen</SelectItem>
-              <SelectItem value="verified">Geverifieerd</SelectItem>
-              <SelectItem value="pending">In afwachting</SelectItem>
-              <SelectItem value="in_review">In review</SelectItem>
-              <SelectItem value="rejected">Afgewezen</SelectItem>
-              <SelectItem value="suspended">Geschorst</SelectItem>
-              <SelectItem value="unverified">Niet geverifieerd</SelectItem>
+              <SelectItem value='all'>Alle statussen</SelectItem>
+              <SelectItem value='verified'>Geverifieerd</SelectItem>
+              <SelectItem value='pending'>In afwachting</SelectItem>
+              <SelectItem value='in_review'>In review</SelectItem>
+              <SelectItem value='rejected'>Afgewezen</SelectItem>
+              <SelectItem value='suspended'>Geschorst</SelectItem>
+              <SelectItem value='unverified'>Niet geverifieerd</SelectItem>
             </SelectContent>
           </Select>
 
           {/* Category Filter */}
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-full sm:w-[180px] bg-slate-50 border-slate-300">
-              <SelectValue placeholder="Categorie" />
+            <SelectTrigger className='w-full sm:w-[180px] bg-slate-50 border-slate-300' iconWidth={16} iconHeight={16}>
+              <SelectValue placeholder='Categorie' />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Alle categorieën</SelectItem>
+              <SelectItem value='all'>Alle categorieën</SelectItem>
               {uniqueCategories.map((category) => (
                 <SelectItem key={category} value={category}>
                   {category}
@@ -152,33 +162,32 @@ export default function ProfessionalsPage() {
 
           {/* Rating Filter */}
           <Select value={selectedRating} onValueChange={setSelectedRating}>
-            <SelectTrigger className="w-full sm:w-[180px] bg-slate-50 border-slate-300">
-              <SelectValue placeholder="Beoordeling" />
+            <SelectTrigger className='w-full sm:w-[180px] bg-slate-50 border-slate-300' iconWidth={16} iconHeight={16}>
+              <SelectValue placeholder='Beoordeling' />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Alle beoordelingen</SelectItem>
-              <SelectItem value="4-5">★★★★★ (4-5)</SelectItem>
-              <SelectItem value="3-4">★★★ (3-4)</SelectItem>
-              <SelectItem value="2-3">★★ (2-3)</SelectItem>
-              <SelectItem value="1-2">★ (1-2)</SelectItem>
-              <SelectItem value="0-1">(0-1)</SelectItem>
+              <SelectItem value='all'>Alle beoordelingen</SelectItem>
+              <SelectItem value='4-5'>★★★★★ (4-5)</SelectItem>
+              <SelectItem value='3-4'>★★★ (3-4)</SelectItem>
+              <SelectItem value='2-3'>★★ (2-3)</SelectItem>
+              <SelectItem value='1-2'>★ (1-2)</SelectItem>
+              <SelectItem value='0-1'>(0-1)</SelectItem>
             </SelectContent>
           </Select>
 
           {/* Reset Filters Button */}
           {hasActiveFilters && (
             <Button
-              variant="outline"
-              size="sm"
+              variant='outline'
               onClick={() => {
                 setSearchQuery('');
                 setSelectedStatus('all');
                 setSelectedRating('all');
                 setSelectedCategory('all');
               }}
-              className="gap-2 whitespace-nowrap"
+              className='h-9 gap-2 whitespace-nowrap'
             >
-              <X className="w-4 h-4" />
+              <X className='w-4 h-4' />
               Reset
             </Button>
           )}
