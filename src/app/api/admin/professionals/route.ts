@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { getProfessionalStatus, ProfessionalStatusType } from '@/lib/utils/professional-status';
+import { ProfessionalStatusType } from '@/lib/utils/professional-status';
 
 export interface ProfessionalWithStatus {
   id: string;
@@ -158,12 +158,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform and filter professionals
-    // Note: Ratings are now fetched from stored aggregates in professional_companies table
+    // Note: Ratings are fetched from company table, status from professional_profiles
     const result: ProfessionalWithStatus[] = professionals
       .map((professional) => {
         // Supabase returns the joined company as an object, not an array
         const company = professional.professional_companies as any;
-        const status = getProfessionalStatus(professional, company);
+
+        // Get status directly from professional's is_verified field
+        const status = (professional.is_verified || 'unverified') as ProfessionalStatusType;
 
         // Apply status filter if provided
         if (statusFilter && status !== statusFilter) {
