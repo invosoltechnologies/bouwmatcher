@@ -44,6 +44,7 @@ export default function ProfessionalsPage() {
       id: professional.id,
       name: `${professional.first_name} ${professional.last_name}`,
       email: professional.email,
+      phone: professional.phone,
       avatar: professional.profile_picture_url && professional.profile_picture_url.trim() !== ''
         ? professional.profile_picture_url
         : undefined,
@@ -197,7 +198,6 @@ export default function ProfessionalsPage() {
       <ProfessionalsTable
         professionals={transformedProfessionals}
         onViewProfile={(id) => console.log('View profile:', id)}
-        showActionButton={false}
         showHeader={false}
       />
     </>

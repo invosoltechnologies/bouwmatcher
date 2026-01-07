@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Star, MoreHorizontal, ArrowUpDown } from 'lucide-react';
+import { Star, MoreHorizontal, ArrowUpDown, Copy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,14 +13,16 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { ContactProfessionalModal } from './ContactProfessionalModal';
+import toast from 'react-hot-toast';
 
 interface Professional {
   id: string;
   name: string;
   email: string;
+  phone?: string | null;
   avatar?: string;
   categories: string[];
   status: 'verified' | 'pending' | 'in_review' | 'unverified' | 'rejected' | 'suspended';
@@ -32,7 +34,6 @@ interface Professional {
 interface ProfessionalsTableProps {
   professionals: Professional[];
   onViewProfile?: (id: string) => void;
-  showActionButton?: boolean;
   showHeader?: boolean;
   onViewAll?: () => void;
 }
@@ -40,11 +41,28 @@ interface ProfessionalsTableProps {
 export default function ProfessionalsTable({
   professionals,
   onViewProfile,
-  showActionButton = true,
   showHeader = true,
   onViewAll,
 }: ProfessionalsTableProps) {
   const t = useTranslations('common.adminDashboard');
+  const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [selectedProfessional, setSelectedProfessional] = useState<Professional | null>(null);
+  const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
+
+  const copyEmail = async (email: string) => {
+    try {
+      await navigator.clipboard.writeText(email);
+      setCopiedEmail(email);
+      setTimeout(() => setCopiedEmail(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy email:', err);
+    }
+  };
+
+  const handleContactClick = (professional: Professional) => {
+    setSelectedProfessional(professional);
+    setContactModalOpen(true);
+  };
 
   const getStatusColor = (
     status: Professional['status']
@@ -114,6 +132,7 @@ export default function ProfessionalsTable({
       },
       cell: ({ row }) => {
         const professional = row.original;
+        const isCopied = copiedEmail === professional.email;
         return (
           <div className='flex items-center gap-4'>
             <div className='w-10 h-10 rounded-full overflow-hidden bg-primary/80 border border-primary flex-shrink-0 relative'>
@@ -130,11 +149,21 @@ export default function ProfessionalsTable({
                 </div>
               )}
             </div>
-            <div>
+            <div className='flex-1'>
               <div className='font-medium text-slate-900'>
                 {professional.name}
               </div>
-              <div className='text-sm text-slate-500'>{professional.email}</div>
+              <div className='flex items-center gap-2'>
+                <span className='text-sm text-slate-500'>
+                  {professional.email}
+                </span>
+
+                  <Copy
+                    className='h-3.5 w-3.5 text-primary cursor-pointer'
+                    onClick={() => copyEmail(professional.email)}
+                  />
+
+              </div>
             </div>
           </div>
         );
@@ -263,49 +292,44 @@ export default function ProfessionalsTable({
         )
       }
     },
-    ...(showActionButton
-      ? [
-          {
-            id: "actions",
-            header: () => (
-              <div className="text-right">{t('tableHeaders.actions', { defaultValue: 'Acties' })}</div>
-            ),
-            cell: ({ row }) => {
-              const professional = row.original;
-              return (
-                <div className="flex items-center justify-end gap-2">
-                  <Button
-                    size="sm"
-                    onClick={() => onViewProfile?.(professional.id)}
-                    className="bg-green-600 hover:bg-green-700 text-white text-xs px-4 h-8 font-medium shadow-sm"
-                  >
-                    {t('verify', { defaultValue: 'Verifiëren' })}
-                  </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem
-                        onClick={() => navigator.clipboard.writeText(professional.id)}
-                      >
-                        Copy ID
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onViewProfile?.(professional.id)}>
-                        View Details
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              );
-            },
-          } as ColumnDef<Professional>,
-        ]
-      : []),
+    {
+      id: "actions",
+      header: () => (
+        <div className="text-right">{t('tableHeaders.actions', { defaultValue: 'Acties' })}</div>
+      ),
+      cell: ({ row }) => {
+        const professional = row.original;
+        return (
+          <div className="flex items-center justify-end">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={() => handleContactClick(professional)}>
+                  Contact
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onViewProfile?.(professional.id)}>
+                  Zie Profiel
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => console.log('Block:', professional.id)}>
+                  Blokkeren
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => console.log('Unblock:', professional.id)}
+                  className="text-muted-foreground"
+                >
+                  Deblokkeren
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        );
+      },
+    } as ColumnDef<Professional>,
   ]
 
   return (
@@ -337,6 +361,17 @@ export default function ProfessionalsTable({
           searchPlaceholder={t('tableHeaders.searchPlaceholder', { defaultValue: 'Zoeken...' })}
         />
       </div>
+
+      {/* Contact Modal */}
+      {selectedProfessional && (
+        <ContactProfessionalModal
+          isOpen={contactModalOpen}
+          onClose={() => setContactModalOpen(false)}
+          professionalName={selectedProfessional.name}
+          email={selectedProfessional.email}
+          phone={selectedProfessional.phone || null}
+        />
+      )}
     </div>
   );
 }
