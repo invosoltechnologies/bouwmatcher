@@ -32,11 +32,17 @@ interface Professional {
 interface ProfessionalsTableProps {
   professionals: Professional[];
   onViewProfile?: (id: string) => void;
+  showActionButton?: boolean;
+  showHeader?: boolean;
+  onViewAll?: () => void;
 }
 
 export default function ProfessionalsTable({
   professionals,
   onViewProfile,
+  showActionButton = true,
+  showHeader = true,
+  onViewAll,
 }: ProfessionalsTableProps) {
   const t = useTranslations('common.adminDashboard');
 
@@ -81,6 +87,17 @@ export default function ProfessionalsTable({
   };
 
   const columns: ColumnDef<Professional>[] = [
+    {
+      id: "index",
+      header: "#",
+      cell: ({ row }) => (
+        <span className="text-sm font-medium text-slate-600">
+          {row.index + 1}
+        </span>
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
     {
       accessorKey: "name",
       header: ({ column }) => {
@@ -248,66 +265,77 @@ export default function ProfessionalsTable({
         )
       }
     },
-    {
-      id: "actions",
-      header: () => <div className="text-right">{t('tableHeaders.actions', { defaultValue: 'Acties' })}</div>,
-      cell: ({ row }) => {
-        const professional = row.original;
-        return (
-          <div className="flex items-center justify-end gap-2">
-            <Button
-              size="sm"
-              onClick={() => onViewProfile?.(professional.id)}
-              className="bg-green-600 hover:bg-green-700 text-white text-xs px-4 h-8 font-medium shadow-sm"
-            >
-              {t('verify', { defaultValue: 'Verifiëren' })}
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem
-                  onClick={() => navigator.clipboard.writeText(professional.id)}
-                >
-                  Copy ID
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onViewProfile?.(professional.id)}>View Details</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        )
-      },
-    },
+    ...(showActionButton
+      ? [
+          {
+            id: "actions",
+            header: () => (
+              <div className="text-right">{t('tableHeaders.actions', { defaultValue: 'Acties' })}</div>
+            ),
+            cell: ({ row }) => {
+              const professional = row.original;
+              return (
+                <div className="flex items-center justify-end gap-2">
+                  <Button
+                    size="sm"
+                    onClick={() => onViewProfile?.(professional.id)}
+                    className="bg-green-600 hover:bg-green-700 text-white text-xs px-4 h-8 font-medium shadow-sm"
+                  >
+                    {t('verify', { defaultValue: 'Verifiëren' })}
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuItem
+                        onClick={() => navigator.clipboard.writeText(professional.id)}
+                      >
+                        Copy ID
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onViewProfile?.(professional.id)}>
+                        View Details
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              );
+            },
+          } as ColumnDef<Professional>,
+        ]
+      : []),
   ]
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-b-xl border border-slate-200 border-t-0 shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="p-6 border-b border-slate-200 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold text-slate-900">
-            {t('recentProfessionals', { defaultValue: 'Recente professionals' })}
-          </h2>
-          <Button
-            variant="default"
-          >
-            {t('viewAllProfessionals', {
-              defaultValue: 'Bekijk alle professionals',
-            })}
-          </Button>
+      {showHeader && (
+        <div className="p-6 border-b border-slate-200 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h2 className="text-lg font-semibold text-slate-900">
+              {t('recentProfessionals', { defaultValue: 'Recente professionals' })}
+            </h2>
+            <Button
+              variant="default"
+              onClick={onViewAll}
+            >
+              {t('viewAllProfessionals', {
+                defaultValue: 'Bekijk alle professionals',
+              })}
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="p-6 pt-0">
-        <DataTable 
-          columns={columns} 
-          data={professionals} 
-          searchKey="name" 
+      <div className={showHeader ? 'p-6 pt-0' : 'p-0'}>
+        <DataTable
+          columns={columns}
+          data={professionals}
+          searchKey="name"
           searchPlaceholder={t('tableHeaders.searchPlaceholder', { defaultValue: 'Zoeken...' })}
         />
       </div>

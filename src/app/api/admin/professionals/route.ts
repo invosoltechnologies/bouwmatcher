@@ -12,6 +12,7 @@ export interface ProfessionalWithStatus {
   specializations: string[] | null;
   company_id: string | null;
   company_name?: string | null;
+  categories: Array<{ id: number; name: string }>;
   status: ProfessionalStatusType;
   rating: number;
   review_count: number;
@@ -114,8 +115,46 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch ratings for all professionals at once
+    // Fetch categories and ratings for all professionals at once
     const professionalIds = professionals.map((p) => p.id);
+
+    // Fetch specializations with category details
+    const { data: specializations, error: specializationsError } = await supabase
+      .from('professional_specializations')
+      .select(
+        `
+        professional_id,
+        service_categories (
+          id,
+          name_nl,
+          name_en
+        )
+      `
+      )
+      .in('professional_id', professionalIds);
+
+    if (specializationsError && specializationsError.code !== 'PGRST116') {
+      console.error('Error fetching specializations:', specializationsError);
+    }
+
+    // Organize categories by professional
+    const categoriesByProfessional: Record<string, Array<{ id: number; name: string }>> = {};
+    if (specializations) {
+      specializations.forEach((spec) => {
+        if (!categoriesByProfessional[spec.professional_id]) {
+          categoriesByProfessional[spec.professional_id] = [];
+        }
+        const category = (spec.service_categories as any);
+        if (category) {
+          categoriesByProfessional[spec.professional_id].push({
+            id: category.id,
+            name: category.name_nl, // Use Dutch name by default
+          });
+        }
+      });
+    }
+
+    // Fetch ratings for all professionals at once
     const { data: ratings, error: ratingsError } = await supabase
       .from('professional_company_ratings')
       .select('company_id, rating')
@@ -165,6 +204,7 @@ export async function GET(request: NextRequest) {
           specializations: professional.specializations || [],
           company_id: professional.company_id,
           company_name: company?.company_name,
+          categories: categoriesByProfessional[professional.id] || [],
           status,
           rating: Math.round(avgRating * 10) / 10, // Round to 1 decimal
           review_count: ratingData?.count || 0,

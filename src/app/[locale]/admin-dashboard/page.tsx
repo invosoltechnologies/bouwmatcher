@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   HardDrive,
   CheckCircle2,
@@ -20,6 +21,7 @@ import toast from 'react-hot-toast';
 
 export default function AdminDashboardPage() {
   const t = useTranslations('common.adminDashboard');
+  const router = useRouter();
   const [loadingReviewId, setLoadingReviewId] = useState<string | null>(null);
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
   const [showRejectionModal, setShowRejectionModal] = useState(false);
@@ -53,7 +55,7 @@ export default function AdminDashboardPage() {
       name: `${professional.first_name} ${professional.last_name}`,
       email: professional.email,
       avatar: professional.profile_picture_url || undefined,
-      categories: professional.specializations || [],
+      categories: professional.categories?.map((cat) => cat.name) || [],
       status: professional.status,
       rating: professional.rating,
       reviewCount: professional.review_count,
@@ -89,7 +91,7 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       {/* Stats Cards Grid */}
-      <div className="flex flex-wrap gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
         <StatsCard
           icon={HardDrive}
           iconColor="text-blue-600"
@@ -183,6 +185,7 @@ export default function AdminDashboardPage() {
       <ProfessionalsTable
         professionals={transformedProfessionals}
         onViewProfile={(id) => console.log('View profile:', id)}
+        onViewAll={() => router.push('/admin-dashboard/professionals')}
       />
 
       {/* Bottom Grid - Reviews and Service Categories */}
