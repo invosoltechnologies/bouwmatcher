@@ -181,13 +181,15 @@ export default function ServiceCategoriesTable({
   ]
 
   return (
-    <div className="border border-slate-200 rounded-lg overflow-hidden bg-white">
-      <DataTable 
-        columns={columns} 
-        data={categories} 
-        searchKey="name"
-        searchPlaceholder={locale === 'nl' ? 'Zoeken...' : 'Search...'}
-      />
+    <div className="bg-white rounded-b-xl border border-slate-200 border-t-0 shadow-sm overflow-hidden">
+      <div className="p-6 pt-0">
+        <DataTable
+          columns={columns}
+          data={categories}
+          searchKey="name"
+          searchPlaceholder={locale === 'nl' ? 'Zoeken...' : 'Search...'}
+        />
+      </div>
     </div>
   );
 }

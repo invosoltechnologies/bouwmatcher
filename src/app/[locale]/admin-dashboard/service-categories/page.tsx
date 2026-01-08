@@ -135,11 +135,24 @@ export default function ServiceCategoriesPage() {
     <div className="space-y-6">
 
       {/* Filters and Actions */}
-      <div className="bg-white rounded-lg border border-slate-200 p-4 space-y-4">
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+      <div className="bg-white rounded-t-lg border border-slate-200 border-b-0 p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+          <h2 className="text-lg font-semibold text-slate-900">
+            {locale === 'nl' ? 'Service Categorieën' : 'Service Categories'}
+          </h2>
+          <Button
+            onClick={handleAddCategory}
+            className="gap-2 whitespace-nowrap"
+          >
+            <Plus className="w-4 h-4" />
+            {locale === 'nl' ? 'Categorie toevoegen' : 'Add Category'}
+          </Button>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 items-end">
           {/* Search Input */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
             <Input
               placeholder={
                 locale === 'nl'
@@ -148,7 +161,7 @@ export default function ServiceCategoriesPage() {
               }
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className="pl-10 bg-slate-50 border-slate-300"
             />
           </div>
 
@@ -157,7 +170,7 @@ export default function ServiceCategoriesPage() {
             value={statusFilter}
             onValueChange={(value) => setStatusFilter(value as 'all' | 'active' | 'inactive')}
           >
-            <SelectTrigger className="w-full sm:w-40">
+            <SelectTrigger className="w-full sm:w-[180px] bg-slate-50 border-slate-300" iconWidth={16} iconHeight={16}>
               <SelectValue
                 placeholder={
                   locale === 'nl' ? 'Filter op status' : 'Filter by status'
@@ -166,7 +179,7 @@ export default function ServiceCategoriesPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">
-                {locale === 'nl' ? 'Alles' : 'All'}
+                {locale === 'nl' ? 'Alle statussen' : 'All statuses'}
               </SelectItem>
               <SelectItem value="active">
                 {locale === 'nl' ? 'Actief' : 'Active'}
@@ -176,22 +189,6 @@ export default function ServiceCategoriesPage() {
               </SelectItem>
             </SelectContent>
           </Select>
-
-          {/* Add Button */}
-          <Button
-            onClick={handleAddCategory}
-            className="flex items-center gap-2 whitespace-nowrap w-full sm:w-auto"
-          >
-            <Plus className="w-4 h-4" />
-            {locale === 'nl' ? 'Categorie toevoegen' : 'Add Category'}
-          </Button>
-        </div>
-
-        {/* Results Counter */}
-        <div className="text-sm text-slate-600">
-          {locale === 'nl'
-            ? `${filteredCategories.length} categorie${filteredCategories.length !== 1 ? 's' : ''} gevonden`
-            : `${filteredCategories.length} categor${filteredCategories.length !== 1 ? 'ies' : 'y'} found`}
         </div>
       </div>
 

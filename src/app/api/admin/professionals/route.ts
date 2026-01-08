@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { getProfessionalStatus, ProfessionalStatusType } from '@/lib/utils/professional-status';
+import { ProfessionalStatusType } from '@/lib/utils/professional-status';
 
 export interface ProfessionalWithStatus {
   id: string;
@@ -12,6 +12,7 @@ export interface ProfessionalWithStatus {
   specializations: string[] | null;
   company_id: string | null;
   company_name?: string | null;
+  categories: Array<{ id: number; name: string }>;
   status: ProfessionalStatusType;
   rating: number;
   review_count: number;
@@ -68,6 +69,7 @@ export async function GET(request: NextRequest) {
         last_name,
         email,
         phone,
+        profile_picture_url,
         specializations,
         company_id,
         is_verified,
@@ -77,12 +79,13 @@ export async function GET(request: NextRequest) {
           id,
           company_name,
           is_verified,
-          verification_status
+          verification_status,
+          aggregate_rating,
+          total_ratings
         )
         `,
         { count: 'exact' }
       )
-      .eq('is_active', true)
       .order(finalSortBy === 'name' ? 'first_name' : finalSortBy, { ascending: sortOrder === 'ASC' })
       .range(offset, offset + limit - 1);
 
@@ -114,47 +117,68 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch ratings for all professionals at once
+    // Fetch categories and ratings for all professionals at once
     const professionalIds = professionals.map((p) => p.id);
-    const { data: ratings, error: ratingsError } = await supabase
-      .from('professional_company_ratings')
-      .select('company_id, rating')
-      .in(
-        'company_id',
-        professionals.filter((p) => p.company_id).map((p) => p.company_id!)
-      );
 
-    if (ratingsError && ratingsError.code !== 'PGRST116') {
-      console.error('Error fetching ratings:', ratingsError);
+    // Fetch specializations with category details
+    const { data: specializations, error: specializationsError } = await supabase
+      .from('professional_specializations')
+      .select(
+        `
+        professional_id,
+        service_categories (
+          id,
+          name_nl,
+          name_en
+        )
+      `
+      )
+      .in('professional_id', professionalIds);
+
+    if (specializationsError && specializationsError.code !== 'PGRST116') {
+      console.error('Error fetching specializations:', specializationsError);
     }
 
-    // Aggregate ratings by company
-    const ratingsByCompany: Record<string, { sum: number; count: number }> = {};
-    if (ratings) {
-      ratings.forEach((rating) => {
-        if (!ratingsByCompany[rating.company_id]) {
-          ratingsByCompany[rating.company_id] = { sum: 0, count: 0 };
+    // Organize categories by professional
+    const categoriesByProfessional: Record<string, Array<{ id: number; name: string }>> = {};
+    if (specializations) {
+      specializations.forEach((spec) => {
+        if (!categoriesByProfessional[spec.professional_id]) {
+          categoriesByProfessional[spec.professional_id] = [];
         }
-        ratingsByCompany[rating.company_id].sum += rating.rating;
-        ratingsByCompany[rating.company_id].count += 1;
+        const category = (spec.service_categories as any);
+        if (category) {
+          categoriesByProfessional[spec.professional_id].push({
+            id: category.id,
+            name: category.name_nl, // Use Dutch name by default
+          });
+        }
       });
     }
 
     // Transform and filter professionals
+    // Note: Ratings are fetched from company table, status from professional_profiles
     const result: ProfessionalWithStatus[] = professionals
       .map((professional) => {
-        const company = (professional.professional_companies as any)?.[0];
-        const status = getProfessionalStatus(professional, company);
+        // Supabase returns the joined company as an object, not an array
+        const company = professional.professional_companies as any;
+
+        // Get status directly from professional's is_verified field
+        const status = (professional.is_verified || 'unverified') as ProfessionalStatusType;
 
         // Apply status filter if provided
         if (statusFilter && status !== statusFilter) {
           return null;
         }
 
-        const ratingData = company?.id
-          ? ratingsByCompany[company.id]
-          : undefined;
-        const avgRating = ratingData ? ratingData.sum / ratingData.count : 0;
+        // Use stored aggregate ratings from company table
+        // Convert to numbers as they come from DB as strings/numbers
+        const avgRating = company?.aggregate_rating
+          ? Number(company.aggregate_rating)
+          : 0;
+        const reviewCount = company?.total_ratings
+          ? Number(company.total_ratings)
+          : 0;
 
         return {
           id: professional.id,
@@ -162,12 +186,14 @@ export async function GET(request: NextRequest) {
           last_name: professional.last_name,
           email: professional.email,
           phone: professional.phone,
+          profile_picture_url: (professional as any).profile_picture_url || null,
           specializations: professional.specializations || [],
           company_id: professional.company_id,
           company_name: company?.company_name,
+          categories: categoriesByProfessional[professional.id] || [],
           status,
-          rating: Math.round(avgRating * 10) / 10, // Round to 1 decimal
-          review_count: ratingData?.count || 0,
+          rating: avgRating,
+          review_count: reviewCount,
           created_at: professional.created_at,
           is_active: professional.is_active,
         };

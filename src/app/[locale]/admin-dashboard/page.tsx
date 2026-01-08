@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   HardDrive,
   CheckCircle2,
@@ -12,47 +13,27 @@ import StatsCard from '@/components/admin-dashboard/StatsCard';
 import ProfessionalsTable from '@/components/admin-dashboard/ProfessionalsTable';
 import ReviewCard from '@/components/admin-dashboard/ReviewCard';
 import ServiceCategoriesList from '@/components/admin-dashboard/ServiceCategoriesList';
+import { ReviewRejectionModal } from '@/components/admin-dashboard/ReviewRejectionModal';
 import { useProfessionals } from '@/lib/hooks/admin/professionals';
+import { useAllReviews, useReviewApproval, type Review } from '@/lib/hooks/admin/reviews';
 import { useTranslations } from 'next-intl';
-
-const mockReviews = [
-  {
-    rating: 5,
-    reviewText:
-      'Uitstekend loodgieterswerk! John was professioneel, op tijd en heeft het gebruik van het nieuwe systeem aan mij uitgelegd. Een echte top!',
-    reviewerName: 'Emily Davis',
-    professionalName: 'John Smith',
-    date: '2024-12-28',
-    status: 'approved' as const,
-  },
-  {
-    rating: 1,
-    reviewText:
-      'Over het algemeen tevreden. Het duurde iets langer dan verwacht maar het resultaat was de moeite waard.',
-    professionalName: 'Jane Pro',
-    reviewerName: 'Mike Anderson',
-    date: '2024-12-25',
-    status: 'pending' as const,
-  },
-  {
-    rating: 4,
-    reviewText:
-      'Over het algemeen tevreden. Het duurde iets langer dan verwacht maar het resultaat was de moeite waard.',
-    reviewerName: 'Lisa Andrews',
-    professionalName: 'Bob Builder',
-    date: '2024-12-23',
-    status: 'approved' as const,
-  },
-];
-
+import toast from 'react-hot-toast';
 
 export default function AdminDashboardPage() {
   const t = useTranslations('common.adminDashboard');
+  const router = useRouter();
+  const [loadingReviewId, setLoadingReviewId] = useState<string | null>(null);
+  const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
+  const [showRejectionModal, setShowRejectionModal] = useState(false);
+
   const { data, isLoading } = useProfessionals({
     limit: 5,
     sortBy: 'created_at',
     sortOrder: 'desc',
   });
+
+  const { data: reviewsData, isLoading: reviewsLoading, refetch: refetchReviews } = useAllReviews(4, 0);
+  const reviewApprovalMutation = useReviewApproval();
 
   // Transform API response and compute stats
   const { transformedProfessionals, stats } = useMemo(() => {
@@ -74,7 +55,7 @@ export default function AdminDashboardPage() {
       name: `${professional.first_name} ${professional.last_name}`,
       email: professional.email,
       avatar: professional.profile_picture_url || undefined,
-      categories: professional.specializations || [],
+      categories: professional.categories?.map((cat) => cat.name) || [],
       status: professional.status,
       rating: professional.rating,
       reviewCount: professional.review_count,
@@ -110,7 +91,7 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       {/* Stats Cards Grid */}
-      <div className="flex flex-wrap gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
         <StatsCard
           icon={HardDrive}
           iconColor="text-blue-600"
@@ -204,6 +185,7 @@ export default function AdminDashboardPage() {
       <ProfessionalsTable
         professionals={transformedProfessionals}
         onViewProfile={(id) => console.log('View profile:', id)}
+        onViewAll={() => router.push('/admin-dashboard/professionals')}
       />
 
       {/* Bottom Grid - Reviews and Service Categories */}
@@ -216,28 +198,109 @@ export default function AdminDashboardPage() {
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
               {t('recentReviewsDesc', {
-                defaultValue: 'Laatst toegevoegde reviews',
+                defaultValue: 'Wachtende goedkeuring',
               })}
             </p>
           </div>
 
           <div className="space-y-4">
-            {mockReviews.map((review, idx) => (
-              <ReviewCard key={idx} {...review} />
-            ))}
+            {reviewsLoading ? (
+              <div className="py-8 text-center text-muted-foreground">
+                Beoordelingen laden...
+              </div>
+            ) : !reviewsData?.reviews || reviewsData.reviews.length === 0 ? (
+              <div className="py-8 text-center text-muted-foreground">
+                Geen beoordelingen in afwachting van goedkeuring
+              </div>
+            ) : (
+              reviewsData.reviews.map((review: Review) => (
+                <ReviewCard
+                  key={review.id}
+                  id={review.id}
+                  rating={review.rating}
+                  reviewText={review.review_text || ''}
+                  reviewerName={review.reviewer_name || 'Unknown'}
+                  professionalName={review.professional_name || ''}
+                  companyName={review.company_name}
+                  date={review.created_at}
+                  status={review.approval_status || 'pending'}
+                  rejectionReason={review.rejection_reason}
+                  approvedAt={review.approved_at}
+                  isAdmin={true}
+                  isLoading={loadingReviewId === review.id}
+                  onApprove={async (reviewId) => {
+                    try {
+                      setLoadingReviewId(reviewId);
+                      await reviewApprovalMutation.mutateAsync({
+                        reviewId,
+                        action: 'approve',
+                      });
+                      toast.success('Beoordeling goedgekeurd!');
+                      await refetchReviews();
+                    } catch (error) {
+                      toast.error(
+                        error instanceof Error
+                          ? error.message
+                          : 'Goedkeuring mislukt'
+                      );
+                    } finally {
+                      setLoadingReviewId(null);
+                    }
+                  }}
+                  onShowRejectionModal={() => {
+                    setSelectedReviewId(review.id);
+                    setShowRejectionModal(true);
+                  }}
+                />
+              ))
+            )}
           </div>
 
           {/* Show all link */}
-          <div className="mt-4 pt-4 border-t border-slate-200 text-center">
-            <button className="text-primary font-medium hover:underline">
-              {t('viewAllReviews', { defaultValue: 'Bekijk alles' })}
-            </button>
-          </div>
+          {reviewsData && reviewsData.total > 0 && (
+            <div className="mt-4 pt-4 border-t border-slate-200 text-center">
+              <button className="text-primary font-medium hover:underline">
+                {t('viewAllReviews', { defaultValue: 'Alle beoordelingen bekijken' })} ({reviewsData.total})
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Service Categories - Right Column */}
         <ServiceCategoriesList />
       </div>
+
+      {/* Rejection Modal */}
+      <ReviewRejectionModal
+        isOpen={showRejectionModal}
+        onClose={() => {
+          setShowRejectionModal(false);
+          setSelectedReviewId(null);
+        }}
+        onConfirm={async (reason) => {
+          if (!selectedReviewId) return;
+
+          try {
+            setLoadingReviewId(selectedReviewId);
+            await reviewApprovalMutation.mutateAsync({
+              reviewId: selectedReviewId,
+              action: 'reject',
+              rejectionReason: reason,
+            });
+            toast.success('Beoordeling afgewezen!');
+            setShowRejectionModal(false);
+            setSelectedReviewId(null);
+            await refetchReviews();
+          } catch (error) {
+            toast.error(
+              error instanceof Error ? error.message : 'Afwijzing mislukt'
+            );
+          } finally {
+            setLoadingReviewId(null);
+          }
+        }}
+        isLoading={loadingReviewId === selectedReviewId}
+      />
     </div>
   );
 }

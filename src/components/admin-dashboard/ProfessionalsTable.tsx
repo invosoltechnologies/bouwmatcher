@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Star, MoreHorizontal, ArrowUpDown } from 'lucide-react';
+import { Star, MoreHorizontal, ArrowUpDown, Copy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,14 +13,28 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { ContactProfessionalModal } from './ContactProfessionalModal';
+import { ConfirmationDialog } from './ConfirmationDialog';
+import toast from 'react-hot-toast';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  useBlockProfessional,
+  useUnblockProfessional,
+  useVerifyProfessional,
+} from '@/lib/hooks/admin/professional-actions';
 
 interface Professional {
   id: string;
   name: string;
   email: string;
+  phone?: string | null;
   avatar?: string;
   categories: string[];
   status: 'verified' | 'pending' | 'in_review' | 'unverified' | 'rejected' | 'suspended';
@@ -32,13 +46,160 @@ interface Professional {
 interface ProfessionalsTableProps {
   professionals: Professional[];
   onViewProfile?: (id: string) => void;
+  showHeader?: boolean;
+  onViewAll?: () => void;
 }
 
 export default function ProfessionalsTable({
   professionals,
   onViewProfile,
+  showHeader = true,
+  onViewAll,
 }: ProfessionalsTableProps) {
   const t = useTranslations('common.adminDashboard');
+  const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [selectedProfessional, setSelectedProfessional] = useState<Professional | null>(null);
+
+  // Confirmation dialogs state
+  const [blockDialogOpen, setBlockDialogOpen] = useState(false);
+  const [unblockDialogOpen, setUnblockDialogOpen] = useState(false);
+  const [verifyDialogOpen, setVerifyDialogOpen] = useState(false);
+  const [actionProfessional, setActionProfessional] = useState<{ id: string; name: string } | null>(null);
+
+  // Mutation hooks
+  const blockMutation = useBlockProfessional();
+  const unblockMutation = useUnblockProfessional();
+  const verifyMutation = useVerifyProfessional();
+
+  const copyEmail = async (email: string) => {
+    try {
+      await navigator.clipboard.writeText(email);
+      toast.success('Email gekopieerd!', {
+        position: 'bottom-center',
+        duration: 2000,
+        style: {
+          background: '#10b981',
+          color: '#fff',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          fontSize: '14px',
+          fontWeight: '500',
+        },
+      });
+    } catch (err) {
+      console.error('Failed to copy email:', err);
+      toast.error('Kopiëren mislukt', {
+        position: 'bottom-center',
+        duration: 2000,
+      });
+    }
+  };
+
+  const handleContactClick = (professional: Professional) => {
+    setSelectedProfessional(professional);
+    setContactModalOpen(true);
+  };
+
+  // Open confirmation dialogs
+  const openBlockDialog = (id: string, name: string) => {
+    setActionProfessional({ id, name });
+    setBlockDialogOpen(true);
+  };
+
+  const openUnblockDialog = (id: string, name: string) => {
+    setActionProfessional({ id, name });
+    setUnblockDialogOpen(true);
+  };
+
+  const openVerifyDialog = (id: string, name: string) => {
+    setActionProfessional({ id, name });
+    setVerifyDialogOpen(true);
+  };
+
+  // Actual action handlers
+  const confirmBlockProfessional = async () => {
+    if (!actionProfessional) return;
+
+    try {
+      await blockMutation.mutateAsync(actionProfessional.id);
+      toast.success(`${actionProfessional.name} is geblokkeerd!`, {
+        position: 'bottom-center',
+        duration: 2000,
+        style: {
+          background: '#10b981',
+          color: '#fff',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          fontSize: '14px',
+          fontWeight: '500',
+        },
+      });
+      setBlockDialogOpen(false);
+      setActionProfessional(null);
+    } catch (err) {
+      console.error('Failed to block professional:', err);
+      toast.error('Blokkeren mislukt', {
+        position: 'bottom-center',
+        duration: 2000,
+      });
+    }
+  };
+
+  const confirmUnblockProfessional = async () => {
+    if (!actionProfessional) return;
+
+    try {
+      await unblockMutation.mutateAsync(actionProfessional.id);
+      toast.success(`${actionProfessional.name} is gedeblokkeerd!`, {
+        position: 'bottom-center',
+        duration: 2000,
+        style: {
+          background: '#10b981',
+          color: '#fff',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          fontSize: '14px',
+          fontWeight: '500',
+        },
+      });
+      setUnblockDialogOpen(false);
+      setActionProfessional(null);
+    } catch (err) {
+      console.error('Failed to unblock professional:', err);
+      toast.error('Deblokkeren mislukt', {
+        position: 'bottom-center',
+        duration: 2000,
+      });
+    }
+  };
+
+  const confirmVerifyProfessional = async () => {
+    if (!actionProfessional) return;
+
+    try {
+      await verifyMutation.mutateAsync(actionProfessional.id);
+      toast.success(`${actionProfessional.name} is geverifieerd!`, {
+        position: 'bottom-center',
+        duration: 2000,
+        style: {
+          background: '#10b981',
+          color: '#fff',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          fontSize: '14px',
+          fontWeight: '500',
+        },
+      });
+      setVerifyDialogOpen(false);
+      setActionProfessional(null);
+    } catch (err) {
+      console.error('Failed to verify professional:', err);
+      toast.error('Verificatie mislukt', {
+        position: 'bottom-center',
+        duration: 2000,
+      });
+    }
+  };
 
   const getStatusColor = (
     status: Professional['status']
@@ -82,6 +243,17 @@ export default function ProfessionalsTable({
 
   const columns: ColumnDef<Professional>[] = [
     {
+      id: "index",
+      header: "#",
+      cell: ({ row }) => (
+        <span className="text-sm font-medium text-slate-600">
+          {row.index + 1}
+        </span>
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
       accessorKey: "name",
       header: ({ column }) => {
         return (
@@ -98,31 +270,37 @@ export default function ProfessionalsTable({
       cell: ({ row }) => {
         const professional = row.original;
         return (
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 border border-slate-200 flex-shrink-0 relative">
+          <div className='flex items-center gap-4'>
+            <div className='w-10 h-10 rounded-full overflow-hidden bg-primary/80 border border-primary flex-shrink-0 relative'>
               {professional.avatar ? (
                 <Image
                   src={professional.avatar}
                   alt={professional.name}
                   fill
-                  className="object-cover"
+                  className='object-cover'
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-slate-500 font-semibold text-sm bg-slate-100">
+                <div className='w-full h-full flex items-center justify-center text-white capitalize font-semibold text-sm bg-primary/80'>
                   {professional.name.charAt(0)}
                 </div>
               )}
             </div>
-            <div>
-              <div className="font-medium text-slate-900">
+            <div className='flex-1'>
+              <div className='font-medium text-slate-900'>
                 {professional.name}
               </div>
-              <div className="text-sm text-slate-500">
-                {professional.email}
+              <div className='flex items-center gap-2'>
+                <span className='text-sm text-slate-500'>
+                  {professional.email}
+                </span>
+                <Copy
+                  className='h-3.5 w-3.5 text-primary cursor-pointer hover:text-primary/80 transition-colors'
+                  onClick={() => copyEmail(professional.email)}
+                />
               </div>
             </div>
           </div>
-        )
+        );
       }
     },
     {
@@ -130,6 +308,7 @@ export default function ProfessionalsTable({
       header: t('tableHeaders.categories', { defaultValue: 'Categorieën' }),
       cell: ({ row }) => {
         const categories = row.getValue("categories") as string[];
+        const remainingCategories = categories.slice(2);
         return (
           <div className="flex flex-wrap gap-2">
             {categories.slice(0, 2).map((category, idx) => {
@@ -150,12 +329,37 @@ export default function ProfessionalsTable({
               );
             })}
             {categories.length > 2 && (
-              <Badge
-                variant="secondary"
-                className="text-xs font-medium border px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border-slate-200"
-              >
-                +{categories.length - 2}
-              </Badge>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Badge
+                      variant="secondary"
+                      className="text-xs font-medium border px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border-slate-200 cursor-help"
+                    >
+                      +{categories.length - 2}
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    className="max-w-xs py-3 bg-white border border-primary/40 shadow-lg"
+                    arrowClassName="fill-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)]"
+                    sideOffset={5}
+                  >
+                    <div className="space-y-1">
+                      <p className="font-semibold text-xs mb-2 text-slate-900">Overige categorieën:</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {remainingCategories.map((category, idx) => (
+                          <span
+                            key={idx}
+                            className="text-xs bg-primary text-white px-2 py-0.5 rounded"
+                          >
+                            {category}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             )}
           </div>
         )
@@ -250,18 +454,13 @@ export default function ProfessionalsTable({
     },
     {
       id: "actions",
-      header: () => <div className="text-right">{t('tableHeaders.actions', { defaultValue: 'Acties' })}</div>,
+      header: () => (
+        <div className="text-right">{t('tableHeaders.actions', { defaultValue: 'Acties' })}</div>
+      ),
       cell: ({ row }) => {
         const professional = row.original;
         return (
-          <div className="flex items-center justify-end gap-2">
-            <Button
-              size="sm"
-              onClick={() => onViewProfile?.(professional.id)}
-              className="bg-green-600 hover:bg-green-700 text-white text-xs px-4 h-8 font-medium shadow-sm"
-            >
-              {t('verify', { defaultValue: 'Verifiëren' })}
-            </Button>
+          <div className="flex items-center justify-end">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0">
@@ -269,48 +468,130 @@ export default function ProfessionalsTable({
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem
-                  onClick={() => navigator.clipboard.writeText(professional.id)}
-                >
-                  Copy ID
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={() => handleContactClick(professional)}>
+                  Contact
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onViewProfile?.(professional.id)}>View Details</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onViewProfile?.(professional.id)}>
+                  Zie Profiel
+                </DropdownMenuItem>
+
+                {/* Show Verify option only for unverified users */}
+                {professional.status === 'unverified' && (
+                  <DropdownMenuItem
+                    onClick={() => openVerifyDialog(professional.id, professional.name)}
+                    className="text-green-600"
+                  >
+                    Verifiëren
+                  </DropdownMenuItem>
+                )}
+
+                {/* Show Block option for non-suspended users */}
+                {professional.status !== 'suspended' && (
+                  <DropdownMenuItem
+                    onClick={() => openBlockDialog(professional.id, professional.name)}
+                    className="text-red-600"
+                  >
+                    Blokkeren
+                  </DropdownMenuItem>
+                )}
+
+                {/* Show Unblock option only for suspended users */}
+                {professional.status === 'suspended' && (
+                  <DropdownMenuItem
+                    onClick={() => openUnblockDialog(professional.id, professional.name)}
+                    className="text-blue-600"
+                  >
+                    Deblokkeren
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-        )
+        );
       },
-    },
+    } as ColumnDef<Professional>,
   ]
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-b-xl border border-slate-200 border-t-0 shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="p-6 border-b border-slate-200 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold text-slate-900">
-            {t('recentProfessionals', { defaultValue: 'Recente professionals' })}
-          </h2>
-          <Button
-            variant="default"
-          >
-            {t('viewAllProfessionals', {
-              defaultValue: 'Bekijk alle professionals',
-            })}
-          </Button>
+      {showHeader && (
+        <div className="p-6 border-b border-slate-200 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h2 className="text-lg font-semibold text-slate-900">
+              {t('recentProfessionals', { defaultValue: 'Recente professionals' })}
+            </h2>
+            <Button
+              variant="default"
+              onClick={onViewAll}
+            >
+              {t('viewAllProfessionals', {
+                defaultValue: 'Bekijk alle professionals',
+              })}
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="p-6 pt-0">
-        <DataTable 
-          columns={columns} 
-          data={professionals} 
-          searchKey="name" 
+      <div className={showHeader ? 'p-6 pt-0' : 'p-0'}>
+        <DataTable
+          columns={columns}
+          data={professionals}
+          searchKey="name"
           searchPlaceholder={t('tableHeaders.searchPlaceholder', { defaultValue: 'Zoeken...' })}
+          getRowClassName={(professional) =>
+            professional.status === 'suspended' ? 'bg-red-50/50 hover:bg-red-100/50' : ''
+          }
         />
       </div>
+
+      {/* Contact Modal */}
+      {selectedProfessional && (
+        <ContactProfessionalModal
+          isOpen={contactModalOpen}
+          onClose={() => setContactModalOpen(false)}
+          professionalName={selectedProfessional.name}
+          email={selectedProfessional.email}
+          phone={selectedProfessional.phone || null}
+        />
+      )}
+
+      {/* Block Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={blockDialogOpen}
+        onClose={() => setBlockDialogOpen(false)}
+        onConfirm={confirmBlockProfessional}
+        title={`Weet je zeker dat je gebruiker ${actionProfessional?.name} wilt blokkeren?`}
+        description="Deze gebruiker kan niet meer inloggen en wordt als geschorst gemarkeerd."
+        confirmText="Blokkeren"
+        variant="danger"
+        isLoading={blockMutation.isPending}
+      />
+
+      {/* Unblock Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={unblockDialogOpen}
+        onClose={() => setUnblockDialogOpen(false)}
+        onConfirm={confirmUnblockProfessional}
+        title={`Weet u zeker dat u gebruiker ${actionProfessional?.name} wilt deblokkeren?`}
+        description="Deze gebruiker kan weer inloggen en wordt als niet-geverifieerd gemarkeerd."
+        confirmText="Deblokkeren"
+        variant="success"
+        isLoading={unblockMutation.isPending}
+      />
+
+      {/* Verify Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={verifyDialogOpen}
+        onClose={() => setVerifyDialogOpen(false)}
+        onConfirm={confirmVerifyProfessional}
+        title={`Weet u zeker dat u gebruiker ${actionProfessional?.name} wilt verifiëren?`}
+        description="Deze gebruiker wordt als geverifieerd gemarkeerd en kan volledige toegang krijgen."
+        confirmText="Verifiëren"
+        variant="success"
+        isLoading={verifyMutation.isPending}
+      />
     </div>
   );
 }

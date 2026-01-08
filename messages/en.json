@@ -1212,7 +1212,11 @@
         "quotationCard": {
           "locked": "Locked",
           "photos": "photos",
-          "notAvailable": "No longer available"
+          "notAvailable": "No longer available",
+          "assignmentStatus": {
+            "assignedToMe": "Assigned to Me",
+            "acquiredByAnother": "Acquired by Another"
+          }
         },
         "sidebar": {
           "reviewsTitle": "How do I receive reviews from satisfied customers?",
@@ -1244,6 +1248,7 @@
         },
         "leadDetails": {
           "loading": "Loading lead details...",
+          "backToOverview": "Back to overview",
           "verificationRequired": "Verification required",
           "verificationMessage": "You must be verified to view lead details. Complete verification to get access to interesting requests.",
           "verificationButton": "Complete verification",
@@ -1302,6 +1307,7 @@
           "currentStatus": "Project status:",
           "statusPendingQuotes": "Update status",
           "statusSpecialistSelected": "Quote sent",
+          "statusAssignedToMe": "Assigned to me",
           "statusInProgress": "Work started",
           "statusCompleted": "Project completed",
           "statusUnknown": "Project cancelled",
@@ -1545,7 +1551,8 @@
         "pending": "Pending",
         "in_review": "In Review",
         "unverified": "Unverified",
-        "rejected": "Rejected"
+        "rejected": "Rejected",
+        "suspended": "Suspended"
       },
       "viewProfile": "View",
       "verify": "Verify",
@@ -1553,6 +1560,56 @@
       "recentReviews": "Recent Reviews",
       "recentReviewsDesc": "Recently added reviews",
       "viewAllReviews": "View all reviews",
+      "reviews": {
+        "title": "Reviews Management",
+        "pendingCount": "Pending Reviews",
+        "approvedCount": "Approved Reviews",
+        "rejectedCount": "Rejected Reviews",
+        "totalCount": "Total Reviews",
+        "searchPlaceholder": "Search by company, professional, or reviewer name...",
+        "tabs": {
+          "pending": "Pending",
+          "approved": "Approved",
+          "rejected": "Rejected",
+          "all": "All"
+        },
+        "noReviews": "No reviews found",
+        "loading": "Loading reviews...",
+        "pagination": {
+          "previous": "Previous",
+          "next": "Next",
+          "page": "Page"
+        },
+        "rejectionModal": {
+          "title": "Reject Review",
+          "description": "Please provide a reason for rejecting this review. The reason will be stored for administrative tracking purposes.",
+          "reasonLabel": "Rejection Reason",
+          "reasonPlaceholder": "Explain why this review is being rejected (e.g., inappropriate content, spam, offensive language, etc.)...",
+          "minCharacters": "minimum characters required",
+          "note": "This action will mark the review as rejected and the reason will be stored for administrative records.",
+          "confirmButton": "Confirm Rejection",
+          "cancelButton": "Cancel"
+        },
+        "actions": {
+          "approve": "Approve",
+          "reject": "Reject",
+          "approved": "Approved",
+          "rejected": "Rejected"
+        },
+        "messages": {
+          "approveSuccess": "Review approved successfully",
+          "rejectSuccess": "Review rejected successfully",
+          "approveFailed": "Failed to approve review",
+          "rejectFailed": "Failed to reject review"
+        },
+        "statusBadges": {
+          "pending": "Pending",
+          "approved": "Approved",
+          "rejected": "Rejected"
+        },
+        "rejectionReason": "Rejection reason",
+        "approvedDate": "Approved on"
+      },
       "serviceCategories": "Service Categories",
       "serviceCategoriesDesc": "Number of professionals per category",
       "active": "Active",
@@ -1601,7 +1658,8 @@
         "waiting": "Waiting for quotes",
         "selected": "Specialist selected",
         "inProgress": "In progress",
-        "completed": "Project completed"
+        "completed": "Project completed",
+        "cancelled": "Project cancelled"
       },
       "updateStatus": "Update project status",
       "statuses": {
@@ -1620,6 +1678,10 @@
         "completed": {
           "label": "Project completed",
           "description": "The project is completed"
+        },
+        "cancelled": {
+          "label": "Project cancelled",
+          "description": "I want to cancel this request"
         }
       },
       "buttons": {
@@ -1629,7 +1691,10 @@
       },
       "validation": {
         "selectStatus": "Please select a status",
-        "invalidToken": "Invalid access token"
+        "invalidToken": "Invalid access token",
+        "noLeadPurchases": "At least one professional must purchase this lead before selecting a specialist",
+        "notSpecialistSelected": "You must select a specialist before marking the project as in progress",
+        "notInProgress": "The project must be in progress before it can be marked as completed"
       },
       "errors": {
         "failedToUpdate": "Failed to update project status"

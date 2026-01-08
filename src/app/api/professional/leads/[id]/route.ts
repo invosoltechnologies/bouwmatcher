@@ -55,7 +55,7 @@ export async function GET(
       );
     }
 
-    // Fetch the project with all details including subcategory pricing
+    // Fetch the project with all details including subcategory pricing and assignment info
     const { data: project, error: projectError } = await supabase
       .from('projects')
       .select(`
@@ -79,6 +79,7 @@ export async function GET(
         status,
         created_at,
         execution_timing,
+        assigned_professional_id,
         service_categories (
           id,
           name_nl,
@@ -124,6 +125,9 @@ export async function GET(
       ? subcategory?.price_particulier
       : subcategory?.price_zakelijk;
 
+    // Determine if assigned to current professional
+    const isAssignedToMe = project.assigned_professional_id === profile.id;
+
     // Mask contact information if not paid
     const maskedProject = {
       ...project,
@@ -138,6 +142,7 @@ export async function GET(
       postcode: isPaid ? project.postcode : maskPostcode(project.postcode),
       company_name: isPaid && project.company_name ? project.company_name : maskString(project.company_name),
       is_locked: !isPaid,
+      is_assigned_to_me: isAssignedToMe,
       lead_price: leadPrice, // Send only the relevant price
       service_subcategories: undefined, // Don't send full subcategory data
     };

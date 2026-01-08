@@ -5,26 +5,16 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, CheckCircle, Clock, Package } from 'lucide-react';
+import { getProjectStatusInfo } from '@/lib/utils/project-professional-status';
 
 interface LeadDetailsSidebarProps {
   isLocked: boolean;
   status?: string;
+  isAssignedToMe?: boolean;
 }
 
-export default function LeadDetailsSidebar({ isLocked, status }: LeadDetailsSidebarProps) {
+export default function LeadDetailsSidebar({ isLocked, status, isAssignedToMe }: LeadDetailsSidebarProps) {
   const t = useTranslations('common.proDashboard.offerteaanvragen.leadDetailsSidebar');
-
-  // Status mapping for display
-  const getStatusInfo = (projectStatus: string) => {
-    const statusMap: Record<string, { labelKey: string; color: string }> = {
-      'pending_quotes': { labelKey: 'statusPendingQuotes', color: 'bg-blue-100 text-blue-700' },
-      'specialist_selected': { labelKey: 'statusSpecialistSelected', color: 'bg-green-100 text-green-700' },
-      'in_progress': { labelKey: 'statusInProgress', color: 'bg-yellow-100 text-yellow-700' },
-      'completed': { labelKey: 'statusCompleted', color: 'bg-gray-100 text-gray-700' },
-    };
-
-    return statusMap[projectStatus] || { labelKey: 'statusUnknown', color: 'bg-gray-100 text-gray-700' };
-  };
 
   return (
     <div className="space-y-4">
@@ -37,8 +27,8 @@ export default function LeadDetailsSidebar({ isLocked, status }: LeadDetailsSide
             <div className="space-y-3">
               <div>
                 <p className="text-sm text-muted-foreground mb-2">{t('currentStatus')}</p>
-                <Badge className={`${getStatusInfo(status).color} px-3 py-1 text-sm font-medium`}>
-                  {t(getStatusInfo(status).labelKey)}
+                <Badge className={`${getProjectStatusInfo(status, isAssignedToMe).color} px-3 py-1 text-sm font-medium`}>
+                  {t(getProjectStatusInfo(status, isAssignedToMe).labelKey)}
                 </Badge>
               </div>
 
