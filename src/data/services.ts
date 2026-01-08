@@ -1,9 +1,18 @@
+export interface ServiceIntro {
+  heading_nl: string;
+  heading_en: string;
+  description_nl: string;
+  description_en: string;
+  backgroundImage: string;
+}
+
 export interface Service {
   id?: number;
   name_nl: string;
   name_en: string;
   icon_url: string;
   slug: string;
+  intro?: ServiceIntro;
 }
 
 export const servicesData: Service[] = [
