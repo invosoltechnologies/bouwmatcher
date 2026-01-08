@@ -12,7 +12,6 @@ export interface Service {
   name_en: string;
   icon_url: string;
   slug: string;
-  intro?: ServiceIntro;
 }
 
 export const servicesData: Service[] = [
