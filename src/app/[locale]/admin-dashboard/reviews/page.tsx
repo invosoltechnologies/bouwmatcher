@@ -234,9 +234,9 @@ export default function AdminReviewsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div >
       {/* Stats Cards Section */}
-      <div>
+      <div className='mb-6'>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div onClick={() => setActiveStatus('all')} className="w-full">
             <StatsCard
@@ -290,11 +290,11 @@ export default function AdminReviewsPage() {
       </div>
 
       {/* Filters and Search Section */}
-      <div className="bg-white rounded-lg border border-slate-200 p-6 space-y-4">
+      <div className="bg-white rounded-t-lg border border-slate-200 border-b-0 p-6">
         <div className="flex flex-col sm:flex-row gap-3 items-end">
           {/* Search Input */}
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-3.5 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
             <Input
               placeholder="Zoeken op naam, bedrijf, of review..."
               value={searchQuery}
@@ -314,7 +314,7 @@ export default function AdminReviewsPage() {
               setOffset(0);
             }}
           >
-            <SelectTrigger className="w-full sm:w-[180px] bg-slate-50 border-slate-300">
+            <SelectTrigger className="w-full sm:w-[180px] bg-slate-50 border-slate-300" iconWidth={16} iconHeight={16}>
               <SelectValue placeholder="Categorie" />
             </SelectTrigger>
             <SelectContent>
@@ -336,7 +336,7 @@ export default function AdminReviewsPage() {
             }}
             disabled={selectedCategoryId === 'all'}
           >
-            <SelectTrigger className="w-full sm:w-[180px] bg-slate-50 border-slate-300">
+            <SelectTrigger className="w-full sm:w-[180px] bg-slate-50 border-slate-300" iconWidth={16} iconHeight={16}>
               <SelectValue placeholder="Subcategorie" />
             </SelectTrigger>
             <SelectContent>
@@ -353,14 +353,13 @@ export default function AdminReviewsPage() {
           {(selectedCategoryId !== 'all' || selectedSubcategoryId !== 'all' || searchQuery) && (
             <Button
               variant="outline"
-              size="sm"
               onClick={() => {
                 setSearchQuery('');
                 setSelectedCategoryId('all');
                 setSelectedSubcategoryId('all');
                 setOffset(0);
               }}
-              className="gap-2 whitespace-nowrap"
+              className="h-9 gap-2 whitespace-nowrap"
             >
               <X className="w-4 h-4" />
               Reset
@@ -397,7 +396,7 @@ export default function AdminReviewsPage() {
       </div>
 
       {/* Table Section */}
-      <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+      <div className="bg-white rounded-b-xl border border-slate-200 border-t-0 shadow-sm overflow-hidden">
         {reviewsLoading ? (
           <div className="text-center py-12">
             <p className="text-slate-500">Beoordelingen laden...</p>
@@ -407,16 +406,18 @@ export default function AdminReviewsPage() {
             <p className="text-slate-500">Geen beoordelingen gevonden</p>
           </div>
         ) : (
-          <ReviewsTable
-            reviews={displayedReviews}
-            onApprove={handleApprove}
-            onReject={handleShowRejectionModal}
-            onBulkApprove={handleBulkApprove}
-            onBulkReject={handleBulkReject}
-            loadingReviewId={loadingReviewId}
-            selectedRowIds={selectedRowIds}
-            onSelectionChange={setSelectedRowIds}
-          />
+          <div className="p-6 pt-0">
+            <ReviewsTable
+              reviews={displayedReviews}
+              onApprove={handleApprove}
+              onReject={handleShowRejectionModal}
+              onBulkApprove={handleBulkApprove}
+              onBulkReject={handleBulkReject}
+              loadingReviewId={loadingReviewId}
+              selectedRowIds={selectedRowIds}
+              onSelectionChange={setSelectedRowIds}
+            />
+          </div>
         )}
       </div>
 
