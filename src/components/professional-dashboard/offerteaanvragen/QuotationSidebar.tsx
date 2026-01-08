@@ -3,12 +3,14 @@
 import { MapPin, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
 interface QuotationSidebarProps {
   accountName: string;
   location: string;
   accountStatus: string;
+  accountStatusKey?: string;
   workArea: string;
 }
 
@@ -16,22 +18,23 @@ export default function QuotationSidebar({
   accountName,
   location,
   accountStatus,
+  accountStatusKey,
   workArea,
 }: QuotationSidebarProps) {
   const t = useTranslations('common.proDashboard.offerteaanvragen.sidebar');
+  const router = useRouter();
+  const locale = useLocale();
+
   const handleModifyWorkArea = () => {
-    // TODO: Navigate to work area modification
-    console.log('Modify work area');
+    router.push(`/${locale}/pro-dashboard/account`);
   };
 
   const handleAccountStatusClick = () => {
-    // TODO: Navigate to account page
-    console.log('Navigate to account');
+    router.push(`/${locale}/pro-dashboard/account`);
   };
 
   const handleContactSupport = () => {
-    // TODO: Open contact support
-    console.log('Contact support');
+    router.push(`/${locale}/contact`);
   };
 
   return (
@@ -121,26 +124,63 @@ export default function QuotationSidebar({
             <p className='text-xs sm:text-sm text-semibold text-muted-foreground mb-2'>{t('accountStatus')}</p>
             <button
               onClick={handleAccountStatusClick}
-              className='flex items-center justify-between w-full p-2.5 sm:p-3 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors'
+              className={`flex items-center justify-between w-full p-2.5 sm:p-3 rounded-lg transition-colors ${
+                accountStatusKey === 'suspended'
+                  ? 'bg-red-50 hover:bg-red-100'
+                  : accountStatusKey === 'verified'
+                  ? 'bg-green-50 hover:bg-green-100'
+                  : accountStatusKey === 'inReview'
+                  ? 'bg-blue-50 hover:bg-blue-100'
+                  : 'bg-orange-50 hover:bg-orange-100'
+              }`}
             >
               <div className='flex items-center gap-2'>
-                <span className='text-amber-400 text-base sm:text-lg'>⚠</span>
-                <span className='text-xs sm:text-sm font-medium text-orange-700'>
+                <span className={`text-base sm:text-lg ${
+                  accountStatusKey === 'suspended'
+                    ? 'text-red-500'
+                    : accountStatusKey === 'verified'
+                    ? 'text-green-500'
+                    : accountStatusKey === 'inReview'
+                    ? 'text-blue-500'
+                    : 'text-amber-400'
+                }`}>
+                  {accountStatusKey === 'suspended' ? '🚫' : accountStatusKey === 'verified' ? '✓' : accountStatusKey === 'inReview' ? '⏳' : '⚠'}
+                </span>
+                <span className={`text-xs sm:text-sm font-medium ${
+                  accountStatusKey === 'suspended'
+                    ? 'text-red-700'
+                    : accountStatusKey === 'verified'
+                    ? 'text-green-700'
+                    : accountStatusKey === 'inReview'
+                    ? 'text-blue-700'
+                    : 'text-orange-700'
+                }`}>
                   {accountStatus}
                 </span>
               </div>
-              <ChevronRight className='w-3 h-3 sm:w-4 sm:h-4 text-orange-700' />
+              <ChevronRight className={`w-3 h-3 sm:w-4 sm:h-4 ${
+                accountStatusKey === 'suspended'
+                  ? 'text-red-700'
+                  : accountStatusKey === 'verified'
+                  ? 'text-green-700'
+                  : accountStatusKey === 'inReview'
+                  ? 'text-blue-700'
+                  : 'text-orange-700'
+              }`} />
             </button>
           </div>
 
           {/* Work Area */}
           <div>
             <p className='text-xs text-muted-foreground mb-2'>{t('workAreaLabel')}</p>
-            <div className='flex items-start gap-2 mb-3'>
+            <button
+              onClick={handleModifyWorkArea}
+              className='flex items-start gap-2 mb-3 w-full text-left hover:bg-slate-50 rounded-lg p-2 -ml-2 transition-colors'
+            >
               <MapPin className='w-3 h-3 sm:w-4 sm:h-4 text-primary mt-0.5 flex-shrink-0' />
               <p className='text-xs sm:text-sm text-foreground flex-1'>{workArea}</p>
               <ChevronRight className='w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground mt-0.5 flex-shrink-0' />
-            </div>
+            </button>
             <Button
               onClick={handleModifyWorkArea}
               variant='outline'

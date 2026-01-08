@@ -1248,6 +1248,7 @@
         },
         "leadDetails": {
           "loading": "Loading lead details...",
+          "backToOverview": "Back to overview",
           "verificationRequired": "Verification required",
           "verificationMessage": "You must be verified to view lead details. Complete verification to get access to interesting requests.",
           "verificationButton": "Complete verification",
@@ -1550,7 +1551,8 @@
         "pending": "Pending",
         "in_review": "In Review",
         "unverified": "Unverified",
-        "rejected": "Rejected"
+        "rejected": "Rejected",
+        "suspended": "Suspended"
       },
       "viewProfile": "View",
       "verify": "Verify",

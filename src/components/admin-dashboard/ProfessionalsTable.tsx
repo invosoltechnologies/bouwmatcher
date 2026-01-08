@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ContactProfessionalModal } from './ContactProfessionalModal';
+import { ConfirmationDialog } from './ConfirmationDialog';
 import toast from 'react-hot-toast';
 import {
   Tooltip,
@@ -23,6 +24,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  useBlockProfessional,
+  useUnblockProfessional,
+  useVerifyProfessional,
+} from '@/lib/hooks/admin/professional-actions';
 
 interface Professional {
   id: string;
@@ -54,6 +60,17 @@ export default function ProfessionalsTable({
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [selectedProfessional, setSelectedProfessional] = useState<Professional | null>(null);
 
+  // Confirmation dialogs state
+  const [blockDialogOpen, setBlockDialogOpen] = useState(false);
+  const [unblockDialogOpen, setUnblockDialogOpen] = useState(false);
+  const [verifyDialogOpen, setVerifyDialogOpen] = useState(false);
+  const [actionProfessional, setActionProfessional] = useState<{ id: string; name: string } | null>(null);
+
+  // Mutation hooks
+  const blockMutation = useBlockProfessional();
+  const unblockMutation = useUnblockProfessional();
+  const verifyMutation = useVerifyProfessional();
+
   const copyEmail = async (email: string) => {
     try {
       await navigator.clipboard.writeText(email);
@@ -81,6 +98,107 @@ export default function ProfessionalsTable({
   const handleContactClick = (professional: Professional) => {
     setSelectedProfessional(professional);
     setContactModalOpen(true);
+  };
+
+  // Open confirmation dialogs
+  const openBlockDialog = (id: string, name: string) => {
+    setActionProfessional({ id, name });
+    setBlockDialogOpen(true);
+  };
+
+  const openUnblockDialog = (id: string, name: string) => {
+    setActionProfessional({ id, name });
+    setUnblockDialogOpen(true);
+  };
+
+  const openVerifyDialog = (id: string, name: string) => {
+    setActionProfessional({ id, name });
+    setVerifyDialogOpen(true);
+  };
+
+  // Actual action handlers
+  const confirmBlockProfessional = async () => {
+    if (!actionProfessional) return;
+
+    try {
+      await blockMutation.mutateAsync(actionProfessional.id);
+      toast.success(`${actionProfessional.name} is geblokkeerd!`, {
+        position: 'bottom-center',
+        duration: 2000,
+        style: {
+          background: '#10b981',
+          color: '#fff',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          fontSize: '14px',
+          fontWeight: '500',
+        },
+      });
+      setBlockDialogOpen(false);
+      setActionProfessional(null);
+    } catch (err) {
+      console.error('Failed to block professional:', err);
+      toast.error('Blokkeren mislukt', {
+        position: 'bottom-center',
+        duration: 2000,
+      });
+    }
+  };
+
+  const confirmUnblockProfessional = async () => {
+    if (!actionProfessional) return;
+
+    try {
+      await unblockMutation.mutateAsync(actionProfessional.id);
+      toast.success(`${actionProfessional.name} is gedeblokkeerd!`, {
+        position: 'bottom-center',
+        duration: 2000,
+        style: {
+          background: '#10b981',
+          color: '#fff',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          fontSize: '14px',
+          fontWeight: '500',
+        },
+      });
+      setUnblockDialogOpen(false);
+      setActionProfessional(null);
+    } catch (err) {
+      console.error('Failed to unblock professional:', err);
+      toast.error('Deblokkeren mislukt', {
+        position: 'bottom-center',
+        duration: 2000,
+      });
+    }
+  };
+
+  const confirmVerifyProfessional = async () => {
+    if (!actionProfessional) return;
+
+    try {
+      await verifyMutation.mutateAsync(actionProfessional.id);
+      toast.success(`${actionProfessional.name} is geverifieerd!`, {
+        position: 'bottom-center',
+        duration: 2000,
+        style: {
+          background: '#10b981',
+          color: '#fff',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          fontSize: '14px',
+          fontWeight: '500',
+        },
+      });
+      setVerifyDialogOpen(false);
+      setActionProfessional(null);
+    } catch (err) {
+      console.error('Failed to verify professional:', err);
+      toast.error('Verificatie mislukt', {
+        position: 'bottom-center',
+        duration: 2000,
+      });
+    }
   };
 
   const getStatusColor = (
@@ -357,15 +475,36 @@ export default function ProfessionalsTable({
                 <DropdownMenuItem onClick={() => onViewProfile?.(professional.id)}>
                   Zie Profiel
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => console.log('Block:', professional.id)}>
-                  Blokkeren
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => console.log('Unblock:', professional.id)}
-                  className="text-muted-foreground"
-                >
-                  Deblokkeren
-                </DropdownMenuItem>
+
+                {/* Show Verify option only for unverified users */}
+                {professional.status === 'unverified' && (
+                  <DropdownMenuItem
+                    onClick={() => openVerifyDialog(professional.id, professional.name)}
+                    className="text-green-600"
+                  >
+                    Verifiëren
+                  </DropdownMenuItem>
+                )}
+
+                {/* Show Block option for non-suspended users */}
+                {professional.status !== 'suspended' && (
+                  <DropdownMenuItem
+                    onClick={() => openBlockDialog(professional.id, professional.name)}
+                    className="text-red-600"
+                  >
+                    Blokkeren
+                  </DropdownMenuItem>
+                )}
+
+                {/* Show Unblock option only for suspended users */}
+                {professional.status === 'suspended' && (
+                  <DropdownMenuItem
+                    onClick={() => openUnblockDialog(professional.id, professional.name)}
+                    className="text-blue-600"
+                  >
+                    Deblokkeren
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -401,6 +540,9 @@ export default function ProfessionalsTable({
           data={professionals}
           searchKey="name"
           searchPlaceholder={t('tableHeaders.searchPlaceholder', { defaultValue: 'Zoeken...' })}
+          getRowClassName={(professional) =>
+            professional.status === 'suspended' ? 'bg-red-50/50 hover:bg-red-100/50' : ''
+          }
         />
       </div>
 
@@ -414,6 +556,42 @@ export default function ProfessionalsTable({
           phone={selectedProfessional.phone || null}
         />
       )}
+
+      {/* Block Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={blockDialogOpen}
+        onClose={() => setBlockDialogOpen(false)}
+        onConfirm={confirmBlockProfessional}
+        title={`Weet je zeker dat je gebruiker ${actionProfessional?.name} wilt blokkeren?`}
+        description="Deze gebruiker kan niet meer inloggen en wordt als geschorst gemarkeerd."
+        confirmText="Blokkeren"
+        variant="danger"
+        isLoading={blockMutation.isPending}
+      />
+
+      {/* Unblock Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={unblockDialogOpen}
+        onClose={() => setUnblockDialogOpen(false)}
+        onConfirm={confirmUnblockProfessional}
+        title={`Weet u zeker dat u gebruiker ${actionProfessional?.name} wilt deblokkeren?`}
+        description="Deze gebruiker kan weer inloggen en wordt als niet-geverifieerd gemarkeerd."
+        confirmText="Deblokkeren"
+        variant="success"
+        isLoading={unblockMutation.isPending}
+      />
+
+      {/* Verify Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={verifyDialogOpen}
+        onClose={() => setVerifyDialogOpen(false)}
+        onConfirm={confirmVerifyProfessional}
+        title={`Weet u zeker dat u gebruiker ${actionProfessional?.name} wilt verifiëren?`}
+        description="Deze gebruiker wordt als geverifieerd gemarkeerd en kan volledige toegang krijgen."
+        confirmText="Verifiëren"
+        variant="success"
+        isLoading={verifyMutation.isPending}
+      />
     </div>
   );
 }

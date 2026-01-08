@@ -1246,6 +1246,7 @@
         },
         "leadDetails": {
           "loading": "Lead details laden...",
+          "backToOverview": "Terug naar overzicht",
           "verificationRequired": "Verificatie vereist",
           "verificationMessage": "Je moet geverifieerd zijn om lead details te bekijken. Voltooi de verificatie om toegang te krijgen tot interessante aanvragen.",
           "verificationButton": "Verificatie voltooien",
@@ -1548,7 +1549,8 @@
         "pending": "In afwachting",
         "in_review": "In beoordeling",
         "unverified": "Niet geverifieerd",
-        "rejected": "Afgewezen"
+        "rejected": "Afgewezen",
+        "suspended": "Geschorst"
       },
       "viewProfile": "Bekijken",
       "verify": "Verifiëren",

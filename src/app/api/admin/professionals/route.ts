@@ -86,7 +86,6 @@ export async function GET(request: NextRequest) {
         `,
         { count: 'exact' }
       )
-      .eq('is_active', true)
       .order(finalSortBy === 'name' ? 'first_name' : finalSortBy, { ascending: sortOrder === 'ASC' })
       .range(offset, offset + limit - 1);
 
