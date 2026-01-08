@@ -70,7 +70,11 @@ export default function ReviewsTable({
   const [rowSelection, setRowSelection] = useState({})
 
   // Sync rowSelection with parent component
-  const handleRowSelectionChange = (newSelection: Record<string, boolean>) => {
+  const handleRowSelectionChange = (updaterOrValue: Record<string, boolean> | ((old: Record<string, boolean>) => Record<string, boolean>)) => {
+    const newSelection = typeof updaterOrValue === 'function'
+      ? updaterOrValue(rowSelection)
+      : updaterOrValue
+
     setRowSelection(newSelection)
     if (onSelectionChange) {
       const selectedIds = new Set(
