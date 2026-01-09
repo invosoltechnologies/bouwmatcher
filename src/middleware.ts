@@ -60,6 +60,7 @@ export async function middleware(request: NextRequest) {
   const isAuthPage = pathnameWithoutLocale.startsWith('/auth');
   const isProDashboard = pathnameWithoutLocale.startsWith('/pro-dashboard');
   const isDashboard = pathnameWithoutLocale.startsWith('/dashboard');
+  const isAdminRoute = pathnameWithoutLocale === '/admin' || pathnameWithoutLocale.startsWith('/admin/');
   const isAdminDashboard = pathnameWithoutLocale.startsWith('/admin-dashboard');
   const isAdminLoginPage = pathnameWithoutLocale === '/auth/admin-login';
 
@@ -91,8 +92,8 @@ export async function middleware(request: NextRequest) {
       return supabaseResponse;
     }
 
-    // If trying to access admin dashboard, redirect to admin login
-    if (isAdminDashboard) {
+    // If trying to access admin routes (/admin or /admin-dashboard), redirect to admin login
+    if (isAdminRoute || isAdminDashboard) {
       return NextResponse.redirect(new URL(`/${locale}/auth/admin-login`, request.url));
     }
 
@@ -106,13 +107,17 @@ export async function middleware(request: NextRequest) {
   const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@bouwmatcher.be';
   const isUserAdmin = user.email === ADMIN_EMAIL;
 
-  // If user is trying to access admin dashboard
-  if (isAdminDashboard) {
+  // If user is trying to access admin routes
+  if (isAdminRoute || isAdminDashboard) {
     if (!isUserAdmin) {
-      // Non-admin trying to access admin dashboard - redirect to admin login
+      // Non-admin trying to access admin routes - redirect to admin login
       return NextResponse.redirect(new URL(`/${locale}/auth/admin-login`, request.url));
     }
-    // Admin user - allow access
+    // Admin user accessing /admin - redirect to admin dashboard
+    if (isAdminRoute) {
+      return NextResponse.redirect(new URL(`/${locale}/admin-dashboard`, request.url));
+    }
+    // Admin user accessing admin dashboard - allow access
     return supabaseResponse;
   }
 
