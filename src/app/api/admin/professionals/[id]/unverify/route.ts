@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
 /**
- * POST /api/admin/professionals/[id]/block
+ * POST /api/admin/professionals/[id]/unverify
  *
- * Blocks a professional by:
- * - Setting is_verified to 'suspended'
- * - Setting is_active to false (user cannot log in)
+ * Unverifies a professional by:
+ * - Setting is_verified to 'unverified'
+ * - Keeps is_active as true (user can still log in)
  */
 export async function POST(
   request: NextRequest,
@@ -23,12 +23,11 @@ export async function POST(
       );
     }
 
-    // Update professional profile to suspended and set is_active to false
+    // Update professional profile to unverified (keep is_active as true)
     const { data, error } = await supabase
       .from('professional_profiles')
       .update({
-        is_verified: 'suspended',
-        is_active: false,
+        is_verified: 'unverified',
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
@@ -36,9 +35,9 @@ export async function POST(
       .single();
 
     if (error) {
-      console.error('Error blocking professional:', error);
+      console.error('Error unverifying professional:', error);
       return NextResponse.json(
-        { error: 'Failed to block professional' },
+        { error: 'Failed to unverify professional' },
         { status: 500 }
       );
     }
@@ -52,13 +51,13 @@ export async function POST(
 
     return NextResponse.json(
       {
-        message: 'Professional blocked successfully',
+        message: 'Professional unverified successfully',
         professional: data,
       },
       { status: 200 }
     );
   } catch (error) {
-    console.error('Error in POST /api/admin/professionals/[id]/block:', error);
+    console.error('Error in POST /api/admin/professionals/[id]/unverify:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

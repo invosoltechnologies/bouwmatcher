@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/server';
  *
  * Unblocks a professional by:
  * - Setting is_verified to 'unverified'
- * - User can continue using their account normally
+ * - Setting is_active to true (user can log in again)
  */
 export async function POST(
   request: NextRequest,
@@ -23,12 +23,13 @@ export async function POST(
       );
     }
 
-    // Update professional profile to unverified
+    // Update professional profile to unverified and set is_active to true
     // Admin can verify them separately if needed
     const { data, error } = await supabase
       .from('professional_profiles')
       .update({
         is_verified: 'unverified',
+        is_active: true,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)

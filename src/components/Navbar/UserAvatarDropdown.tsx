@@ -4,20 +4,39 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from '@/i18n/navigation';
-import { User, LogOut, ChevronDown, BriefcaseBusiness } from 'lucide-react';
+import { User, LogOut, ChevronDown, BriefcaseBusiness, LayoutDashboard, Users, Building2, ShieldCheck, Star, Briefcase, FolderTree, Home } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { dashboardNavigation } from '@/config/professional-dashboard';
+import { adminNavigation } from '@/config/admin-dashboard';
 import { useAccount } from '@/lib/hooks/professional/account/useAccount';
+import { useAdminStatus } from '@/lib/hooks/useAdminStatus';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
+
+// Map of Lucide icon names to components
+const lucideIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+  LayoutDashboard,
+  Users,
+  Building2,
+  ShieldCheck,
+  Star,
+  Briefcase,
+  FolderTree,
+  Home,
+  LogOut,
+  BriefcaseBusiness,
+};
 
 export default function UserAvatarDropdown() {
   const router = useRouter();
   const t = useTranslations('common');
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [open, setOpen] = useState(false);
-  const { data, isLoading } = useAccount();
+  const { data: adminStatusData } = useAdminStatus();
+  const { data: professionalData, isLoading: isProfessionalLoading } = useAccount();
+
+  const isAdmin = adminStatusData?.isAdmin || false;
 
   const handleLogout = async () => {
     if (isLoggingOut) return;
@@ -52,21 +71,27 @@ export default function UserAvatarDropdown() {
     }
   };
 
-  const userName = data?.accountData
-    ? `${data.accountData.contactInfo.contactPerson || ''}`
-    : undefined;
+  // Get user info based on user type
+  const userName = isAdmin
+    ? adminStatusData?.adminUser?.email?.split('@')[0] || 'Admin'
+    : professionalData?.accountData
+      ? `${professionalData.accountData.contactInfo.contactPerson || ''}`
+      : undefined;
 
-  const companyName = data?.accountData
-    ? data.accountData.companyInfo.companyName
+  const companyName = !isAdmin && professionalData?.accountData
+    ? professionalData.accountData.companyInfo.companyName
     : undefined;
 
   const avatarUrl =
-    data?.accountData && data.accountData.profilePictureUrl
-      ? data.accountData.profilePictureUrl
+    !isAdmin && professionalData?.accountData && professionalData.accountData.profilePictureUrl
+      ? professionalData.accountData.profilePictureUrl
       : undefined;
 
+  // Select the appropriate navigation based on user type
+  const navigation = isAdmin ? adminNavigation : dashboardNavigation;
+
   // Filter out the Home and Logout items from navigation as we'll handle them separately
-  const dashboardLinks = dashboardNavigation.filter(
+  const dashboardLinks = navigation.filter(
     (item) => item.type === 'link' && item.id !== 'home' && item.id !== 'logout'
   );
 
@@ -94,40 +119,49 @@ export default function UserAvatarDropdown() {
         {/* User Info Header */}
         <div className='px-3 py-2 mb-2 border-b border-gray-200'>
           <p className='text-sm font-semibold leading-none text-secondary-foreground'>
-            {isLoading ? '...' : userName || 'User'}
+            {isProfessionalLoading && !isAdmin ? '...' : userName || 'User'}
           </p>
+          {isAdmin && (
+            <p className='text-xs text-muted-foreground mt-1'>
+              {adminStatusData?.adminUser?.role || 'Admin'}
+            </p>
+          )}
           {companyName && (
             <p className='text-xs text-muted-foreground mt-1'>
-              {isLoading ? '...' : companyName}
+              {isProfessionalLoading ? '...' : companyName}
             </p>
           )}
         </div>
 
         {/* Dashboard Links */}
         <div className='space-y-1'>
-          {dashboardLinks.map((item) => (
-            <Link
-              key={item.id}
-              href={item.href}
-              onClick={() => setOpen(false)}
-              className='group flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent transition-colors cursor-pointer'
-            >
-              {item.iconType === 'lucide' && item.icon === 'BriefcaseBusiness' ? (
-                <BriefcaseBusiness className='w-4 h-4 group-hover:text-white transition-colors' />
-              ) : (
-                <Image
-                  src={item.icon}
-                  alt={t(`proDashboard.navigation.${item.id}`)}
-                  width={16}
-                  height={16}
-                  className='w-4 h-4 group-hover:brightness-0 group-hover:invert transition-all'
-                />
-              )}
-              <span className='text-sm group-hover:text-white transition-colors'>
-                {t(`proDashboard.navigation.${item.id}`)}
-              </span>
-            </Link>
-          ))}
+          {dashboardLinks.map((item) => {
+            const IconComponent = item.iconType === 'lucide' && lucideIcons[item.icon];
+
+            return (
+              <Link
+                key={item.id}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className='group flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent transition-colors cursor-pointer'
+              >
+                {IconComponent ? (
+                  <IconComponent className='w-4 h-4 group-hover:text-white transition-colors' />
+                ) : (
+                  <Image
+                    src={item.icon}
+                    alt={isAdmin ? item.label : t(`proDashboard.navigation.${item.id}`)}
+                    width={16}
+                    height={16}
+                    className='w-4 h-4 group-hover:brightness-0 group-hover:invert transition-all'
+                  />
+                )}
+                <span className='text-sm group-hover:text-white transition-colors'>
+                  {isAdmin ? item.label : t(`proDashboard.navigation.${item.id}`)}
+                </span>
+              </Link>
+            );
+          })}
         </div>
 
         {/* Separator */}

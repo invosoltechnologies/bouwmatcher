@@ -28,6 +28,7 @@ import {
   useBlockProfessional,
   useUnblockProfessional,
   useVerifyProfessional,
+  useUnverifyProfessional,
 } from '@/lib/hooks/admin/professional-actions';
 
 interface Professional {
@@ -64,12 +65,14 @@ export default function ProfessionalsTable({
   const [blockDialogOpen, setBlockDialogOpen] = useState(false);
   const [unblockDialogOpen, setUnblockDialogOpen] = useState(false);
   const [verifyDialogOpen, setVerifyDialogOpen] = useState(false);
+  const [unverifyDialogOpen, setUnverifyDialogOpen] = useState(false);
   const [actionProfessional, setActionProfessional] = useState<{ id: string; name: string } | null>(null);
 
   // Mutation hooks
   const blockMutation = useBlockProfessional();
   const unblockMutation = useUnblockProfessional();
   const verifyMutation = useVerifyProfessional();
+  const unverifyMutation = useUnverifyProfessional();
 
   const copyEmail = async (email: string) => {
     try {
@@ -114,6 +117,11 @@ export default function ProfessionalsTable({
   const openVerifyDialog = (id: string, name: string) => {
     setActionProfessional({ id, name });
     setVerifyDialogOpen(true);
+  };
+
+  const openUnverifyDialog = (id: string, name: string) => {
+    setActionProfessional({ id, name });
+    setUnverifyDialogOpen(true);
   };
 
   // Actual action handlers
@@ -195,6 +203,34 @@ export default function ProfessionalsTable({
     } catch (err) {
       console.error('Failed to verify professional:', err);
       toast.error('Verificatie mislukt', {
+        position: 'bottom-center',
+        duration: 2000,
+      });
+    }
+  };
+
+  const confirmUnverifyProfessional = async () => {
+    if (!actionProfessional) return;
+
+    try {
+      await unverifyMutation.mutateAsync(actionProfessional.id);
+      toast.success(`${actionProfessional.name} is niet meer geverifieerd!`, {
+        position: 'bottom-center',
+        duration: 2000,
+        style: {
+          background: '#10b981',
+          color: '#fff',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          fontSize: '14px',
+          fontWeight: '500',
+        },
+      });
+      setUnverifyDialogOpen(false);
+      setActionProfessional(null);
+    } catch (err) {
+      console.error('Failed to unverify professional:', err);
+      toast.error('Ongedaan maken mislukt', {
         position: 'bottom-center',
         duration: 2000,
       });
@@ -486,6 +522,16 @@ export default function ProfessionalsTable({
                   </DropdownMenuItem>
                 )}
 
+                {/* Show Unverify option only for verified users */}
+                {professional.status === 'verified' && (
+                  <DropdownMenuItem
+                    onClick={() => openUnverifyDialog(professional.id, professional.name)}
+                    className="text-amber-600"
+                  >
+                    Niet Verifiëren
+                  </DropdownMenuItem>
+                )}
+
                 {/* Show Block option for non-suspended users */}
                 {professional.status !== 'suspended' && (
                   <DropdownMenuItem
@@ -563,7 +609,7 @@ export default function ProfessionalsTable({
         onClose={() => setBlockDialogOpen(false)}
         onConfirm={confirmBlockProfessional}
         title={`Weet je zeker dat je gebruiker ${actionProfessional?.name} wilt blokkeren?`}
-        description="Deze gebruiker kan niet meer inloggen en wordt als geschorst gemarkeerd."
+        description="Het account wordt geschorst (is_active = false) en de gebruiker kan niet meer inloggen."
         confirmText="Blokkeren"
         variant="danger"
         isLoading={blockMutation.isPending}
@@ -575,7 +621,7 @@ export default function ProfessionalsTable({
         onClose={() => setUnblockDialogOpen(false)}
         onConfirm={confirmUnblockProfessional}
         title={`Weet u zeker dat u gebruiker ${actionProfessional?.name} wilt deblokkeren?`}
-        description="Deze gebruiker kan weer inloggen en wordt als niet-geverifieerd gemarkeerd."
+        description="Het account wordt geactiveerd (is_active = true) en de status wordt niet-geverifieerd. De gebruiker kan weer inloggen."
         confirmText="Deblokkeren"
         variant="success"
         isLoading={unblockMutation.isPending}
@@ -591,6 +637,18 @@ export default function ProfessionalsTable({
         confirmText="Verifiëren"
         variant="success"
         isLoading={verifyMutation.isPending}
+      />
+
+      {/* Unverify Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={unverifyDialogOpen}
+        onClose={() => setUnverifyDialogOpen(false)}
+        onConfirm={confirmUnverifyProfessional}
+        title={`Weet u zeker dat u de verificatie van ${actionProfessional?.name} wilt intrekken?`}
+        description="Deze gebruiker wordt als niet-geverifieerd gemarkeerd maar kan wel blijven inloggen."
+        confirmText="Niet Verifiëren"
+        variant="danger"
+        isLoading={unverifyMutation.isPending}
       />
     </div>
   );

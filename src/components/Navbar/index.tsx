@@ -1,7 +1,7 @@
 'use client';
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { Search, Menu, X, BriefcaseBusiness, LogOut } from "lucide-react";
+import { Search, Menu, X, BriefcaseBusiness, LogOut, LayoutDashboard, Users, Building2, ShieldCheck, Star, Briefcase, FolderTree, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
@@ -10,8 +10,24 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import UserAvatarDropdown from "./UserAvatarDropdown";
 import { dashboardNavigation } from "@/config/professional-dashboard";
+import { adminNavigation } from "@/config/admin-dashboard";
+import { useAdminStatus } from "@/lib/hooks/useAdminStatus";
 import { toast } from "react-hot-toast";
 import { useTranslations } from 'next-intl';
+
+// Map of Lucide icon names to components
+const lucideIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+  LayoutDashboard,
+  Users,
+  Building2,
+  ShieldCheck,
+  Star,
+  Briefcase,
+  FolderTree,
+  Home,
+  LogOut,
+  BriefcaseBusiness,
+};
 
 export default function Navbar() {
   const t = useTranslations('common.navbar');
@@ -23,7 +39,11 @@ export default function Navbar() {
   const pathname = usePathname();
   const isAuthRoute = pathname?.includes('/auth');
   const { user, loading } = useAuth();
+  const { data: adminStatusData } = useAdminStatus();
   const router = useRouter();
+
+  const isAdmin = adminStatusData?.isAdmin || false;
+  const navigation = isAdmin ? adminNavigation : dashboardNavigation;
 
   const handleCategoriesClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -286,32 +306,36 @@ export default function Navbar() {
                   }`}
                 >
                   <div className='pl-4 pb-2 space-y-2'>
-                    {dashboardNavigation
+                    {navigation
                       .filter((item) => item.id !== 'home' && item.id !== 'logout')
-                      .map((item) => (
-                        <Link
-                          key={item.id}
-                          href={item.href}
-                          className='flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors text-sm py-2'
-                          onClick={() => {
-                            setIsMobileMenuOpen(false);
-                            setIsAccountMenuOpen(false);
-                          }}
-                        >
-                          {item.iconType === 'lucide' && item.icon === 'BriefcaseBusiness' ? (
-                            <BriefcaseBusiness className='w-4 h-4' />
-                          ) : (
-                            <Image
-                              src={item.icon}
-                              alt={item.label}
-                              width={16}
-                              height={16}
-                              className='w-4 h-4'
-                            />
-                          )}
-                          <span>{item.label}</span>
-                        </Link>
-                      ))}
+                      .map((item) => {
+                        const IconComponent = item.iconType === 'lucide' && lucideIcons[item.icon];
+
+                        return (
+                          <Link
+                            key={item.id}
+                            href={item.href}
+                            className='flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors text-sm py-2'
+                            onClick={() => {
+                              setIsMobileMenuOpen(false);
+                              setIsAccountMenuOpen(false);
+                            }}
+                          >
+                            {IconComponent ? (
+                              <IconComponent className='w-4 h-4' />
+                            ) : (
+                              <Image
+                                src={item.icon}
+                                alt={item.label}
+                                width={16}
+                                height={16}
+                                className='w-4 h-4'
+                              />
+                            )}
+                            <span>{item.label}</span>
+                          </Link>
+                        );
+                      })}
 
                     {/* Logout Button */}
                     <button
