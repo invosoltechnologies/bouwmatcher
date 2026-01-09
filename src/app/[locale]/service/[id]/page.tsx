@@ -14,6 +14,7 @@ import type { ValueItem } from '@/components/Homepage/Values';
 import ServiceSEO from '@/components/Service/ServiceSEO';
 import ServiceProcess from '@/components/Service/ServiceProcess';
 import ServiceCTA from '@/components/Service/ServiceCTA';
+import ServiceMarquee from '@/components/Service/ServiceMarquee';
 import type { ProcessStep } from '@/components/ui/process-steps';
 
 interface ServicePageProps {
@@ -266,6 +267,13 @@ const architectCTAData = {
   ctaText: 'Start nu',
 };
 
+// Marquee Data - customize per service
+const architectMarqueeItems = [
+  { text: 'Uw project starten' },
+  { text: 'Gecertificeerde en gecontroleerde architecten' },
+  { text: 'Duidelijke prijzen zonder verborgen kosten' },
+];
+
 export default async function ServicePage({ params }: ServicePageProps) {
   const { id, locale } = await params;
 
@@ -314,6 +322,8 @@ export default async function ServicePage({ params }: ServicePageProps) {
         }}
         language='nl'
       />
+      {/* Marquee Section */}
+      <ServiceMarquee items={architectMarqueeItems} />
       <ServiceTypes
         heading={
           locale === 'nl' ? 'Soorten architecten' : 'Types of Architects'
