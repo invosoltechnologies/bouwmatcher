@@ -1,7 +1,5 @@
 import { notFound } from 'next/navigation';
-import CTASection from '@/components/Homepage/CTASection';
 import ServiceBanner from '@/components/Service/ServiceBanner';
-import ProcessSection from '@/components/Homepage/ProcessSection';
 import DefaultLayout from '@/components/DefaultLayout';
 import { createClient } from '@/lib/supabase/server';
 import ServiceIntroduction from '@/components/Service/ServiceIntroduction';
@@ -9,6 +7,14 @@ import ServiceFAQ from '@/components/Service/ServiceFAQ';
 import ServicePriceComparison from '@/components/Service/ServicePriceComparison';
 import ServiceTips from '@/components/Service/ServiceTips';
 import ServiceCostTable from '@/components/Service/ServiceCostTable';
+import ServiceTypes from '@/components/Service/ServiceTypes';
+import ServiceReviews from '@/components/Service/ServiceReviews';
+import Values from '@/components/Homepage/Values';
+import type { ValueItem } from '@/components/Homepage/Values';
+import ServiceSEO from '@/components/Service/ServiceSEO';
+import ServiceProcess from '@/components/Service/ServiceProcess';
+import ServiceCTA from '@/components/Service/ServiceCTA';
+import type { ProcessStep } from '@/components/ui/process-steps';
 
 interface ServicePageProps {
   params: Promise<{ id: string; locale: string }>;
@@ -102,6 +108,164 @@ const architectCostTableRows = [
   },
 ];
 
+// Service Types Data - customize per service
+const architectTypes = [
+  {
+    title: 'Architect voor verbouwingen',
+    description:
+      'Voor uitbreidingen, herindelingen, renovaties en aanbouwen. Specialisatie in het transformeren van bestaande ruimtes.',
+  },
+  {
+    title: 'Interieurarchitect',
+    description:
+      'Richt zich volledig op binnenruimtes, indeling, functionaliteit en afwerking. Voor moderne en stijlvolle interieurs.',
+  },
+  {
+    title: 'Landschapsarchitect',
+    description:
+      'Gespecialiseerd in tuinen, omgevingen en buitenruimtes. Voor aangelegde groene, parkeerplekken en buitenkanten.',
+  },
+];
+
+// Reviews Data - customize per service
+const architectReviews = [
+  {
+    id: '1',
+    name: 'Emma J.',
+    rating: 5,
+    review:
+      'Bouwmatcher maakte het zo gemakkelijk om een betroubware specialist te vinden. Duidelijke communicatie, eerlijke prijzen en de taak was eerder voltooid dan verwacht.',
+    bgColor: '#EDFDF2',
+    borderColor: '#BEEECD',
+  },
+  {
+    id: '2',
+    name: 'Daniel V.',
+    rating: 5,
+    review:
+      'Ik was verrast door hoe snel ik op elkaar passende offertes ontving. Binnen een dag had ik een betrouwbare professionaal aan mijn deur. Uitstekende service!',
+    bgColor: '#ECF4FF',
+    borderColor: '#D0E4FF',
+  },
+  {
+    id: '3',
+    name: 'Sophie de B.',
+    rating: 5,
+    review:
+      'Het platform heeft me zoveel tijd bespaard. De loodgieter was professioneel, legde alles duidelijk uit en liet alles vlekkeloos achter. Ten zeerste aanbevelen!',
+    bgColor: '#EDFDF2',
+    borderColor: '#BEEECD',
+  },
+  {
+    id: '4',
+    name: 'Thomas B.',
+    rating: 4,
+    review:
+      'Snel, transparant en betrouwbaar. Ik kond gemakkelijk een ervaren architect vinden zonder mij zorgen te hoeven maken. Zeer tevreden met het resultaat!',
+    bgColor: '#ECF4FF',
+    borderColor: '#D0E4FF',
+  },
+];
+
+// Values Data - customize per service
+const architectValues: ValueItem[] = [
+  {
+    id: 1,
+    icon: '/icons/values/Betrouwbaarheid.svg',
+    title: 'Kwaliteit gegarandeerd',
+    description: 'Alleen geverifieerde en betrouwbare architecten met bewezen ervaring',
+    position: 'top-left',
+  },
+  {
+    id: 2,
+    icon: '/icons/values/Doelgericht.svg',
+    title: 'Snel & eenvoudig',
+    description: 'Binnen 24 uur meerdere offertes van geschikte architecten',
+    position: 'top-right',
+  },
+  {
+    id: 3,
+    icon: '/icons/values/Transparantie.svg',
+    title: 'Transparante prijzen',
+    description: 'Vergelijk prijzen en diensten zonder verborgen kosten',
+    position: 'bottom-left',
+  },
+  {
+    id: 4,
+    icon: '/icons/values/Eerlijkheid.svg',
+    title: 'Veilig & betrouwbaar',
+    description: 'Alle architecten zijn gescreend en verzekerd voor uw gemoedsrust',
+    position: 'bottom-right',
+  },
+];
+
+// SEO Content Data - customize per service (Two-column card layout with auto-split)
+const architectSEOData = {
+  heading: 'SEO Content',
+  description:
+    'Alles wat je moet weten over architecten en hoe zij jouw bouwproject tot leven brengen.',
+  cards: [
+    {
+      title: 'Wat doet een architect?',
+      content:
+        'Een architect maakt ontwerpen, ruimtelijke indelingen en technische tekeningen. Hij of zij bewaakt functionaliteit, esthetiek en naleving van bouwvoorschriften. Daarnaast adviseert de architect over materialen, lichtinval en energieprestaties.',
+    },
+    {
+      title: 'Wanneer heb je een architect nodig?',
+      content:
+        'Een architect is essentieel voor nieuwbouwprojecten, uitbreidingen, grote renovaties en vergunningsaanvragen. Het voorkomt fouten in het ontwerp en zorgt voor een soepel traject richting uitvoering.',
+    },
+    {
+      title: 'Rol tijdens de uitvoering',
+      content:
+        'Architecten kunnen toezicht houden op de bouw, controleren of het werk volgens plan verloopt, en adviseren bij onvoorziene situaties. Dit verhoogt de bouwkwaliteit en betrouwbaarheid.',
+    },
+  ],
+};
+
+// Process Steps Data - customize per service
+const architectProcessSteps: ProcessStep[] = [
+  {
+    id: 1,
+    title: 'Beschrijf jouw project',
+    description:
+      'Vul je projectgegevens in en beschrijf wat je nodig hebt. Wij helpen je stap voor stap.',
+    icon: '/icons/process/step1-icon.svg',
+    image: '/images/homepage/process/step1.png',
+  },
+  {
+    id: 2,
+    title: 'Ontvang offertes',
+    description:
+      'Binnen 24 uur ontvang je offertes van geschikte architecten uit jouw regio.',
+    icon: '/icons/process/step2-icon.svg',
+    image: '/images/homepage/process/step2.png',
+  },
+  {
+    id: 3,
+    title: 'Vergelijk & selecteer',
+    description:
+      'Vergelijk de verschillende aanbiedingen op prijs, ervaring en stijl. Kies degene die het beste bij je past.',
+    icon: '/icons/process/step3-icon.svg',
+    image: '/images/homepage/process/step3.png',
+  },
+  {
+    id: 4,
+    title: 'Realiseer je project',
+    description:
+      'Werken met jouw geselecteerde architect aan het ontwerp en realisatie van je bouwproject.',
+    icon: '/icons/process/step4-icon.svg',
+    image: '/images/homepage/process/step4.png',
+  },
+];
+
+// CTA Data - customize per service
+const architectCTAData = {
+  heading: 'Klaar om te beginnen?',
+  description: 'Vind nu de perfecte architect voor jouw bouwproject en ontvang within 24 uur offertes.',
+  ctaText: 'Start nu',
+};
+
 export default async function ServicePage({ params }: ServicePageProps) {
   const { id, locale } = await params;
 
@@ -150,6 +314,22 @@ export default async function ServicePage({ params }: ServicePageProps) {
         }}
         language='nl'
       />
+      <ServiceTypes
+        heading={
+          locale === 'nl' ? 'Soorten architecten' : 'Types of Architects'
+        }
+        serviceTypes={architectTypes}
+      />
+      <ServiceProcess
+        title={locale === 'nl' ? 'Hoe werkt Bouwmatcher?' : 'How does Bouwmatcher work?'}
+        subtitle={
+          locale === 'nl'
+            ? 'In 4 stappen naar jouw perfecte architect'
+            : 'Get to your perfect architect in 4 steps'
+        }
+        steps={architectProcessSteps}
+        showCTA={false}
+      />
       <ServicePriceComparison
         heading={locale === 'nl' ? 'Vergelijkingstabel' : 'Comparison Table'}
         description={
@@ -160,7 +340,11 @@ export default async function ServicePage({ params }: ServicePageProps) {
         priceItems={architectPriceItems}
       />
       <ServiceTips
-        heading={locale === 'nl' ? 'Tips voor het kiezen van een architect' : 'Tips for Choosing an Architect'}
+        heading={
+          locale === 'nl'
+            ? 'Tips voor het kiezen van een architect'
+            : 'Tips for Choosing an Architect'
+        }
         description={
           locale === 'nl'
             ? 'Volg deze tips om de juiste architect voor uw project te selecteren'
@@ -179,7 +363,9 @@ export default async function ServicePage({ params }: ServicePageProps) {
         rows={architectCostTableRows}
       />
       <ServiceFAQ
-        heading={locale === 'nl' ? 'Veelgestelde vragen' : 'Frequently Asked Questions'}
+        heading={
+          locale === 'nl' ? 'Veelgestelde vragen' : 'Frequently Asked Questions'
+        }
         description={
           locale === 'nl'
             ? 'Heb je vragen over architecten? Hier vind je antwoorden op de meestgestelde vragen.'
@@ -187,8 +373,49 @@ export default async function ServicePage({ params }: ServicePageProps) {
         }
         faqItems={architectFaqItems}
       />
-      <ProcessSection />
-      <CTASection />
+      <ServiceReviews
+        eyebrowText={locale === 'nl' ? 'Klantverhalen' : 'Client Stories'}
+        heading={
+          locale === 'nl'
+            ? 'Waarom anderen voor ons kiezen'
+            : 'Why Others Choose Us'
+        }
+        description={
+          locale === 'nl'
+            ? 'Echte ervaringen van tevreden klanten'
+            : 'Real experiences from satisfied clients'
+        }
+        reviews={architectReviews}
+      />
+      <Values
+        heading={locale === 'nl' ? 'Waarom Bouwmatcher?' : 'Why Bouwmatcher?'}
+        description={
+          locale === 'nl'
+            ? 'Vind de perfecte architect voor jouw project'
+            : 'Find the perfect architect for your project'
+        }
+        centerText={
+          locale === 'nl' ? 'Betrouwbaar platform' : 'Trusted platform'
+        }
+        values={architectValues}
+        showCTA={false}
+      />
+      <ServiceSEO
+        heading={architectSEOData.heading}
+        description={architectSEOData.description}
+        cards={architectSEOData.cards}
+      />
+      <ServiceCTA
+        heading={
+          locale === 'nl' ? architectCTAData.heading : 'Ready to get started?'
+        }
+        description={
+          locale === 'nl'
+            ? architectCTAData.description
+            : 'Find the perfect architect for your building project and receive quotes within 24 hours.'
+        }
+        ctaText={locale === 'nl' ? architectCTAData.ctaText : 'Start now'}
+      />
     </DefaultLayout>
   );
 }
