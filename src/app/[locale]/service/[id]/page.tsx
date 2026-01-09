@@ -274,6 +274,161 @@ const architectMarqueeItems = [
   { text: 'Duidelijke prijzen zonder verborgen kosten' },
 ];
 
+// Service Page Configuration - customize order and marquee position per service
+const architectServiceConfig = {
+  sectionOrder: [
+    'intro',
+    'types',
+    'process',
+    'price',
+    'tips',
+    'cost',
+    'faq',
+    'reviews',
+    'values',
+    'seo',
+  ],
+  marquee: {
+    enabled: true,
+    showAfter: 'faq', // Can be: 'intro', 'types', 'process', 'price', 'tips', 'cost', 'faq', 'reviews', 'values', 'seo'
+    items: architectMarqueeItems,
+  },
+};
+
+// Type definitions for section rendering
+interface SectionRendererProps {
+  sectionKey: string;
+  locale: string;
+}
+
+type SectionRenderer = (props: SectionRendererProps) => React.ReactNode;
+
+// Section component mapper - maps section keys to their rendered components
+const createSectionRenderer = (): Record<string, SectionRenderer> => ({
+  intro: () => (
+    <ServiceIntroduction
+      intro={{
+        heading_nl: 'Wat is een architect?',
+        heading_en: 'What is an architect?',
+        description_nl:
+          'Een architect is verantwoordelijk voor het ontwerpen en uitwerken van bouwprojecten, variërend van woningen en aanbouwen tot zakelijke gebouwen en renovaties. Een architect vertaalt jouw wensen naar een veilig, functioneel en esthetisch ontwerp dat voldoet aan wetgeving en bouwvoorschriften. Hierbij worden schetsen, plattegronden, technische tekeningen en 3D-visualisaties opgesteld.\n\nArchitecten werken nauw samen met aannemers, ingenieurs en andere bouwprofessionals om ervoor te zorgen dat het ontwerp praktisch uitvoerbaar is en binnen het budget blijft. Ze kunnen daarnaast helpen met vergunningstrajecten, materiaalkeuze en bouwbegeleiding. Door een architect in te schakelen, voorkom je fouten tijdens de uitvoering en zorg je voor structuur binnen het gehele project.\n\nOf het gaat om een nieuwbouwwoning, uitbreiding, renovatie of herindeling van een bestaande ruimte: een architect legt de basis voor een kwalitatief en duurzaam eindresultaat.',
+        description_en:
+          "An architect is responsible for designing and developing construction projects, ranging from residential buildings and extensions to commercial buildings and renovations. An architect translates your wishes into a safe, functional and aesthetic design that complies with regulations and building codes. In doing so, sketches, floor plans, technical drawings and 3D visualizations are created.\n\nArchitects work closely with contractors, engineers and other construction professionals to ensure that the design is practically feasible and stays within budget. They can also assist with permits, material selection and construction supervision. By engaging an architect, you avoid errors during execution and ensure structure throughout the entire project.\n\nWhether it's a new residential building, extension, renovation or reconfiguration of an existing space: an architect lays the foundation for a quality and sustainable end result.",
+        backgroundImage: '/images/services/service-intro-bg.png',
+      }}
+      language="nl"
+    />
+  ),
+
+  types: ({ locale }) => (
+    <ServiceTypes
+      heading={locale === 'nl' ? 'Soorten architecten' : 'Types of Architects'}
+      serviceTypes={architectTypes}
+    />
+  ),
+
+  process: ({ locale }) => (
+    <ServiceProcess
+      title={locale === 'nl' ? 'Hoe werkt Bouwmatcher?' : 'How does Bouwmatcher work?'}
+      subtitle={
+        locale === 'nl'
+          ? 'In 4 stappen naar jouw perfecte architect'
+          : 'Get to your perfect architect in 4 steps'
+      }
+      steps={architectProcessSteps}
+      showCTA={false}
+    />
+  ),
+
+  price: ({ locale }) => (
+    <ServicePriceComparison
+      heading={locale === 'nl' ? 'Vergelijkingstabel' : 'Comparison Table'}
+      description={
+        locale === 'nl'
+          ? 'Bekijk de gemiddelde kosten voor verschillende architectenwerkzaamheden'
+          : 'View average costs for different architect services'
+      }
+      priceItems={architectPriceItems}
+    />
+  ),
+
+  tips: ({ locale }) => (
+    <ServiceTips
+      heading={
+        locale === 'nl'
+          ? 'Tips voor het kiezen van een architect'
+          : 'Tips for Choosing an Architect'
+      }
+      description={
+        locale === 'nl'
+          ? 'Volg deze tips om de juiste architect voor uw project te selecteren'
+          : 'Follow these tips to select the right architect for your project'
+      }
+      tips={architectTips}
+    />
+  ),
+
+  cost: ({ locale }) => (
+    <ServiceCostTable
+      heading={locale === 'nl' ? 'Kostenenoverzicht' : 'Cost Overview'}
+      description={
+        locale === 'nl'
+          ? 'Gedetailleerd overzicht van architect diensten en kosten'
+          : 'Detailed overview of architect services and costs'
+      }
+      columns={architectCostTableColumns}
+      rows={architectCostTableRows}
+    />
+  ),
+
+  faq: ({ locale }) => (
+    <ServiceFAQ
+      heading={locale === 'nl' ? 'Veelgestelde vragen' : 'Frequently Asked Questions'}
+      description={
+        locale === 'nl'
+          ? 'Heb je vragen over architecten? Hier vind je antwoorden op de meestgestelde vragen.'
+          : 'Have questions about architects? Find answers to the most asked questions here.'
+      }
+      faqItems={architectFaqItems}
+    />
+  ),
+
+  reviews: ({ locale }) => (
+    <ServiceReviews
+      eyebrowText={locale === 'nl' ? 'Klantverhalen' : 'Client Stories'}
+      heading={locale === 'nl' ? 'Waarom anderen voor ons kiezen' : 'Why Others Choose Us'}
+      description={
+        locale === 'nl'
+          ? 'Echte ervaringen van tevreden klanten'
+          : 'Real experiences from satisfied clients'
+      }
+      reviews={architectReviews}
+    />
+  ),
+
+  values: ({ locale }) => (
+    <Values
+      heading={locale === 'nl' ? 'Waarom Bouwmatcher?' : 'Why Bouwmatcher?'}
+      description={
+        locale === 'nl'
+          ? 'Vind de perfecte architect voor jouw project'
+          : 'Find the perfect architect for your project'
+      }
+      centerText={locale === 'nl' ? 'Betrouwbaar platform' : 'Trusted platform'}
+      values={architectValues}
+      showCTA={false}
+    />
+  ),
+
+  seo: () => (
+    <ServiceSEO
+      heading={architectSEOData.heading}
+      description={architectSEOData.description}
+      cards={architectSEOData.cards}
+    />
+  ),
+});
+
 export default async function ServicePage({ params }: ServicePageProps) {
   const { id, locale } = await params;
 
@@ -299,6 +454,9 @@ export default async function ServicePage({ params }: ServicePageProps) {
     backgroundImage: '/images/services/service-bg.png',
   };
 
+  // Initialize section renderer
+  const sectionRenderer = createSectionRenderer();
+
   return (
     <DefaultLayout>
       <ServiceBanner
@@ -309,116 +467,29 @@ export default async function ServicePage({ params }: ServicePageProps) {
         backgroundImage={bannerData.backgroundImage}
         trustPills={trustPills}
       />
-      {/* Service Introduction Section */}
-      <ServiceIntroduction
-        intro={{
-          heading_nl: 'Wat is een architect?',
-          heading_en: 'What is an architect?',
-          description_nl:
-            'Een architect is verantwoordelijk voor het ontwerpen en uitwerken van bouwprojecten, variërend van woningen en aanbouwen tot zakelijke gebouwen en renovaties. Een architect vertaalt jouw wensen naar een veilig, functioneel en esthetisch ontwerp dat voldoet aan wetgeving en bouwvoorschriften. Hierbij worden schetsen, plattegronden, technische tekeningen en 3D-visualisaties opgesteld.\n\nArchitecten werken nauw samen met aannemers, ingenieurs en andere bouwprofessionals om ervoor te zorgen dat het ontwerp praktisch uitvoerbaar is en binnen het budget blijft. Ze kunnen daarnaast helpen met vergunningstrajecten, materiaalkeuze en bouwbegeleiding. Door een architect in te schakelen, voorkom je fouten tijdens de uitvoering en zorg je voor structuur binnen het gehele project.\n\nOf het gaat om een nieuwbouwwoning, uitbreiding, renovatie of herindeling van een bestaande ruimte: een architect legt de basis voor een kwalitatief en duurzaam eindresultaat.',
-          description_en:
-            "An architect is responsible for designing and developing construction projects, ranging from residential buildings and extensions to commercial buildings and renovations. An architect translates your wishes into a safe, functional and aesthetic design that complies with regulations and building codes. In doing so, sketches, floor plans, technical drawings and 3D visualizations are created.\n\nArchitects work closely with contractors, engineers and other construction professionals to ensure that the design is practically feasible and stays within budget. They can also assist with permits, material selection and construction supervision. By engaging an architect, you avoid errors during execution and ensure structure throughout the entire project.\n\nWhether it's a new residential building, extension, renovation or reconfiguration of an existing space: an architect lays the foundation for a quality and sustainable end result.",
-          backgroundImage: '/images/services/service-intro-bg.png',
-        }}
-        language='nl'
-      />
-      {/* Marquee Section */}
-      <ServiceMarquee items={architectMarqueeItems} />
-      <ServiceTypes
-        heading={
-          locale === 'nl' ? 'Soorten architecten' : 'Types of Architects'
-        }
-        serviceTypes={architectTypes}
-      />
-      <ServiceProcess
-        title={locale === 'nl' ? 'Hoe werkt Bouwmatcher?' : 'How does Bouwmatcher work?'}
-        subtitle={
-          locale === 'nl'
-            ? 'In 4 stappen naar jouw perfecte architect'
-            : 'Get to your perfect architect in 4 steps'
-        }
-        steps={architectProcessSteps}
-        showCTA={false}
-      />
-      <ServicePriceComparison
-        heading={locale === 'nl' ? 'Vergelijkingstabel' : 'Comparison Table'}
-        description={
-          locale === 'nl'
-            ? 'Bekijk de gemiddelde kosten voor verschillende architectenwerkzaamheden'
-            : 'View average costs for different architect services'
-        }
-        priceItems={architectPriceItems}
-      />
-      <ServiceTips
-        heading={
-          locale === 'nl'
-            ? 'Tips voor het kiezen van een architect'
-            : 'Tips for Choosing an Architect'
-        }
-        description={
-          locale === 'nl'
-            ? 'Volg deze tips om de juiste architect voor uw project te selecteren'
-            : 'Follow these tips to select the right architect for your project'
-        }
-        tips={architectTips}
-      />
-      <ServiceCostTable
-        heading={locale === 'nl' ? 'Kostenenoverzicht' : 'Cost Overview'}
-        description={
-          locale === 'nl'
-            ? 'Gedetailleerd overzicht van architect diensten en kosten'
-            : 'Detailed overview of architect services and costs'
-        }
-        columns={architectCostTableColumns}
-        rows={architectCostTableRows}
-      />
-      <ServiceFAQ
-        heading={
-          locale === 'nl' ? 'Veelgestelde vragen' : 'Frequently Asked Questions'
-        }
-        description={
-          locale === 'nl'
-            ? 'Heb je vragen over architecten? Hier vind je antwoorden op de meestgestelde vragen.'
-            : 'Have questions about architects? Find answers to the most asked questions here.'
-        }
-        faqItems={architectFaqItems}
-      />
-      <ServiceReviews
-        eyebrowText={locale === 'nl' ? 'Klantverhalen' : 'Client Stories'}
-        heading={
-          locale === 'nl'
-            ? 'Waarom anderen voor ons kiezen'
-            : 'Why Others Choose Us'
-        }
-        description={
-          locale === 'nl'
-            ? 'Echte ervaringen van tevreden klanten'
-            : 'Real experiences from satisfied clients'
-        }
-        reviews={architectReviews}
-      />
-      <Values
-        heading={locale === 'nl' ? 'Waarom Bouwmatcher?' : 'Why Bouwmatcher?'}
-        description={
-          locale === 'nl'
-            ? 'Vind de perfecte architect voor jouw project'
-            : 'Find the perfect architect for your project'
-        }
-        centerText={
-          locale === 'nl' ? 'Betrouwbaar platform' : 'Trusted platform'
-        }
-        values={architectValues}
-        showCTA={false}
-      />
-      <ServiceSEO
-        heading={architectSEOData.heading}
-        description={architectSEOData.description}
-        cards={architectSEOData.cards}
-      />
+      {/* Dynamic Section Rendering */}
+      {architectServiceConfig.sectionOrder.map((sectionKey) => {
+        const showMarqueeAfter =
+          architectServiceConfig.marquee.enabled &&
+          architectServiceConfig.marquee.showAfter === sectionKey;
+
+        // Get the section renderer function, fallback to null if not found
+        const renderSection = sectionRenderer[sectionKey];
+
+        return (
+          <div key={sectionKey}>
+            {/* Render Section if renderer exists */}
+            {renderSection && renderSection({ sectionKey, locale })}
+
+            {/* Render Marquee After Section if Configured */}
+            {showMarqueeAfter && (
+              <ServiceMarquee items={architectServiceConfig.marquee.items} />
+            )}
+          </div>
+        );
+      })}
       <ServiceCTA
-        heading={
-          locale === 'nl' ? architectCTAData.heading : 'Ready to get started?'
-        }
+        heading={locale === 'nl' ? architectCTAData.heading : 'Ready to get started?'}
         description={
           locale === 'nl'
             ? architectCTAData.description
