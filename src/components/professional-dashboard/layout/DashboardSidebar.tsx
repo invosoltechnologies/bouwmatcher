@@ -35,14 +35,14 @@ export default function DashboardSidebar() {
         throw new Error('Failed to logout');
       }
 
-      toast.success(t('auth.logoutSuccess'));
+      toast.success(t('common.navbar.logoutSuccess'));
 
       // Redirect to home page
       router.push('/');
       router.refresh();
     } catch (error) {
       console.error('Logout error:', error);
-      toast.error(t('auth.logoutError'));
+      toast.error(t('common.navbar.logoutError'));
       setIsLoggingOut(false);
     }
   };
@@ -55,7 +55,7 @@ export default function DashboardSidebar() {
 
   const getNavigationLabel = (item: typeof dashboardNavigation[0]) => {
     if (item.id === 'logout' && isLoggingOut) {
-      return t('auth.loggingOut');
+      return t('common.navbar.loggingOut');
     }
     return t(`common.proDashboard.navigation.${item.id}` as any);
   };
