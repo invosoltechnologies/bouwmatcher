@@ -65,6 +65,14 @@ export const adminNavigation: NavigationItem[] = [
     type: 'link',
   },
   {
+    id: 'service-pages',
+    label: 'Service Pages',
+    href: '/admin-dashboard/service-pages',
+    icon: 'FileText',
+    iconType: 'lucide',
+    type: 'link',
+  },
+  {
     id: 'home',
     label: 'Home',
     href: '/',
@@ -119,5 +127,9 @@ export const adminPageConfigs: Record<string, PageConfig> = {
   'service-categories-form': {
     title: 'Category Form',
     description: 'Create or edit a service category',
+  },
+  'service-pages': {
+    title: 'Service Pages',
+    description: 'Create and manage service pages for each category',
   },
 };
