@@ -132,7 +132,7 @@ export default function ServiceCategoriesPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <>
 
       {/* Filters and Actions */}
       <div className="bg-white rounded-t-lg border border-slate-200 border-b-0 p-6 space-y-4">
@@ -217,6 +217,6 @@ export default function ServiceCategoriesPage() {
         onConfirm={handleConfirmDelete}
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </>
   );
 }
