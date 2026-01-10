@@ -1339,6 +1339,7 @@
         "reviews": "Reviews",
         "projects": "Projects",
         "service-categories": "Service Categories",
+        "service-pages": "Service Pages",
         "home": "Home",
         "logout": "Log out"
       },
@@ -1375,6 +1376,10 @@
         "service-categories-form": {
           "title": "Category Form",
           "description": "Create or edit a service category"
+        },
+        "service-pages": {
+          "title": "Service Pages",
+          "description": "Create and manage service pages for each category"
         }
       },
       "categoryForm": {
