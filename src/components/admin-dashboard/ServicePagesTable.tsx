@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -9,7 +8,6 @@ import {
   Edit2,
   Trash2,
   ArrowUpDown,
-  Plus,
   Check,
   Clock,
   FileText,
@@ -34,7 +32,6 @@ interface ServicePagesTableProps {
   onDelete: (page: ServicePageDTO) => void;
   onStatusChange: (page: ServicePageDTO, status: 'draft' | 'pending' | 'active') => void;
   onCreateNew: () => void;
-  isLoading?: boolean;
 }
 
 const STATUS_CONFIG = {
@@ -70,7 +67,6 @@ export default function ServicePagesTable({
   onDelete,
   onStatusChange,
   onCreateNew,
-  isLoading = false,
 }: ServicePagesTableProps) {
   const locale = useLocale();
 
@@ -260,18 +256,8 @@ export default function ServicePagesTable({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        <Button
-          onClick={onCreateNew}
-          className="gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          {locale === 'nl' ? 'Nieuwe pagina' : 'Add New Page'}
-        </Button>
-      </div>
-
-      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
-        <DataTable columns={columns} data={pages} isLoading={isLoading} />
+      <div className="bg-white rounded-b-lg border shadow-sm overflow-hidden">
+        <DataTable columns={columns} data={pages} />
       </div>
     </div>
   );

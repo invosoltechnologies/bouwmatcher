@@ -38,11 +38,11 @@ export default function ServicePagesPage() {
   const router = useRouter();
 
   // Queries and mutations
-  const { data: pages = [], isLoading } = useServicePages();
+  const { data: pages = [] } = useServicePages();
   const { data: categories = [] } = useAdminServiceCategories();
   const createMutation = useCreateServicePage();
   const deleteMutation = useDeleteServicePage();
-  const statusMutation = useUpdateServicePageStatus('');
+  const statusMutation = useUpdateServicePageStatus();
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -64,7 +64,7 @@ export default function ServicePagesPage() {
           ? page.category_name_nl || page.category_name
           : page.category_name_en || page.category_name;
 
-      const matchesSearch = categoryName
+      const matchesSearch = (categoryName || '')
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
 
@@ -128,9 +128,10 @@ export default function ServicePagesPage() {
     if (!selectedPage || !statusChangeTarget) return;
 
     try {
-      // Create a new mutation with the current page ID
-      const mutation = useUpdateServicePageStatus(selectedPage.id);
-      await mutation.mutateAsync(statusChangeTarget);
+      await statusMutation.mutateAsync({
+        pageId: selectedPage.id,
+        status: statusChangeTarget,
+      });
       setStatusChangeDialog(false);
       setSelectedPage(null);
       setStatusChangeTarget(null);
@@ -148,37 +149,42 @@ export default function ServicePagesPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div>
       {/* Filters Section */}
-      <div className="bg-white rounded-t-lg border border-slate-200 border-b-0 p-6 space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className='bg-white rounded-t-lg border border-slate-200 border-b-0 p-6 space-y-4'>
+        <div className='flex flex-wrap gap-4'>
           {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <div className='relative'>
+            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4' />
             <Input
-              placeholder={locale === 'nl' ? 'Zoeken op categorie...' : 'Search by category...'}
-              className="pl-10 bg-slate-50 border-slate-300"
+              placeholder={
+                locale === 'nl' ? 'Zoeken op slug...' : 'Search by slug...'
+              }
+              className='pl-10 bg-slate-50 border-slate-300'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
           {/* Status Filter */}
-          <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
-            <SelectTrigger className="bg-slate-50 border-slate-300">
+          <Select
+            value={statusFilter}
+            onValueChange={(value: any) => setStatusFilter(value)}
+          >
+            <SelectTrigger className='bg-slate-50 border-slate-300'>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">
+              <SelectItem value='all'>
                 {locale === 'nl' ? 'Alle statussen' : 'All Statuses'}
               </SelectItem>
-              <SelectItem value="draft">
+              <SelectItem value='draft'>
                 {locale === 'nl' ? 'Concept' : 'Draft'}
               </SelectItem>
-              <SelectItem value="pending">
+              <SelectItem value='pending'>
                 {locale === 'nl' ? 'In behandeling' : 'Pending'}
               </SelectItem>
-              <SelectItem value="active">
+              <SelectItem value='active'>
                 {locale === 'nl' ? 'Actief' : 'Active'}
               </SelectItem>
             </SelectContent>
@@ -186,34 +192,48 @@ export default function ServicePagesPage() {
 
           {/* Category Filter */}
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="bg-slate-50 border-slate-300">
-              <SelectValue placeholder={locale === 'nl' ? 'Alle categorieën' : 'All Categories'} />
+            <SelectTrigger className='bg-slate-50 border-slate-300'>
+              <SelectValue
+                placeholder={
+                  locale === 'nl' ? 'Alle categorieën' : 'All Categories'
+                }
+              />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">
+              <SelectItem value='all'>
                 {locale === 'nl' ? 'Alle categorieën' : 'All Categories'}
               </SelectItem>
               {categories
                 .filter((cat) => !cat.is_deleted)
                 .map((category) => (
                   <SelectItem key={category.id} value={category.id.toString()}>
-                    {locale === 'nl' ? category.name_nl : category.name_en || category.name_nl}
+                    {locale === 'nl'
+                      ? category.name_nl
+                      : category.name_en || category.name_nl}
                   </SelectItem>
                 ))}
             </SelectContent>
           </Select>
+
+          {/* Add New Button */}
+          <div className='flex justify-end'>
+            <Button onClick={handleCreateNew} className='gap-2'>
+              <Plus className='w-4 h-4' />
+              {locale === 'nl' ? 'Nieuwe pagina' : 'Add New Page'}
+            </Button>
+          </div>
         </div>
 
         {/* Reset Button */}
         {hasActiveFilters && (
-          <div className="flex justify-end">
+          <div className='flex justify-end'>
             <Button
-              variant="outline"
-              size="sm"
+              variant='outline'
+              size='sm'
               onClick={handleResetFilters}
-              className="gap-2"
+              className='gap-2'
             >
-              <X className="w-4 h-4" />
+              <X className='w-4 h-4' />
               {locale === 'nl' ? 'Reset' : 'Reset'}
             </Button>
           </div>
@@ -227,7 +247,6 @@ export default function ServicePagesPage() {
         onDelete={handleDeleteClick}
         onStatusChange={handleStatusChange}
         onCreateNew={handleCreateNew}
-        isLoading={isLoading}
       />
 
       {/* Delete Confirmation Dialog */}
@@ -241,13 +260,13 @@ export default function ServicePagesPage() {
               ? 'Weet je zeker dat je deze servicepagina wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.'
               : 'Are you sure you want to delete this service page? This action cannot be undone.'}
           </AlertDialogDescription>
-          <div className="flex justify-end gap-3">
+          <div className='flex justify-end gap-3'>
             <AlertDialogCancel>
               {locale === 'nl' ? 'Annuleren' : 'Cancel'}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className='bg-red-600 hover:bg-red-700 text-white'
             >
               {locale === 'nl' ? 'Verwijderen' : 'Delete'}
             </AlertDialogAction>
@@ -256,17 +275,32 @@ export default function ServicePagesPage() {
       </AlertDialog>
 
       {/* Status Change Confirmation Dialog */}
-      <AlertDialog open={statusChangeDialog} onOpenChange={setStatusChangeDialog}>
+      <AlertDialog
+        open={statusChangeDialog}
+        onOpenChange={setStatusChangeDialog}
+      >
         <AlertDialogContent>
           <AlertDialogTitle>
             {locale === 'nl' ? 'Status wijzigen?' : 'Change Status?'}
           </AlertDialogTitle>
           <AlertDialogDescription>
             {locale === 'nl'
-              ? `Weet je zeker dat je de status wilt wijzigen naar "${statusChangeTarget === 'draft' ? 'Concept' : statusChangeTarget === 'pending' ? 'In behandeling' : 'Actief'}"?`
-              : `Are you sure you want to change the status to "${statusChangeTarget === 'draft' ? 'Draft' : statusChangeTarget === 'pending' ? 'Pending' : 'Active'}"?`}
+              ? `Weet je zeker dat je de status wilt wijzigen naar "${
+                  statusChangeTarget === 'draft'
+                    ? 'Concept'
+                    : statusChangeTarget === 'pending'
+                    ? 'In behandeling'
+                    : 'Actief'
+                }"?`
+              : `Are you sure you want to change the status to "${
+                  statusChangeTarget === 'draft'
+                    ? 'Draft'
+                    : statusChangeTarget === 'pending'
+                    ? 'Pending'
+                    : 'Active'
+                }"?`}
           </AlertDialogDescription>
-          <div className="flex justify-end gap-3">
+          <div className='flex justify-end gap-3'>
             <AlertDialogCancel>
               {locale === 'nl' ? 'Annuleren' : 'Cancel'}
             </AlertDialogCancel>

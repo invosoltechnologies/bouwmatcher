@@ -21,18 +21,20 @@ export function useCreateServicePage() {
   });
 }
 
-export function useUpdateServicePageStatus(pageId: string) {
+export function useUpdateServicePageStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (status: 'draft' | 'pending' | 'active') =>
-      await adminServicePagesApi.update(pageId, { status }),
+    mutationFn: async ({
+      pageId,
+      status,
+    }: {
+      pageId: string;
+      status: 'draft' | 'pending' | 'active';
+    }) => await adminServicePagesApi.update(pageId, { status }),
     onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: servicePagesQueryKeys.lists(),
-      });
-      queryClient.invalidateQueries({
-        queryKey: servicePagesQueryKeys.detail(pageId),
       });
       toast.success(data.message || 'Status updated successfully');
     },
