@@ -15,6 +15,7 @@ import { Plus, Search, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import ServicePagesTable from '@/components/admin-dashboard/ServicePagesTable';
+import AddServicePageDialog from '@/components/admin-dashboard/AddServicePageDialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -50,6 +51,7 @@ export default function ServicePagesPage() {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
   // Dialog states
+  const [addPageDialogOpen, setAddPageDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedPage, setSelectedPage] = useState<ServicePageDTO | null>(null);
   const [statusChangeDialog, setStatusChangeDialog] = useState(false);
@@ -83,15 +85,27 @@ export default function ServicePagesPage() {
   }, [pages, searchQuery, statusFilter, categoryFilter, locale]);
 
   // Handlers
-  const handleCreateNew = async () => {
-    // Navigate to category selection or create form
+  const handleCreateNew = () => {
     if (categories.length === 0) {
       toast.error(locale === 'nl' ? 'Geen categorieën beschikbaar' : 'No categories available');
       return;
     }
 
-    // For now, redirect to create page or show category selection
-    router.push(`/${locale}/admin-dashboard/service-pages/new`);
+    setAddPageDialogOpen(true);
+  };
+
+  const handleAddServicePage = async (data: {
+    categoryId: number;
+    metaTitle: string;
+    metaDescription: string;
+  }) => {
+    try {
+      await createMutation.mutateAsync(data.categoryId.toString());
+      setAddPageDialogOpen(false);
+      toast.success(locale === 'nl' ? 'Servicepagina gemaakt' : 'Service page created');
+    } catch (error) {
+      // Error is handled by the mutation
+    }
   };
 
   const handleEdit = (page: ServicePageDTO) => {
@@ -310,6 +324,15 @@ export default function ServicePagesPage() {
           </div>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Add Service Page Dialog */}
+      <AddServicePageDialog
+        open={addPageDialogOpen}
+        onOpenChange={setAddPageDialogOpen}
+        categories={categories}
+        existingPages={pages}
+        onSubmit={handleAddServicePage}
+      />
     </div>
   );
 }
