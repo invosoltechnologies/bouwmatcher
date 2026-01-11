@@ -52,12 +52,22 @@ export default function TinyMCEEditor({
             'wordcount',
           ],
           toolbar:
-            'undo redo | formatselect | ' +
+            'undo redo | ' +
+            'blocks | ' +
             'bold italic underline strikethrough | ' +
             'alignleft aligncenter alignright alignjustify | ' +
             'bullist numlist outdent indent | ' +
             'table | image link | ' +
             'removeformat | code | help',
+          blocks: [
+            { title: 'Paragraph', value: 'p' },
+            { title: 'Heading 1', value: 'h1' },
+            { title: 'Heading 2', value: 'h2' },
+            { title: 'Heading 3', value: 'h3' },
+            { title: 'Heading 4', value: 'h4' },
+            { title: 'Heading 5', value: 'h5' },
+            { title: 'Heading 6', value: 'h6' },
+          ],
           table_toolbar:
             'tableprops tabledelete | ' +
             'tableinsertrowbefore tableinsertrowafter tabledeleterow | ' +
