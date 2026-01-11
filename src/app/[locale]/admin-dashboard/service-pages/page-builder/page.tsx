@@ -14,6 +14,8 @@ import SeoContentSection from '@/components/admin-dashboard/service-page-builder
 import ProcessSection from '@/components/admin-dashboard/service-page-builder/ProcessSection';
 import ValuesSection from '@/components/admin-dashboard/service-page-builder/ValuesSection';
 import CTASection from '@/components/admin-dashboard/service-page-builder/CTASection';
+import TypesSection from '@/components/admin-dashboard/service-page-builder/TypesSection';
+import ReviewsSection from '@/components/admin-dashboard/service-page-builder/ReviewsSection';
 import { useServicePageBanner } from '@/lib/hooks/admin/service-page-banners';
 import { useServicePageIntro } from '@/lib/hooks/admin/service-page-intro';
 import { useServicePageFaq } from '@/lib/hooks/admin/service-page-faqs';
@@ -24,6 +26,8 @@ import { useServicePageSeoContent } from '@/lib/hooks/admin/service-page-seo-con
 import { useServicePageProcess } from '@/lib/hooks/admin/service-page-process';
 import { useServicePageValues } from '@/lib/hooks/admin/service-page-values';
 import { useServicePageCta } from '@/lib/hooks/admin/service-page-cta';
+import { useServicePageTypes } from '@/lib/hooks/admin/service-page-types';
+import { useServicePageReviews } from '@/lib/hooks/admin/service-page-reviews';
 import { useServicePageById } from '@/lib/hooks/admin/service-pages';
 
 export default function ServicePageBuilderPage() {
@@ -46,6 +50,8 @@ export default function ServicePageBuilderPage() {
   const { data: process } = useServicePageProcess(pageId);
   const { data: values } = useServicePageValues(pageId);
   const { data: cta } = useServicePageCta(pageId);
+  const { data: types } = useServicePageTypes(pageId);
+  const { data: reviews } = useServicePageReviews(pageId);
 
   if (!pageId) {
     return (
@@ -191,6 +197,22 @@ export default function ServicePageBuilderPage() {
           <CTASection
             servicePageId={pageId}
             initialData={cta}
+          />
+        </div>
+
+        {/* Types Section */}
+        <div className='bg-white rounded-lg'>
+          <TypesSection
+            servicePageId={pageId}
+            initialData={types}
+          />
+        </div>
+
+        {/* Reviews Section */}
+        <div className='bg-white rounded-lg'>
+          <ReviewsSection
+            servicePageId={pageId}
+            initialData={reviews}
           />
         </div>
       </div>

@@ -255,7 +255,7 @@ export default function ValuesSection({
         className='w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors'
       >
         <h3 className='text-lg font-semibold text-slate-900'>
-          {locale === 'nl' ? 'Waarom Bouwmatcher? Sectie' : 'Why Bouwmatcher? Section'}
+          {locale === 'nl' ? 'Waarden Sectie' : 'Values Section'}
         </h3>
         {isExpanded ? (
           <ChevronUp className='w-5 h-5 text-slate-600' />
@@ -300,12 +300,16 @@ export default function ValuesSection({
                   className='bg-slate-50 border-slate-300 min-h-[80px]'
                   maxLength={500}
                 />
-                <p className='text-xs text-slate-500'>{descriptionNl.length}/500</p>
+                <p className='text-xs text-slate-500'>
+                  {descriptionNl.length}/500
+                </p>
               </div>
 
               <div className='space-y-2'>
                 <label className='block text-sm font-medium text-slate-900'>
-                  {locale === 'nl' ? 'Middel Tekst (max 90)' : 'Center Text (max 90)'}
+                  {locale === 'nl'
+                    ? 'Middel Tekst (max 90)'
+                    : 'Center Text (max 90)'}
                 </label>
                 <Textarea
                   placeholder='Tekst voor cirkel in het midden'
@@ -314,7 +318,9 @@ export default function ValuesSection({
                   className='bg-slate-50 border-slate-300 min-h-[60px]'
                   maxLength={90}
                 />
-                <p className='text-xs text-slate-500'>{centerTextNl.length}/90</p>
+                <p className='text-xs text-slate-500'>
+                  {centerTextNl.length}/90
+                </p>
               </div>
             </div>
 
@@ -349,12 +355,16 @@ export default function ValuesSection({
                   className='bg-slate-50 border-slate-300 min-h-[80px]'
                   maxLength={500}
                 />
-                <p className='text-xs text-slate-500'>{descriptionEn.length}/500</p>
+                <p className='text-xs text-slate-500'>
+                  {descriptionEn.length}/500
+                </p>
               </div>
 
               <div className='space-y-2'>
                 <label className='block text-sm font-medium text-slate-900'>
-                  {locale === 'nl' ? 'Middel Tekst (max 90)' : 'Center Text (max 90)'}
+                  {locale === 'nl'
+                    ? 'Middel Tekst (max 90)'
+                    : 'Center Text (max 90)'}
                 </label>
                 <Textarea
                   placeholder='Text for circle in center'
@@ -363,7 +373,9 @@ export default function ValuesSection({
                   className='bg-slate-50 border-slate-300 min-h-[60px]'
                   maxLength={90}
                 />
-                <p className='text-xs text-slate-500'>{centerTextEn.length}/90</p>
+                <p className='text-xs text-slate-500'>
+                  {centerTextEn.length}/90
+                </p>
               </div>
             </div>
           </div>
@@ -376,14 +388,26 @@ export default function ValuesSection({
 
             {/* Top Row */}
             <div className='grid grid-cols-2 gap-6'>
-              {renderValueCard('top_left', locale === 'nl' ? 'Linksboven' : 'Top Left')}
-              {renderValueCard('top_right', locale === 'nl' ? 'Rechtsboven' : 'Top Right')}
+              {renderValueCard(
+                'top_left',
+                locale === 'nl' ? 'Linksboven' : 'Top Left'
+              )}
+              {renderValueCard(
+                'top_right',
+                locale === 'nl' ? 'Rechtsboven' : 'Top Right'
+              )}
             </div>
 
             {/* Bottom Row */}
             <div className='grid grid-cols-2 gap-6'>
-              {renderValueCard('bottom_left', locale === 'nl' ? 'Linksonder' : 'Bottom Left')}
-              {renderValueCard('bottom_right', locale === 'nl' ? 'Rechtsonder' : 'Bottom Right')}
+              {renderValueCard(
+                'bottom_left',
+                locale === 'nl' ? 'Linksonder' : 'Bottom Left'
+              )}
+              {renderValueCard(
+                'bottom_right',
+                locale === 'nl' ? 'Rechtsonder' : 'Bottom Right'
+              )}
             </div>
           </div>
 
