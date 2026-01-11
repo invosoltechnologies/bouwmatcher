@@ -96,20 +96,34 @@ export default function ServicePagesPage() {
 
   const handleAddServicePage = async (data: {
     categoryId: number;
-    metaTitle: string;
-    metaDescription: string;
+    metaTitleNl: string;
+    metaTitleEn: string;
+    metaDescriptionNl: string;
+    metaDescriptionEn: string;
   }) => {
     try {
-      await createMutation.mutateAsync(data.categoryId.toString());
+      const response = await createMutation.mutateAsync({
+        categoryId: data.categoryId.toString(),
+        metaTitleNl: data.metaTitleNl,
+        metaTitleEn: data.metaTitleEn,
+        metaDescriptionNl: data.metaDescriptionNl,
+        metaDescriptionEn: data.metaDescriptionEn,
+      });
       setAddPageDialogOpen(false);
-      toast.success(locale === 'nl' ? 'Servicepagina gemaakt' : 'Service page created');
+
+      // Navigate to page builder after successful creation
+      if (response.servicePage?.id) {
+        router.push(
+          `/${locale}/admin-dashboard/service-pages/page-builder?page_id=${response.servicePage.id}`
+        );
+      }
     } catch (error) {
       // Error is handled by the mutation
     }
   };
 
   const handleEdit = (page: ServicePageDTO) => {
-    router.push(`/${locale}/admin-dashboard/service-pages/${page.id}`);
+    router.push(`/${locale}/admin-dashboard/service-pages/page-builder?page_id=${page.id}`);
   };
 
   const handleDeleteClick = (page: ServicePageDTO) => {
@@ -166,69 +180,81 @@ export default function ServicePagesPage() {
     <div>
       {/* Filters Section */}
       <div className='bg-white rounded-t-lg border border-slate-200 border-b-0 p-6 space-y-4'>
-        <div className='flex flex-wrap gap-4'>
+        <div className='flex flex-wrap justify-between'>
           {/* Search */}
-          <div className='relative'>
-            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4' />
-            <Input
-              placeholder={
-                locale === 'nl' ? 'Zoeken op slug...' : 'Search by slug...'
-              }
-              className='pl-10 bg-slate-50 border-slate-300'
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-
-          {/* Status Filter */}
-          <Select
-            value={statusFilter}
-            onValueChange={(value: any) => setStatusFilter(value)}
-          >
-            <SelectTrigger className='bg-slate-50 border-slate-300'>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='all'>
-                {locale === 'nl' ? 'Alle statussen' : 'All Statuses'}
-              </SelectItem>
-              <SelectItem value='draft'>
-                {locale === 'nl' ? 'Concept' : 'Draft'}
-              </SelectItem>
-              <SelectItem value='pending'>
-                {locale === 'nl' ? 'In behandeling' : 'Pending'}
-              </SelectItem>
-              <SelectItem value='active'>
-                {locale === 'nl' ? 'Actief' : 'Active'}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Category Filter */}
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className='bg-slate-50 border-slate-300'>
-              <SelectValue
+          <div className='flex flex-wrap gap-4'>
+            <div className='relative'>
+              <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4' />
+              <Input
                 placeholder={
-                  locale === 'nl' ? 'Alle categorieën' : 'All Categories'
+                  locale === 'nl' ? 'Zoeken op slug...' : 'Search by slug...'
                 }
+                className='pl-10 bg-slate-50 border-slate-300'
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='all'>
-                {locale === 'nl' ? 'Alle categorieën' : 'All Categories'}
-              </SelectItem>
-              {categories
-                .filter((cat) => !cat.is_deleted)
-                .map((category) => (
-                  <SelectItem key={category.id} value={category.id.toString()}>
-                    {locale === 'nl'
-                      ? category.name_nl
-                      : category.name_en || category.name_nl}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
+            </div>
 
+            {/* Status Filter */}
+            <Select
+              value={statusFilter}
+              onValueChange={(value: any) => setStatusFilter(value)}
+            >
+              <SelectTrigger
+                className='bg-slate-50 border-slate-300'
+                iconWidth={16}
+                iconHeight={16}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='all'>
+                  {locale === 'nl' ? 'Alle statussen' : 'All Statuses'}
+                </SelectItem>
+                <SelectItem value='draft'>
+                  {locale === 'nl' ? 'Concept' : 'Draft'}
+                </SelectItem>
+                <SelectItem value='pending'>
+                  {locale === 'nl' ? 'In behandeling' : 'Pending'}
+                </SelectItem>
+                <SelectItem value='active'>
+                  {locale === 'nl' ? 'Actief' : 'Active'}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* Category Filter */}
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger
+                className='bg-slate-50 border-slate-300'
+                iconWidth={16}
+                iconHeight={16}
+              >
+                <SelectValue
+                  placeholder={
+                    locale === 'nl' ? 'Alle categorieën' : 'All Categories'
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='all'>
+                  {locale === 'nl' ? 'Alle categorieën' : 'All Categories'}
+                </SelectItem>
+                {categories
+                  .filter((cat) => !cat.is_deleted)
+                  .map((category) => (
+                    <SelectItem
+                      key={category.id}
+                      value={category.id.toString()}
+                    >
+                      {locale === 'nl'
+                        ? category.name_nl
+                        : category.name_en || category.name_nl}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
           {/* Add New Button */}
           <div className='flex justify-end'>
             <Button onClick={handleCreateNew} className='gap-2'>

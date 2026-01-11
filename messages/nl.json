@@ -1378,6 +1378,10 @@
         "service-pages": {
           "title": "Servicepagina's",
           "description": "Maak en beheer servicepagina's voor elke categorie"
+        },
+        "page-builder": {
+          "title": "Servicepagina Bouwer",
+          "description": "Ontwerp en bewerk servicepagina-inhoud"
         }
       },
       "categoryForm": {

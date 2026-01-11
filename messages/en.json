@@ -1380,6 +1380,10 @@
         "service-pages": {
           "title": "Service Pages",
           "description": "Create and manage service pages for each category"
+        },
+        "page-builder": {
+          "title": "Service Page Builder",
+          "description": "Design and edit service page content"
         }
       },
       "categoryForm": {
