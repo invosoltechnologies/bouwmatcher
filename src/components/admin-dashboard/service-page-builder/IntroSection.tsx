@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { ChevronDown, ChevronUp, Upload } from 'lucide-react';
-import RichTextEditor from '@/components/ui/rich-text-editor';
+import TinyMCEEditor from '@/components/ui/tinymce-editor';
 import { useSaveServicePageIntro } from '@/lib/hooks/admin/service-page-intro';
 import { ServicePageIntroDTO } from '@/lib/api/admin/service-page-intro.api';
 
@@ -172,7 +172,7 @@ export default function IntroSection({
                 <label className='block text-sm font-medium text-slate-900'>
                   {locale === 'nl' ? 'Beschrijving (HTML)' : 'Description (HTML)'}
                 </label>
-                <RichTextEditor
+                <TinyMCEEditor
                   value={descriptionNl}
                   onChange={setDescriptionNl}
                   placeholder='Beschrijf de intro in detail...'
@@ -209,7 +209,7 @@ export default function IntroSection({
                 <label className='block text-sm font-medium text-slate-900'>
                   {locale === 'nl' ? 'Beschrijving (HTML)' : 'Description (HTML)'}
                 </label>
-                <RichTextEditor
+                <TinyMCEEditor
                   value={descriptionEn}
                   onChange={setDescriptionEn}
                   placeholder='Describe the intro in detail...'

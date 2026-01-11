@@ -17,6 +17,7 @@ import {
   INSERT_UNORDERED_LIST_COMMAND,
 } from '@lexical/list';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
+import { INSERT_TABLE_COMMAND } from '@lexical/table';
 import {
   Bold,
   Italic,
@@ -30,6 +31,7 @@ import {
   Pilcrow,
   Link as LinkIcon,
   Image as ImageIcon,
+  Table as TableIcon,
 } from 'lucide-react';
 
 const ToolbarPlugin = () => {
@@ -95,6 +97,25 @@ const ToolbarPlugin = () => {
           }
         }
       });
+    }
+  };
+
+  const insertTable = () => {
+    const rows = prompt('Number of rows:', '3');
+    const cols = prompt('Number of columns:', '3');
+
+    if (rows && cols) {
+      const rowCount = parseInt(rows, 10);
+      const colCount = parseInt(cols, 10);
+
+      if (rowCount > 0 && colCount > 0 && rowCount <= 20 && colCount <= 10) {
+        editor.dispatchCommand(INSERT_TABLE_COMMAND, {
+          rows: String(rowCount),
+          columns: String(colCount),
+        });
+      } else {
+        alert('Please enter valid numbers (max 20 rows, 10 columns)');
+      }
     }
   };
 
@@ -208,7 +229,7 @@ const ToolbarPlugin = () => {
 
       <div className='w-px h-6 bg-slate-300 mx-1' />
 
-      {/* Link and Image */}
+      {/* Link, Image, and Table */}
       <button
         type='button'
         onClick={insertLink}
@@ -224,6 +245,14 @@ const ToolbarPlugin = () => {
         aria-label='Insert Image'
       >
         <ImageIcon className='w-4 h-4 text-slate-700' />
+      </button>
+      <button
+        type='button'
+        onClick={insertTable}
+        className='p-2 hover:bg-slate-200 rounded transition-colors'
+        aria-label='Insert Table'
+      >
+        <TableIcon className='w-4 h-4 text-slate-700' />
       </button>
     </div>
   );

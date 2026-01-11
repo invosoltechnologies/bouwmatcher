@@ -7,9 +7,11 @@ import { ArrowLeft } from 'lucide-react';
 import BannerSection from '@/components/admin-dashboard/service-page-builder/BannerSection';
 import IntroSection from '@/components/admin-dashboard/service-page-builder/IntroSection';
 import FaqSection from '@/components/admin-dashboard/service-page-builder/FaqSection';
+import ComparisonTableSection from '@/components/admin-dashboard/service-page-builder/ComparisonTableSection';
 import { useServicePageBanner } from '@/lib/hooks/admin/service-page-banners';
 import { useServicePageIntro } from '@/lib/hooks/admin/service-page-intro';
 import { useServicePageFaq } from '@/lib/hooks/admin/service-page-faqs';
+import { useServicePageComparisonTable } from '@/lib/hooks/admin/service-page-comparison-tables';
 import { useServicePageById } from '@/lib/hooks/admin/service-pages';
 
 export default function ServicePageBuilderPage() {
@@ -25,6 +27,7 @@ export default function ServicePageBuilderPage() {
   const { data: banner } = useServicePageBanner(pageId);
   const { data: intro } = useServicePageIntro(pageId);
   const { data: faq } = useServicePageFaq(pageId);
+  const { data: comparisonTable } = useServicePageComparisonTable(pageId);
 
   if (!pageId) {
     return (
@@ -114,6 +117,14 @@ export default function ServicePageBuilderPage() {
           <FaqSection
             servicePageId={pageId}
             initialFaq={faq}
+          />
+        </div>
+
+        {/* Comparison Table Section */}
+        <div className='bg-white rounded-lg'>
+          <ComparisonTableSection
+            servicePageId={pageId}
+            initialData={comparisonTable}
           />
         </div>
 

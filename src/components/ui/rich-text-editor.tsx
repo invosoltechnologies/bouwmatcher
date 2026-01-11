@@ -12,6 +12,8 @@ import { ListItemNode, ListNode } from '@lexical/list';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { LinkNode, AutoLinkNode } from '@lexical/link';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
+import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
+import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $getRoot, $insertNodes } from 'lexical';
@@ -69,11 +71,24 @@ export default function RichTextEditor({
         italic: 'italic',
         underline: 'underline',
       },
+      table: 'border-collapse border border-slate-300 w-full my-4',
+      tableCell: 'border border-slate-300 px-3 py-2 min-w-[100px]',
+      tableCellHeader: 'border border-slate-300 px-3 py-2 bg-slate-100 font-semibold',
     },
     onError: (error: Error) => {
       console.error('Lexical error:', error);
     },
-    nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode, LinkNode, AutoLinkNode],
+    nodes: [
+      HeadingNode,
+      QuoteNode,
+      ListNode,
+      ListItemNode,
+      LinkNode,
+      AutoLinkNode,
+      TableNode,
+      TableCellNode,
+      TableRowNode,
+    ],
   };
 
   const handleChange = (editorState: any, editor: any) => {
@@ -105,6 +120,7 @@ export default function RichTextEditor({
         <HistoryPlugin />
         <ListPlugin />
         <LinkPlugin />
+        <TablePlugin />
         <OnChangePlugin onChange={handleChange} />
         <InitialContentPlugin html={value} />
       </div>
