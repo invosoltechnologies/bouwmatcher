@@ -8,10 +8,16 @@ import BannerSection from '@/components/admin-dashboard/service-page-builder/Ban
 import IntroSection from '@/components/admin-dashboard/service-page-builder/IntroSection';
 import FaqSection from '@/components/admin-dashboard/service-page-builder/FaqSection';
 import ComparisonTableSection from '@/components/admin-dashboard/service-page-builder/ComparisonTableSection';
+import TipsSection from '@/components/admin-dashboard/service-page-builder/TipsSection';
+import OverviewTableSection from '@/components/admin-dashboard/service-page-builder/OverviewTableSection';
+import SeoContentSection from '@/components/admin-dashboard/service-page-builder/SeoContentSection';
 import { useServicePageBanner } from '@/lib/hooks/admin/service-page-banners';
 import { useServicePageIntro } from '@/lib/hooks/admin/service-page-intro';
 import { useServicePageFaq } from '@/lib/hooks/admin/service-page-faqs';
 import { useServicePageComparisonTable } from '@/lib/hooks/admin/service-page-comparison-tables';
+import { useServicePageTips } from '@/lib/hooks/admin/service-page-tips';
+import { useServicePageOverviewTable } from '@/lib/hooks/admin/service-page-overview-tables';
+import { useServicePageSeoContent } from '@/lib/hooks/admin/service-page-seo-content';
 import { useServicePageById } from '@/lib/hooks/admin/service-pages';
 
 export default function ServicePageBuilderPage() {
@@ -28,6 +34,9 @@ export default function ServicePageBuilderPage() {
   const { data: intro } = useServicePageIntro(pageId);
   const { data: faq } = useServicePageFaq(pageId);
   const { data: comparisonTable } = useServicePageComparisonTable(pageId);
+  const { data: tips } = useServicePageTips(pageId);
+  const { data: overviewTable } = useServicePageOverviewTable(pageId);
+  const { data: seoContent } = useServicePageSeoContent(pageId);
 
   if (!pageId) {
     return (
@@ -128,13 +137,28 @@ export default function ServicePageBuilderPage() {
           />
         </div>
 
-        {/* Placeholder for other sections */}
-        <div className='p-6 border-2 border-dashed border-slate-300 rounded-lg text-center text-slate-500'>
-          <p>
-            {locale === 'nl'
-              ? 'Meer secties volgen spoedig...'
-              : 'More sections coming soon...'}
-          </p>
+        {/* Tips Section */}
+        <div className='bg-white rounded-lg'>
+          <TipsSection
+            servicePageId={pageId}
+            initialData={tips}
+          />
+        </div>
+
+        {/* Overview Table Section */}
+        <div className='bg-white rounded-lg'>
+          <OverviewTableSection
+            servicePageId={pageId}
+            initialData={overviewTable}
+          />
+        </div>
+
+        {/* SEO Content Section */}
+        <div className='bg-white rounded-lg'>
+          <SeoContentSection
+            servicePageId={pageId}
+            initialData={seoContent}
+          />
         </div>
       </div>
     </div>
