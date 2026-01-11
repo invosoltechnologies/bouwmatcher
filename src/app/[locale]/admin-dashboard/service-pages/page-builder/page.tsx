@@ -11,6 +11,7 @@ import ComparisonTableSection from '@/components/admin-dashboard/service-page-bu
 import TipsSection from '@/components/admin-dashboard/service-page-builder/TipsSection';
 import OverviewTableSection from '@/components/admin-dashboard/service-page-builder/OverviewTableSection';
 import SeoContentSection from '@/components/admin-dashboard/service-page-builder/SeoContentSection';
+import ProcessSection from '@/components/admin-dashboard/service-page-builder/ProcessSection';
 import { useServicePageBanner } from '@/lib/hooks/admin/service-page-banners';
 import { useServicePageIntro } from '@/lib/hooks/admin/service-page-intro';
 import { useServicePageFaq } from '@/lib/hooks/admin/service-page-faqs';
@@ -18,6 +19,7 @@ import { useServicePageComparisonTable } from '@/lib/hooks/admin/service-page-co
 import { useServicePageTips } from '@/lib/hooks/admin/service-page-tips';
 import { useServicePageOverviewTable } from '@/lib/hooks/admin/service-page-overview-tables';
 import { useServicePageSeoContent } from '@/lib/hooks/admin/service-page-seo-content';
+import { useServicePageProcess } from '@/lib/hooks/admin/service-page-process';
 import { useServicePageById } from '@/lib/hooks/admin/service-pages';
 
 export default function ServicePageBuilderPage() {
@@ -37,6 +39,7 @@ export default function ServicePageBuilderPage() {
   const { data: tips } = useServicePageTips(pageId);
   const { data: overviewTable } = useServicePageOverviewTable(pageId);
   const { data: seoContent } = useServicePageSeoContent(pageId);
+  const { data: process } = useServicePageProcess(pageId);
 
   if (!pageId) {
     return (
@@ -158,6 +161,14 @@ export default function ServicePageBuilderPage() {
           <SeoContentSection
             servicePageId={pageId}
             initialData={seoContent}
+          />
+        </div>
+
+        {/* Process Section */}
+        <div className='bg-white rounded-lg'>
+          <ProcessSection
+            servicePageId={pageId}
+            initialData={process}
           />
         </div>
       </div>
