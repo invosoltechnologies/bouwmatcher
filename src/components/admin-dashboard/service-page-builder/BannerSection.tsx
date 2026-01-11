@@ -92,7 +92,7 @@ export default function BannerSection({
   };
 
   return (
-    <Card className='border border-slate-200 rounded-lg overflow-hidden'>
+    <Card className='border py-0 border-slate-200 rounded-lg overflow-hidden'>
       {/* Header - Collapsible */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}

@@ -62,16 +62,12 @@ export default function ServicePageBuilderPage() {
         <div>
           <Button
             variant='outline'
-            size='sm'
             onClick={() => router.back()}
             className='gap-2 mb-4'
           >
             <ArrowLeft className='w-4 h-4' />
             {locale === 'nl' ? 'Terug' : 'Back'}
           </Button>
-          <h1 className='text-3xl font-bold text-slate-900'>
-            {locale === 'nl' ? 'Pagina Bouwer' : 'Page Builder'}
-          </h1>
           <p className='text-slate-600 mt-1'>
             {locale === 'nl'
               ? `Category: ${servicePage.category_name_nl || servicePage.category_name}`
@@ -89,7 +85,7 @@ export default function ServicePageBuilderPage() {
       </div>
 
       {/* Sections Container */}
-      <div className='space-y-4'>
+      <div className='custom-container space-y-6'>
         <h2 className='text-lg font-semibold text-slate-900'>
           {locale === 'nl' ? 'Secties' : 'Sections'}
         </h2>

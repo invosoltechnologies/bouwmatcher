@@ -9,7 +9,9 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { ListItemNode, ListNode } from '@lexical/list';
-import { LinkNode } from '@lexical/link';
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
+import { LinkNode, AutoLinkNode } from '@lexical/link';
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from '@lexical/html';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $getRoot, $insertNodes } from 'lexical';
@@ -71,7 +73,7 @@ export default function RichTextEditor({
     onError: (error: Error) => {
       console.error('Lexical error:', error);
     },
-    nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode, LinkNode],
+    nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode, LinkNode, AutoLinkNode],
   };
 
   const handleChange = (editorState: any, editor: any) => {
@@ -83,7 +85,7 @@ export default function RichTextEditor({
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div className={`border border-slate-300 rounded-lg bg-white ${className}`}>
+      <div className={`border border-slate-300 rounded-b-lg bg-white ${className}`}>
         <ToolbarPlugin />
         <div className='relative'>
           <RichTextPlugin
@@ -101,6 +103,8 @@ export default function RichTextEditor({
           />
         </div>
         <HistoryPlugin />
+        <ListPlugin />
+        <LinkPlugin />
         <OnChangePlugin onChange={handleChange} />
         <InitialContentPlugin html={value} />
       </div>

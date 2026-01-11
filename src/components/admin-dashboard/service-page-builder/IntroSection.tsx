@@ -84,7 +84,7 @@ export default function IntroSection({
   };
 
   return (
-    <Card className='border border-slate-200 rounded-lg overflow-hidden'>
+    <Card className=' py-0 border border-slate-200 rounded-lg overflow-hidden'>
       {/* Header - Collapsible */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
