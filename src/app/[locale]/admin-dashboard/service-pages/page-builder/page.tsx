@@ -12,6 +12,8 @@ import TipsSection from '@/components/admin-dashboard/service-page-builder/TipsS
 import OverviewTableSection from '@/components/admin-dashboard/service-page-builder/OverviewTableSection';
 import SeoContentSection from '@/components/admin-dashboard/service-page-builder/SeoContentSection';
 import ProcessSection from '@/components/admin-dashboard/service-page-builder/ProcessSection';
+import ValuesSection from '@/components/admin-dashboard/service-page-builder/ValuesSection';
+import CTASection from '@/components/admin-dashboard/service-page-builder/CTASection';
 import { useServicePageBanner } from '@/lib/hooks/admin/service-page-banners';
 import { useServicePageIntro } from '@/lib/hooks/admin/service-page-intro';
 import { useServicePageFaq } from '@/lib/hooks/admin/service-page-faqs';
@@ -20,6 +22,8 @@ import { useServicePageTips } from '@/lib/hooks/admin/service-page-tips';
 import { useServicePageOverviewTable } from '@/lib/hooks/admin/service-page-overview-tables';
 import { useServicePageSeoContent } from '@/lib/hooks/admin/service-page-seo-content';
 import { useServicePageProcess } from '@/lib/hooks/admin/service-page-process';
+import { useServicePageValues } from '@/lib/hooks/admin/service-page-values';
+import { useServicePageCta } from '@/lib/hooks/admin/service-page-cta';
 import { useServicePageById } from '@/lib/hooks/admin/service-pages';
 
 export default function ServicePageBuilderPage() {
@@ -40,6 +44,8 @@ export default function ServicePageBuilderPage() {
   const { data: overviewTable } = useServicePageOverviewTable(pageId);
   const { data: seoContent } = useServicePageSeoContent(pageId);
   const { data: process } = useServicePageProcess(pageId);
+  const { data: values } = useServicePageValues(pageId);
+  const { data: cta } = useServicePageCta(pageId);
 
   if (!pageId) {
     return (
@@ -169,6 +175,22 @@ export default function ServicePageBuilderPage() {
           <ProcessSection
             servicePageId={pageId}
             initialData={process}
+          />
+        </div>
+
+        {/* Values Section */}
+        <div className='bg-white rounded-lg'>
+          <ValuesSection
+            servicePageId={pageId}
+            initialData={values}
+          />
+        </div>
+
+        {/* CTA Section */}
+        <div className='bg-white rounded-lg'>
+          <CTASection
+            servicePageId={pageId}
+            initialData={cta}
           />
         </div>
       </div>
