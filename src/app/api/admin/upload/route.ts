@@ -51,22 +51,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get signed URL (valid for 1 hour)
-    const { data: signedData, error: signError } = await supabase.storage
-      .from(bucket)
-      .createSignedUrl(data.path, 3600);
-
-    if (signError) {
-      console.error('Signed URL error:', signError);
-      return NextResponse.json(
-        { error: 'Failed to generate signed URL' },
-        { status: 500 }
-      );
-    }
+    // Use public URL instead of signed URL
+    // Make sure the bucket has public access policy
+    const publicUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${bucket}/${data.path}`;
 
     return NextResponse.json({
       message: 'File uploaded successfully',
-      url: signedData.signedUrl,
+      url: publicUrl,
       path: data.path,
     });
   } catch (error) {

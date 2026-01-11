@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/card';
 import { ChevronDown, ChevronUp, Upload } from 'lucide-react';
 import { useSaveServicePageBanner } from '@/lib/hooks/admin/service-page-banners';
 import { ServicePageBannerDTO } from '@/lib/api/admin/service-page-banners.api';
+import { getPublicStorageUrl } from '@/lib/utils/storage-url';
 
 interface BannerSectionProps {
   servicePageId: string;
@@ -120,7 +121,7 @@ export default function BannerSection({
               {backgroundImageUrl && (
                 <div className='relative w-32 h-32 rounded-lg overflow-hidden border border-slate-300'>
                   <img
-                    src={backgroundImageUrl}
+                    src={getPublicStorageUrl(backgroundImageUrl, 'service-pages') || ''}
                     alt='Banner background'
                     className='w-full h-full object-cover'
                   />
