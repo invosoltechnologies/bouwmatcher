@@ -16,6 +16,7 @@ import ValuesSection from '@/components/admin-dashboard/service-page-builder/Val
 import CTASection from '@/components/admin-dashboard/service-page-builder/CTASection';
 import TypesSection from '@/components/admin-dashboard/service-page-builder/TypesSection';
 import ReviewsSection from '@/components/admin-dashboard/service-page-builder/ReviewsSection';
+import MarqueesSection from '@/components/admin-dashboard/service-page-builder/MarqueesSection';
 import { useServicePageBanner } from '@/lib/hooks/admin/service-page-banners';
 import { useServicePageIntro } from '@/lib/hooks/admin/service-page-intro';
 import { useServicePageFaq } from '@/lib/hooks/admin/service-page-faqs';
@@ -28,6 +29,7 @@ import { useServicePageValues } from '@/lib/hooks/admin/service-page-values';
 import { useServicePageCta } from '@/lib/hooks/admin/service-page-cta';
 import { useServicePageTypes } from '@/lib/hooks/admin/service-page-types';
 import { useServicePageReviews } from '@/lib/hooks/admin/service-page-reviews';
+import { useServicePageMarquees } from '@/lib/hooks/admin/service-page-marquees';
 import { useServicePageById } from '@/lib/hooks/admin/service-pages';
 
 export default function ServicePageBuilderPage() {
@@ -52,6 +54,7 @@ export default function ServicePageBuilderPage() {
   const { data: cta } = useServicePageCta(pageId);
   const { data: types } = useServicePageTypes(pageId);
   const { data: reviews } = useServicePageReviews(pageId);
+  const { data: marquees } = useServicePageMarquees(pageId);
 
   if (!pageId) {
     return (
@@ -213,6 +216,14 @@ export default function ServicePageBuilderPage() {
           <ReviewsSection
             servicePageId={pageId}
             initialData={reviews}
+          />
+        </div>
+
+        {/* Marquees Section */}
+        <div className='bg-white rounded-lg'>
+          <MarqueesSection
+            servicePageId={pageId}
+            initialData={marquees}
           />
         </div>
       </div>
