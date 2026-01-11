@@ -5,7 +5,9 @@ import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import BannerSection from '@/components/admin-dashboard/service-page-builder/BannerSection';
+import IntroSection from '@/components/admin-dashboard/service-page-builder/IntroSection';
 import { useServicePageBanner } from '@/lib/hooks/admin/service-page-banners';
+import { useServicePageIntro } from '@/lib/hooks/admin/service-page-intro';
 import { useServicePageById } from '@/lib/hooks/admin/service-pages';
 
 export default function ServicePageBuilderPage() {
@@ -19,6 +21,7 @@ export default function ServicePageBuilderPage() {
   const { data: servicePage, isLoading: isLoadingPage } =
     useServicePageById(pageId || '');
   const { data: banner } = useServicePageBanner(pageId);
+  const { data: intro } = useServicePageIntro(pageId);
 
   if (!pageId) {
     return (
@@ -96,6 +99,14 @@ export default function ServicePageBuilderPage() {
           <BannerSection
             servicePageId={pageId}
             initialBanner={banner}
+          />
+        </div>
+
+        {/* Intro Section */}
+        <div className='bg-white rounded-lg'>
+          <IntroSection
+            servicePageId={pageId}
+            initialIntro={intro}
           />
         </div>
 
