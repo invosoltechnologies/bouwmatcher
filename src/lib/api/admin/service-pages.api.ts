@@ -27,6 +27,11 @@ export interface UpdateServicePageDTO {
   status?: 'draft' | 'pending' | 'active';
 }
 
+export interface SectionsConfig {
+  order: string[];
+  active: string[];
+}
+
 export interface CreateServicePageResponse {
   servicePage: ServicePageDTO;
   message: string;
@@ -68,5 +73,36 @@ export const adminServicePagesApi = {
   getById: (id: string) =>
     apiClient.get<{ servicePage: ServicePageDTO }>(
       `/api/admin/service-pages/${id}`
+    ),
+
+  // Sections Management
+  getSectionsConfig: (servicePageId: string) =>
+    apiClient.get<SectionsConfig>(
+      `/api/admin/service-pages/sections?servicePageId=${servicePageId}`
+    ),
+
+  addSection: (servicePageId: string, sectionKey: string) =>
+    apiClient.post<{ message: string; config: SectionsConfig }>(
+      '/api/admin/service-pages/sections',
+      { servicePageId, sectionKey }
+    ),
+
+  deleteSection: (servicePageId: string, sectionKey: string) =>
+    apiClient.delete<{ message: string; config: SectionsConfig }>(
+      '/api/admin/service-pages/sections',
+      { servicePageId, sectionKey }
+    ),
+
+  reorderSections: (servicePageId: string, order: string[]) =>
+    apiClient.patch<{ message: string; config: SectionsConfig }>(
+      '/api/admin/service-pages/sections',
+      { servicePageId, order }
+    ),
+
+  // Page Publishing
+  publishPage: (servicePageId: string, status: 'draft' | 'pending' | 'active') =>
+    apiClient.patch<{ message: string; data: ServicePageDTO }>(
+      '/api/admin/service-pages/publish',
+      { servicePageId, status }
     ),
 };

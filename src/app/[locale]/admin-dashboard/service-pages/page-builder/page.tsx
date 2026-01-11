@@ -1,9 +1,12 @@
 'use client';
 
+import React, { useState, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useLocale, useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+
+// Sections
 import BannerSection from '@/components/admin-dashboard/service-page-builder/BannerSection';
 import IntroSection from '@/components/admin-dashboard/service-page-builder/IntroSection';
 import FaqSection from '@/components/admin-dashboard/service-page-builder/FaqSection';
@@ -17,6 +20,14 @@ import CTASection from '@/components/admin-dashboard/service-page-builder/CTASec
 import TypesSection from '@/components/admin-dashboard/service-page-builder/TypesSection';
 import ReviewsSection from '@/components/admin-dashboard/service-page-builder/ReviewsSection';
 import MarqueesSection from '@/components/admin-dashboard/service-page-builder/MarqueesSection';
+
+// UI Components
+import SectionCard from '@/components/admin-dashboard/service-page-builder/SectionCard';
+import AddSectionDropdown from '@/components/admin-dashboard/service-page-builder/AddSectionDropdown';
+import PublishModal from '@/components/admin-dashboard/service-page-builder/PublishModal';
+import ReorderModal from '@/components/admin-dashboard/service-page-builder/ReorderModal';
+
+// Hooks
 import { useServicePageBanner } from '@/lib/hooks/admin/service-page-banners';
 import { useServicePageIntro } from '@/lib/hooks/admin/service-page-intro';
 import { useServicePageFaq } from '@/lib/hooks/admin/service-page-faqs';
@@ -31,17 +42,75 @@ import { useServicePageTypes } from '@/lib/hooks/admin/service-page-types';
 import { useServicePageReviews } from '@/lib/hooks/admin/service-page-reviews';
 import { useServicePageMarquees } from '@/lib/hooks/admin/service-page-marquees';
 import { useServicePageById } from '@/lib/hooks/admin/service-pages';
+import {
+  useServicePageSections,
+  useAddSection,
+  useDeleteSection,
+  useReorderSections,
+  usePublishPage,
+} from '@/lib/hooks/admin/service-page-sections';
 
-export default function ServicePageBuilderPage() {
+const ALL_SECTIONS = [
+  'intro',
+  'faq',
+  'comparison_table',
+  'tips',
+  'overview_table',
+  'seo_content',
+  'process',
+  'values',
+  'cta',
+  'types',
+  'reviews',
+  'marquees',
+];
+
+const SECTION_LABELS: Record<string, { nl: string; en: string }> = {
+  intro: { nl: 'Intro Sectie', en: 'Intro Section' },
+  faq: { nl: 'FAQ Sectie', en: 'FAQ Section' },
+  comparison_table: { nl: 'Vergelijkingtabel', en: 'Comparison Table' },
+  tips: { nl: 'Tips Sectie', en: 'Tips Section' },
+  overview_table: { nl: 'Overzichtstabel', en: 'Overview Table' },
+  seo_content: { nl: 'SEO Inhoud', en: 'SEO Content' },
+  process: { nl: 'Proces Sectie', en: 'Process Section' },
+  values: { nl: 'Waarden Sectie', en: 'Values Section' },
+  cta: { nl: 'CTA Sectie', en: 'CTA Section' },
+  types: { nl: 'Types Sectie', en: 'Types Section' },
+  reviews: { nl: 'Reviews Sectie', en: 'Reviews Section' },
+  marquees: { nl: 'Marquee Sectie', en: 'Marquee Section' },
+};
+
+// Map of section keys to component renderers
+const SECTION_COMPONENTS: Record<
+  string,
+  (props: { servicePageId: string; initialData?: any }) => React.ReactElement
+> = {
+  intro: (props) => <IntroSection {...props} initialIntro={props.initialData} />,
+  faq: (props) => <FaqSection {...props} initialFaq={props.initialData} />,
+  comparison_table: (props) => <ComparisonTableSection {...props} initialData={props.initialData} />,
+  tips: (props) => <TipsSection {...props} initialData={props.initialData} />,
+  overview_table: (props) => <OverviewTableSection {...props} initialData={props.initialData} />,
+  seo_content: (props) => <SeoContentSection {...props} initialData={props.initialData} />,
+  process: (props) => <ProcessSection {...props} initialData={props.initialData} />,
+  values: (props) => <ValuesSection {...props} initialData={props.initialData} />,
+  cta: (props) => <CTASection {...props} initialData={props.initialData} />,
+  types: (props) => <TypesSection {...props} initialData={props.initialData} />,
+  reviews: (props) => <ReviewsSection {...props} initialData={props.initialData} />,
+  marquees: (props) => <MarqueesSection {...props} initialData={props.initialData} />,
+};
+
+function ServicePageBuilderContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const locale = useLocale();
-  const t = useTranslations('common.adminDashboard');
 
   const pageId = searchParams.get('page_id');
 
-  const { data: servicePage, isLoading: isLoadingPage } =
-    useServicePageById(pageId || '');
+  // Fetch page and all section data
+  const { data: servicePage, isLoading: isLoadingPage } = useServicePageById(pageId || '');
+  const { data: sectionsConfig } = useServicePageSections(pageId);
+
+  // Fetch all section data
   const { data: banner } = useServicePageBanner(pageId);
   const { data: intro } = useServicePageIntro(pageId);
   const { data: faq } = useServicePageFaq(pageId);
@@ -56,13 +125,90 @@ export default function ServicePageBuilderPage() {
   const { data: reviews } = useServicePageReviews(pageId);
   const { data: marquees } = useServicePageMarquees(pageId);
 
+  // Mutations
+  const addSectionMutation = useAddSection();
+  const deleteSectionMutation = useDeleteSection();
+  const reorderSectionsMutation = useReorderSections();
+  const publishPageMutation = usePublishPage();
+
+  // Modal states
+  const [showPublishModal, setShowPublishModal] = useState(false);
+  const [showReorderModal, setShowReorderModal] = useState(false);
+
+  // Get all section data as a map
+  const allSectionData = useMemo(
+    () => ({
+      intro,
+      faq,
+      comparison_table: comparisonTable,
+      tips,
+      overview_table: overviewTable,
+      seo_content: seoContent,
+      process,
+      values,
+      cta,
+      types,
+      reviews,
+      marquees,
+    }),
+    [
+      intro,
+      faq,
+      comparisonTable,
+      tips,
+      overviewTable,
+      seoContent,
+      process,
+      values,
+      cta,
+      types,
+      reviews,
+      marquees,
+    ]
+  );
+
+  // Calculate available sections (not yet added)
+  const activeSections = sectionsConfig?.active || ['banner'];
+  const availableSections = ALL_SECTIONS.filter((s) => !activeSections.includes(s));
+  const sectionOrder = sectionsConfig?.order || ['banner'];
+
+  const handleAddSection = async (sectionKey: string) => {
+    if (!pageId) return;
+    await addSectionMutation.mutateAsync({
+      servicePageId: pageId,
+      sectionKey,
+    });
+  };
+
+  const handleDeleteSection = async (sectionKey: string) => {
+    if (!pageId) return;
+    await deleteSectionMutation.mutateAsync({
+      servicePageId: pageId,
+      sectionKey,
+    });
+  };
+
+  const handleReorderSections = async (order: string[]) => {
+    if (!pageId) return;
+    await reorderSectionsMutation.mutateAsync({
+      servicePageId: pageId,
+      order,
+    });
+  };
+
+  const handlePublishPage = async (status: 'draft' | 'pending' | 'active') => {
+    if (!pageId) return;
+    await publishPageMutation.mutateAsync({
+      servicePageId: pageId,
+      status,
+    });
+  };
+
   if (!pageId) {
     return (
       <div className='p-6 text-center'>
         <p className='text-slate-600'>
-          {locale === 'nl'
-            ? 'Geen pagina ID opgegeven'
-            : 'No page ID provided'}
+          {locale === 'nl' ? 'Geen pagina ID opgegeven' : 'No page ID provided'}
         </p>
       </div>
     );
@@ -123,110 +269,93 @@ export default function ServicePageBuilderPage() {
           {locale === 'nl' ? 'Secties' : 'Sections'}
         </h2>
 
-        {/* Banner Section - Compulsory */}
+        {/* Banner Section - Always first */}
         <div className='bg-white rounded-lg'>
-          <BannerSection
-            servicePageId={pageId}
-            initialBanner={banner}
+          <BannerSection servicePageId={pageId} initialBanner={banner} />
+        </div>
+
+        {/* Dynamic Sections */}
+        {sectionOrder.map((sectionKey) => {
+          if (sectionKey === 'banner') return null;
+
+          const Component = SECTION_COMPONENTS[sectionKey];
+          const sectionData = allSectionData[sectionKey as keyof typeof allSectionData];
+
+          if (!Component) return null;
+
+          return (
+            <div key={sectionKey} className='bg-white rounded-lg'>
+              <SectionCard
+                sectionName={SECTION_LABELS[sectionKey as keyof typeof SECTION_LABELS]?.[locale as 'nl' | 'en'] || sectionKey}
+                onDelete={() => handleDeleteSection(sectionKey)}
+                isDeleting={
+                  deleteSectionMutation.isPending &&
+                  deleteSectionMutation.variables?.sectionKey === sectionKey
+                }
+              >
+                {Component({
+                  servicePageId: pageId,
+                  initialData: sectionData,
+                })}
+              </SectionCard>
+            </div>
+          );
+        })}
+
+        {/* Add New Section */}
+        <div className='space-y-4 pt-6'>
+          <h3 className='text-lg font-semibold text-slate-900'>
+            {locale === 'nl' ? 'Sectie Beheer' : 'Section Management'}
+          </h3>
+
+          <AddSectionDropdown
+            availableSections={availableSections}
+            onAdd={handleAddSection}
+            isAdding={addSectionMutation.isPending}
           />
         </div>
 
-        {/* Intro Section */}
-        <div className='bg-white rounded-lg'>
-          <IntroSection
-            servicePageId={pageId}
-            initialIntro={intro}
-          />
-        </div>
-
-        {/* FAQ Section */}
-        <div className='bg-white rounded-lg'>
-          <FaqSection
-            servicePageId={pageId}
-            initialFaq={faq}
-          />
-        </div>
-
-        {/* Comparison Table Section */}
-        <div className='bg-white rounded-lg'>
-          <ComparisonTableSection
-            servicePageId={pageId}
-            initialData={comparisonTable}
-          />
-        </div>
-
-        {/* Tips Section */}
-        <div className='bg-white rounded-lg'>
-          <TipsSection
-            servicePageId={pageId}
-            initialData={tips}
-          />
-        </div>
-
-        {/* Overview Table Section */}
-        <div className='bg-white rounded-lg'>
-          <OverviewTableSection
-            servicePageId={pageId}
-            initialData={overviewTable}
-          />
-        </div>
-
-        {/* SEO Content Section */}
-        <div className='bg-white rounded-lg'>
-          <SeoContentSection
-            servicePageId={pageId}
-            initialData={seoContent}
-          />
-        </div>
-
-        {/* Process Section */}
-        <div className='bg-white rounded-lg'>
-          <ProcessSection
-            servicePageId={pageId}
-            initialData={process}
-          />
-        </div>
-
-        {/* Values Section */}
-        <div className='bg-white rounded-lg'>
-          <ValuesSection
-            servicePageId={pageId}
-            initialData={values}
-          />
-        </div>
-
-        {/* CTA Section */}
-        <div className='bg-white rounded-lg'>
-          <CTASection
-            servicePageId={pageId}
-            initialData={cta}
-          />
-        </div>
-
-        {/* Types Section */}
-        <div className='bg-white rounded-lg'>
-          <TypesSection
-            servicePageId={pageId}
-            initialData={types}
-          />
-        </div>
-
-        {/* Reviews Section */}
-        <div className='bg-white rounded-lg'>
-          <ReviewsSection
-            servicePageId={pageId}
-            initialData={reviews}
-          />
-        </div>
-
-        {/* Marquees Section */}
-        <div className='bg-white rounded-lg'>
-          <MarqueesSection
-            servicePageId={pageId}
-            initialData={marquees}
-          />
+        {/* Action Buttons */}
+        <div className='flex gap-4 pt-6 border-t border-slate-200'>
+          <Button
+            onClick={() => setShowReorderModal(true)}
+            variant='outline'
+            disabled={sectionOrder.length <= 1}
+          >
+            {locale === 'nl' ? 'Wijzig Volgorde' : 'Change Sections Order'}
+          </Button>
+          <Button
+            onClick={() => setShowPublishModal(true)}
+            className='ml-auto'
+          >
+            {locale === 'nl' ? 'Pagina Opslaan' : 'Save Page'}
+          </Button>
         </div>
       </div>
+
+      {/* Modals */}
+      <PublishModal
+        open={showPublishModal}
+        onOpenChange={setShowPublishModal}
+        onPublish={handlePublishPage}
+        isPublishing={publishPageMutation.isPending}
+      />
+
+      <ReorderModal
+        open={showReorderModal}
+        onOpenChange={setShowReorderModal}
+        sections={sectionOrder}
+        onReorder={handleReorderSections}
+        isReordering={reorderSectionsMutation.isPending}
+      />
     </div>
+  );
+}
+
+export default function ServicePageBuilderPage() {
+  return (
+    <Suspense fallback={<div className='p-6 text-center'>Loading...</div>}>
+      <ServicePageBuilderContent />
+    </Suspense>
   );
 }
