@@ -7,8 +7,20 @@ export function useCreateServicePage() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (categoryId: string) =>
-      await adminServicePagesApi.create({ service_category_id: categoryId }),
+    mutationFn: async (data: {
+      categoryId: string;
+      metaTitleNl?: string;
+      metaTitleEn?: string;
+      metaDescriptionNl?: string;
+      metaDescriptionEn?: string;
+    }) =>
+      await adminServicePagesApi.create({
+        service_category_id: data.categoryId,
+        meta_title_nl: data.metaTitleNl,
+        meta_title_en: data.metaTitleEn,
+        meta_description_nl: data.metaDescriptionNl,
+        meta_description_en: data.metaDescriptionEn,
+      }),
     onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: servicePagesQueryKeys.lists(),

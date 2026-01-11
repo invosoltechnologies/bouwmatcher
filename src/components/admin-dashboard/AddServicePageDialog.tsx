@@ -11,7 +11,13 @@ interface AddServicePageDialogProps {
   onOpenChange: (open: boolean) => void;
   categories: ServiceCategory[];
   existingPages: ServicePageDTO[];
-  onSubmit: (data: { categoryId: number; metaTitle: string; metaDescription: string }) => Promise<void>;
+  onSubmit: (data: {
+    categoryId: number;
+    metaTitleNl: string;
+    metaTitleEn: string;
+    metaDescriptionNl: string;
+    metaDescriptionEn: string;
+  }) => Promise<void>;
   isLoading?: boolean;
 }
 

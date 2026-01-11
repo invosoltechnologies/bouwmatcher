@@ -2,7 +2,7 @@ import { apiClient } from '@/lib/api/client';
 
 export interface ServicePageDTO {
   id: string;
-  service_category_id: string;
+  service_category_id: string | number;
   status: 'draft' | 'pending' | 'active';
   created_by?: string;
   updated_by?: string;
@@ -17,10 +17,19 @@ export interface ServicePageDTO {
 
 export interface CreateServicePageDTO {
   service_category_id: string;
+  meta_title_nl?: string;
+  meta_title_en?: string;
+  meta_description_nl?: string;
+  meta_description_en?: string;
 }
 
 export interface UpdateServicePageDTO {
   status?: 'draft' | 'pending' | 'active';
+}
+
+export interface CreateServicePageResponse {
+  servicePage: ServicePageDTO;
+  message: string;
 }
 
 export const adminServicePagesApi = {
@@ -37,7 +46,7 @@ export const adminServicePagesApi = {
 
   // Create a new service page
   create: (data: CreateServicePageDTO) =>
-    apiClient.post<{ servicePage: ServicePageDTO; message: string }>(
+    apiClient.post<CreateServicePageResponse>(
       '/api/admin/service-pages',
       data
     ),
