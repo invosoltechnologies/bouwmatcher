@@ -10,6 +10,7 @@ export interface ServicePageBannerDTO {
   description_nl: string;
   description_en: string;
   background_image_url?: string;
+  background_image_alt?: string;
   created_at: string;
   updated_at: string;
 }
@@ -23,6 +24,7 @@ export interface CreateServicePageBannerDTO {
   description_nl: string;
   description_en: string;
   background_image_url?: string;
+  background_image_alt?: string;
 }
 
 export interface CreateServicePageBannerResponse {

@@ -187,68 +187,77 @@ export default function ServicePagesTable({
     },
     {
       id: 'actions',
+      header: () => (
+        <div className="text-right pr-2">{locale === 'nl' ? 'Acties' : 'Actions'}</div>
+      ),
       cell: ({ row }) => {
         const page = row.original;
 
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm">
-                <MoreHorizontal className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem
-                onClick={() => onEdit(page)}
-                className="cursor-pointer"
-              >
-                <Edit2 className="w-4 h-4 mr-2" />
-                {locale === 'nl' ? 'Bewerken' : 'Edit'}
-              </DropdownMenuItem>
-
-              <DropdownMenuSeparator />
-
-              {page.status !== 'active' && (
+          <div className='flex justify-end'>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant='ghost' size='sm'>
+                  <MoreHorizontal className='w-4 h-4' />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align='end' className='w-48'>
                 <DropdownMenuItem
-                  onClick={() => onStatusChange(page, 'active')}
-                  className="cursor-pointer text-green-600"
+                  onClick={() => onEdit(page)}
+                  className='group cursor-pointer hover:bg-primary hover:text-white'
                 >
-                  <Check className="w-4 h-4 mr-2" />
-                  {locale === 'nl' ? 'Publiceren' : 'Publish'}
+                  <Edit2 className='w-4 h-4 mr-2 text-muted-foreground group-hover:text-white' />
+                  {locale === 'nl' ? 'Bewerken' : 'Edit'}
                 </DropdownMenuItem>
-              )}
 
-              {page.status !== 'pending' && (
-                <DropdownMenuItem
-                  onClick={() => onStatusChange(page, 'pending')}
-                  className="cursor-pointer text-amber-600"
-                >
-                  <Clock className="w-4 h-4 mr-2" />
-                  {locale === 'nl' ? 'In behandeling' : 'Set Pending'}
-                </DropdownMenuItem>
-              )}
+                <DropdownMenuSeparator />
 
-              {page.status !== 'draft' && (
-                <DropdownMenuItem
-                  onClick={() => onStatusChange(page, 'draft')}
-                  className="cursor-pointer"
-                >
-                  <FileText className="w-4 h-4 mr-2" />
-                  {locale === 'nl' ? 'Als concept opslaan' : 'Save as Draft'}
-                </DropdownMenuItem>
-              )}
+                {page.status !== 'active' && (
+                  <DropdownMenuItem
+                    onClick={() => onStatusChange(page, 'active')}
+                    className='group cursor-pointer text-green-600 hover:bg-green-600 hover:text-white'
+                  >
+                    <Check className='w-4 h-4 mr-2 group-hover:text-white' />
+                    {locale === 'nl' ? 'Publiceren' : 'Publish'}
+                  </DropdownMenuItem>
+                )}
 
-              <DropdownMenuSeparator />
+                {page.status !== 'pending' && (
+                  <DropdownMenuItem
+                    onClick={() => onStatusChange(page, 'pending')}
+                    className='group cursor-pointer text-amber-600 hover:bg-amber-600 hover:text-white'
+                  >
+                    <Clock className='w-4 h-4 mr-2 group-hover:text-white' />
+                    {locale === 'nl' ? 'In behandeling' : 'Set Pending'}
+                  </DropdownMenuItem>
+                )}
 
-              <DropdownMenuItem
-                onClick={() => onDelete(page)}
-                className="cursor-pointer text-red-600"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                {locale === 'nl' ? 'Verwijderen' : 'Delete'}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                {page.status !== 'draft' && (
+                  <DropdownMenuItem
+                    onClick={() => onStatusChange(page, 'draft')}
+                    className='group cursor-pointer hover:bg-primary hover:text-white'
+                  >
+                    <FileText className='w-4 h-4 mr-2 text-muted-foreground group-hover:text-white' />
+                    {locale === 'nl' ? 'Als concept opslaan' : 'Save as Draft'}
+                  </DropdownMenuItem>
+                )}
+
+                {page.status !== 'active' && (
+                  <>
+                    <DropdownMenuSeparator />
+
+                    <DropdownMenuItem
+                      onClick={() => onDelete(page)}
+                      className='group cursor-pointer text-red-600 hover:bg-red-600 hover:text-white'
+                    >
+                      <Trash2 className='w-4 h-4 mr-2 group-hover:text-white' />
+                      {locale === 'nl' ? 'Verwijderen' : 'Delete'}
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         );
       },
     },
