@@ -6,8 +6,10 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import BannerSection from '@/components/admin-dashboard/service-page-builder/BannerSection';
 import IntroSection from '@/components/admin-dashboard/service-page-builder/IntroSection';
+import FaqSection from '@/components/admin-dashboard/service-page-builder/FaqSection';
 import { useServicePageBanner } from '@/lib/hooks/admin/service-page-banners';
 import { useServicePageIntro } from '@/lib/hooks/admin/service-page-intro';
+import { useServicePageFaq } from '@/lib/hooks/admin/service-page-faqs';
 import { useServicePageById } from '@/lib/hooks/admin/service-pages';
 
 export default function ServicePageBuilderPage() {
@@ -22,6 +24,7 @@ export default function ServicePageBuilderPage() {
     useServicePageById(pageId || '');
   const { data: banner } = useServicePageBanner(pageId);
   const { data: intro } = useServicePageIntro(pageId);
+  const { data: faq } = useServicePageFaq(pageId);
 
   if (!pageId) {
     return (
@@ -103,6 +106,14 @@ export default function ServicePageBuilderPage() {
           <IntroSection
             servicePageId={pageId}
             initialIntro={intro}
+          />
+        </div>
+
+        {/* FAQ Section */}
+        <div className='bg-white rounded-lg'>
+          <FaqSection
+            servicePageId={pageId}
+            initialFaq={faq}
           />
         </div>
 
