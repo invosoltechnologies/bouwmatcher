@@ -463,7 +463,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
   // Try to fetch CMS data from public API
   let cmsData: CmsDataResponse | null = null;
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const apiUrl = `${baseUrl}/api/service-pages/${id}`;
 
     const response = await fetch(apiUrl, {
