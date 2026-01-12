@@ -1,13 +1,20 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabaseClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !serviceKey) {
+    throw new Error('Missing Supabase configuration');
+  }
+
+  return createClient(url, serviceKey);
+}
 
 export async function GET(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const searchParams = request.nextUrl.searchParams;
     const service_page_id = searchParams.get('service_page_id');
 
@@ -49,6 +56,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const body = await request.json();
     const {
       service_page_id,
@@ -98,19 +106,15 @@ export async function POST(request: NextRequest) {
       });
     } else {
       // Create new
-      const { data, error } = await supabase
-        .from('service_page_overview_tables')
-        .insert({
-          service_page_id,
-          heading_nl,
-          heading_en,
-          description_nl,
-          description_en,
-          content_nl,
-          content_en,
-        })
-        .select()
-        .single();
+      const { data, error } = await supabase.from('service_page_overview_tables').insert({
+        service_page_id,
+        heading_nl,
+        heading_en,
+        description_nl,
+        description_en,
+        content_nl,
+        content_en,
+      }).select().single();
 
       if (error) {
         console.error('Insert error:', error);
