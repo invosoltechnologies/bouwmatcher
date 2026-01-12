@@ -467,7 +467,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
     const apiUrl = `${baseUrl}/api/service-pages/${id}`;
 
     const response = await fetch(apiUrl, {
-      next: { revalidate: 3600 }, // ISR - revalidate every hour
+      next: { revalidate: 60 }, // ISR - revalidate every hour
     });
 
     if (response.ok) {
