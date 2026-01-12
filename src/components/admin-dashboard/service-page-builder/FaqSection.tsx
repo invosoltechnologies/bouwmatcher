@@ -5,7 +5,7 @@ import { useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { ChevronDown, ChevronUp, Plus, Trash2, GripVertical, Edit2, Save, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Plus, Trash2, GripVertical, Edit2, X, Loader2, Check } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import {
   useSaveServicePageFaq,
@@ -81,32 +81,47 @@ export default function FaqSection({
   };
 
   return (
-    <Card className='py-0 border border-slate-200 rounded-lg overflow-hidden'>
+    <Card className='border py-0 border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow'>
       {/* Header - Collapsible */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className='w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors'
+        className='w-full flex items-center justify-between p-5 hover:bg-gradient-to-r hover:from-slate-50 hover:to-white transition-all group'
       >
-        <h3 className='text-lg font-semibold text-slate-900'>
-          {locale === 'nl' ? 'FAQ Sectie' : 'FAQ Section'}
-        </h3>
-        {isExpanded ? (
-          <ChevronUp className='w-5 h-5 text-slate-600' />
-        ) : (
-          <ChevronDown className='w-5 h-5 text-slate-600' />
-        )}
+        <div className='flex items-center gap-3'>
+          <div className='w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors'>
+            <span className='text-lg'>❓</span>
+          </div>
+          <h3 className='text-lg font-semibold text-slate-900'>
+            {locale === 'nl' ? 'FAQ Sectie' : 'FAQ Section'}
+          </h3>
+          {faqItems.length > 0 && (
+            <span className='text-xs text-blue-600 font-medium px-2 py-1 bg-blue-50 rounded-full'>
+              {faqItems.length} {locale === 'nl' ? 'vragen' : 'questions'}
+            </span>
+          )}
+        </div>
+        <div className='flex items-center gap-2'>
+          {isExpanded ? (
+            <ChevronUp className='w-5 h-5 text-slate-600 group-hover:text-primary transition-colors' />
+          ) : (
+            <ChevronDown className='w-5 h-5 text-slate-600 group-hover:text-primary transition-colors' />
+          )}
+        </div>
       </button>
 
       {/* Content - Expandable */}
       {isExpanded && (
-        <div className='border-t border-slate-200 p-6 space-y-6 bg-slate-50'>
+        <div className='border-t border-slate-200 p-6 space-y-8 bg-gradient-to-b from-slate-50 to-white'>
           {/* Section Header Fields */}
           <div className='grid grid-cols-2 gap-6'>
             {/* Dutch (NL) Column */}
-            <div className='space-y-4 p-4 bg-white rounded-lg border border-slate-200'>
-              <h4 className='font-semibold text-slate-900 text-sm uppercase tracking-wide'>
-                Nederlands (NL)
-              </h4>
+            <div className='space-y-4 p-5 bg-white rounded-xl border-2 border-slate-200 shadow-sm hover:border-primary/50 transition-colors'>
+              <div className='flex items-center gap-2 pb-3 border-b border-slate-100'>
+                <span className='text-xl'>🇳🇱</span>
+                <h4 className='font-semibold text-slate-900 text-sm uppercase tracking-wide'>
+                  Nederlands (NL)
+                </h4>
+              </div>
 
               {/* Heading NL */}
               <div className='space-y-2'>
@@ -144,10 +159,13 @@ export default function FaqSection({
             </div>
 
             {/* English (EN) Column */}
-            <div className='space-y-4 p-4 bg-white rounded-lg border border-slate-200'>
-              <h4 className='font-semibold text-slate-900 text-sm uppercase tracking-wide'>
-                English (EN)
-              </h4>
+            <div className='space-y-4 p-5 bg-white rounded-xl border-2 border-slate-200 shadow-sm hover:border-primary/50 transition-colors'>
+              <div className='flex items-center gap-2 pb-3 border-b border-slate-100'>
+                <span className='text-xl'>🇬🇧</span>
+                <h4 className='font-semibold text-slate-900 text-sm uppercase tracking-wide'>
+                  English (EN)
+                </h4>
+              </div>
 
               {/* Heading EN */}
               <div className='space-y-2'>
@@ -186,38 +204,42 @@ export default function FaqSection({
           </div>
 
           {/* Save Section Button */}
-          <div className='flex justify-end pt-2 border-t border-slate-200'>
+          <div className='flex justify-end pt-6 border-t-2 border-slate-200'>
             <Button
               onClick={handleSaveSection}
               disabled={saveSectionMutation.isPending}
-              className='gap-2'
-              
+              className='gap-2 px-6 py-2.5 shadow-md hover:shadow-lg transition-all'
             >
-              {saveSectionMutation.isPending
-                ? locale === 'nl'
-                  ? 'Opslaan...'
-                  : 'Saving...'
-                : locale === 'nl'
-                ? 'Sectie Opslaan'
-                : 'Save Section'}
+              {saveSectionMutation.isPending ? (
+                <>
+                  <Loader2 className='w-4 h-4 animate-spin' />
+                  {locale === 'nl' ? 'Opslaan...' : 'Saving...'}
+                </>
+              ) : (
+                <>
+                  <Check className='w-4 h-4' />
+                  {locale === 'nl' ? 'Opslaan' : 'Save'}
+                </>
+              )}
             </Button>
           </div>
 
           {/* FAQ Items Section */}
           {initialFaq && (
-            <div className='space-y-4 pt-4 border-t-2 border-slate-300'>
+            <div className='space-y-6 pt-6 border-t-2 border-slate-300'>
               <div className='flex items-center justify-between'>
-                <h4 className='text-md font-semibold text-slate-900'>
-                  {locale === 'nl' ? 'FAQ Vragen' : 'FAQ Questions'}
-                  <span className='ml-2 text-sm text-slate-500 font-normal'>
-                    ({faqItems.length}/15)
+                <div className='flex items-center gap-3'>
+                  <h4 className='text-lg font-semibold text-slate-900'>
+                    {locale === 'nl' ? 'FAQ Vragen' : 'FAQ Questions'}
+                  </h4>
+                  <span className='text-sm text-slate-600 font-medium px-3 py-1 bg-slate-100 rounded-full'>
+                    {faqItems.length}/15
                   </span>
-                </h4>
+                </div>
                 <Button
                   onClick={handleAddNewItem}
                   disabled={faqItems.length >= 15 || isAddingNew}
-                  className='gap-2'
-                  
+                  className='gap-2 px-4 py-2 shadow-sm hover:shadow-md transition-all'
                   variant='outline'
                 >
                   <Plus className='w-4 h-4' />
@@ -250,11 +272,11 @@ export default function FaqSection({
                 ))}
 
                 {faqItems.length === 0 && !isAddingNew && (
-                  <div className='text-center py-8 text-slate-500 bg-white rounded-lg border-2 border-dashed border-slate-300'>
-                    <p>
+                  <div className='text-center py-12 text-slate-500 bg-white rounded-lg border-2 border-dashed border-slate-300 hover:border-slate-400 transition-colors'>
+                    <p className='text-sm'>
                       {locale === 'nl'
-                        ? 'Nog geen vragen toegevoegd. Klik op "Vraag Toevoegen" om te beginnen.'
-                        : 'No questions added yet. Click "Add Question" to get started.'}
+                        ? '🔰 Nog geen vragen toegevoegd. Klik op "Vraag Toevoegen" om te beginnen.'
+                        : '🔰 No questions added yet. Click "Add Question" to get started.'}
                     </p>
                   </div>
                 )}
@@ -316,11 +338,19 @@ function FaqItem({
 
   if (isEditing) {
     return (
-      <Card className='p-4 bg-white border-2 border-blue-400'>
-        <div className='grid grid-cols-2 gap-4'>
+      <Card className='p-5 bg-white border-2 border-blue-400 shadow-md rounded-lg'>
+        <div className='mb-4'>
+          <h5 className='font-semibold text-slate-900'>
+            {locale === 'nl' ? 'Vraag Bewerken' : 'Edit Question'}
+          </h5>
+        </div>
+        <div className='grid grid-cols-2 gap-6'>
           {/* NL Column */}
-          <div className='space-y-3'>
-            <h5 className='font-semibold text-xs uppercase text-slate-700'>Nederlands (NL)</h5>
+          <div className='space-y-4'>
+            <div className='flex items-center gap-2 pb-2 border-b border-slate-100'>
+              <span className='text-lg'>🇳🇱</span>
+              <h5 className='font-semibold text-xs uppercase text-slate-700'>Nederlands (NL)</h5>
+            </div>
             <div>
               <label className='block text-sm font-medium text-slate-700 mb-1'>Vraag</label>
               <Input
@@ -342,8 +372,11 @@ function FaqItem({
           </div>
 
           {/* EN Column */}
-          <div className='space-y-3'>
-            <h5 className='font-semibold text-xs uppercase text-slate-700'>English (EN)</h5>
+          <div className='space-y-4'>
+            <div className='flex items-center gap-2 pb-2 border-b border-slate-100'>
+              <span className='text-lg'>🇬🇧</span>
+              <h5 className='font-semibold text-xs uppercase text-slate-700'>English (EN)</h5>
+            </div>
             <div>
               <label className='block text-sm font-medium text-slate-700 mb-1'>Question</label>
               <Input
@@ -365,20 +398,23 @@ function FaqItem({
           </div>
         </div>
 
-        <div className='flex justify-end gap-2 mt-4 pt-3 border-t'>
-          <Button onClick={onCancelEdit} variant='outline' >
-            <X className='w-4 h-4 mr-1' />
+        <div className='flex justify-end gap-2 mt-6 pt-4 border-t-2 border-slate-200'>
+          <Button onClick={onCancelEdit} variant='outline' className='gap-2 px-4 py-2'>
+            <X className='w-4 h-4' />
             {locale === 'nl' ? 'Annuleren' : 'Cancel'}
           </Button>
-          <Button onClick={handleSave}  disabled={updateItemMutation.isPending}>
-            <Save className='w-4 h-4 mr-1' />
-            {updateItemMutation.isPending
-              ? locale === 'nl'
-                ? 'Opslaan...'
-                : 'Saving...'
-              : locale === 'nl'
-              ? 'Opslaan'
-              : 'Save'}
+          <Button onClick={handleSave} disabled={updateItemMutation.isPending} className='gap-2 px-4 py-2 shadow-md hover:shadow-lg transition-all'>
+            {updateItemMutation.isPending ? (
+              <>
+                <Loader2 className='w-4 h-4 animate-spin' />
+                {locale === 'nl' ? 'Opslaan...' : 'Saving...'}
+              </>
+            ) : (
+              <>
+                <Check className='w-4 h-4' />
+                {locale === 'nl' ? 'Opslaan' : 'Save'}
+              </>
+            )}
           </Button>
         </div>
       </Card>
@@ -386,22 +422,22 @@ function FaqItem({
   }
 
   return (
-    <Card className='p-4 bg-white hover:shadow-md transition-shadow'>
+    <Card className='p-4 bg-white border border-slate-200 hover:shadow-md hover:border-primary/50 transition-all rounded-lg'>
       <div className='flex items-start gap-3'>
-        <div className='flex-shrink-0 mt-1 cursor-move text-slate-400'>
+        <div className='flex-shrink-0 mt-1 cursor-move text-slate-400 hover:text-primary transition-colors'>
           <GripVertical className='w-5 h-5' />
         </div>
-        <div className='flex-1 space-y-2'>
-          <div className='flex items-start justify-between gap-2'>
-            <h5 className='font-semibold text-slate-900'>
+        <div className='flex-1 min-w-0'>
+          <div className='flex items-start justify-between gap-3 mb-2'>
+            <h5 className='font-semibold text-slate-900 leading-tight'>
               {locale === 'nl' ? item.question_nl : item.question_en}
             </h5>
             <div className='flex gap-1 flex-shrink-0'>
-              <Button onClick={onEdit} variant='ghost'  className='h-8 w-8 p-0'>
-                <Edit2 className='w-4 h-4 text-blue-600' />
+              <Button onClick={onEdit} variant='ghost' className='h-8 w-8 p-0 hover:bg-blue-50'>
+                <Edit2 className='w-4 h-4 text-blue-600 hover:text-blue-700' />
               </Button>
-              <Button onClick={onDelete} variant='ghost'  className='h-8 w-8 p-0'>
-                <Trash2 className='w-4 h-4 text-red-600' />
+              <Button onClick={onDelete} variant='ghost' className='h-8 w-8 p-0 hover:bg-red-50'>
+                <Trash2 className='w-4 h-4 text-red-600 hover:text-red-700' />
               </Button>
             </div>
           </div>
@@ -450,16 +486,19 @@ function FaqItemForm({
   };
 
   return (
-    <Card className='p-4 bg-white border-2 border-green-400'>
-      <div className='mb-3'>
+    <Card className='p-5 bg-white border-2 border-green-400 shadow-md rounded-lg'>
+      <div className='mb-4'>
         <h5 className='font-semibold text-slate-900'>
           {locale === 'nl' ? 'Nieuwe Vraag Toevoegen' : 'Add New Question'}
         </h5>
       </div>
-      <div className='grid grid-cols-2 gap-4'>
+      <div className='grid grid-cols-2 gap-6'>
         {/* NL Column */}
-        <div className='space-y-3'>
-          <h5 className='font-semibold text-xs uppercase text-slate-700'>Nederlands (NL)</h5>
+        <div className='space-y-4'>
+          <div className='flex items-center gap-2 pb-2 border-b border-slate-100'>
+            <span className='text-lg'>🇳🇱</span>
+            <h5 className='font-semibold text-xs uppercase text-slate-700'>Nederlands (NL)</h5>
+          </div>
           <div>
             <label className='block text-sm font-medium text-slate-700 mb-1'>
               Vraag <span className='text-red-500'>*</span>
@@ -489,8 +528,11 @@ function FaqItemForm({
         </div>
 
         {/* EN Column */}
-        <div className='space-y-3'>
-          <h5 className='font-semibold text-xs uppercase text-slate-700'>English (EN)</h5>
+        <div className='space-y-4'>
+          <div className='flex items-center gap-2 pb-2 border-b border-slate-100'>
+            <span className='text-lg'>🇬🇧</span>
+            <h5 className='font-semibold text-xs uppercase text-slate-700'>English (EN)</h5>
+          </div>
           <div>
             <label className='block text-sm font-medium text-slate-700 mb-1'>
               Question <span className='text-red-500'>*</span>
@@ -520,20 +562,23 @@ function FaqItemForm({
         </div>
       </div>
 
-      <div className='flex justify-end gap-2 mt-4 pt-3 border-t'>
-        <Button onClick={onCancel} variant='outline' >
-          <X className='w-4 h-4 mr-1' />
+      <div className='flex justify-end gap-2 mt-6 pt-4 border-t-2 border-slate-200'>
+        <Button onClick={onCancel} variant='outline' className='gap-2 px-4 py-2'>
+          <X className='w-4 h-4' />
           {locale === 'nl' ? 'Annuleren' : 'Cancel'}
         </Button>
-        <Button onClick={handleSave}  disabled={createItemMutation.isPending}>
-          <Plus className='w-4 h-4 mr-1' />
-          {createItemMutation.isPending
-            ? locale === 'nl'
-              ? 'Toevoegen...'
-              : 'Adding...'
-            : locale === 'nl'
-            ? 'Toevoegen'
-            : 'Add'}
+        <Button onClick={handleSave} disabled={createItemMutation.isPending} className='gap-2 px-4 py-2 shadow-md hover:shadow-lg transition-all'>
+          {createItemMutation.isPending ? (
+            <>
+              <Loader2 className='w-4 h-4 animate-spin' />
+              {locale === 'nl' ? 'Toevoegen...' : 'Adding...'}
+            </>
+          ) : (
+            <>
+              <Plus className='w-4 h-4' />
+              {locale === 'nl' ? 'Toevoegen' : 'Add'}
+            </>
+          )}
         </Button>
       </div>
     </Card>

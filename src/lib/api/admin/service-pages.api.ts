@@ -5,7 +5,6 @@ export interface ServicePageDTO {
   service_category_id: string | number;
   status: 'draft' | 'pending' | 'active';
   created_by?: string;
-  updated_by?: string;
   published_by?: string;
   published_at?: string;
   created_at: string;

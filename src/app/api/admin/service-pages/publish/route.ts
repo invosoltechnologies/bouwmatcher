@@ -53,13 +53,11 @@ export async function PATCH(request: NextRequest) {
     const updateData: any = {
       status,
       updated_at: new Date().toISOString(),
-      updated_by: user.id,
     };
 
-    // If publishing (status = 'active'), set published_at and published_by
+    // If publishing (status = 'active'), set published_at
     if (status === 'active') {
       updateData.published_at = new Date().toISOString();
-      updateData.published_by = user.id;
     }
 
     const { data: page, error } = await supabase
