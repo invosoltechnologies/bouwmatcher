@@ -13,18 +13,24 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if email matches admin email
-    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@bouwmatcher.be';
-    if (email !== ADMIN_EMAIL) {
+    const supabase = await createClient();
+
+    // Check if user exists in admin_users table and is active
+    const { data: adminUser, error: adminCheckError } = await supabase
+      .from('admin_users')
+      .select('id, email, role, is_active')
+      .eq('email', email)
+      .eq('is_active', true)
+      .single();
+
+    if (adminCheckError || !adminUser) {
       return NextResponse.json(
         { success: false, error: 'Invalid admin credentials' },
         { status: 401 }
       );
     }
 
-    const supabase = await createClient();
-
-    // Attempt to sign in
+    // Attempt to sign in with Supabase Auth
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -38,9 +44,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify user is admin
-    if (data.user.email !== ADMIN_EMAIL) {
-      // Sign out if not admin
+    // Verify the authenticated user matches the admin user
+    if (data.user.email !== adminUser.email) {
+      // Sign out if mismatch
       await supabase.auth.signOut();
       return NextResponse.json(
         { success: false, error: 'Unauthorized access' },
@@ -53,6 +59,7 @@ export async function POST(request: Request) {
       user: {
         id: data.user.id,
         email: data.user.email,
+        role: adminUser.role,
       },
     });
   } catch (error) {

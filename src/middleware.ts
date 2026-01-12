@@ -60,8 +60,10 @@ export async function middleware(request: NextRequest) {
   const isAuthPage = pathnameWithoutLocale.startsWith('/auth');
   const isProDashboard = pathnameWithoutLocale.startsWith('/pro-dashboard');
   const isDashboard = pathnameWithoutLocale.startsWith('/dashboard');
+  const isAdminRoute = pathnameWithoutLocale === '/admin' || pathnameWithoutLocale.startsWith('/admin/');
   const isAdminDashboard = pathnameWithoutLocale.startsWith('/admin-dashboard');
   const isAdminLoginPage = pathnameWithoutLocale === '/auth/admin-login';
+  const isRegisterPage = pathnameWithoutLocale === '/auth/register' || pathnameWithoutLocale.startsWith('/auth/register/');
 
   // Define public routes that don't require authentication
   const publicRoutes = [
@@ -91,8 +93,8 @@ export async function middleware(request: NextRequest) {
       return supabaseResponse;
     }
 
-    // If trying to access admin dashboard, redirect to admin login
-    if (isAdminDashboard) {
+    // If trying to access admin routes (/admin or /admin-dashboard), redirect to admin login
+    if (isAdminRoute || isAdminDashboard) {
       return NextResponse.redirect(new URL(`/${locale}/auth/admin-login`, request.url));
     }
 
@@ -102,17 +104,27 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // Check if user is admin
-  const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@bouwmatcher.be';
-  const isUserAdmin = user.email === ADMIN_EMAIL;
+  // Check if user is admin by querying admin_users table
+  const { data: adminUser } = await supabase
+    .from('admin_users')
+    .select('id, email, role, is_active')
+    .eq('email', user.email)
+    .eq('is_active', true)
+    .single();
 
-  // If user is trying to access admin dashboard
-  if (isAdminDashboard) {
+  const isUserAdmin = !!adminUser;
+
+  // If user is trying to access admin routes
+  if (isAdminRoute || isAdminDashboard) {
     if (!isUserAdmin) {
-      // Non-admin trying to access admin dashboard - redirect to admin login
+      // Non-admin trying to access admin routes - redirect to admin login
       return NextResponse.redirect(new URL(`/${locale}/auth/admin-login`, request.url));
     }
-    // Admin user - allow access
+    // Admin user accessing /admin - redirect to admin dashboard
+    if (isAdminRoute) {
+      return NextResponse.redirect(new URL(`/${locale}/admin-dashboard`, request.url));
+    }
+    // Admin user accessing admin dashboard - allow access
     return supabaseResponse;
   }
 
@@ -126,46 +138,65 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}/admin-dashboard`, request.url));
   }
 
-  // User is signed in (non-admin) - check profile completion status
-  const { data: profiles } = await supabase
+  // User is signed in (non-admin) - check if they're a professional
+  const { data: professionalProfile } = await supabase
     .from('professional_profiles')
-    .select('profile_completed, current_step')
+    .select('id, profile_completed, current_step, is_active')
     .eq('user_id', user.id)
-    .limit(1);
+    .single();
 
-  const profile = profiles && profiles.length > 0 ? profiles[0] : null;
-  const isProfileCompleted = profile?.profile_completed === true;
-  const currentStep = profile?.current_step || 1;
+  const isProfessional = !!professionalProfile;
+  const isProfileCompleted = professionalProfile?.profile_completed === true;
+  const currentStep = professionalProfile?.current_step || 1;
 
   // If user is trying to access pro-dashboard
   if (isProDashboard) {
+    // Check if user is a professional
+    if (!isProfessional) {
+      // Not a professional - sign out and redirect to login
+      await supabase.auth.signOut();
+      return NextResponse.redirect(new URL(`/${locale}/auth/login`, request.url));
+    }
     // Check if profile is completed
     if (!isProfileCompleted || currentStep < 6) {
       // Redirect to registration to complete profile
       return NextResponse.redirect(new URL(`/${locale}/auth/register`, request.url));
     }
-    // Profile is completed, allow access
+    // Check if profile is active
+    if (!professionalProfile?.is_active) {
+      // Profile is inactive - sign out and redirect to login
+      await supabase.auth.signOut();
+      return NextResponse.redirect(new URL(`/${locale}/auth/login`, request.url));
+    }
+    // Profile is completed and active, allow access
     return supabaseResponse;
   }
 
   // If user is trying to access auth pages
   if (isAuthPage) {
-    // Allow access to /auth/register if profile is not completed
-    if (pathnameWithoutLocale.startsWith('/auth/register')) {
-      if (!isProfileCompleted || currentStep < 6) {
-        return supabaseResponse;
+    // Professional user handling
+    if (isProfessional) {
+      // Allow access to /auth/register if profile is not completed
+      if (isRegisterPage) {
+        if (!isProfileCompleted || currentStep < 6) {
+          return supabaseResponse;
+        }
+        // Profile is completed, redirect to pro dashboard
+        return NextResponse.redirect(new URL(`/${locale}/pro-dashboard/account`, request.url));
       }
-      // Profile is completed, redirect to dashboard
-      return NextResponse.redirect(new URL(`/${locale}/pro-dashboard/account`, request.url));
+
+      // For other auth pages (like login), redirect to dashboard if profile is completed
+      if (isProfileCompleted && currentStep >= 6) {
+        return NextResponse.redirect(new URL(`/${locale}/pro-dashboard/account`, request.url));
+      }
+
+      // Otherwise redirect to registration to complete profile
+      return NextResponse.redirect(new URL(`/${locale}/auth/register`, request.url));
     }
 
-    // For other auth pages (like login), redirect to dashboard if profile is completed
-    if (isProfileCompleted && currentStep >= 6) {
-      return NextResponse.redirect(new URL(`/${locale}/pro-dashboard/account`, request.url));
-    }
-
-    // Otherwise redirect to registration to complete profile
-    return NextResponse.redirect(new URL(`/${locale}/auth/register`, request.url));
+    // User exists in auth but not in professional_profiles table - allow auth page access
+    // This allows new signups to proceed
+    return supabaseResponse;
   }
 
   return supabaseResponse;

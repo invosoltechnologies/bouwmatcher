@@ -1,3 +1,11 @@
+export interface ServiceIntro {
+  heading_nl: string;
+  heading_en: string;
+  description_nl: string;
+  description_en: string;
+  backgroundImage: string;
+}
+
 export interface Service {
   id?: number;
   name_nl: string;

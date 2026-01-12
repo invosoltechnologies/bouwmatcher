@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/server';
  *
  * Blocks a professional by:
  * - Setting is_verified to 'suspended'
- * - User remains active and can log in to see suspended status
+ * - Setting is_active to false (user cannot log in)
  */
 export async function POST(
   request: NextRequest,
@@ -23,11 +23,12 @@ export async function POST(
       );
     }
 
-    // Update professional profile to suspended (but keep active for login)
+    // Update professional profile to suspended and set is_active to false
     const { data, error } = await supabase
       .from('professional_profiles')
       .update({
         is_verified: 'suspended',
+        is_active: false,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)

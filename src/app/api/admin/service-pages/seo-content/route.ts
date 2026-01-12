@@ -1,0 +1,135 @@
+import { createClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(request: NextRequest) {
+  try {
+    const supabase = await createClient();
+    const searchParams = request.nextUrl.searchParams;
+    const service_page_id = searchParams.get('service_page_id');
+
+    if (!service_page_id) {
+      return NextResponse.json(
+        { error: 'service_page_id is required' },
+        { status: 400 }
+      );
+    }
+
+    const { data, error } = await supabase
+      .from('service_page_seo_content')
+      .select('*')
+      .eq('service_page_id', service_page_id)
+      .single();
+
+    if (error && error.code === 'PGRST116') {
+      // No rows found
+      return NextResponse.json(null);
+    }
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return NextResponse.json(
+        { error: 'Failed to fetch SEO content section' },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('Error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const supabase = await createClient();
+    const body = await request.json();
+    const {
+      service_page_id,
+      heading_nl,
+      heading_en,
+      description_nl,
+      description_en,
+      content_nl,
+      content_en,
+    } = body;
+
+    // Check if record exists
+    const { data: existingSection } = await supabase
+      .from('service_page_seo_content')
+      .select('id')
+      .eq('service_page_id', service_page_id)
+      .single();
+
+    if (existingSection) {
+      // Update existing
+      const { data, error } = await supabase
+        .from('service_page_seo_content')
+        .update({
+          heading_nl,
+          heading_en,
+          description_nl,
+          description_en,
+          content_nl,
+          content_en,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', existingSection.id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Update error:', error);
+        return NextResponse.json(
+          { error: 'Failed to update SEO content section' },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json({
+        message: 'SEO content section updated successfully',
+        seoContent: data,
+      });
+    } else {
+      // Create new
+      const { data, error } = await supabase
+        .from('service_page_seo_content')
+        .insert({
+          service_page_id,
+          heading_nl,
+          heading_en,
+          description_nl,
+          description_en,
+          content_nl,
+          content_en,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Insert error:', error);
+        return NextResponse.json(
+          { error: 'Failed to create SEO content section' },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json(
+        {
+          message: 'SEO content section created successfully',
+          seoContent: data,
+        },
+        { status: 201 }
+      );
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

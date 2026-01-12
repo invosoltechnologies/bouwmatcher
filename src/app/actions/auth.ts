@@ -102,13 +102,28 @@ export async function signUpProfessionalAction(data: SignUpData): Promise<AuthRe
 }
 
 /**
- * Sign in an existing user
+ * Sign in an existing user (Professional users only)
  * Server action - runs on server only
  */
 export async function signInAction(data: SignInData): Promise<AuthResult> {
   const supabase = await createClient();
 
   try {
+    // Check if user is an admin (admins cannot login through professional route)
+    const { data: adminUser } = await supabase
+      .from('admin_users')
+      .select('id, email')
+      .eq('email', data.email)
+      .eq('is_active', true)
+      .single();
+
+    if (adminUser) {
+      return {
+        success: false,
+        error: 'Please use the admin login page',
+      };
+    }
+
     const { data: authData, error } = await supabase.auth.signInWithPassword({
       email: data.email,
       password: data.password,
@@ -121,13 +136,36 @@ export async function signInAction(data: SignInData): Promise<AuthResult> {
       };
     }
 
-    // Update last login
-    if (authData.user) {
-      await supabase
-        .from('professional_profiles')
-        .update({ last_login_at: new Date().toISOString() })
-        .eq('user_id', authData.user.id);
+    // Check if user has a professional profile
+    const { data: professionalProfile } = await supabase
+      .from('professional_profiles')
+      .select('id, is_active')
+      .eq('user_id', authData.user.id)
+      .single();
+
+    if (!professionalProfile) {
+      // Sign out if not a professional
+      await supabase.auth.signOut();
+      return {
+        success: false,
+        error: 'No professional profile found. Please register as a professional.',
+      };
     }
+
+    if (!professionalProfile.is_active) {
+      // Sign out if profile is inactive
+      await supabase.auth.signOut();
+      return {
+        success: false,
+        error: 'Your account is inactive. Please contact support.',
+      };
+    }
+
+    // Update last login
+    await supabase
+      .from('professional_profiles')
+      .update({ last_login_at: new Date().toISOString() })
+      .eq('user_id', authData.user.id);
 
     revalidatePath('/', 'layout');
 

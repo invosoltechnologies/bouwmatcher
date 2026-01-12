@@ -1337,6 +1337,7 @@
         "reviews": "Reviews",
         "projects": "Projecten",
         "service-categories": "Servicecategorieën",
+        "service-pages": "Servicepagina's",
         "home": "Home",
         "logout": "Uitloggen"
       },
@@ -1373,6 +1374,14 @@
         "service-categories-form": {
           "title": "Categorieformulier",
           "description": "Maak of bewerk een servicecategorie"
+        },
+        "service-pages": {
+          "title": "Servicepagina's",
+          "description": "Maak en beheer servicepagina's voor elke categorie"
+        },
+        "page-builder": {
+          "title": "Servicepagina Bouwer",
+          "description": "Ontwerp en bewerk servicepagina-inhoud"
         }
       },
       "categoryForm": {

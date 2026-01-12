@@ -16,8 +16,8 @@ export function useBlockProfessional() {
       return response;
     },
     onSuccess: () => {
-      // Invalidate professionals list to refetch
-      queryClient.invalidateQueries({ queryKey: ['professionals'] });
+      // Invalidate all professionals queries to refetch
+      queryClient.invalidateQueries({ queryKey: ['admin', 'professionals'] });
     },
   });
 }
@@ -37,8 +37,8 @@ export function useUnblockProfessional() {
       return response;
     },
     onSuccess: () => {
-      // Invalidate professionals list to refetch
-      queryClient.invalidateQueries({ queryKey: ['professionals'] });
+      // Invalidate all professionals queries to refetch
+      queryClient.invalidateQueries({ queryKey: ['admin', 'professionals'] });
     },
   });
 }
@@ -58,8 +58,29 @@ export function useVerifyProfessional() {
       return response;
     },
     onSuccess: () => {
-      // Invalidate professionals list to refetch
-      queryClient.invalidateQueries({ queryKey: ['professionals'] });
+      // Invalidate all professionals queries to refetch
+      queryClient.invalidateQueries({ queryKey: ['admin', 'professionals'] });
+    },
+  });
+}
+
+/**
+ * Hook to unverify a professional
+ */
+export function useUnverifyProfessional() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (professionalId: string) => {
+      const response = await apiClient.post(
+        `/api/admin/professionals/${professionalId}/unverify`,
+        {}
+      );
+      return response;
+    },
+    onSuccess: () => {
+      // Invalidate all professionals queries to refetch
+      queryClient.invalidateQueries({ queryKey: ['admin', 'professionals'] });
     },
   });
 }

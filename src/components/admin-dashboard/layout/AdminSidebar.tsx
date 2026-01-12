@@ -16,6 +16,9 @@ import {
   FolderTree,
   Home,
   LogOut,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
 } from 'lucide-react';
 import { adminNavigation } from '@/config/admin-dashboard';
 import { cn } from '@/lib/utils';
@@ -26,6 +29,7 @@ export default function AdminSidebar() {
   const router = useRouter();
   const t = useTranslations();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleLogout = async () => {
     if (isLoggingOut) return;
@@ -86,6 +90,7 @@ export default function AdminSidebar() {
       FolderTree,
       Home,
       LogOut,
+      FileText,
     };
 
     if (item.iconType === 'lucide' && iconMap[item.icon]) {
@@ -111,22 +116,43 @@ export default function AdminSidebar() {
   };
 
   return (
-    <aside className="hidden lg:flex lg:max-w-64 w-full bg-white border-r border-slate-200 flex-col h-screen sticky top-0">
-      {/* Logo */}
-      <div className="px-6 py-8.5">
-        <Link href="/">
-          <Image
-            src="/images/logo.svg"
-            alt="Bouwmatcher"
-            width={140}
-            height={40}
-            className="h-10 w-auto"
-          />
-        </Link>
+    <aside
+      className={cn(
+        'hidden lg:flex bg-white border-r border-slate-200 flex-col h-screen sticky top-0 transition-all duration-300',
+        isCollapsed ? 'w-24' : 'max-w-64 w-full'
+      )}
+    >
+      {/* Logo & Toggle */}
+      <div className="px-6 py-8.5 flex items-center justify-between">
+        {!isCollapsed && (
+          <Link href="/">
+            <Image
+              src="/images/logo.svg"
+              alt="Bouwmatcher"
+              width={140}
+              height={40}
+              className="h-10 w-auto"
+            />
+          </Link>
+        )}
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className={cn(
+            'p-1.5 hover:bg-slate-100 rounded-lg transition-colors',
+            isCollapsed && 'w-full flex justify-center'
+          )}
+          title={isCollapsed ? 'Expand' : 'Collapse'}
+        >
+          {isCollapsed ? (
+            <ChevronRight className="w-4 h-4 text-slate-600" />
+          ) : (
+            <ChevronLeft className="w-4 h-4 text-slate-600" />
+          )}
+        </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-6 py-8.5">
+      <nav className="flex-1 px-3 py-8.5">
         <ul className="space-y-2.5">
           {adminNavigation.map((item) => {
             // Check if pathname ends with the item href (to handle locale prefix like /en/admin-dashboard)
@@ -146,12 +172,14 @@ export default function AdminSidebar() {
                     disabled={isLoggingOut}
                     className={cn(
                       'w-full flex items-center gap-4 px-4 py-3 rounded-lg text-base font-medium transition-colors cursor-pointer group',
+                      isCollapsed && 'justify-center',
                       'hover:bg-primary/5 text-muted-foreground hover:text-primary',
                       isLoggingOut && 'opacity-50 cursor-not-allowed'
                     )}
+                    title={isCollapsed ? getNavigationLabel(item) : undefined}
                   >
                     {renderIcon(item, false)}
-                    <span>{getNavigationLabel(item)}</span>
+                    {!isCollapsed && <span>{getNavigationLabel(item)}</span>}
                   </button>
                 </li>
               );
@@ -163,13 +191,15 @@ export default function AdminSidebar() {
                   href={item.href}
                   className={cn(
                     'flex items-center gap-4 px-4 py-3 rounded-lg text-base font-medium transition-colors group',
+                    isCollapsed && 'justify-center',
                     isActive
                       ? 'bg-primary text-white'
                       : 'hover:bg-primary/5 text-muted-foreground hover:text-primary'
                   )}
+                  title={isCollapsed ? getNavigationLabel(item) : undefined}
                 >
                   {renderIcon(item, isActive)}
-                  <span>{getNavigationLabel(item)}</span>
+                  {!isCollapsed && <span>{getNavigationLabel(item)}</span>}
                 </Link>
               </li>
             );
@@ -178,19 +208,29 @@ export default function AdminSidebar() {
       </nav>
 
       {/* Bottom Section */}
-      <div className="border-t border-neutral-200 py-4 px-4 space-y-4">
+      <div className={cn('border-t border-neutral-200 py-4 px-4 space-y-4', isCollapsed && 'px-2')}>
         {/* Language Switcher */}
-        <SidebarLanguageSwitcher />
+        {!isCollapsed && <SidebarLanguageSwitcher />}
 
         {/* Admin Badge */}
-        <div className="px-4 py-3 bg-primary/5 rounded-lg">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-primary">
-              {t('common.adminDashboard.adminBadge', { defaultValue: 'Admin' })}
-            </span>
+        {!isCollapsed && (
+          <div className="px-4 py-3 bg-primary/5 rounded-lg">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-primary">
+                {t('common.adminDashboard.adminBadge', { defaultValue: 'Admin' })}
+              </span>
+            </div>
           </div>
-        </div>
+        )}
+
+        {isCollapsed && (
+          <div className="flex justify-center">
+            <div className="w-8 h-8 bg-primary/5 rounded-lg flex items-center justify-center">
+              <ShieldCheck className="w-4 h-4 text-primary" />
+            </div>
+          </div>
+        )}
       </div>
     </aside>
   );
