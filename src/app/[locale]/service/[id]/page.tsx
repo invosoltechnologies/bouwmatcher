@@ -471,9 +471,11 @@ export default async function ServicePage({ params }: ServicePageProps) {
     });
 
     if (response.ok) {
+      console.log('REsaponse cmsData ', response);
       cmsData = (await response.json()) as CmsDataResponse;
     }
   } catch {
+    console.error('Failed to fetch CMS data:', error);
     // Continue with fallback if API fails
   }
 
