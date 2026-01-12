@@ -42,7 +42,7 @@ export default function ServiceBanner({
               <div className='flex flex-col items-center text-center'>
                 {/* Main Heading */}
                 <h1 className='text-4xl lg:text-[55px] font-normal leading-tight mb-2 text-white'>
-                  {heading} {serviceName.toLowerCase()} specialisten
+                  {heading}
                 </h1>
 
                 {/* Description */}

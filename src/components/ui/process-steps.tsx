@@ -7,9 +7,15 @@ import Image from 'next/image';
 export interface ProcessStep {
   id: number;
   title: string;
+  title_nl?: string;
+  title_en?: string;
   description: string;
+  description_nl?: string;
+  description_en?: string;
   icon: string;
   image: string;
+  iconAlt?: string;
+  imageAlt?: string;
 }
 
 interface ProcessStepsProps {
@@ -183,7 +189,7 @@ export default function ProcessSteps({
                       <div className='flex flex-col items-start justify-end gap-1'>
                         <Image
                           src={step.icon}
-                          alt={step.title}
+                          alt={`${step.title}-icon`}
                           width={48}
                           height={48}
                           className='w-12 h-12 mb-4'
@@ -220,7 +226,7 @@ export default function ProcessSteps({
                         <div className='flex flex-col items-end justify-end gap-1'>
                           <Image
                             src={step.icon}
-                            alt={step.title}
+                            alt={step.iconAlt || step.imageAlt || `${step.title}-image`}
                             width={48}
                             height={48}
                             className='w-12 h-12 mb-4'
@@ -272,7 +278,7 @@ export default function ProcessSteps({
                         <div className='flex flex-col items-start justify-end gap-1'>
                           <Image
                             src={step.icon}
-                            alt={step.title}
+                            alt={step.iconAlt || step.imageAlt || step.title}
                             width={48}
                             height={48}
                             className='w-12 h-12 mb-4'

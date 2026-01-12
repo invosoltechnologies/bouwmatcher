@@ -15,10 +15,26 @@ import ServiceSEO from '@/components/Service/ServiceSEO';
 import ServiceProcess from '@/components/Service/ServiceProcess';
 import ServiceCTA from '@/components/Service/ServiceCTA';
 import ServiceMarquee from '@/components/Service/ServiceMarquee';
+import DynamicServiceSections from '@/components/Service/DynamicServiceSections';
 import type { ProcessStep } from '@/components/ui/process-steps';
+
+// ISR configuration - revalidate every hour
+export const revalidate = 3600;
 
 interface ServicePageProps {
   params: Promise<{ id: string; locale: string }>;
+}
+
+interface CmsDataResponse {
+  hasCmsData: boolean;
+  banner: Record<string, unknown> | null;
+  sections: Record<string, unknown>;
+  sectionsConfig: { order: string[]; active: string[] } | null;
+  category?: {
+    id: string;
+    name_nl: string;
+    name_en: string;
+  };
 }
 
 const trustPills = [
@@ -444,50 +460,98 @@ export default async function ServicePage({ params }: ServicePageProps) {
     notFound();
   }
 
-  // Banner data - customize per service as needed
-  const bannerData = {
-    heading: locale === 'nl' ? 'Vind en vergelijk' : 'Find and compare',
-    description:
-      locale === 'nl'
-        ? 'Op deze pagina ontdek je alles over de service, werkzaamheden, kosten, vergunningen en hoe je eenvoudig de juiste specialist vindt via Bouwmatcher.'
-        : 'On this page you will discover everything about the service, activities, costs, permits and how you can easily find the right specialist via Bouwmatcher.',
-    backgroundImage: '/images/services/service-bg.png',
-  };
+  // Try to fetch CMS data from public API
+  let cmsData: CmsDataResponse | null = null;
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const apiUrl = `${baseUrl}/api/service-pages/${id}`;
 
-  // Initialize section renderer
+    const response = await fetch(apiUrl, {
+      next: { revalidate: 3600 }, // ISR - revalidate every hour
+    });
+
+    if (response.ok) {
+      cmsData = (await response.json()) as CmsDataResponse;
+    }
+  } catch {
+    // Continue with fallback if API fails
+  }
+
+  // Determine if we should use CMS data or fallback
+  // Simple logic: if banner exists in CMS data, use full CMS; otherwise use fallback
+  const useCmsData = cmsData?.hasCmsData && cmsData?.banner;
+
+  // Banner data - use CMS if available, otherwise fallback
+  const bannerData = useCmsData && cmsData && cmsData.banner
+    ? {
+        heading: locale === 'nl'
+          ? (cmsData.banner.h1_text_nl as string) || (cmsData.banner.h1_text_en as string) || 'Vind en vergelijk'
+          : (cmsData.banner.h1_text_en as string) || (cmsData.banner.h1_text_nl as string) || 'Find and compare',
+        description: locale === 'nl'
+          ? (cmsData.banner.description_nl as string) || ''
+          : (cmsData.banner.description_en as string) || '',
+        backgroundImage: (cmsData.banner.background_image as string) || '/images/services/service-bg.png',
+      }
+    : {
+        heading: locale === 'nl' ? 'Vind en vergelijk' : 'Find and compare',
+        description:
+          locale === 'nl'
+            ? 'Op deze pagina ontdek je alles over de service, werkzaamheden, kosten, vergunningen en hoe je eenvoudig de juiste specialist vindt via Bouwmatcher.'
+            : 'On this page you will discover everything about the service, activities, costs, permits and how you can easily find the right specialist via Bouwmatcher.',
+        backgroundImage: '/images/services/service-bg.png',
+      };
+
+  // Initialize section renderer for fallback
   const sectionRenderer = createSectionRenderer();
 
   return (
     <DefaultLayout>
       <ServiceBanner
-        serviceName={locale === 'nl' ? service.name_nl : service.name_en}
+        serviceName={service.name_nl} // Still passed for ProjectForm component
         serviceSlug={service.slug}
         heading={bannerData.heading}
         description={bannerData.description}
         backgroundImage={bannerData.backgroundImage}
         trustPills={trustPills}
       />
-      {/* Dynamic Section Rendering */}
-      {architectServiceConfig.sectionOrder.map((sectionKey) => {
-        const showMarqueeAfter =
-          architectServiceConfig.marquee.enabled &&
-          architectServiceConfig.marquee.showAfter === sectionKey;
 
-        // Get the section renderer function, fallback to null if not found
-        const renderSection = sectionRenderer[sectionKey];
+      {/* If CMS data available, render dynamic sections (skip banner since it's already shown); otherwise render fallback */}
+      {useCmsData && cmsData && cmsData.sectionsConfig ? (
+        <DynamicServiceSections
+          sectionsConfig={{
+            ...cmsData.sectionsConfig,
+            order: cmsData.sectionsConfig.order.filter((s) => s !== 'banner'), // Remove banner from dynamic rendering
+          }}
+          sectionsData={cmsData.sections}
+          locale={locale}
+          trustPills={trustPills}
+        />
+      ) : (
+        <>
+          {/* Fallback to hardcoded architect content */}
+          {architectServiceConfig.sectionOrder.map((sectionKey) => {
+            const showMarqueeAfter =
+              architectServiceConfig.marquee.enabled &&
+              architectServiceConfig.marquee.showAfter === sectionKey;
 
-        return (
-          <div key={sectionKey}>
-            {/* Render Section if renderer exists */}
-            {renderSection && renderSection({ sectionKey, locale })}
+            // Get the section renderer function, fallback to null if not found
+            const renderSection = sectionRenderer[sectionKey];
 
-            {/* Render Marquee After Section if Configured */}
-            {showMarqueeAfter && (
-              <ServiceMarquee items={architectServiceConfig.marquee.items} />
-            )}
-          </div>
-        );
-      })}
+            return (
+              <div key={sectionKey}>
+                {/* Render Section if renderer exists */}
+                {renderSection && renderSection({ sectionKey, locale })}
+
+                {/* Render Marquee After Section if Configured */}
+                {showMarqueeAfter && (
+                  <ServiceMarquee items={architectServiceConfig.marquee.items} />
+                )}
+              </div>
+            );
+          })}
+        </>
+      )}
+
       <ServiceCTA
         heading={locale === 'nl' ? architectCTAData.heading : 'Ready to get started?'}
         description={

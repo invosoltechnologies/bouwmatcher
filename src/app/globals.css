@@ -191,4 +191,29 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;  /* Chrome, Safari and Opera */
   }
+
+  /* HTML content rendering - paragraph spacing and formatting */
+  .html-content p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  .html-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  .html-content a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  .html-content strong,
+  .html-content b {
+    font-weight: 600;
+  }
+
+  .html-content em,
+  .html-content i {
+    font-style: italic;
+  }
 }

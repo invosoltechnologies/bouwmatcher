@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { ServiceIntro } from '@/data/services';
 
 interface ServiceIntroductionProps {
@@ -14,6 +15,45 @@ export default function ServiceIntroduction({
   const heading = language === 'nl' ? intro.heading_nl : intro.heading_en;
   const description =
     language === 'nl' ? intro.description_nl : intro.description_en;
+
+  const [sanitized, setSanitized] = useState<string>('');
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    if (description && description.includes('<')) {
+      // Dynamically import DOMPurify for client-side sanitization
+      import('dompurify').then((module) => {
+        const DOMPurify = module.default;
+        setSanitized(DOMPurify.sanitize(description));
+        setIsLoaded(true);
+      });
+    } else {
+      setIsLoaded(true);
+    }
+  }, [description]);
+
+  // Sanitize and render HTML content
+  const renderDescription = () => {
+    if (!isLoaded) {
+      return null;
+    }
+
+    // Check if description contains HTML tags
+    if (description && description.includes('<') && sanitized) {
+      return (
+        <div
+          className='html-content text-base lg:text-lg text-white/95 leading-relaxed'
+          dangerouslySetInnerHTML={{ __html: sanitized }}
+        />
+      );
+    }
+    // Plain text description
+    return (
+      <p className='text-base lg:text-lg text-white/95 leading-relaxed'>
+        {description}
+      </p>
+    );
+  };
 
   return (
     <section className='relative py-16'>
@@ -42,9 +82,7 @@ export default function ServiceIntroduction({
             <h2 className='text-3xl lg:text-4xl font-semibold text-white mb-6 leading-tight'>
               {heading}
             </h2>
-            <p className='text-base lg:text-lg text-white/95 leading-relaxed'>
-              {description}
-            </p>
+            {renderDescription()}
           </div>
         </div>
       </div>
