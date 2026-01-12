@@ -9,14 +9,26 @@ export async function GET(
     const supabase = await createClient();
     const { slug } = await params;
 
+    console.log('[SERVICE-PAGE-API] Starting fetch for slug:', slug);
+    console.log('[SERVICE-PAGE-API] Timestamp:', new Date().toISOString());
+
     // Get category by slug
+    console.log('[SERVICE-PAGE-API] Querying service_categories for slug:', slug);
     const { data: category, error: categoryError } = await supabase
       .from('service_categories')
       .select('id, name_nl, name_en')
       .eq('slug', slug)
       .single();
 
+    console.log('[SERVICE-PAGE-API] Category lookup result:', {
+      found: !!category,
+      categoryId: category?.id,
+      categoryName: category?.name_en,
+      error: categoryError?.message,
+    });
+
     if (categoryError || !category) {
+      console.log('[SERVICE-PAGE-API] No category found, returning fallback (hasCmsData: false)');
       // Return empty structure for fallback
       return NextResponse.json({
         hasCmsData: false,
@@ -27,6 +39,7 @@ export async function GET(
     }
 
     // Get service page for this category
+    console.log('[SERVICE-PAGE-API] Querying service_pages for category:', category.id);
     const { data: servicePage, error: pageError } = await supabase
       .from('service_pages')
       .select('id, sections_config, status')
@@ -34,7 +47,15 @@ export async function GET(
       .eq('status', 'active')
       .single();
 
+    console.log('[SERVICE-PAGE-API] Service page lookup result:', {
+      found: !!servicePage,
+      pageId: servicePage?.id,
+      status: servicePage?.status,
+      error: pageError?.message,
+    });
+
     if (pageError || !servicePage || servicePage.status !== 'active') {
+      console.log('[SERVICE-PAGE-API] No active service page found, returning fallback (hasCmsData: false)');
       // No active CMS page - use fallback
       return NextResponse.json({
         hasCmsData: false,
@@ -50,15 +71,24 @@ export async function GET(
       active: ['banner'],
     };
 
+    console.log('[SERVICE-PAGE-API] Sections config:', sectionsConfig);
+
     // Fetch banner (required for CMS data trigger)
+    console.log('[SERVICE-PAGE-API] Fetching banner for page:', pageId);
     const { data: banner } = await supabase
       .from('service_page_banners')
       .select('*')
       .eq('service_page_id', pageId)
       .single();
 
+    console.log('[SERVICE-PAGE-API] Banner fetch result:', {
+      found: !!banner,
+      bannerHeading: banner?.h1_text_en,
+    });
+
     // If no banner, use fallback
     if (!banner) {
+      console.log('[SERVICE-PAGE-API] No banner found, returning fallback (hasCmsData: false)');
       return NextResponse.json({
         hasCmsData: false,
         banner: null,
@@ -173,7 +203,24 @@ export async function GET(
     if (reviews) sections.reviews = reviews;
     if (marqueeData) sections.marquees = marqueeData;
 
-    return NextResponse.json({
+    console.log('[SERVICE-PAGE-API] Sections loaded summary:', {
+      banner: !!sections.banner,
+      intro: !!sections.intro,
+      faq: !!sections.faq,
+      comparison_table: !!sections.comparison_table,
+      tips: !!sections.tips,
+      overview_table: !!sections.overview_table,
+      seo_content: !!sections.seo_content,
+      process: !!sections.process,
+      values: !!sections.values,
+      cta: !!sections.cta,
+      types: !!sections.types,
+      reviews: !!sections.reviews,
+      marquees: !!sections.marquees,
+      totalSections: Object.keys(sections).length,
+    });
+
+    const response = {
       hasCmsData: true,
       banner,
       sections,
@@ -183,9 +230,16 @@ export async function GET(
         name_nl: category.name_nl,
         name_en: category.name_en,
       },
-    });
+    };
+
+    console.log('[SERVICE-PAGE-API] SUCCESS - Returning CMS data for slug:', slug, '| hasCmsData: true');
+    return NextResponse.json(response);
   } catch (error) {
-    console.error('Error fetching service page:', error);
+    console.error('[SERVICE-PAGE-API] ERROR - Exception caught:', {
+      slug: _request?.url,
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return NextResponse.json({
       hasCmsData: false,
       banner: null,
