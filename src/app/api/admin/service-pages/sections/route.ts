@@ -8,7 +8,7 @@ interface SectionsConfig {
 }
 
 const SECTION_TABLE_MAPPING: Record<string, { table: string; relations?: string[] }> = {
-  intro: { table: 'service_page_intro' },
+  intro: { table: 'service_pages_intro' },
   faq: { table: 'service_page_faqs', relations: ['service_page_faq_items'] },
   comparison_table: { table: 'service_page_comparison_tables' },
   tips: { table: 'service_page_tips' },

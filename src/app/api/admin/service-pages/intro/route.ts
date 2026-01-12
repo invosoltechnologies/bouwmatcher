@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
       description_nl,
       description_en,
       background_image_url,
+      background_image_alt,
     } = body;
 
     if (!service_page_id) {
@@ -78,6 +79,7 @@ export async function POST(request: NextRequest) {
           description_nl,
           description_en,
           background_image_url,
+          background_image_alt,
           updated_at: new Date().toISOString(),
         })
         .eq('service_page_id', service_page_id)
@@ -108,6 +110,7 @@ export async function POST(request: NextRequest) {
         description_nl,
         description_en,
         background_image_url,
+        background_image_alt,
       })
       .select()
       .single();

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Upload, Edit, Loader2, X } from 'lucide-react';
+import { Upload, Edit, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getPublicStorageUrl } from '@/lib/utils/storage-url';
 
@@ -13,6 +13,7 @@ interface ImageUploadProps {
   className?: string;
   aspectRatio?: 'square' | 'video' | 'banner' | 'banner-small';
   disabled?: boolean;
+  compact?: boolean;
 }
 
 export default function ImageUpload({
@@ -23,6 +24,7 @@ export default function ImageUpload({
   className,
   aspectRatio = 'square',
   disabled = false,
+  compact = false,
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -32,8 +34,10 @@ export default function ImageUpload({
     square: 'aspect-square',
     video: 'aspect-video',
     banner: 'aspect-[21/9]',
-    'banner-small': 'aspect-[1326/652]',
+    'banner-small': 'aspect-[612/408]',
   };
+
+  const compactSizeClasses = compact ? 'w-96 h-48' : '';
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -73,9 +77,9 @@ export default function ImageUpload({
   };
 
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={className}>
       {label && (
-        <label className='block text-sm font-medium text-slate-900'>
+        <label className='block text-sm font-medium text-slate-900 mb-2'>
           {label}
         </label>
       )}
@@ -83,7 +87,8 @@ export default function ImageUpload({
       <div
         className={cn(
           'relative overflow-hidden rounded-lg border-2 border-dashed transition-all',
-          aspectRatioClasses[aspectRatio],
+          compact ? compactSizeClasses : aspectRatioClasses[aspectRatio],
+          !compact && 'w-full',
           imageUrl
             ? 'border-transparent'
             : 'border-slate-300 hover:border-slate-400',

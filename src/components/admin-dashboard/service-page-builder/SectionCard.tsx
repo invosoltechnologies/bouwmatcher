@@ -41,10 +41,9 @@ export default function SectionCard({
     <>
       <Card className='py-0 border border-slate-200 rounded-lg overflow-hidden relative'>
         {/* Delete Button */}
-        <div className='absolute top-4 right-4 z-10'>
+        <div className='absolute top-6 right-14 z-10'>
           <Button
             variant='ghost'
-            size='sm'
             onClick={() => setShowDeleteConfirm(true)}
             disabled={isDeleting}
             className='text-red-600 hover:text-red-700 hover:bg-red-50'

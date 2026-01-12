@@ -65,7 +65,7 @@ export default function AddSectionDropdown({
       <div className='flex gap-4'>
         <div className='flex-1'>
           <Select value={selectedSection} onValueChange={setSelectedSection}>
-            <SelectTrigger className='bg-slate-50 border-slate-300'>
+            <SelectTrigger className='bg-slate-50 border-slate-300' iconWidth={14} iconHeight={14}>
               <SelectValue
                 placeholder={
                   locale === 'nl'

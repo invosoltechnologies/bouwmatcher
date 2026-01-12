@@ -81,13 +81,14 @@ export default function BannerSection({
           <h3 className='text-lg font-semibold text-slate-900'>
             {locale === 'nl' ? 'Banner Sectie' : 'Banner Section'}
           </h3>
-        </div>
-        <div className='flex items-center gap-2'>
+
           {backgroundImageUrl && (
             <span className='text-xs text-green-600 font-medium px-2 py-1 bg-green-50 rounded-full'>
               ✓ Configured
             </span>
           )}
+        </div>
+        <div className='flex items-center gap-2'>
           {isExpanded ? (
             <ChevronUp className='w-5 h-5 text-slate-600 group-hover:text-primary transition-colors' />
           ) : (
@@ -99,45 +100,54 @@ export default function BannerSection({
       {/* Content - Expandable */}
       {isExpanded && (
         <div className='border-t border-slate-200 p-6 space-y-8 bg-gradient-to-b from-slate-50 to-white'>
-          {/* Background Image Upload */}
+          {/* Background Image Upload & Alt Text */}
           <div className='space-y-4'>
-            <ImageUpload
-              imageUrl={backgroundImageUrl}
-              onImageChange={setBackgroundImageUrl}
-              bucket='service-pages'
-              label={locale === 'nl' ? 'Achtergrond Afbeelding' : 'Background Image'}
-              aspectRatio='banner-small'
-              disabled={saveMutation.isPending}
-            />
+            <div className='flex items-end gap-6'>
+              {/* Image Upload */}
+              <div className='flex-shrink-0'>
+                <ImageUpload
+                  imageUrl={backgroundImageUrl}
+                  onImageChange={setBackgroundImageUrl}
+                  bucket='service-pages'
+                  label={locale === 'nl' ? 'Afbeelding' : 'Image'}
+                  aspectRatio='banner-small'
+                  disabled={saveMutation.isPending}
+                  compact={true}
+                />
+              </div>
+
+              {/* Alt Text Input */}
+              <div className='flex-1 space-y-2'>
+                <label className='block text-sm font-medium text-slate-900'>
+                  {locale === 'nl'
+                    ? 'Alt Tekst (Toegankelijkheid)'
+                    : 'Alt Text (Accessibility)'}
+                </label>
+                <Input
+                  placeholder={
+                    locale === 'nl'
+                      ? 'bijv. Professionele aannemer aan het werk'
+                      : 'e.g. Professional contractor at work'
+                  }
+                  value={backgroundImageAlt}
+                  onChange={(e) => setBackgroundImageAlt(e.target.value)}
+                  className='bg-white border-slate-300'
+                  maxLength={150}
+                />
+                <p className='text-xs text-slate-500'>
+                  {backgroundImageAlt.length}/150 {' - '}
+                  {locale === 'nl'
+                    ? 'Beschrijf de afbeelding voor schermlezers'
+                    : 'Describe the image for screen readers'}
+                </p>
+              </div>
+            </div>
+
             <p className='text-xs text-slate-500 italic'>
               {locale === 'nl'
-                ? '💡 Aanbevolen resolutie: 1326x652px voor optimale weergave'
-                : '💡 Recommended resolution: 1326x652px for optimal display'}
+                ? '💡 Aanbevolen resolutie: 1326x652px'
+                : '💡 Recommended resolution: 1326x652px'}
             </p>
-
-            {/* Alt Text Input */}
-            <div className='space-y-2'>
-              <label className='block text-sm font-medium text-slate-900'>
-                {locale === 'nl' ? 'Alt Tekst (Toegankelijkheid)' : 'Alt Text (Accessibility)'}
-              </label>
-              <Input
-                placeholder={
-                  locale === 'nl'
-                    ? 'bijv. Professionele aannemer aan het werk'
-                    : 'e.g. Professional contractor at work'
-                }
-                value={backgroundImageAlt}
-                onChange={(e) => setBackgroundImageAlt(e.target.value)}
-                className='bg-white border-slate-300'
-                maxLength={150}
-              />
-              <p className='text-xs text-slate-500'>
-                {backgroundImageAlt.length}/150 {' - '}
-                {locale === 'nl'
-                  ? 'Beschrijf de afbeelding voor schermlezers'
-                  : 'Describe the image for screen readers'}
-              </p>
-            </div>
           </div>
 
           {/* Two Column Layout for Languages */}
@@ -180,9 +190,7 @@ export default function BannerSection({
                   className='bg-slate-50 border-slate-300'
                   maxLength={150}
                 />
-                <p className='text-xs text-slate-500'>
-                  {h1TextNl.length}/150
-                </p>
+                <p className='text-xs text-slate-500'>{h1TextNl.length}/150</p>
               </div>
 
               {/* Description NL */}
@@ -241,9 +249,7 @@ export default function BannerSection({
                   className='bg-slate-50 border-slate-300'
                   maxLength={150}
                 />
-                <p className='text-xs text-slate-500'>
-                  {h1TextEn.length}/150
-                </p>
+                <p className='text-xs text-slate-500'>{h1TextEn.length}/150</p>
               </div>
 
               {/* Description EN */}

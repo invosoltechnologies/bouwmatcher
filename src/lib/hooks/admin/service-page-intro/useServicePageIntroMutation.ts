@@ -14,6 +14,7 @@ export function useSaveServicePageIntro() {
       descriptionNl: string;
       descriptionEn: string;
       backgroundImageUrl?: string;
+      backgroundImageAlt?: string;
     }) =>
       await adminServicePageIntroApi.save({
         service_page_id: data.servicePageId,
@@ -22,6 +23,7 @@ export function useSaveServicePageIntro() {
         description_nl: data.descriptionNl,
         description_en: data.descriptionEn,
         background_image_url: data.backgroundImageUrl,
+        background_image_alt: data.backgroundImageAlt,
       }),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
