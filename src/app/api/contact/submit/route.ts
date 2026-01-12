@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { createClient } from '@/lib/supabase/server';
 import { Resend } from 'resend';
 import { EMAIL_CONFIG } from '@/lib/config';
 
@@ -10,6 +10,7 @@ const ADMIN_EMAIL = process.env.CONTACT_ADMIN_EMAIL || 'info@bouwmatcher.com';
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createClient();
     const formData = await request.formData();
 
     // Extract form fields
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Save to database (without file - file will be sent via email only)
-    const { data: submission, error: dbError } = await supabaseAdmin
+    const { data: submission, error: dbError } = await supabase
       .from('contact_submissions')
       .insert({
         name,

@@ -1,20 +1,9 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
-
-function getSupabaseClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!url || !serviceKey) {
-    throw new Error('Missing Supabase configuration');
-  }
-
-  return createClient(url, serviceKey);
-}
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = getSupabaseClient();
+    const supabase = await createClient();
     const searchParams = request.nextUrl.searchParams;
     const service_page_id = searchParams.get('service_page_id');
 
@@ -56,7 +45,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = getSupabaseClient();
+    const supabase = await createClient();
     const body = await request.json();
     const {
       service_page_id,
