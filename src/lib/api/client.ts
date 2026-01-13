@@ -119,10 +119,15 @@ class ApiClient {
     });
   }
 
-  async delete<T>(endpoint: string, config?: RequestConfig): Promise<T> {
+  async delete<T>(
+    endpoint: string,
+    body?: unknown,
+    config?: RequestConfig
+  ): Promise<T> {
     return this.request<T>(endpoint, {
       ...config,
       method: 'DELETE',
+      body: body ? JSON.stringify(body) : undefined,
     });
   }
 }

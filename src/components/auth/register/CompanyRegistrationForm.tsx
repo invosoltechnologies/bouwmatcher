@@ -21,6 +21,13 @@ interface CompanySearchResult {
   country?: 'NL' | 'BE';
   businessIdType?: 'KVK' | 'KBO';
   businessIdFormatted?: string;
+  // Additional fields from Bedrijfsdata API
+  vatNumber?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  employees?: number;
+  description?: string;
 }
 
 interface CompanyRegistrationFormProps {
@@ -38,6 +45,15 @@ export interface CompanyData {
   country: 'NL' | 'BE';
   businessIdType: 'KVK' | 'KBO';
   businessIdFormatted?: string;
+  // Additional fields from API
+  vatNumber?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  employees?: number;
+  description?: string;
+  // Verification source
+  isFromApi: boolean; // true if selected from search results, false if manually entered
 }
 
 type FormMode = 'search' | 'manual';
@@ -111,6 +127,13 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
     if (company.businessIdFormatted) {
       setValue('businessIdFormatted', company.businessIdFormatted);
     }
+    // Set additional fields from API
+    if (company.vatNumber) setValue('vatNumber', company.vatNumber);
+    if (company.phone) setValue('phone', company.phone);
+    if (company.email) setValue('email', company.email);
+    if (company.website) setValue('website', company.website);
+    if (company.employees) setValue('employees', company.employees);
+    if (company.description) setValue('description', company.description);
     setMode('manual');
   };
 
@@ -147,7 +170,12 @@ export default function CompanyRegistrationForm({ onNext, onBack }: CompanyRegis
 
   // Submit form
   const onSubmit = (data: CompanyData) => {
-    onNext(data);
+    // Add isFromApi flag: true if company was selected from search results, false if manually entered
+    const dataWithVerificationSource = {
+      ...data,
+      isFromApi: searchResults.some(result => result.kvkNumber === data.kvkNumber),
+    };
+    onNext(dataWithVerificationSource);
   };
 
   return (

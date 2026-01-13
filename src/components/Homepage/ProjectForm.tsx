@@ -2,10 +2,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from '@/i18n/navigation';
 import { Search } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { type Service } from '@/data/services';
+import { EXECUTION_DATE_OPTIONS } from '@/data/executionDates';
+import { useProjectForm } from '@/contexts/ProjectFormContext';
 import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
 
@@ -18,11 +21,18 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
   const t = useTranslations('homepage.projectForm');
   const locale = useLocale();
   const router = useRouter();
+  const { formData, setFormData } = useProjectForm();
   const [services, setServices] = useState<Service[]>([]);
-  const [category, setCategory] = useState('');
-  const [postcode, setPostcode] = useState('');
-  const [executionDate, setExecutionDate] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Local state that syncs with context
+  const category = formData.category;
+  const postcode = formData.postcode;
+  const executionDate = formData.executionDate;
+
+  const setCategory = (value: string) => setFormData({ category: value });
+  const setPostcode = (value: string) => setFormData({ postcode: value });
+  const setExecutionDate = (value: string) => setFormData({ executionDate: value });
 
   // Fetch services from backend
   useEffect(() => {
@@ -49,19 +59,26 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
     fetchServices();
   }, [preselectedService, locale]);
 
-  const executionDates = [
-    t('executionDate1'),
-    t('executionDate2'),
-    t('executionDate3'),
-    t('executionDate4'),
-    t('executionDate5'),
-    t('executionDate6')
-  ];
+  // Auto-select service when in service mode
+  useEffect(() => {
+    if (mode === 'service' && preselectedService && services.length > 0) {
+      const preselected = services.find((s: Service) => s.slug === preselectedService);
+      if (preselected && !category) {
+        setCategory(preselected.slug);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, preselectedService, services]);
+
+  const executionDates = EXECUTION_DATE_OPTIONS.map((opt, index) => ({
+    value: opt.value,
+    label: t(`executionDate${index + 1}`),
+  }));
 
   const handleStartProject = async () => {
     // Validate category selection
     if (!category) {
-      alert(t('selectCategoryAlert'));
+      toast.error(t('selectCategoryAlert'));
       return;
     }
 
@@ -100,11 +117,12 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
       // Store session token in localStorage
       localStorage.setItem('projectSessionToken', data.sessionToken);
 
-      // Redirect to questionnaire with draft ID
+      // Form data is already in context, no need to store separately
+      // Just redirect to questionnaire with draft ID
       router.push(`/create-project?draft=${data.draftId}`);
     } catch (error) {
       console.error('Error starting project:', error);
-      alert(t('errorAlert'));
+      toast.error(t('errorAlert'));
     } finally {
       setIsLoading(false);
     }
@@ -202,11 +220,11 @@ export default function ProjectForm({ mode = 'home', preselectedService }: Proje
               <SelectContent>
                 {executionDates.map((date) => (
                   <SelectItem
-                    key={date}
-                    value={date}
+                    key={date.value}
+                    value={date.value}
                     className='font-montserrat'
                   >
-                    {date}
+                    {date.label}
                   </SelectItem>
                 ))}
               </SelectContent>

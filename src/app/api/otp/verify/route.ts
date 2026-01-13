@@ -130,6 +130,7 @@ export async function POST(request: NextRequest) {
         success: true,
         message: 'Phone verified and project created successfully',
         projectId,
+        accessToken,
       });
     } catch (conversionError) {
       console.error('Error calling convert function:', conversionError);

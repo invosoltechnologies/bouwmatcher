@@ -176,7 +176,10 @@
       "oauthFailed": "OAuth authenticatie mislukt. Probeer het opnieuw.",
       "profileCreationFailed": "Kon profiel niet aanmaken. Neem contact op met support.",
       "oauthCallbackFailed": "Er ging iets mis tijdens het inloggen. Probeer het opnieuw.",
-      "genericError": "Er is een fout opgetreden tijdens het inloggen."
+      "genericError": "Er is een fout opgetreden tijdens het inloggen.",
+      "logoutSuccess": "Succesvol uitgelogd",
+      "logoutError": "Kon niet uitloggen. Probeer het opnieuw.",
+      "loggingOut": "Bezig met uitloggen..."
     },
     "register": {
       "steps": {
@@ -325,6 +328,7 @@
         "additionalInfo": "Je kunt altijd meer vakgebieden/type je wilt ontvangen.",
         "yourCategories": "Jouw vakgebieden:",
         "searchPlaceholder": "Zoek opdrachttypes...",
+        "selected": "geselecteerd",
         "selectedLabel": "geselecteerd",
         "deselectAll": "Alles deselecteren",
         "selectAll": "Alles selecteren",
@@ -416,7 +420,7 @@
       "hero": {
         "heading": "FAQ voor",
         "headingAccent": "klanten",
-        "description":"FAQ voor specialisten • FAQ voor klanten",
+        "description": "FAQ voor specialisten • FAQ voor klanten",
         "ctaButton1": "FAQ voor specialisten",
         "ctaButton2": "FAQ voor klanten"
       },
@@ -648,10 +652,8 @@
       "section1List8": "Diensten: de door Bouwmatcher aangeboden matchingdiensten tussen Gebruikers en Leveranciers.",
       "section1List9": "Partner: bedrijven of organisaties die met Bouwmatcher een samenwerkingsverband aangaan buiten het leverancierscontract.",
       "section1Outro": "Review: een beoordeling van een Leverancier door een Gebruiker.",
-
       "section2Title": "2. Voorwerp van het contract",
       "section2Para1": "Bouwmatcher stelt een online platform ter beschikking dat fungeert als bemiddelaar tussen Gebruikers en Leveranciers. Bouwmatcher is geen partij bij de overeenkomsten die tussen hen tot stand komen en draagt geen verantwoordelijkheid voor de uitvoering, naleving of kwaliteit ervan. Bouwmatcher biedt geen garantie op het aantal offertes, de kwaliteit van Leveranciers of de uiteindelijke uitvoering van de werken.",
-
       "section3Title": "3. Inschrijving en accountbeheer",
       "section3List1": "Een Gebruiker registreert zich door het indienen van een Offerteaanvraag.",
       "section3List2": "Een Leverancier registreert zich via een Bestelbon of via het Extranet.",
@@ -663,7 +665,6 @@
       "section4List2": "Offerteaanvragen uitsluitend worden gedaan met een reële aankoopintentie;",
       "section4List3": "aanvragen niet louter worden gebruikt om offertes van concurrenten te vergelijken zonder intentie tot aankoop.",
       "section4Para1": "De Gebruiker is aansprakelijk voor de juistheid van alle door hem verstrekte gegevens.",
-
       "section5Title": "5. Verplichtingen van Leveranciers",
       "section5Intro": "De Leverancier verbindt zich ertoe:",
       "section5List1": "Offerteaanvragen binnen 48 uur na ontvangst op te volgen;",
@@ -672,7 +673,6 @@
       "section5List4": "respectvol en professioneel te communiceren met Gebruikers;",
       "section5List5": "de kwaliteit en uitvoering van zijn diensten te waarborgen.",
       "section5Para1": "Bouwmatcher kan sancties opleggen of accounts schorsen bij herhaaldelijke klachten of schendingen van deze voorwaarden.",
-
       "section6Title": "6. Vergoeding en betaling",
       "section6List1": "Voor Gebruikers zijn de diensten van Bouwmatcher kosteloos.",
       "section6List2": "Leveranciers betalen een vergoeding via Creditpacks of via facturatie.",
@@ -680,7 +680,6 @@
       "section6List4": "Facturen zijn betaalbaar via domiciliëring of automatische incasso, tenzij schriftelijk anders overeengekomen.",
       "section6List5": "Bij wanbetaling kan Bouwmatcher de toegang tot het Extranet opschorten.",
       "section6List6": "Laattijdige betalingen geven aanleiding tot 1% nalatigheidsintrest per maand, vermeerderd met een forfaitaire schadevergoeding van 15% van het openstaande bedrag (minimum €50).",
-
       "section7Title": "7. Protesten en retourbeleid",
       "section7Para1": "Een Leverancier kan binnen tien (10) kalenderdagen na ontvangst van een Offerteaanvraag een Protest indienen via het Extranet. Protesten zijn enkel geldig indien:",
       "section7List1": "de Gebruiker geen reële aankoopintentie heeft;",
@@ -688,41 +687,32 @@
       "section7List3": "de aanvraag buiten de vooraf overeengekomen criteria valt;",
       "section7List4": "de aanvraag identiek is aan een reeds eerder ontvangen aanvraag binnen twee weken.",
       "section7Para2": "Bouwmatcher beslist autonoom en finaal over de gegrondheid van een Protest. Bij goedkeuring wordt compensatie uitsluitend toegekend in de vorm van credits.",
-
       "section8Title": "8. Reviews en feedback",
       "section8List1": "Reviews moeten eerlijk, respectvol en gebaseerd zijn op eigen ervaring.",
       "section8List2": "Bouwmatcher kan reviews verwijderen die ongepast, misleidend of beledigend zijn.",
       "section8List3": "Het plaatsen van valse of gemanipuleerde reviews is verboden.",
       "section8List4": "Leveranciers kunnen gemotiveerde verzoeken tot verwijdering van een review indienen.",
-
       "section9Title": "9. Intellectueel eigendom",
       "section9List1": "Alle intellectuele eigendomsrechten verbonden aan het platform, de software, logo’s, teksten, beelden en ontwerpen behoren uitsluitend toe aan Bouwmatcher.",
       "section9List2": "Het is verboden deze zonder voorafgaande schriftelijke toestemming te gebruiken, kopiëren of verspreiden.",
       "section9Para1": "Gebruikers en Leveranciers behouden de rechten op eigen geplaatste inhoud, maar verlenen Bouwmatcher een beperkte, niet-exclusieve licentie om deze te gebruiken voor promotie- en publicatiedoeleinden.",
-
       "section10Title": "10. Aansprakelijkheid",
       "section10List1": "Bouwmatcher is niet aansprakelijk voor schade die voortvloeit uit overeenkomsten of transacties tussen Gebruikers en Leveranciers.",
       "section10List2": "Bouwmatcher garandeert geen continuïteit, minimum aantal offertes of kwaliteit van de aangeboden diensten.",
       "section10Para1": "Storingen van het internet, virussen, technische defecten of fouten in de gegevens vallen niet onder de aansprakelijkheid van Bouwmatcher.",
-
       "section11Title": "11. Overmacht",
       "section11Para1": "Bouwmatcher kan niet aansprakelijk worden gesteld voor tekortkomingen door omstandigheden buiten haar redelijke controle, waaronder maar niet beperkt tot netwerkstoringen, stakingen, natuurrampen, pandemieën of overheidsmaatregelen.",
-
       "section12Title": "12. Duur, opschorting en beëindiging",
       "section12List1": "Bouwmatcher kan het Contract met onmiddellijke ingang beëindigen bij wanbetaling, fraude, misbruik of schending van deze voorwaarden.",
       "section12List2": "Reeds betaalde bedragen worden niet teruggestort.",
       "section12List3": "Leveranciers kunnen hun contract beëindigen met een opzegtermijn van twee (2) weken.",
       "section12Para1": "Bouwmatcher kan accounts tijdelijk of definitief schorsen bij vermoeden van fraude of misbruik.",
-
       "section13Title": "13. Bescherming van persoonsgegevens",
       "section13Para1": "Bouwmatcher verwerkt persoonsgegevens conform haar Privacybeleid en Cookiebeleid, gepubliceerd op de website. Gebruikers en Leveranciers hebben recht op inzage, rectificatie en verwijdering van hun gegevens. Klachten kunnen worden ingediend bij de Gegevensbeschermingsautoriteit.",
-
       "section14Title": "14. Wijzigingen van de voorwaarden",
       "section14Para1": "Bouwmatcher behoudt zich het recht voor deze Algemene Voorwaarden te allen tijde te wijzigen. De gewijzigde voorwaarden worden gepubliceerd op de website en zijn bindend vanaf de datum van publicatie. Het verder gebruik van het platform geldt als aanvaarding van de nieuwe voorwaarden.",
-
       "section15Title": "15. Toepasselijk recht en bevoegde rechtbank",
       "section15Para1": "Op deze Algemene Voorwaarden is uitsluitend Belgisch recht van toepassing. Geschillen behoren tot de exclusieve bevoegdheid van de rechtbanken van Leuven. Partijen verbinden zich ertoe eerst te trachten geschillen minnelijk te regelen.",
-
       "section16Title": "16. Contactgegevens"
     },
     "cookies": {
@@ -738,16 +728,76 @@
       "section3Title": "3. Overzicht van gebruikte cookies",
       "section3Para1": "Voor een volledig overzicht van alle cookies die wij gebruiken, kun je terecht in je cookievoorkeuren. Hier kun je ook je toestemming wijzigen of intrekken.",
       "cookieTable": {
-        "header": ["Cookie", "Type", "Uitgever", "Doel / Functie", "Bewaartermijn"],
-        "phpsessid": ["PHPSESSID", "Functioneel", "Bouwmatcher", "Houdt sessie-informatie bij zodat formulieren werken.", "Sessie"],
-        "cookieConsent": ["CookieConsent", "Functioneel", "Bouwmatcher", "Onthoudt jouw cookie-instellingen.", "1 jaar"],
-        "ga": ["_ga", "Analytisch", "Google Analytics", "Analyseert bezoekersgedrag en websitegebruik.", "2 jaar"],
-        "gid": ["_gid", "Analytisch", "Google Analytics", "Analyseert bezoekersgedrag en websitegebruik.", "24 uur"],
-        "fbp": ["_fbp", "Marketing", "Facebook / Meta", "Houdt bij welke pagina's je bezoekt voor statistieken.", "3 maanden"],
-        "fr": ["fr", "Marketing", "Facebook / Meta", "Toont relevante advertenties op Facebook & Instagram.", "3 maanden"],
-        "liSugr": ["li_sugr", "Marketing", "LinkedIn", "Browser-ID cookie voor LinkedIn Ads.", "90 dagen"],
-        "bcookie": ["bcookie", "Marketing", "LinkedIn", "Gebruikt voor advertentietargeting.", "1 jaar"],
-        "uetvid": ["_uetvid", "Marketing", "Microsoft Ads", "Helpt advertenties af te stemmen op jouw interesses.", "13 maanden"]
+        "header": [
+          "Cookie",
+          "Type",
+          "Uitgever",
+          "Doel / Functie",
+          "Bewaartermijn"
+        ],
+        "phpsessid": [
+          "PHPSESSID",
+          "Functioneel",
+          "Bouwmatcher",
+          "Houdt sessie-informatie bij zodat formulieren werken.",
+          "Sessie"
+        ],
+        "cookieConsent": [
+          "CookieConsent",
+          "Functioneel",
+          "Bouwmatcher",
+          "Onthoudt jouw cookie-instellingen.",
+          "1 jaar"
+        ],
+        "ga": [
+          "_ga",
+          "Analytisch",
+          "Google Analytics",
+          "Analyseert bezoekersgedrag en websitegebruik.",
+          "2 jaar"
+        ],
+        "gid": [
+          "_gid",
+          "Analytisch",
+          "Google Analytics",
+          "Analyseert bezoekersgedrag en websitegebruik.",
+          "24 uur"
+        ],
+        "fbp": [
+          "_fbp",
+          "Marketing",
+          "Facebook / Meta",
+          "Houdt bij welke pagina's je bezoekt voor statistieken.",
+          "3 maanden"
+        ],
+        "fr": [
+          "fr",
+          "Marketing",
+          "Facebook / Meta",
+          "Toont relevante advertenties op Facebook & Instagram.",
+          "3 maanden"
+        ],
+        "liSugr": [
+          "li_sugr",
+          "Marketing",
+          "LinkedIn",
+          "Browser-ID cookie voor LinkedIn Ads.",
+          "90 dagen"
+        ],
+        "bcookie": [
+          "bcookie",
+          "Marketing",
+          "LinkedIn",
+          "Gebruikt voor advertentietargeting.",
+          "1 jaar"
+        ],
+        "uetvid": [
+          "_uetvid",
+          "Marketing",
+          "Microsoft Ads",
+          "Helpt advertenties af te stemmen op jouw interesses.",
+          "13 maanden"
+        ]
       },
       "section4Title": "4. Cookies beheren of verwijderen",
       "section4Para1": "Je kan je voorkeuren op elk moment aanpassen via de cookie-instellingen onderaan onze website.",
@@ -764,9 +814,29 @@
     "saving": "Opslaan...",
     "loading": "Laden...",
     "locationHeading": "Wat is de projectlocatie?",
+    "contactHeading": "Vul hier jouw gegevens in",
     "useCurrentLocation": "Gebruik mijn huidige locatie",
     "loadingLocation": "Locatie ophalen...",
-    "errorLoadingQuestions": "Er is een fout opgetreden bij het laden van de vragen."
+    "errorLoadingQuestions": "Er is een fout opgetreden bij het laden van de vragen.",
+    "otpVerification": {
+      "heading": "Verifieer jouw telefoonnummer",
+      "description": "Er is zojuist een SMS met een 6-cijferige code verzonden naar",
+      "enterCode": "Voer de code in",
+      "resendCode": "Code niet ontvangen?",
+      "resendButton": "Opnieuw verzenden",
+      "submitButton": "Ontvang offertes",
+      "previousButton": "Vorige",
+      "resendingCode": "Code verzenden...",
+      "submitting": "Verzenden...",
+      "invalidCode": "Ongeldige code. Probeer het opnieuw.",
+      "codeSent": "Code verzonden!",
+      "verificationFailed": "Verificatie mislukt. Probeer het opnieuw.",
+      "resendTimer": "Opnieuw verzenden over {seconds} seconden",
+      "codeExpired": "Code verlopen. Vraag een nieuwe code aan.",
+      "invalidPhone": "Ongeldig telefoonnummer",
+      "verificationSuccess": "Telefoonnummer geverifieerd!"
+    },
+    "requiredFieldsError": "Vul alle velden in"
   },
   "common": {
     "topbar": {
@@ -1140,7 +1210,11 @@
         "quotationCard": {
           "locked": "Vergrendeld",
           "photos": "foto's",
-          "notAvailable": "Niet meer beschikbaar"
+          "notAvailable": "Niet meer beschikbaar",
+          "assignmentStatus": {
+            "assignedToMe": "Aan mij toegewezen",
+            "acquiredByAnother": "Verworven door ander"
+          }
         },
         "sidebar": {
           "reviewsTitle": "Hoe ontvang ik reviews van tevreden klanten?",
@@ -1172,6 +1246,7 @@
         },
         "leadDetails": {
           "loading": "Lead details laden...",
+          "backToOverview": "Terug naar overzicht",
           "verificationRequired": "Verificatie vereist",
           "verificationMessage": "Je moet geverifieerd zijn om lead details te bekijken. Voltooi de verificatie om toegang te krijgen tot interessante aanvragen.",
           "verificationButton": "Verificatie voltooien",
@@ -1224,8 +1299,337 @@
           "cancel": "Annuleren",
           "proceed": "Doorgaan naar betaling",
           "loading": "Bezig met laden..."
+        },
+        "leadDetailsSidebar": {
+          "projectStatusTitle": "Offerteaanvraag status",
+          "currentStatus": "Projectstatus:",
+          "statusPendingQuotes": "Status bijwerken",
+          "statusSpecialistSelected": "Offerte verstuurd",
+          "statusAssignedToMe": "Aan mij toegewezen",
+          "statusInProgress": "Werkzaamheden gestart",
+          "statusCompleted": "Project afgerond",
+          "statusUnknown": "Project geannuleerd",
+          "noteTitle": "Let op:",
+          "noteDescription": "Er kan een review gevraagd worden als een project is afgerond.",
+          "reviewsTitle": "Hoe ontvang ik reviews van tevreden klanten?",
+          "step1Title": "Reageer binnen 8 uur",
+          "step1Description": "Neem snel contact op met de klant",
+          "step2Title": "Bel eerst, mail kort",
+          "step2Description": "Stuur een samenvatting met volgende stappen",
+          "step3Title": "Status bijwerken & review vragen",
+          "step3Description": "Houd je klanten op de hoogte van de voortgang",
+          "tipsTitle": "Tips",
+          "tip1": "Neem binnen 8 uur contact op",
+          "tip2": "Bel indien mogelijk; anders een korte e-mail",
+          "tip3": "Volg teeds op door de status bij te werken.",
+          "helpTitle": "Hulp nodig?",
+          "helpDescription": "Ons support team staat klaar om je te helpen met al je vragen over offerteaanvragen.",
+          "contactButton": "Contact opnemen"
         }
       }
+    },
+    "adminDashboard": {
+      "navigation": {
+        "dashboard": "Dashboard",
+        "professionals": "Professionals",
+        "companies": "Bedrijven",
+        "verification": "Verificatie",
+        "reviews": "Reviews",
+        "projects": "Projecten",
+        "service-categories": "Servicecategorieën",
+        "service-pages": "Servicepagina's",
+        "home": "Home",
+        "logout": "Uitloggen"
+      },
+      "adminBadge": "Admin",
+      "pages": {
+        "dashboard": {
+          "title": "Admin Dashboard",
+          "description": "Overzicht van platformstatistieken en recente activiteit"
+        },
+        "professionals": {
+          "title": "Professionals Beheer",
+          "description": "Beheer professionele profielen en verificatie"
+        },
+        "companies": {
+          "title": "Bedrijven Beheer",
+          "description": "Beheer bedrijfsprofielen en verificatie"
+        },
+        "verification": {
+          "title": "Verificatiewachtrij",
+          "description": "Bekijk en keur openstaande verificaties goed"
+        },
+        "reviews": {
+          "title": "Reviews Beheer",
+          "description": "Monitor en modereer gebruikersbeoordelingen"
+        },
+        "projects": {
+          "title": "Projecten Beheer",
+          "description": "Bekijk en beheer alle platformprojecten"
+        },
+        "service-categories": {
+          "title": "Servicecategorieën",
+          "description": "Beheer servicecategorieën en subcategorieën"
+        },
+        "service-categories-form": {
+          "title": "Categorieformulier",
+          "description": "Maak of bewerk een servicecategorie"
+        },
+        "service-pages": {
+          "title": "Servicepagina's",
+          "description": "Maak en beheer servicepagina's voor elke categorie"
+        },
+        "page-builder": {
+          "title": "Servicepagina Bouwer",
+          "description": "Ontwerp en bewerk servicepagina-inhoud"
+        }
+      },
+      "categoryForm": {
+        "createTitle": "Nieuwe categorie toevoegen",
+        "editTitle": "Categorie bewerken",
+        "createDescription": "Maak een nieuwe servicecategorie aan met subcategorieën en vragen",
+        "editDescription": "Wijzig de gegevens van de servicecategorie",
+        "step1": {
+          "title": "Categorie informatie",
+          "description": "Voer de basisinformatie in voor de nieuwe servicecategorie",
+          "categoryNameNl": "Categorie naam (Nederlands)",
+          "categoryNameNlPlaceholder": "Bijv. Afbraakwerken",
+          "categoryNameEn": "Categorie naam (Engels)",
+          "categoryNameEnPlaceholder": "Bijv. Demolition",
+          "slug": "Slug",
+          "slugPlaceholder": "afbraakwerken",
+          "slugHelp": "Wordt automatisch gegenereerd, maar kan aangepast worden. Mag geen spaties bevatten.",
+          "rootQuestionTitle": "Hoofdvraag",
+          "rootQuestionDescription": "Deze vraag wordt als eerste aan gebruikers getoond, met subcategorieën als antwoordopties",
+          "rootQuestionNl": "Hoofdvraag (Nederlands)",
+          "rootQuestionEn": "Hoofdvraag (Engels)",
+          "rootQuestionNlPlaceholder": "Bijv. Wat voor type afbraakwerken zoek je?",
+          "rootQuestionEnPlaceholder": "Bijv. What type of demolition work are you looking for?",
+          "icon": "Icoon (optioneel)",
+          "iconUpload": "Upload icoon",
+          "iconFormats": "PNG, JPG of SVG (max 2MB)",
+          "iconRemove": "Verwijderen",
+          "iconCurrent": "Huidige icoon",
+          "required": "Verplicht veld",
+          "fillAllFields": "Vul alle verplichte velden in",
+          "categoryUpdated": "Categorie bijgewerkt",
+          "categoryCreated": "Categorie aangemaakt",
+          "slugExists": "Een categorie met deze slug bestaat al. Kies een andere slug.",
+          "error": "Er is een fout opgetreden. Probeer het opnieuw.",
+          "fileTypeError": "Alleen PNG, JPG en SVG bestanden zijn toegestaan",
+          "fileSizeError": "Bestand is te groot. Maximum grootte is 2MB"
+        },
+        "step2": {
+          "title": "Subcategorieën & Vragen",
+          "description": "Voeg subcategorieën toe met bijbehorende vragen voor gebruikers",
+          "nameNl": "Naam (Nederlands)",
+          "nameNlPlaceholder": "Bijv. Volledige sloop woning/gebouw",
+          "nameEn": "Naam (Engels)",
+          "nameEnPlaceholder": "Bijv. Complete demolition house/building",
+          "slug": "Slug",
+          "slugHelp": "Automatisch gegenereerd, maar aanpasbaar. Mag geen spaties bevatten.",
+          "descriptionNl": "Beschrijving (Nederlands)",
+          "descriptionNlPlaceholder": "Optionele beschrijving...",
+          "descriptionEn": "Beschrijving (Engels)",
+          "descriptionEnPlaceholder": "Optional description...",
+          "priceB2C": "Prijs B2C (Particulier)",
+          "priceB2B": "Prijs B2B (Zakelijk)",
+          "questions": "Vragen voor deze subcategorie",
+          "questionsDescription": "Voeg vragen toe die gebruikers moeten beantwoorden voor deze dienst",
+          "addQuestion": "Vraag toevoegen",
+          "addFirstQuestion": "Eerste vraag toevoegen",
+          "noQuestionsYet": "Nog geen vragen toegevoegd",
+          "addSubcategory": "Subcategorie toevoegen",
+          "newSubcategory": "Nieuwe subcategorie",
+          "question": "Vraag",
+          "questionTextNl": "Vraag tekst (Nederlands)",
+          "questionTextNlPlaceholder": "Bijv. Hoe groot is het project?",
+          "questionTextEn": "Vraag tekst (Engels)",
+          "questionTextEnPlaceholder": "E.g. How large is the project?",
+          "questionType": "Type",
+          "radio": "Radio (één keuze)",
+          "checkbox": "Checkbox (meerdere keuzes)",
+          "text": "Tekst invoer",
+          "textarea": "Tekstvak",
+          "select": "Dropdown",
+          "date": "Datum",
+          "required": "Verplicht veld",
+          "answerOptions": "Antwoord opties",
+          "addOption": "Optie toevoegen",
+          "labelNl": "Label NL",
+          "labelEn": "Label EN",
+          "clickToAdd": "Klik op \"Optie toevoegen\" om antwoord opties toe te voegen",
+          "minOneSubcategory": "Voeg minimaal één subcategorie toe",
+          "fillAllRequired": "Vul alle verplichte velden in",
+          "pricesGreaterThanZero": "Prijzen moeten groter zijn dan 0",
+          "minOneQuestion": "Voeg minimaal één vraag toe",
+          "minTwoOptions": "Voeg minimaal 2 opties toe",
+          "fillBothLabels": "Vul beide labels in",
+          "allCreated": "Alle subcategorieën succesvol aangemaakt!",
+          "subcategoryExists": "Een subcategorie met deze slug bestaat al. Pas de slug aan.",
+          "savingError": "Er is een fout opgetreden bij het opslaan. Probeer het opnieuw.",
+          "saveCategory": "Categorie opslaan",
+          "subcategoryCard": {
+            "newSubcategory": "Nieuwe subcategorie",
+            "question": "vraag",
+            "questions": "vragen",
+            "nameNl": "Naam (Nederlands)",
+            "nameNlPlaceholder": "Bijv. Volledige sloop woning/gebouw",
+            "nameEn": "Naam (Engels)",
+            "nameEnPlaceholder": "Bijv. Complete demolition house/building",
+            "slug": "Slug",
+            "slugPlaceholder": "volledige-sloop-woning-gebouw",
+            "slugHelp": "Automatisch gegenereerd, maar aanpasbaar. Mag geen spaties bevatten.",
+            "descriptionNl": "Beschrijving (Nederlands)",
+            "descriptionNlPlaceholder": "Optionele beschrijving...",
+            "descriptionEn": "Beschrijving (Engels)",
+            "descriptionEnPlaceholder": "Optional description...",
+            "priceB2C": "Prijs B2C (Particulier)",
+            "priceB2B": "Prijs B2B (Zakelijk)",
+            "questionsTitle": "Vragen voor deze subcategorie",
+            "questionsDescription": "Voeg vragen toe die gebruikers moeten beantwoorden voor deze dienst",
+            "addQuestion": "Vraag toevoegen",
+            "noQuestions": "Nog geen vragen toegevoegd",
+            "addFirstQuestion": "Eerste vraag toevoegen"
+          },
+          "questionFieldset": {
+            "question": "Vraag",
+            "questionTextNl": "Vraag tekst (Nederlands)",
+            "questionTextNlPlaceholder": "Bijv. Hoe groot is het project?",
+            "questionTextEn": "Vraag tekst (Engels)",
+            "questionTextEnPlaceholder": "E.g. How large is the project?",
+            "type": "Type",
+            "typeRadio": "Radio (één keuze)",
+            "typeCheckbox": "Checkbox (meerdere keuzes)",
+            "typeText": "Tekst invoer",
+            "typeTextarea": "Tekstvak",
+            "typeSelect": "Dropdown",
+            "typeDate": "Datum",
+            "required": "Verplicht veld",
+            "optionsTitle": "Antwoord opties",
+            "addOption": "Optie toevoegen",
+            "labelNl": "Label NL",
+            "labelEn": "Label EN",
+            "noOptions": "Klik op \"Optie toevoegen\" om antwoord opties toe te voegen"
+          }
+        },
+        "navigation": {
+          "cancel": "Annuleren",
+          "previous": "Vorige",
+          "next": "Volgende",
+          "complete": "Voltooien",
+          "saving": "Opslaan...",
+          "loading": "Laden..."
+        },
+        "progress": {
+          "categoryInfo": "Categorie informatie",
+          "subcategoriesQuestions": "Subcategorieën & Vragen"
+        }
+      },
+      "stats": {
+        "totalProfessionals": "Totaal professionals",
+        "newLeads": "Nieuwe leads (30d)",
+        "newLeadsChange": "+23 versus vorige maand",
+        "verificationRate": "Verificatiepercentage",
+        "verificationRateDetails": "150 van 175 goedgekeurd",
+        "averageRating": "Gemiddelde beoordeling",
+        "averageRatingDetails": "Uit 1.234 beoordelingen",
+        "blockedProfessionals": "Geblokkeerde professionals",
+        "blockedProfessionalsChange": "+1 deze week",
+        "moderationQueue": "Moderatiewachtrij",
+        "moderationQueueDetails": "Heeft aandacht nodig",
+        "activeProjects": "Actieve projecten",
+        "pendingVerifications": "Wachtende verificaties",
+        "serviceCategories": "Servicecategorieën"
+      },
+      "recentProfessionals": "Recente professionals",
+      "recentProfessionalsDesc": "Laatst geregistreerde professionals",
+      "tableHeaders": {
+        "professional": "Professional",
+        "categories": "Categorieën",
+        "status": "Status",
+        "rating": "Beoordeling",
+        "registered": "Geregistreerd",
+        "actions": "Acties",
+        "searchPlaceholder": "Zoeken..."
+      },
+      "status": {
+        "verified": "Geverifieerd",
+        "pending": "In afwachting",
+        "in_review": "In beoordeling",
+        "unverified": "Niet geverifieerd",
+        "rejected": "Afgewezen",
+        "suspended": "Geschorst"
+      },
+      "viewProfile": "Bekijken",
+      "verify": "Verifiëren",
+      "viewAllProfessionals": "Bekijk alle professionals",
+      "recentReviews": "Recente beoordelingen",
+      "recentReviewsDesc": "Laatst toegevoegde reviews",
+      "viewAllReviews": "Bekijk alle beoordelingen",
+      "reviews": {
+        "title": "Beheer beoordelingen",
+        "pendingCount": "In afwachting",
+        "approvedCount": "Goedgekeurd",
+        "rejectedCount": "Afgewezen",
+        "totalCount": "Totaal",
+        "searchPlaceholder": "Zoeken op bedrijf, professional of beoordelaar...",
+        "tabs": {
+          "pending": "In afwachting",
+          "approved": "Goedgekeurd",
+          "rejected": "Afgewezen",
+          "all": "Alles"
+        },
+        "noReviews": "Geen beoordelingen gevonden",
+        "loading": "Beoordelingen laden...",
+        "pagination": {
+          "previous": "Vorige",
+          "next": "Volgende",
+          "page": "Pagina"
+        },
+        "rejectionModal": {
+          "title": "Beoordeling afwijzen",
+          "description": "Geef een reden op voor het afwijzen van deze beoordeling. De reden wordt opgeslagen voor administratieve doeleinden.",
+          "reasonLabel": "Afwijzingsreden",
+          "reasonPlaceholder": "Leg uit waarom deze beoordeling wordt afgewezen (bijv. ongepast inhoud, spam, beledigende taal, enz.)...",
+          "minCharacters": "minimale karakters vereist",
+          "note": "Deze actie markeert de beoordeling als afgewezen en de reden wordt opgeslagen voor administratieve records.",
+          "confirmButton": "Afwijzing bevestigen",
+          "cancelButton": "Annuleren"
+        },
+        "actions": {
+          "approve": "Goedkeuren",
+          "reject": "Afwijzen",
+          "approved": "Goedgekeurd",
+          "rejected": "Afgewezen"
+        },
+        "messages": {
+          "approveSuccess": "Beoordeling met succes goedgekeurd",
+          "rejectSuccess": "Beoordeling met succes afgewezen",
+          "approveFailed": "Kan beoordeling niet goedkeuren",
+          "rejectFailed": "Kan beoordeling niet afwijzen"
+        },
+        "statusBadges": {
+          "pending": "In afwachting",
+          "approved": "Goedgekeurd",
+          "rejected": "Afgewezen"
+        },
+        "rejectionReason": "Afwijzingsreden",
+        "approvedDate": "Goedgekeurd op"
+      },
+      "serviceCategories": "Servicecategorieën",
+      "serviceCategoriesDesc": "Aantal professionals per categorie",
+      "active": "Actief",
+      "inactive": "Inactief",
+      "professional": "professional",
+      "professionals": "professionals",
+      "viewAllCategories": "Bekijk alle categorieën",
+      "addCategory": "Categorie toevoegen",
+      "popular": "Populair",
+      "lessUsed": "Minder gebruikt",
+      "categoryEdit": "Bewerken",
+      "categoryDelete": "Verwijderen",
+      "viewAll": "Bekijk alles"
     },
     "footer": {
       "description": "Het vertrouwde platform voor het matchen van bouwers en projecten.",
@@ -1249,6 +1653,78 @@
       "cookies": "Cookiebeleid",
       "disclaimer": "Disclaimer",
       "companyNumber": "Ondernemingsnummer - BE 1024.216.268"
+    },
+    "projectStatus": {
+      "title": "Wat is de huidige status van je project?",
+      "loading": "Project gegevens laden...",
+      "status": "Status",
+      "requestedOn": "Aangevraagd op",
+      "errorLoadingProject": "Kon projectgegevens niet laden",
+      "noProjectFound": "Geen project gevonden. Controleer de link en probeer het opnieuw.",
+      "steps": {
+        "waiting": "Wachten op offertes",
+        "selected": "Vakspecialist gekozen",
+        "inProgress": "In uitvoering",
+        "completed": "Project afgerond",
+        "cancelled": "Project geannuleerd"
+      },
+      "updateStatus": "Update projectstatus",
+      "statuses": {
+        "pending_quotes": {
+          "label": "Wachten op offertes",
+          "description": "Ik ben aan het wachten op offertes van vakspecialisten"
+        },
+        "specialist_selected": {
+          "label": "Vakspecialist gekozen",
+          "description": "Ik heb een vakspecialist geselecteerd"
+        },
+        "in_progress": {
+          "label": "In uitvoering",
+          "description": "Het werk is begonnen"
+        },
+        "completed": {
+          "label": "Project afgerond",
+          "description": "Het project is voltooid"
+        },
+        "cancelled": {
+          "label": "Project geannuleerd",
+          "description": "Ik wil deze aanvraag annuleren"
+        }
+      },
+      "buttons": {
+        "back": "Terug",
+        "updateStatus": "Status bijwerken",
+        "updating": "Bijwerken..."
+      },
+      "validation": {
+        "selectStatus": "Selecteer alstublieft een status",
+        "invalidToken": "Ongeldig toegangstoken",
+        "noLeadPurchases": "Ten minste één professional moet deze lead kopen voordat u een specialist selecteert",
+        "notSpecialistSelected": "U moet een specialist selecteren voordat het project in uitvoering kan zijn",
+        "notInProgress": "Het project moet in uitvoering zijn voordat het als voltooid kan worden gemarkeerd"
+      },
+      "errors": {
+        "failedToUpdate": "Kon projectstatus niet bijwerken"
+      },
+      "messages": {
+        "success": "Projectstatus succesvol bijgewerkt!"
+      },
+      "alert": {
+        "title": "Controleer je e-mail voor offertes van specialisten",
+        "description": "Lokale specialisten nemen per e-mail contact met je op. Vergelijk hun offertes om je probleem sneller op te lossen.",
+        "point1": {
+          "title": "Nieuwe offertes komen per e-mail binnen.",
+          "description": "Open je inbox om reacties van specialisten op je aanvraag te zien."
+        },
+        "point2": {
+          "title": "Niets gezien? Check Spam/Reclame en zoek op \"Bouwmatcher\".",
+          "description": "Voeg afzenders toe aan je contacten."
+        },
+        "point3": {
+          "title": "Snel reageren = beter aanbod.",
+          "description": "Stel je vragen of geef je beschikbaarheid door, snelle reacties helpen met lagere prijzen en eerdere planning."
+        }
+      }
     }
   }
 }

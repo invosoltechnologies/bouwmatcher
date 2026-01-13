@@ -222,7 +222,7 @@ export default function SubcategoriesForm({ onNext, onBack }: SubcategoriesFormP
   }
 
   return (
-    <div className='md:custom-container'>
+    <div className='custom-container'>
       {/* Full Screen Loader for saving operations */}
       {isSaving && <Loader fullScreen text={t('saving')} />}
 

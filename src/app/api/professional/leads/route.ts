@@ -63,7 +63,7 @@ export async function GET() {
 
     const subcategoryIds = subscribedSubcategories.map(s => s.subcategory_id);
 
-    // Fetch projects that match subcategories
+    // Fetch projects that match subcategories - INCLUDE ALL STATUSES for comprehensive view
     const { data: projects, error: projectsError } = await supabase
       .from('projects')
       .select(`
@@ -84,14 +84,27 @@ export async function GET() {
         status,
         created_at,
         execution_timing,
+        assigned_professional_id,
         service_categories (
           id,
           name_nl,
           name_en
+        ),
+        service_subcategories (
+          id,
+          name_nl,
+          name_en,
+          price_particulier,
+          price_zakelijk
+        ),
+        project_professionals (
+          professional_id,
+          professional_email
         )
       `)
       .in('subcategory_id', subcategoryIds)
-      .eq('status', 'pending_quotes')
+      .in('status', ['pending_quotes', 'specialist_selected', 'in_progress', 'completed'])
+      .neq('status', 'cancelled')
       .not('latitude', 'is', null)
       .not('longitude', 'is', null)
       .order('created_at', { ascending: false });
@@ -103,6 +116,19 @@ export async function GET() {
         { status: 500 }
       );
     }
+
+    // Get professional's purchased leads
+    const { data: purchases, error: purchasesError } = await supabase
+      .from('professional_lead_purchases')
+      .select('project_id')
+      .eq('professional_id', profile.id);
+
+    if (purchasesError) {
+      console.error('Error fetching purchases:', purchasesError);
+      // Continue without purchases data
+    }
+
+    const purchasedLeadIds = new Set(purchases?.map(p => p.project_id) || []);
 
     // Filter projects by geographic proximity using Haversine formula
     const serviceRadiusKm = profile.service_radius_km || 10;
@@ -123,22 +149,56 @@ export async function GET() {
       );
 
       return distance <= serviceRadiusKm;
-    }).map(project => ({
-      ...project,
-      distance: calculateDistance(
-        professionalLat,
-        professionalLon,
-        parseFloat(project.latitude),
-        parseFloat(project.longitude)
-      )
-    }));
+    }).map(project => {
+      const isPurchased = purchasedLeadIds.has(project.id);
+      const isAssignedToCurrentProfessional = project.assigned_professional_id === profile.id;
+
+      // Determine assignment status
+      let assignmentStatus = 'available';
+      if (project.assigned_professional_id && isAssignedToCurrentProfessional) {
+        assignmentStatus = 'assigned_to_me';
+      } else if (project.assigned_professional_id) {
+        assignmentStatus = 'acquired_by_another';
+      }
+
+      return {
+        ...project,
+        distance: calculateDistance(
+          professionalLat,
+          professionalLon,
+          parseFloat(project.latitude),
+          parseFloat(project.longitude)
+        ),
+        is_locked: !isPurchased,
+        assigned_professional_id: project.assigned_professional_id,
+        assignment_status: assignmentStatus,
+        is_assigned_to_me: isAssignedToCurrentProfessional,
+      };
+    });
 
     // Sort by created_at (newest first)
     matchedLeads.sort((a, b) => {
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
 
-    return NextResponse.json({ leads: matchedLeads });
+    // Separate into locked and unlocked leads
+    const lockedLeads = matchedLeads.filter(
+      lead => lead.is_locked && lead.status === 'pending_quotes'
+    );
+
+    const unlockedLeads = matchedLeads
+      .filter(lead => !lead.is_locked)
+      .map(lead => ({
+        ...lead,
+        // Determine visibility: active if pending_quotes or assigned to current professional
+        isVisibilityActive:
+          lead.status === 'pending_quotes' || lead.is_assigned_to_me,
+      }));
+
+    return NextResponse.json({
+      lockedLeads,
+      unlockedLeads,
+    });
 
   } catch (error) {
     console.error('Error in leads API:', error);

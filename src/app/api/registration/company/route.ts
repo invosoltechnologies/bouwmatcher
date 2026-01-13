@@ -28,6 +28,15 @@ export async function POST(request: NextRequest) {
       country,
       businessIdType,
       businessIdFormatted,
+      // Optional fields from API
+      vatNumber,
+      phone,
+      email,
+      website,
+      employees,
+      description,
+      // Verification source: true if selected from API search results
+      isFromApi = false,
     } = body;
 
     if (!companyName || !kvkNumber || !postalCode || !houseNumber || !street || !city || !country || !businessIdType) {
@@ -66,6 +75,14 @@ export async function POST(request: NextRequest) {
           street_name: street,
           city: city,
           full_address: `${street} ${houseNumber}, ${postalCode} ${city}`,
+          // Additional fields from API
+          vat_number: vatNumber,
+          business_phone: phone,
+          business_email: email,
+          website: website,
+          employee_count: employees ? String(employees) : null,
+          business_description: description,
+          // Standard fields
           created_by: user.id,
           is_active: true,
           verification_status: 'pending',
@@ -86,14 +103,29 @@ export async function POST(request: NextRequest) {
     }
 
     // Link user to company via company_id in professional_profiles
+    // Determine verification status based on whether company was found via API
+    const verificationStatus = isFromApi ? 'verified' : 'pending';
+    const isActive = isFromApi ? true : false;
+
+    // Get user email to populate quotes_email and invoices_email
+    const { data: userEmail } = await supabase
+      .from('professional_profiles')
+      .select('email')
+      .eq('user_id', user.id)
+      .single();
+
     const { error: updateError } = await supabase
       .from('professional_profiles')
       .update({
         company_id: companyId,
-        role_in_company: existingCompany ? 'employee' : 'owner',
+        role_in_company: 'owner',
+        is_verified: verificationStatus,
+        is_active: isActive,
         joined_company_at: new Date().toISOString(),
         profile_completed: true,
         current_step: 6,
+        quotes_email: userEmail?.email || null,
+        invoices_email: userEmail?.email || null,
       })
       .eq('user_id', user.id);
 

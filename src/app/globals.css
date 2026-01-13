@@ -178,8 +178,8 @@
     max-width: 1236px;
     width: 100%;
     margin: 0 auto;
-    padding-left: 24px;
-    padding-right: 24px;
+    /* padding-left: 24px;
+    padding-right: 24px; */
   }
 
   /* Hide scrollbar for horizontal scroll */
@@ -190,5 +190,30 @@
 
   .scrollbar-hide::-webkit-scrollbar {
     display: none;  /* Chrome, Safari and Opera */
+  }
+
+  /* HTML content rendering - paragraph spacing and formatting */
+  .html-content p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  .html-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  .html-content a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  .html-content strong,
+  .html-content b {
+    font-weight: 600;
+  }
+
+  .html-content em,
+  .html-content i {
+    font-style: italic;
   }
 }

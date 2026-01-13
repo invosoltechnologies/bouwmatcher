@@ -81,7 +81,7 @@ export default function AllCategoriesGrid({
                   )}
                 />
               )}
-              <span className='text-base font-medium flex-1'>{getCategoryName(category)}</span>
+              <span className='text-base text-center md:text-left font-medium flex-1'>{getCategoryName(category)}</span>
             </button>
           );
         })}

@@ -9,11 +9,12 @@ export async function GET(
     const supabase = await createClient();
     const { companyId } = await params;
 
-    // Fetch all ratings for the company
+    // Fetch only approved ratings for the company
     const { data: ratings, error: ratingsError } = await supabase
       .from('professional_company_ratings')
       .select('*')
       .eq('company_id', companyId)
+      .eq('approval_status', 'approved')
       .order('created_at', { ascending: false });
 
     if (ratingsError) {
@@ -24,7 +25,7 @@ export async function GET(
       );
     }
 
-    // Fetch aggregate rating from company table (calculated by database trigger)
+    // Fetch aggregate rating from company table
     const { data: companyData, error: companyError } = await supabase
       .from('professional_companies')
       .select('aggregate_rating, total_ratings')
@@ -39,11 +40,21 @@ export async function GET(
       );
     }
 
+    // Fallback: If aggregate_rating is not set in DB, calculate from approved ratings
+    let avgRating = companyData?.aggregate_rating || 0;
+    let totalRatings = companyData?.total_ratings || 0;
+
+    if ((avgRating === 0 || avgRating === null) && ratings && ratings.length > 0) {
+      avgRating = ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length;
+      totalRatings = ratings.length;
+      console.log(`Calculated aggregate from approved ratings: ${avgRating} (${totalRatings} ratings)`);
+    }
+
     return NextResponse.json({
       ratings: ratings || [],
       summary: {
-        averageRating: companyData?.aggregate_rating || 0,
-        totalRatings: companyData?.total_ratings || 0,
+        averageRating: avgRating,
+        totalRatings: totalRatings,
       },
     });
   } catch (error) {
@@ -109,7 +120,7 @@ export async function POST(
           updated_at: new Date().toISOString(),
         })
         .eq('id', ratingId)
-        .eq('rated_by_profile_id', profileData.id)
+        .eq('professional_id', profileData.id)
         .select()
         .single();
 
@@ -127,12 +138,35 @@ export async function POST(
       });
     }
 
+    // Check if professional is trying to rate their own company (prevent self-rating)
+    const { data: companyData } = await supabase
+      .from('professional_companies')
+      .select('id')
+      .eq('id', companyId)
+      .single();
+
+    if (companyData) {
+      // Check if the rater's company matches the company being rated
+      const { data: raterCompany } = await supabase
+        .from('professional_profiles')
+        .select('company_id')
+        .eq('id', profileData.id)
+        .single();
+
+      if (raterCompany?.company_id === companyId) {
+        return NextResponse.json(
+          { error: 'Cannot rate your own company' },
+          { status: 403 }
+        );
+      }
+    }
+
     // Check if user already rated this company
     const { data: existingRating } = await supabase
       .from('professional_company_ratings')
       .select('id')
       .eq('company_id', companyId)
-      .eq('rated_by_profile_id', profileData.id)
+      .eq('professional_id', profileData.id)
       .maybeSingle();
 
     if (existingRating) {
@@ -147,9 +181,10 @@ export async function POST(
       .from('professional_company_ratings')
       .insert({
         company_id: companyId,
-        rated_by_profile_id: profileData.id,
+        professional_id: profileData.id,
         rating,
         review_text: reviewText || null,
+        approval_status: 'pending',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })

@@ -117,7 +117,7 @@ function LoginForm() {
   };
 
   return (
-    <div className='w-full max-w-md md:max-w-lg lg:max-w-xl px-4'>
+    <div className='w-full max-w-md md:max-w-3xl px-4'>
           <h1 className='text-2xl sm:text-3xl md:text-4xl lg:text-[55px] font-normal text-center mb-8 md:mb-12 leading-tight'>
             <span
               style={{
@@ -283,7 +283,7 @@ export default function LoginPage() {
       <AuthNavbar />
 
       <main className='flex-1 flex items-center justify-center px-4 pt-20 md:pt-24 pb-8 md:pb-12'>
-        <Suspense fallback={<div className='w-full max-w-md md:max-w-lg lg:max-w-xl text-center'>Loading...</div>}>
+        <Suspense fallback={<div className='w-full max-w-md md:max-w-3xl lg:max-w-xl text-center'>Loading...</div>}>
           <LoginForm />
         </Suspense>
       </main>

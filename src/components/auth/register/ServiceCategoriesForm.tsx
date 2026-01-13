@@ -256,7 +256,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
   }
 
   return (
-    <div className='md:custom-container'>
+    <div className='custom-container'>
       {/* Full Screen Loader for saving operations */}
       {isSaving && <Loader fullScreen text={t('saving')} />}
 

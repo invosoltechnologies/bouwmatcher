@@ -13,6 +13,7 @@ import QuotationSidebar from './QuotationSidebar';
 import LeadDetailsView from './LeadDetailsView';
 import { useLeads } from '@/lib/hooks/professional/leads';
 import { useAccount } from '@/lib/hooks/professional/account';
+import { useWorkArea } from '@/lib/hooks/professional/account';
 import { Lead } from '@/types/models/lead.model';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
@@ -34,6 +35,9 @@ export default function OfferteaanvragenPageClient() {
   // Fetch account data to check verification status
   const { data: accountData } = useAccount();
 
+  // Fetch work area data
+  const { data: workAreaData } = useWorkArea();
+
   const handleSearch = () => {
     // Search functionality is handled by filtering below
     console.log('Search:', { dateRange, projectType, searchQuery });
@@ -45,18 +49,30 @@ export default function OfferteaanvragenPageClient() {
 
   // Filter and transform leads based on search criteria
   const filteredLeads = useMemo(() => {
-    if (!data?.leads) return [];
+    if (!data) return [];
 
-    let filtered = data.leads;
+    // Combine locked and unlocked leads for filtering
+    const allLeads = [...(data.lockedLeads || []), ...(data.unlockedLeads || [])];
+    let filtered = allLeads;
 
     // Filter by date range
     if (dateRange?.from) {
       filtered = filtered.filter(lead => {
         const leadDate = new Date(lead.created_at);
+
+        // Set start of day for 'from' date
+        const startDate = new Date(dateRange.from!);
+        startDate.setHours(0, 0, 0, 0);
+
         if (dateRange.to) {
-          return leadDate >= dateRange.from! && leadDate <= dateRange.to;
+          // Set end of day for 'to' date
+          const endDate = new Date(dateRange.to);
+          endDate.setHours(23, 59, 59, 999);
+
+          return leadDate >= startDate && leadDate <= endDate;
         }
-        return leadDate >= dateRange.from!;
+
+        return leadDate >= startDate;
       });
     }
 
@@ -78,7 +94,7 @@ export default function OfferteaanvragenPageClient() {
     }
 
     return filtered;
-  }, [data?.leads, dateRange, projectType, searchQuery]);
+  }, [data, dateRange, projectType, searchQuery]);
 
   // Transform leads to quotation request format
   const quotationRequests = useMemo(() => {
@@ -96,10 +112,13 @@ export default function OfferteaanvragenPageClient() {
         title,
         author,
         date,
-        isLocked: true, // All leads are locked by default (need payment to unlock)
+        isLocked: lead.is_locked, // Use the actual locked status from API
         hasPhotos: lead.has_photos,
         photoCount: lead.has_photos ? 3 : 0, // We don't have exact count, using placeholder
         isAvailable: true, // Lead is available if it's in the list
+        assignmentStatus: lead.assignment_status || 'available',
+        projectStatus: lead.status,
+        isVisibilityActive: lead.isVisibilityActive !== false, // Default to true for locked leads
       };
     });
   }, [filteredLeads, locale, dateLocale]);
@@ -120,6 +139,57 @@ export default function OfferteaanvragenPageClient() {
         return quotationRequests;
     }
   }, [quotationRequests, activeTab]);
+
+  // Prepare sidebar data
+  const sidebarData = useMemo(() => {
+    const contactInfo = accountData?.accountData?.contactInfo;
+    const companyInfo = accountData?.accountData?.companyInfo;
+    const accountStatus = accountData?.accountData?.accountStatus;
+    const workArea = workAreaData?.data;
+
+    const accountName = contactInfo?.contactPerson || 'Professional';
+    const location = companyInfo?.companyName || companyInfo?.city || 'Location not set';
+
+    // Format account status
+    let statusText = 'Niet geverifieerd';
+    let statusKey = 'unverified';
+    if (accountStatus) {
+      if (accountStatus.status === 'suspended') {
+        statusText = 'Account geschorst';
+        statusKey = 'suspended';
+      } else if (accountStatus.statusCode === 1) {
+        statusText = 'Geverifieerd';
+        statusKey = 'verified';
+      } else if (accountStatus.statusKey === 'inReview') {
+        statusText = 'In beoordeling';
+        statusKey = 'inReview';
+      } else if (accountStatus.statusCode === 2) {
+        statusText = 'Verificatie in behandeling';
+        statusKey = 'pending';
+      }
+    }
+
+    // Format work area
+    let workAreaText = 'Werkgebied niet ingesteld';
+    if (workArea) {
+      const radius = workArea.service_radius_km;
+      const address = workArea.work_address;
+      const postalCode = workArea.work_postal_code;
+      const city = workArea.work_city;
+
+      if (address || city) {
+        workAreaText = `Radius ${radius} km vanuit ${address || ''} ${postalCode || ''} ${city || ''}`.trim();
+      }
+    }
+
+    return {
+      accountName,
+      location,
+      accountStatus: statusText,
+      accountStatusKey: statusKey,
+      workArea: workAreaText,
+    };
+  }, [accountData, workAreaData]);
 
   // If a lead is selected, show detail view
   if (selectedLeadId) {
@@ -149,8 +219,9 @@ export default function OfferteaanvragenPageClient() {
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
         {/* Main Content */}
         <div className="flex-1 min-w-0">
-          {/* Verification Banner - Only show if not verified (statusCode 1 = verified) */}
-          {accountData?.accountData?.accountStatus?.statusCode !== 1 && (
+          {/* Verification Banner - Show if not verified or suspended */}
+          {(accountData?.accountData?.accountStatus?.statusCode !== 1 ||
+            accountData?.accountData?.accountStatus?.status === 'suspended') && (
             <VerificationBanner />
           )}
 
@@ -223,6 +294,9 @@ export default function OfferteaanvragenPageClient() {
                       hasPhotos={request.hasPhotos}
                       photoCount={request.photoCount}
                       isAvailable={request.isAvailable}
+                      assignmentStatus={request.assignmentStatus}
+                      projectStatus={request.projectStatus}
+                      isVisibilityActive={request.isVisibilityActive}
                     />
                   </div>
                 ))}
@@ -234,10 +308,11 @@ export default function OfferteaanvragenPageClient() {
         {/* Sidebar - Hidden on mobile, shown on desktop */}
         <div className="hidden lg:block lg:w-80 xl:w-96 flex-shrink-0">
           <QuotationSidebar
-            accountName="Alex Militaru"
-            location="Hotspot Amsterdam Noord"
-            accountStatus="Verificatie vereist"
-            workArea="Radius 15 km vanuit Markerplein 1, 1011 MV Amsterdam, Nederland"
+            accountName={sidebarData.accountName}
+            location={sidebarData.location}
+            accountStatus={sidebarData.accountStatus}
+            accountStatusKey={sidebarData.accountStatusKey}
+            workArea={sidebarData.workArea}
           />
         </div>
       </div>

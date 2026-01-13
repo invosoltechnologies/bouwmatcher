@@ -2,8 +2,7 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Rating, RatingButton } from '@/components/ui/shadcn-io/rating';
-import { MapPin, Phone, Mail, Building2 } from 'lucide-react';
+import { MapPin, Phone, Mail, Building2, Star as StarIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { CompanyInfoData, ContactInfoData, CompanyRatingSummary } from '@/lib/types/account';
 import Image from 'next/image';
@@ -17,7 +16,6 @@ interface CompanyHeaderCardProps {
   ratingSummary?: CompanyRatingSummary;
   userRating?: number | null;
   onLogoClick?: () => void;
-  onRatingClick?: () => void;
 }
 
 export default function CompanyHeaderCard({
@@ -27,7 +25,6 @@ export default function CompanyHeaderCard({
   ratingSummary,
   userRating,
   onLogoClick,
-  onRatingClick,
 }: CompanyHeaderCardProps) {
   const t = useTranslations('common.proDashboard.bedrijfsprofiel.header');
   const [isLogoHovered, setIsLogoHovered] = useState(false);
@@ -116,16 +113,16 @@ export default function CompanyHeaderCard({
               </span>
             </div>
             <div className='flex items-center gap-1 mb-2 sm:mb-3 flex-wrap'>
-              <div onClick={onRatingClick} className='cursor-pointer'>
-                <Rating defaultValue={ratingSummary?.averageRating || 0}>
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <RatingButton
-                      className='text-yellow-500'
-                      key={index}
-                      size={18}
-                    />
-                  ))}
-                </Rating>
+              <div className='flex gap-0.5'>
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <div key={index}>
+                    {index < Math.round(ratingSummary?.averageRating || 0) ? (
+                      <StarIcon className='w-5 h-5 fill-yellow-400 text-yellow-400' />
+                    ) : (
+                      <StarIcon className='w-5 h-5 text-gray-300' />
+                    )}
+                  </div>
+                ))}
               </div>
 
               <span className='text-xs sm:text-sm text-muted-foreground ml-1 sm:ml-2'>
@@ -136,24 +133,6 @@ export default function CompanyHeaderCard({
                   : t('noReviews')}
               </span>
             </div>
-
-            {/* Show user's own rating if they have rated */}
-            {userRating && userRating > 0 && (
-              <div className='flex items-center gap-2 mb-2 sm:mb-3 bg-blue-50 rounded-lg p-1.5 sm:p-2'>
-                <span className='text-xs text-primary font-medium'>
-                  {t('yourRating')}
-                </span>
-                <Rating defaultValue={userRating}>
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <RatingButton
-                      className='text-yellow-500 pointer-events-none'
-                      key={index}
-                      size={14}
-                    />
-                  ))}
-                </Rating>
-              </div>
-            )}
 
             {(!ratingSummary || ratingSummary.totalRatings === 0) && (
               <p className='text-xs text-muted-foreground bg-slate-50 rounded-full p-1.5 sm:p-2 inline-block'>
