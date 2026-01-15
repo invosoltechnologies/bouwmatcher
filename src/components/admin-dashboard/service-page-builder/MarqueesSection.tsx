@@ -5,7 +5,7 @@ import { useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { ChevronDown, ChevronUp, Trash2, Plus } from 'lucide-react';
+import { ChevronDown, ChevronUp, Trash2, Plus, Loader2, Check } from 'lucide-react';
 import { MultiSelect } from '@/components/ui/multi-select';
 import {
   useSaveServicePageMarquees,
@@ -152,15 +152,25 @@ export default function MarqueesSection({
   };
 
   return (
-    <Card className='py-0 border border-slate-200 rounded-lg overflow-hidden'>
+    <Card className='border py-0 border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow'>
       {/* Header - Collapsible */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className='w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors'
+        className='w-full flex items-center justify-between p-5 hover:bg-gradient-to-r hover:from-slate-50 hover:to-white transition-all group'
       >
-        <h3 className='text-lg font-semibold text-slate-900'>
-          {locale === 'nl' ? 'Marquee Sectie' : 'Marquee Section'}
-        </h3>
+        <div className='flex items-center gap-3'>
+          <div className='w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors'>
+            <span className='text-lg'>🎯</span>
+          </div>
+          <h3 className='text-lg font-semibold text-slate-900'>
+            {locale === 'nl' ? 'Marquee Sectie' : 'Marquee Section'}
+          </h3>
+          {isEnabled && items.length >= 3 && afterSections.length > 0 && (
+            <span className='text-xs text-green-600 font-medium px-2 py-1 bg-green-50 rounded-full'>
+              ✓ Configured
+            </span>
+          )}
+        </div>
         {isExpanded ? (
           <ChevronUp className='w-5 h-5 text-slate-600' />
         ) : (
@@ -227,9 +237,12 @@ export default function MarqueesSection({
               >
                 {/* Dutch (NL) */}
                 <div className='space-y-2'>
-                  <label className='block text-sm font-medium text-slate-900'>
-                    Nederlands (NL)
-                  </label>
+                  <div className='flex items-center gap-2'>
+                    <span className='text-lg'>🇳🇱</span>
+                    <label className='block text-sm font-medium text-slate-900'>
+                      Nederlands (NL)
+                    </label>
+                  </div>
                   <Input
                     placeholder='Voer tekst in...'
                     value={item.text_nl}
@@ -246,9 +259,12 @@ export default function MarqueesSection({
 
                 {/* English (EN) */}
                 <div className='space-y-2'>
-                  <label className='block text-sm font-medium text-slate-900'>
-                    English (EN)
-                  </label>
+                  <div className='flex items-center gap-2'>
+                    <span className='text-lg'>🇬🇧</span>
+                    <label className='block text-sm font-medium text-slate-900'>
+                      English (EN)
+                    </label>
+                  </div>
                   <Input
                     placeholder='Enter text...'
                     value={item.text_en}
@@ -302,15 +318,19 @@ export default function MarqueesSection({
                 !items.every((item) => item.text_nl && item.text_en) ||
                 afterSections.length === 0
               }
-              className='gap-2'
+              className='gap-2 px-6 py-2.5 shadow-md hover:shadow-lg transition-all'
             >
-              {saveMutation.isPending
-                ? locale === 'nl'
-                  ? 'Opslaan...'
-                  : 'Saving...'
-                : locale === 'nl'
-                ? 'Opslaan'
-                : 'Save'}
+              {saveMutation.isPending ? (
+                <>
+                  <Loader2 className='w-4 h-4 animate-spin' />
+                  {locale === 'nl' ? 'Opslaan...' : 'Saving...'}
+                </>
+              ) : (
+                <>
+                  <Check className='w-4 h-4' />
+                  {locale === 'nl' ? 'Opslaan' : 'Save'}
+                </>
+              )}
             </Button>
           </div>
         </div>

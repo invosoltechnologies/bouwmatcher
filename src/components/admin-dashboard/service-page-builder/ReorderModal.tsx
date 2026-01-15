@@ -107,7 +107,7 @@ export default function ReorderModal({
           </DialogDescription>
         </DialogHeader>
 
-        <div className='space-y-3 py-4'>
+        <div className='space-y-3 py-4 max-h-[60vh] overflow-y-auto'>
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
