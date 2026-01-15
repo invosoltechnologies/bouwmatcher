@@ -5,7 +5,7 @@ import { useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Loader2, Check } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import TinyMCEEditor from '@/components/ui/tinymce-editor';
 import { useSaveServicePageOverviewTable } from '@/lib/hooks/admin/service-page-overview-tables';
@@ -61,15 +61,25 @@ export default function OverviewTableSection({
   };
 
   return (
-    <Card className='py-0 border border-slate-200 rounded-lg overflow-hidden'>
+    <Card className='border py-0 border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow'>
       {/* Header - Collapsible */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className='w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors'
+        className='w-full flex items-center justify-between p-5 hover:bg-gradient-to-r hover:from-slate-50 hover:to-white transition-all group'
       >
-        <h3 className='text-lg font-semibold text-slate-900'>
-          {locale === 'nl' ? 'Overzichtstafel Sectie' : 'Overview Table Section'}
-        </h3>
+        <div className='flex items-center gap-3'>
+          <div className='w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors'>
+            <span className='text-lg'>📋</span>
+          </div>
+          <h3 className='text-lg font-semibold text-slate-900'>
+            {locale === 'nl' ? 'Overzichtstafel Sectie' : 'Overview Table Section'}
+          </h3>
+          {(contentNl || contentEn) && (
+            <span className='text-xs text-green-600 font-medium px-2 py-1 bg-green-50 rounded-full'>
+              ✓ Configured
+            </span>
+          )}
+        </div>
         {isExpanded ? (
           <ChevronUp className='w-5 h-5 text-slate-600' />
         ) : (
@@ -84,9 +94,12 @@ export default function OverviewTableSection({
           <div className='grid grid-cols-2 gap-6'>
             {/* Dutch (NL) Column */}
             <div className='space-y-4 p-4 bg-white rounded-lg border border-slate-200'>
-              <h4 className='font-semibold text-slate-900 text-sm uppercase tracking-wide'>
-                Nederlands (NL)
-              </h4>
+              <div className='flex items-center gap-2 pb-3 border-b border-slate-100'>
+                <span className='text-xl'>🇳🇱</span>
+                <h4 className='font-semibold text-slate-900 text-sm uppercase tracking-wide'>
+                  Nederlands (NL)
+                </h4>
+              </div>
 
               {/* Heading NL */}
               <div className='space-y-2'>
@@ -139,9 +152,12 @@ export default function OverviewTableSection({
 
             {/* English (EN) Column */}
             <div className='space-y-4 p-4 bg-white rounded-lg border border-slate-200'>
-              <h4 className='font-semibold text-slate-900 text-sm uppercase tracking-wide'>
-                English (EN)
-              </h4>
+              <div className='flex items-center gap-2 pb-3 border-b border-slate-100'>
+                <span className='text-xl'>🇬🇧</span>
+                <h4 className='font-semibold text-slate-900 text-sm uppercase tracking-wide'>
+                  English (EN)
+                </h4>
+              </div>
 
               {/* Heading EN */}
               <div className='space-y-2'>
@@ -198,15 +214,19 @@ export default function OverviewTableSection({
             <Button
               onClick={handleSave}
               disabled={saveMutation.isPending}
-              className='gap-2'
+              className='gap-2 px-6 py-2.5 shadow-md hover:shadow-lg transition-all'
             >
-              {saveMutation.isPending
-                ? locale === 'nl'
-                  ? 'Opslaan...'
-                  : 'Saving...'
-                : locale === 'nl'
-                ? 'Opslaan'
-                : 'Save'}
+              {saveMutation.isPending ? (
+                <>
+                  <Loader2 className='w-4 h-4 animate-spin' />
+                  {locale === 'nl' ? 'Opslaan...' : 'Saving...'}
+                </>
+              ) : (
+                <>
+                  <Check className='w-4 h-4' />
+                  {locale === 'nl' ? 'Opslaan' : 'Save'}
+                </>
+              )}
             </Button>
           </div>
         </div>

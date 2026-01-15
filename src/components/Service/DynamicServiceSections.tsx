@@ -204,6 +204,25 @@ export default function DynamicServiceSections({
           );
         }
 
+        // Special handling for overview_table component
+        if (sectionKey === 'overview_table') {
+          const content = locale === 'nl' ? sectionData.content_nl : sectionData.content_en;
+
+          if (!content || content.trim() === '') {
+            return null;
+          }
+
+          return (
+            <div key={sectionKey}>
+              <ServiceCostTable
+                heading={locale === 'nl' ? sectionData.heading_nl : sectionData.heading_en}
+                description={locale === 'nl' ? sectionData.description_nl : sectionData.description_en}
+                content={content}
+              />
+            </div>
+          );
+        }
+
         // Get component for other section types
         const Component = SECTION_COMPONENTS[sectionKey];
         if (!Component) {

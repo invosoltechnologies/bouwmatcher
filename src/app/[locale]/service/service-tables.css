@@ -231,3 +231,152 @@
   display: block !important;
   width: 100% !important;
 }
+
+/* ============================================ */
+/* Service Overview Table Content Styles */
+/* ============================================ */
+/* Identical to comparison table for consistency */
+
+/* Strip unwanted TinyMCE inline styles */
+.service-overview-table-content table,
+.service-overview-table-content table * {
+  border: none !important;
+  background: none !important;
+}
+
+.service-overview-table-content table {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  margin: 0 auto !important;
+  max-width: 1200px !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Remove TinyMCE wrapper elements */
+.service-overview-table-content td > div,
+.service-overview-table-content td > p {
+  all: unset !important;
+  display: inline !important;
+}
+
+/* Table Header - ONLY if first row has <strong> or <b> inside td */
+.service-overview-table-content table tbody tr:first-child:has(td strong),
+.service-overview-table-content table tbody tr:first-child:has(td b),
+.service-overview-table-content table thead tr {
+  background: linear-gradient(135deg, #0AB27E 0%, #023AA2 100%) !important;
+}
+
+.service-overview-table-content table tbody tr:first-child:has(td strong) td,
+.service-overview-table-content table tbody tr:first-child:has(td b) td,
+.service-overview-table-content table thead th,
+.service-overview-table-content table thead td {
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 18px !important;
+  padding: 20px 24px !important;
+  text-align: left !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+/* Remove bold styling from header row */
+.service-overview-table-content table tbody tr:first-child:has(td strong) td strong,
+.service-overview-table-content table tbody tr:first-child:has(td b) td b,
+.service-overview-table-content table thead td strong,
+.service-overview-table-content table thead td b {
+  font-weight: 600 !important;
+  padding: 0 !important;
+  background: none !important;
+  color: white !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Regular table rows (not header) */
+.service-overview-table-content table tbody tr {
+  transition: background-color 0.2s ease;
+  background: white !important;
+}
+
+.service-overview-table-content table tbody tr:not(:first-child):hover,
+.service-overview-table-content table tbody tr:not(:has(td strong)):not(:has(td b)):first-child:hover {
+  background-color: rgba(10, 178, 126, 0.03) !important;
+}
+
+/* Regular table cells (non-header rows) */
+.service-overview-table-content table tbody tr:not(:first-child) td,
+.service-overview-table-content table tbody tr:not(:has(td strong)):not(:has(td b)):first-child td {
+  padding: 20px 24px !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  color: #374151 !important;
+  vertical-align: middle !important;
+  text-align: left !important;
+  background: transparent !important;
+}
+
+.service-overview-table-content table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+/* Bold text in regular cells (not header) - render as gradient pill badges */
+.service-overview-table-content table tbody tr:not(:first-child) td strong,
+.service-overview-table-content table tbody tr:not(:first-child) td b,
+.service-overview-table-content table tbody tr:not(:has(td strong)):not(:has(td b)):first-child td strong,
+.service-overview-table-content table tbody tr:not(:has(td strong)):not(:has(td b)):first-child td b {
+  display: inline-block !important;
+  padding: 10px 24px !important;
+  border-radius: 9999px !important;
+  background: linear-gradient(135deg, #0AB27E 0%, #023AA2 100%) !important;
+  color: white !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  white-space: nowrap !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Mobile responsiveness for overview table */
+@media (max-width: 768px) {
+  .service-overview-table-content {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .service-overview-table-content table {
+    min-width: 500px;
+    border-radius: 12px !important;
+  }
+
+  .service-overview-table-content table tbody tr:first-child:has(td strong) td,
+  .service-overview-table-content table tbody tr:first-child:has(td b) td,
+  .service-overview-table-content table thead th,
+  .service-overview-table-content table thead td {
+    font-size: 14px !important;
+    padding: 16px 20px !important;
+  }
+
+  .service-overview-table-content table tbody tr:not(:first-child) td,
+  .service-overview-table-content table tbody tr:not(:has(td strong)):not(:has(td b)):first-child td {
+    font-size: 14px !important;
+    padding: 16px 20px !important;
+  }
+
+  .service-overview-table-content table tbody tr:not(:first-child) td strong,
+  .service-overview-table-content table tbody tr:not(:first-child) td b,
+  .service-overview-table-content table tbody tr:not(:has(td strong)):not(:has(td b)):first-child td strong,
+  .service-overview-table-content table tbody tr:not(:has(td strong)):not(:has(td b)):first-child td b {
+    padding: 8px 18px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .service-overview-table-content table {
+    max-width: 100%;
+  }
+}
