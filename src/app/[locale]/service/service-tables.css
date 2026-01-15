@@ -143,3 +143,91 @@
     max-width: 100%;
   }
 }
+
+/* ============================================ */
+/* Service Tips Content Styles */
+/* ============================================ */
+
+/* Remove default list styling */
+.service-tips-content ul {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1rem !important; /* 16px spacing between items on mobile */
+}
+
+/* Desktop spacing */
+@media (min-width: 768px) {
+  .service-tips-content ul {
+    gap: 1.25rem !important; /* 20px spacing between items on desktop */
+  }
+}
+
+/* List item layout */
+.service-tips-content ul li {
+  display: flex !important;
+  gap: 1rem !important; /* 16px gap between bullet and text on mobile */
+  align-items: flex-start !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Desktop gap */
+@media (min-width: 768px) {
+  .service-tips-content ul li {
+    gap: 1.25rem !important; /* 20px gap between bullet and text on desktop */
+  }
+}
+
+/* Custom green bullet point */
+.service-tips-content ul li::before {
+  content: '' !important;
+  display: block !important;
+  width: 0.5rem !important; /* 8px on mobile */
+  height: 0.5rem !important; /* 8px on mobile */
+  border-radius: 50% !important;
+  background-color: #0AB27E !important;
+  flex-shrink: 0 !important;
+  margin-top: 0.5rem !important; /* 8px top margin on mobile */
+}
+
+/* Desktop bullet size */
+@media (min-width: 768px) {
+  .service-tips-content ul li::before {
+    width: 0.75rem !important; /* 12px on desktop */
+    height: 0.75rem !important; /* 12px on desktop */
+    margin-top: 0.75rem !important; /* 12px top margin on desktop */
+  }
+}
+
+/* Paragraph text styling inside list items */
+.service-tips-content ul li p,
+.service-tips-content ul li {
+  color: #6B7280 !important; /* text-muted-foreground */
+  font-size: 0.875rem !important; /* 14px on mobile */
+  line-height: 1.75 !important; /* leading-relaxed */
+  font-weight: 400 !important;
+}
+
+/* Desktop text size */
+@media (min-width: 768px) {
+  .service-tips-content ul li p,
+  .service-tips-content ul li {
+    font-size: 1.125rem !important; /* 18px on desktop */
+  }
+}
+
+/* Remove default paragraph margins */
+.service-tips-content ul li p {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* If there's a wrapper div or p, make it inline */
+.service-tips-content ul li > div,
+.service-tips-content ul li > p {
+  display: block !important;
+  width: 100% !important;
+}
