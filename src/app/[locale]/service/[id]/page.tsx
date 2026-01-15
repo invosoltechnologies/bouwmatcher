@@ -460,6 +460,28 @@ export default async function ServicePage({ params }: ServicePageProps) {
     notFound();
   }
 
+  // Fetch subcategories for this service category
+  let subcategories: any[] = [];
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const subcategoriesUrl = `${baseUrl}/api/service-subcategories?categoryIds=${service.id}`;
+
+    const response = await fetch(subcategoriesUrl, {
+      next: { revalidate: 3600 }, // ISR - revalidate every hour
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      subcategories = data.subcategories || [];
+    }
+  } catch (error) {
+    console.error('[SUBCATEGORIES-FETCH-ERROR]', {
+      service: id,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    // Continue with empty array if fetch fails
+  }
+
   // Try to fetch CMS data from public API
   let cmsData: CmsDataResponse | null = null;
   try {
@@ -548,9 +570,33 @@ export default async function ServicePage({ params }: ServicePageProps) {
               description_en: '',
               reviewsItems: architectReviews,
             },
+            // Add subcategories for types section
+            types: cmsData.sections.types ? {
+              ...cmsData.sections.types,
+              typesItems: subcategories,
+            } : {
+              heading_nl: '',
+              heading_en: '',
+              description_nl: '',
+              description_en: '',
+              typesItems: subcategories,
+            },
           }}
           locale={locale}
           trustPills={trustPills}
+          marqueeConfig={
+            cmsData.sections.marquees
+              ? {
+                  isEnabled: ((cmsData.sections.marquees as Record<string, unknown>).is_enabled as boolean) || false,
+                  afterSections: ((cmsData.sections.marquees as Record<string, unknown>).after_sections as string[]) || [],
+                  items: (((cmsData.sections.marquees as Record<string, unknown>).service_page_marquee_items as any[]) || []).map(
+                    (item: Record<string, unknown>) => ({
+                      text: locale === 'nl' ? String(item.text_nl || '') : String(item.text_en || ''),
+                    })
+                  ),
+                }
+              : undefined
+          }
         />
       ) : (
         <>

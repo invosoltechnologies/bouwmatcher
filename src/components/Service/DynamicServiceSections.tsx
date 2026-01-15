@@ -26,11 +26,18 @@ interface TrustPill {
   dotColor: string;
 }
 
+interface MarqueeConfig {
+  isEnabled: boolean;
+  afterSections: string[];
+  items: Array<{ text: string }>;
+}
+
 interface DynamicServiceSectionsProps {
   sectionsConfig: SectionsConfig;
   sectionsData: Record<string, any>;
   locale: string;
   trustPills?: TrustPill[];
+  marqueeConfig?: MarqueeConfig;
 }
 
 // Component mapping for dynamic rendering
@@ -55,6 +62,7 @@ export default function DynamicServiceSections({
   sectionsData,
   locale,
   trustPills,
+  marqueeConfig,
 }: DynamicServiceSectionsProps) {
   if (!sectionsConfig || !sectionsConfig.order) {
     return null;
@@ -74,9 +82,12 @@ export default function DynamicServiceSections({
           return null;
         }
 
+        // Declare rendered section variable
+        let renderedSection: React.ReactNode = null;
+
         // Special handling for banner component
         if (sectionKey === 'banner') {
-          return (
+          renderedSection = (
             <div key={sectionKey}>
               <ServiceBanner
                 serviceName={sectionData.service_name || ''}
@@ -95,10 +106,9 @@ export default function DynamicServiceSections({
             </div>
           );
         }
-
         // Special handling for intro component
-        if (sectionKey === 'intro') {
-          return (
+        else if (sectionKey === 'intro') {
+          renderedSection = (
             <div key={sectionKey}>
               <ServiceIntroduction
                 intro={{
@@ -113,15 +123,14 @@ export default function DynamicServiceSections({
             </div>
           );
         }
-
         // Special handling for FAQ component
-        if (sectionKey === 'faq') {
+        else if (sectionKey === 'faq') {
           const faqItems = (sectionData.service_page_faq_items as any[])?.map((item) => ({
             question: locale === 'nl' ? item.question_nl : item.question_en,
             answer: locale === 'nl' ? item.answer_nl : item.answer_en,
           })) || [];
 
-          return (
+          renderedSection = (
             <div key={sectionKey}>
               <ServiceFAQ
                 heading={locale === 'nl' ? sectionData.heading_nl : sectionData.heading_en}
@@ -131,9 +140,8 @@ export default function DynamicServiceSections({
             </div>
           );
         }
-
         // Special handling for process component
-        if (sectionKey === 'process') {
+        else if (sectionKey === 'process') {
           const steps = (sectionData.service_page_process_steps as any[])?.map((item: any) => {
             const title = locale === 'nl' ? item.heading_nl : item.heading_en;
             return {
@@ -157,7 +165,7 @@ export default function DynamicServiceSections({
             return null;
           }
 
-          return (
+          renderedSection = (
             <div key={sectionKey}>
               <ServiceProcess
                 title={locale === 'nl' ? (sectionData.heading_nl || sectionData.title_nl) : (sectionData.heading_en || sectionData.title_en)}
@@ -167,16 +175,15 @@ export default function DynamicServiceSections({
             </div>
           );
         }
-
         // Special handling for comparison_table component
-        if (sectionKey === 'comparison_table') {
+        else if (sectionKey === 'comparison_table') {
           const content = locale === 'nl' ? sectionData.content_nl : sectionData.content_en;
 
           if (!content || content.trim() === '') {
             return null;
           }
 
-          return (
+          renderedSection = (
             <div key={sectionKey}>
               <ServicePriceComparison
                 heading={locale === 'nl' ? sectionData.heading_nl : sectionData.heading_en}
@@ -186,16 +193,15 @@ export default function DynamicServiceSections({
             </div>
           );
         }
-
         // Special handling for tips component
-        if (sectionKey === 'tips') {
+        else if (sectionKey === 'tips') {
           const content = locale === 'nl' ? sectionData.content_nl : sectionData.content_en;
 
           if (!content || content.trim() === '') {
             return null;
           }
 
-          return (
+          renderedSection = (
             <div key={sectionKey}>
               <ServiceTips
                 heading={locale === 'nl' ? sectionData.heading_nl : sectionData.heading_en}
@@ -205,16 +211,15 @@ export default function DynamicServiceSections({
             </div>
           );
         }
-
         // Special handling for overview_table component
-        if (sectionKey === 'overview_table') {
+        else if (sectionKey === 'overview_table') {
           const content = locale === 'nl' ? sectionData.content_nl : sectionData.content_en;
 
           if (!content || content.trim() === '') {
             return null;
           }
 
-          return (
+          renderedSection = (
             <div key={sectionKey}>
               <ServiceCostTable
                 heading={locale === 'nl' ? sectionData.heading_nl : sectionData.heading_en}
@@ -224,16 +229,15 @@ export default function DynamicServiceSections({
             </div>
           );
         }
-
         // Special handling for seo_content component
-        if (sectionKey === 'seo_content') {
+        else if (sectionKey === 'seo_content') {
           const content = locale === 'nl' ? sectionData.content_nl : sectionData.content_en;
 
           if (!content || content.trim() === '') {
             return null;
           }
 
-          return (
+          renderedSection = (
             <div key={sectionKey}>
               <ServiceSEO
                 heading={locale === 'nl' ? sectionData.heading_nl : sectionData.heading_en}
@@ -243,9 +247,8 @@ export default function DynamicServiceSections({
             </div>
           );
         }
-
         // Special handling for values component
-        if (sectionKey === 'values') {
+        else if (sectionKey === 'values') {
           const items = sectionData.service_page_value_items || sectionData.items || [];
 
           if (items.length === 0) {
@@ -270,7 +273,7 @@ export default function DynamicServiceSections({
             };
           });
 
-          return (
+          renderedSection = (
             <div key={sectionKey}>
               <Values
                 heading={locale === 'nl' ? sectionData.heading_nl : sectionData.heading_en}
@@ -282,9 +285,8 @@ export default function DynamicServiceSections({
             </div>
           );
         }
-
         // Special handling for cta component
-        if (sectionKey === 'cta') {
+        else if (sectionKey === 'cta') {
           const handleCtaAction = () => {
             const link = sectionData.cta_link;
             if (link) {
@@ -300,7 +302,7 @@ export default function DynamicServiceSections({
             }
           };
 
-          return (
+          renderedSection = (
             <div key={sectionKey}>
               <ServiceCTA
                 heading={locale === 'nl' ? sectionData.heading_nl : sectionData.heading_en}
@@ -311,8 +313,9 @@ export default function DynamicServiceSections({
             </div>
           );
         }
-
         // Special handling for reviews component
+        else
+
         if (sectionKey === 'reviews') {
           // Get reviews items data (fallback or CMS)
           const reviewsItems = sectionData.reviewsItems || [];
@@ -322,7 +325,7 @@ export default function DynamicServiceSections({
             return null;
           }
 
-          return (
+          renderedSection = (
             <div key={sectionKey}>
               <ServiceReviews
                 eyebrowText={locale === 'nl' ? sectionData.eye_text_nl : sectionData.eye_text_en}
@@ -332,21 +335,69 @@ export default function DynamicServiceSections({
               />
             </div>
           );
-        }
+        } else if (sectionKey === 'types') {
+          // Get types items data (subcategories)
+          const typesItems = sectionData.typesItems || [];
 
-        // Get component for other section types
-        const Component = SECTION_COMPONENTS[sectionKey];
-        if (!Component) {
-          console.warn(`No component found for section: ${sectionKey}`);
+          // Return null if no types data available
+          if (!typesItems || typesItems.length === 0) {
+            return null;
+          }
+
+          // Transform subcategory data to ServiceTypes format
+          const transformedTypes = typesItems.map((item: Record<string, unknown>) => ({
+            title: locale === 'nl' ? String(item.name_nl || '') : String(item.name_en || ''),
+            description: locale === 'nl' ? String(item.description_nl || '') : String(item.description_en || ''),
+          }));
+
+          renderedSection = (
+            <div key={sectionKey}>
+              <ServiceTypes
+                heading={locale === 'nl' ? sectionData.heading_nl : sectionData.heading_en}
+                description={locale === 'nl' ? (sectionData.description_nl || '') : (sectionData.description_en || '')}
+                serviceTypes={transformedTypes}
+              />
+            </div>
+          );
+        } else if (sectionKey === 'marquees') {
+          // Special handling for marquees - skip rendering as standalone section
+          // Marquees are rendered after other sections based on marqueeConfig.afterSections
           return null;
+        } else {
+          // Get component for other section types
+          const Component = SECTION_COMPONENTS[sectionKey];
+          if (!Component) {
+            console.warn(`No component found for section: ${sectionKey}`);
+            return null;
+          }
+
+          // Render with section data
+          renderedSection = (
+            <div key={sectionKey}>
+              <Component data={sectionData} locale={locale} />
+            </div>
+          );
         }
 
-        // Render with section data
-        return (
-          <div key={sectionKey}>
-            <Component data={sectionData} locale={locale} />
-          </div>
-        );
+        // Check if marquee should be rendered after this section
+        const shouldRenderMarquee =
+          marqueeConfig &&
+          marqueeConfig.isEnabled &&
+          marqueeConfig.afterSections &&
+          marqueeConfig.afterSections.includes(sectionKey) &&
+          marqueeConfig.items &&
+          marqueeConfig.items.length > 0;
+
+        if (shouldRenderMarquee) {
+          return (
+            <div key={`${sectionKey}-with-marquee`}>
+              {renderedSection}
+              <ServiceMarquee items={marqueeConfig.items} />
+            </div>
+          );
+        }
+
+        return renderedSection;
       })}
     </>
   );
