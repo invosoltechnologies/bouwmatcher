@@ -466,48 +466,31 @@ export default async function ServicePage({ params }: ServicePageProps) {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const apiUrl = `${baseUrl}/api/service-pages/${id}`;
 
-    console.log('[SERVICE-PAGE-FRONTEND] Fetching CMS data for service:', id);
-    console.log('[SERVICE-PAGE-FRONTEND] API URL:', apiUrl);
-    console.log('[SERVICE-PAGE-FRONTEND] Timestamp:', new Date().toISOString());
-
     const response = await fetch(apiUrl, {
       next: { revalidate: 60 }, // ISR - revalidate every hour
     });
 
-    console.log('[SERVICE-PAGE-FRONTEND] API Response status:', response.status);
-    console.log('[SERVICE-PAGE-FRONTEND] API Response ok:', response.ok);
-
     if (response.ok) {
       cmsData = (await response.json()) as CmsDataResponse;
-      console.log('[SERVICE-PAGE-FRONTEND] API Response parsed successfully');
-      console.log('[SERVICE-PAGE-FRONTEND] Response data:', {
-        hasCmsData: cmsData?.hasCmsData,
-        hasBanner: !!cmsData?.banner,
-        bannerHeading: cmsData?.banner?.h1_text_en,
-        sections: Object.keys(cmsData?.sections || {}).length,
-        sectionsList: Object.keys(cmsData?.sections || {}),
-      });
-    } else {
-      console.warn('[SERVICE-PAGE-FRONTEND] API response not ok, status:', response.status);
-      console.warn('[SERVICE-PAGE-FRONTEND] Response text:', await response.text());
     }
   } catch (error) {
-    console.error('[SERVICE-PAGE-FRONTEND] Failed to fetch CMS data:', {
+    console.error('[CMS-FETCH-ERROR]', {
+      service: id,
       error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
     });
     // Continue with fallback if API fails
   }
 
-  // Determine if we should use CMS data or fallback
-  // Simple logic: if banner exists in CMS data, use full CMS; otherwise use fallback
-  console.log('[SERVICE-PAGE-FRONTEND] Determining data source:', {
-    hasCmsData: cmsData?.hasCmsData,
-    hasBanner: !!cmsData?.banner,
-    willUseCms: cmsData?.hasCmsData && cmsData?.banner,
-  });
-
   const useCmsData = cmsData?.hasCmsData && cmsData?.banner;
+
+  // Comprehensive CMS data log
+  console.log('[CMS-DATA]', JSON.stringify({
+    service: id,
+    locale,
+    timestamp: new Date().toISOString(),
+    useCmsData,
+    cmsData: cmsData || null,
+  }, null, 2));
 
   // Banner data - use CMS if available, otherwise fallback
   const bannerData = useCmsData && cmsData && cmsData.banner
@@ -532,21 +515,6 @@ export default async function ServicePage({ params }: ServicePageProps) {
   // Initialize section renderer for fallback
   const sectionRenderer = createSectionRenderer();
 
-  console.log('[SERVICE-PAGE-FRONTEND] Final decision - rendering content:', {
-    usesCmsData: useCmsData,
-    cmsDataAvailable: !!cmsData,
-    sectionsConfigAvailable: !!cmsData?.sectionsConfig,
-    sectionsCount: Object.keys(cmsData?.sections || {}).length,
-    service: service.name_en,
-    locale,
-  });
-
-  if (useCmsData) {
-    console.log('[SERVICE-PAGE-FRONTEND] ✅ USING CMS DATA');
-  } else {
-    console.log('[SERVICE-PAGE-FRONTEND] ⚠️ USING FALLBACK CONTENT (Static/Hardcoded)');
-  }
-
   return (
     <DefaultLayout>
       <ServiceBanner
@@ -560,21 +528,17 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
       {/* If CMS data available, render dynamic sections (skip banner since it's already shown); otherwise render fallback */}
       {useCmsData && cmsData && cmsData.sectionsConfig ? (
-        <>
-          {console.log('[SERVICE-PAGE-FRONTEND] DynamicServiceSections component rendering')}
-          <DynamicServiceSections
-            sectionsConfig={{
-              ...cmsData.sectionsConfig,
-              order: cmsData.sectionsConfig.order.filter((s) => s !== 'banner'), // Remove banner from dynamic rendering
-            }}
-            sectionsData={cmsData.sections}
-            locale={locale}
-            trustPills={trustPills}
-          />
-        </>
+        <DynamicServiceSections
+          sectionsConfig={{
+            ...cmsData.sectionsConfig,
+            order: cmsData.sectionsConfig.order.filter((s) => s !== 'banner'), // Remove banner from dynamic rendering
+          }}
+          sectionsData={cmsData.sections}
+          locale={locale}
+          trustPills={trustPills}
+        />
       ) : (
         <>
-          {console.log('[SERVICE-PAGE-FRONTEND] Fallback content rendering')}
           {/* Fallback to hardcoded architect content */}
           {architectServiceConfig.sectionOrder.map((sectionKey) => {
             const showMarqueeAfter =

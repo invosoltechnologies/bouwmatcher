@@ -123,6 +123,45 @@ export default function TinyMCEEditor({
               input.click();
             }
           },
+          // Paste preprocessing - clean unwanted HTML when pasting
+          paste_preprocess: (plugin: any, args: any) => {
+            // Remove all classes, IDs, and inline styles from pasted content
+            let content = args.content;
+
+            // Remove class attributes
+            content = content.replace(/\s*class="[^"]*"/gi, '');
+            content = content.replace(/\s*class='[^']*'/gi, '');
+
+            // Remove id attributes
+            content = content.replace(/\s*id="[^"]*"/gi, '');
+            content = content.replace(/\s*id='[^']*'/gi, '');
+
+            // Remove style attributes
+            content = content.replace(/\s*style="[^"]*"/gi, '');
+            content = content.replace(/\s*style='[^']*'/gi, '');
+
+            // Remove data attributes
+            content = content.replace(/\s*data-[a-z-]+=["'][^"']*["']/gi, '');
+
+            // Remove unwanted wrapper divs and spans inside table cells
+            content = content.replace(/<td[^>]*>\s*<div[^>]*>/gi, '<td>');
+            content = content.replace(/<\/div>\s*<\/td>/gi, '</td>');
+            content = content.replace(/<td[^>]*>\s*<p[^>]*>/gi, '<td>');
+            content = content.replace(/<\/p>\s*<\/td>/gi, '</td>');
+            content = content.replace(/<td[^>]*>\s*<span[^>]*>/gi, '<td>');
+            content = content.replace(/<\/span>\s*<\/td>/gi, '</td>');
+
+            args.content = content;
+          },
+          // Restrict valid elements for table content
+          valid_elements:
+            'p,h1,h2,h3,h4,h5,h6,strong/b,em/i,u,strike,a[href|target],ul,ol,li,' +
+            'table[border],tbody,thead,tr,td,th,' +
+            'br,img[src|alt|width|height]',
+          // Strip all invalid styles
+          valid_styles: {},
+          // Remove empty elements
+          remove_trailing_brs: true,
         }}
       />
     </div>

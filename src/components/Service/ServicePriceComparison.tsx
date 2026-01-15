@@ -1,23 +1,25 @@
 'use client';
 
-interface PriceItem {
-  label: string;
-  priceRange: string;
-}
+import '@/app/[locale]/service/service-tables.css';
+import { sanitizeTableHTML } from '@/lib/utils/html-sanitizer';
+import { useMemo } from 'react';
 
 interface ServicePriceComparisonProps {
   heading: string;
   description?: string;
-  priceItems: PriceItem[];
+  content: string;
 }
 
 export default function ServicePriceComparison({
   heading,
   description,
-  priceItems,
+  content,
 }: ServicePriceComparisonProps) {
-  // Safety check for priceItems
-  if (!priceItems || priceItems.length === 0) {
+  // Sanitize HTML content (fallback for old data that wasn't sanitized)
+  const sanitizedContent = useMemo(() => sanitizeTableHTML(content), [content]);
+
+  // Safety check for content
+  if (!content || content.trim() === '') {
     return null;
   }
 
@@ -36,36 +38,12 @@ export default function ServicePriceComparison({
           )}
         </div>
 
-        {/* Price Comparison Table */}
+        {/* HTML Table Content from TinyMCE */}
         <div className='max-w-full px-0 md:max-w-4xl mx-auto md:px-0'>
-          <div className='overflow-x-auto'>
-            <div className='min-w-full'>
-              {priceItems.map((item, index) => (
-                <div
-                  key={index}
-                  className='flex items-center justify-between gap-4 md:gap-6 py-4 md:py-5 px-5 md:px-6 border-b border-neutral-200 last:border-b-0 hover:bg-accent/5 transition-colors'
-                >
-                  {/* Label */}
-                  <div className='flex-grow min-w-0'>
-                    <p className='text-sm md:text-lg font-medium text-foreground truncate'>
-                      {item.label}
-                    </p>
-                  </div>
-
-                  {/* Price Badge */}
-                  <div
-                    className='flex-shrink-0 px-4 py-2 md:px-5 md:py-3 rounded-full text-xs md:text-sm font-medium text-white whitespace-nowrap'
-                    style={{
-                      background:
-                        'linear-gradient(135deg, #0AB27E 0%, #023AA2 100%)',
-                    }}
-                  >
-                    {item.priceRange}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <div
+            className='service-comparison-table-content'
+            dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+          />
         </div>
       </div>
     </section>

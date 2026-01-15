@@ -168,12 +168,9 @@ export default function DynamicServiceSections({
 
         // Special handling for comparison_table component
         if (sectionKey === 'comparison_table') {
-          const priceItems = (sectionData.service_page_comparison_table_items as any[])?.map((item) => ({
-            label: locale === 'nl' ? item.label_nl : item.label_en,
-            priceRange: locale === 'nl' ? item.price_range_nl : item.price_range_en,
-          })) || [];
+          const content = locale === 'nl' ? sectionData.content_nl : sectionData.content_en;
 
-          if (priceItems.length === 0) {
+          if (!content || content.trim() === '') {
             return null;
           }
 
@@ -182,7 +179,7 @@ export default function DynamicServiceSections({
               <ServicePriceComparison
                 heading={locale === 'nl' ? sectionData.heading_nl : sectionData.heading_en}
                 description={locale === 'nl' ? sectionData.description_nl : sectionData.description_en}
-                priceItems={priceItems}
+                content={content}
               />
             </div>
           );
