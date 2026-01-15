@@ -533,7 +533,22 @@ export default async function ServicePage({ params }: ServicePageProps) {
             ...cmsData.sectionsConfig,
             order: cmsData.sectionsConfig.order.filter((s) => s !== 'banner'), // Remove banner from dynamic rendering
           }}
-          sectionsData={cmsData.sections}
+          sectionsData={{
+            ...cmsData.sections,
+            // Keep reviews section metadata, add reviewsItems for actual review data
+            reviews: cmsData.sections.reviews ? {
+              ...cmsData.sections.reviews,
+              reviewsItems: architectReviews, // Always use fallback reviews
+            } : {
+              eye_text_nl: '',
+              eye_text_en: '',
+              heading_nl: '',
+              heading_en: '',
+              description_nl: '',
+              description_en: '',
+              reviewsItems: architectReviews,
+            },
+          }}
           locale={locale}
           trustPills={trustPills}
         />
@@ -560,18 +575,19 @@ export default async function ServicePage({ params }: ServicePageProps) {
               </div>
             );
           })}
+
+          {/* Default CTA - only shown for fallback pages */}
+          <ServiceCTA
+            heading={locale === 'nl' ? architectCTAData.heading : 'Ready to get started?'}
+            description={
+              locale === 'nl'
+                ? architectCTAData.description
+                : 'Find the perfect architect for your building project and receive quotes within 24 hours.'
+            }
+            ctaText={locale === 'nl' ? architectCTAData.ctaText : 'Start now'}
+          />
         </>
       )}
-
-      <ServiceCTA
-        heading={locale === 'nl' ? architectCTAData.heading : 'Ready to get started?'}
-        description={
-          locale === 'nl'
-            ? architectCTAData.description
-            : 'Find the perfect architect for your building project and receive quotes within 24 hours.'
-        }
-        ctaText={locale === 'nl' ? architectCTAData.ctaText : 'Start now'}
-      />
     </DefaultLayout>
   );
 }

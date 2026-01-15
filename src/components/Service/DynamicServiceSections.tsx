@@ -13,6 +13,8 @@ import ServiceCTA from './ServiceCTA';
 import ServiceTypes from './ServiceTypes';
 import ServiceReviews from './ServiceReviews';
 import ServiceMarquee from './ServiceMarquee';
+import Values from '@/components/Homepage/Values';
+import type { ValueItem } from '@/components/Homepage/Values';
 
 interface SectionsConfig {
   order: string[];
@@ -237,6 +239,96 @@ export default function DynamicServiceSections({
                 heading={locale === 'nl' ? sectionData.heading_nl : sectionData.heading_en}
                 description={locale === 'nl' ? sectionData.description_nl : sectionData.description_en}
                 content={content}
+              />
+            </div>
+          );
+        }
+
+        // Special handling for values component
+        if (sectionKey === 'values') {
+          const items = sectionData.service_page_value_items || sectionData.items || [];
+
+          if (items.length === 0) {
+            return null;
+          }
+
+          // Transform CMS data to ValueItem format
+          const transformedValues: ValueItem[] = items.map((item: Record<string, unknown>, index: number) => {
+            const positionMap: Record<string, 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'> = {
+              'top_left': 'top-left',
+              'top_right': 'top-right',
+              'bottom_left': 'bottom-left',
+              'bottom_right': 'bottom-right',
+            };
+
+            return {
+              id: index + 1, // Simple unique ID: 1, 2, 3, 4
+              icon: String(item.icon_url || ''),
+              title: locale === 'nl' ? String(item.heading_nl || '') : String(item.heading_en || ''),
+              description: locale === 'nl' ? String(item.description_nl || '') : String(item.description_en || ''),
+              position: positionMap[String(item.position)] || 'top-left',
+            };
+          });
+
+          return (
+            <div key={sectionKey}>
+              <Values
+                heading={locale === 'nl' ? sectionData.heading_nl : sectionData.heading_en}
+                description={locale === 'nl' ? sectionData.description_nl : sectionData.description_en}
+                centerText={locale === 'nl' ? sectionData.center_text_nl : sectionData.center_text_en}
+                values={transformedValues}
+                showCTA={false}
+              />
+            </div>
+          );
+        }
+
+        // Special handling for cta component
+        if (sectionKey === 'cta') {
+          const handleCtaAction = () => {
+            const link = sectionData.cta_link;
+            if (link) {
+              if (link.startsWith('http://') || link.startsWith('https://')) {
+                window.location.href = link;
+              } else if (link.startsWith('/')) {
+                window.location.href = link;
+              } else if (link.startsWith('mailto:')) {
+                window.location.href = link;
+              } else {
+                window.location.href = `/${link}`;
+              }
+            }
+          };
+
+          return (
+            <div key={sectionKey}>
+              <ServiceCTA
+                heading={locale === 'nl' ? sectionData.heading_nl : sectionData.heading_en}
+                description={locale === 'nl' ? (sectionData.description_nl || '') : (sectionData.description_en || '')}
+                ctaText={locale === 'nl' ? sectionData.button_text_nl : sectionData.button_text_en}
+                ctaAction={handleCtaAction}
+              />
+            </div>
+          );
+        }
+
+        // Special handling for reviews component
+        if (sectionKey === 'reviews') {
+          // Get reviews items data (fallback or CMS)
+          const reviewsItems = sectionData.reviewsItems || [];
+
+          // Return null if no reviews data available
+          if (!reviewsItems || reviewsItems.length === 0) {
+            return null;
+          }
+
+          return (
+            <div key={sectionKey}>
+              <ServiceReviews
+                eyebrowText={locale === 'nl' ? sectionData.eye_text_nl : sectionData.eye_text_en}
+                heading={locale === 'nl' ? sectionData.heading_nl : sectionData.heading_en}
+                description={locale === 'nl' ? (sectionData.description_nl || '') : (sectionData.description_en || '')}
+                reviews={reviewsItems}
               />
             </div>
           );
