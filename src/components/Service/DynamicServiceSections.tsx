@@ -223,6 +223,25 @@ export default function DynamicServiceSections({
           );
         }
 
+        // Special handling for seo_content component
+        if (sectionKey === 'seo_content') {
+          const content = locale === 'nl' ? sectionData.content_nl : sectionData.content_en;
+
+          if (!content || content.trim() === '') {
+            return null;
+          }
+
+          return (
+            <div key={sectionKey}>
+              <ServiceSEO
+                heading={locale === 'nl' ? sectionData.heading_nl : sectionData.heading_en}
+                description={locale === 'nl' ? sectionData.description_nl : sectionData.description_en}
+                content={content}
+              />
+            </div>
+          );
+        }
+
         // Get component for other section types
         const Component = SECTION_COMPONENTS[sectionKey];
         if (!Component) {

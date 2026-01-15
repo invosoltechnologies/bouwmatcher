@@ -380,3 +380,248 @@
     max-width: 100%;
   }
 }
+
+/* ============================================ */
+/* Service SEO Content Styles */
+/* ============================================ */
+
+.service-seo-content {
+  color: #374151 !important; /* text-foreground */
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+  font-weight: 400 !important;
+}
+
+/* Headings */
+.service-seo-content h1,
+.service-seo-content h2,
+.service-seo-content h3,
+.service-seo-content h4,
+.service-seo-content h5,
+.service-seo-content h6 {
+  color: #1f2937 !important; /* text-slate-900 */
+  font-weight: 600 !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 0.75rem !important;
+  line-height: 1.4 !important;
+}
+
+.service-seo-content h1 {
+  font-size: 1.875rem !important; /* 30px */
+}
+
+.service-seo-content h2 {
+  font-size: 1.5rem !important; /* 24px */
+}
+
+.service-seo-content h3 {
+  font-size: 1.25rem !important; /* 20px */
+}
+
+.service-seo-content h4 {
+  font-size: 1.125rem !important; /* 18px */
+}
+
+.service-seo-content h5,
+.service-seo-content h6 {
+  font-size: 1rem !important;
+}
+
+/* Paragraphs */
+.service-seo-content p {
+  margin-bottom: 1rem !important;
+  margin-top: 0 !important;
+  color: #374151 !important;
+}
+
+.service-seo-content p:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Bold and Strong Text */
+.service-seo-content strong,
+.service-seo-content b {
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+}
+
+/* Italic and Emphasis */
+.service-seo-content em,
+.service-seo-content i {
+  font-style: italic !important;
+  color: #4b5563 !important;
+}
+
+/* Lists - Unordered */
+.service-seo-content ul {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 1rem 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.75rem !important;
+}
+
+.service-seo-content ul li {
+  display: flex !important;
+  gap: 0.75rem !important;
+  align-items: flex-start !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #374151 !important;
+}
+
+/* Custom green bullet for unordered lists */
+.service-seo-content ul li::before {
+  content: '' !important;
+  display: block !important;
+  width: 0.5rem !important;
+  height: 0.5rem !important;
+  border-radius: 50% !important;
+  background-color: #0AB27E !important;
+  flex-shrink: 0 !important;
+  margin-top: 0.375rem !important; /* Align with text baseline */
+}
+
+/* Lists - Ordered */
+.service-seo-content ol {
+  list-style: decimal !important;
+  padding-left: 1.5rem !important;
+  margin: 1rem 0 !important;
+  color: #374151 !important;
+}
+
+.service-seo-content ol li {
+  margin-bottom: 0.5rem !important;
+  color: #374151 !important;
+}
+
+.service-seo-content ol li:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* List item styling */
+.service-seo-content ul li,
+.service-seo-content ol li {
+  line-height: 1.6 !important;
+}
+
+.service-seo-content ul li p,
+.service-seo-content ol li p {
+  margin: 0 !important;
+}
+
+/* Links */
+.service-seo-content a {
+  color: #0AB27E !important;
+  text-decoration: underline !important;
+  transition: color 0.2s ease !important;
+}
+
+.service-seo-content a:hover {
+  color: #023AA2 !important;
+}
+
+/* Blockquote */
+.service-seo-content blockquote {
+  border-left: 4px solid #0AB27E !important;
+  padding-left: 1rem !important;
+  margin: 1rem 0 !important;
+  color: #6b7280 !important;
+  font-style: italic !important;
+}
+
+/* Code */
+.service-seo-content code {
+  background-color: #f3f4f6 !important;
+  color: #1f2937 !important;
+  padding: 0.25rem 0.5rem !important;
+  border-radius: 0.25rem !important;
+  font-family: monospace !important;
+  font-size: 0.875em !important;
+}
+
+.service-seo-content pre {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+  padding: 1rem !important;
+  border-radius: 0.5rem !important;
+  overflow-x: auto !important;
+  margin: 1rem 0 !important;
+}
+
+.service-seo-content pre code {
+  background-color: transparent !important;
+  color: inherit !important;
+  padding: 0 !important;
+}
+
+/* Horizontal Rule */
+.service-seo-content hr {
+  border: none !important;
+  border-top: 1px solid #e5e7eb !important;
+  margin: 2rem 0 !important;
+}
+
+/* Tables */
+.service-seo-content table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin: 1rem 0 !important;
+}
+
+.service-seo-content table th,
+.service-seo-content table td {
+  border: 1px solid #e5e7eb !important;
+  padding: 0.75rem !important;
+  text-align: left !important;
+}
+
+.service-seo-content table th {
+  background-color: #f3f4f6 !important;
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+}
+
+.service-seo-content table tbody tr:nth-child(even) {
+  background-color: #f9fafb !important;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .service-seo-content h1 {
+    font-size: 1.5rem !important;
+  }
+
+  .service-seo-content h2 {
+    font-size: 1.25rem !important;
+  }
+
+  .service-seo-content h3 {
+    font-size: 1.125rem !important;
+  }
+
+  .service-seo-content h4 {
+    font-size: 1rem !important;
+  }
+
+  .service-seo-content p {
+    font-size: 0.95rem !important;
+  }
+
+  .service-seo-content ul {
+    gap: 0.5rem !important;
+  }
+
+  .service-seo-content ul li::before {
+    width: 0.375rem !important;
+    height: 0.375rem !important;
+    margin-top: 0.3rem !important;
+  }
+
+  .service-seo-content table th,
+  .service-seo-content table td {
+    padding: 0.5rem !important;
+    font-size: 0.875rem !important;
+  }
+}

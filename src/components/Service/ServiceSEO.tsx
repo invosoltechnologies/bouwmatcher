@@ -1,5 +1,9 @@
 'use client';
 
+import { useMemo } from 'react';
+import { sanitizeTableHTML } from '@/lib/utils/html-sanitizer';
+import { parseH3Content } from '@/lib/utils/h3-content-parser';
+
 interface Card {
   title: string;
   content: string;
@@ -8,18 +12,45 @@ interface Card {
 interface ServiceSEOProps {
   heading: string;
   description: string;
-  cards: Card[];
+  content?: string; // CMS HTML content with H3 tags (optional)
+  cards?: Card[]; // Fallback data for non-CMS pages
 }
 
 export default function ServiceSEO({
   heading,
   description,
+  content,
   cards,
 }: ServiceSEOProps) {
+  // Sanitize and parse H3 content
+  const sanitizedContent = useMemo(() => {
+    if (content && content.trim() !== '') {
+      return sanitizeTableHTML(content);
+    }
+    return '';
+  }, [content]);
+
+  // Parse H3s from content or use fallback cards
+  const parsedCards = useMemo(() => {
+    if (sanitizedContent) {
+      return parseH3Content(sanitizedContent);
+    }
+    return cards || [];
+  }, [sanitizedContent, cards]);
+
+  // Determine which mode to use
+  const useCmsContent = sanitizedContent.length > 0;
+  const useFallbackCards = !useCmsContent && cards && cards.length > 0;
+
+  // Safety check - return null if no content available
+  if (!useCmsContent && !useFallbackCards) {
+    return null;
+  }
+
   // Split cards into two columns
-  const midpoint = Math.ceil(cards.length / 2);
-  const leftCards = cards.slice(0, midpoint);
-  const rightCards = cards.slice(midpoint);
+  const midpoint = Math.ceil(parsedCards.length / 2);
+  const leftCards = parsedCards.slice(0, midpoint);
+  const rightCards = parsedCards.slice(midpoint);
 
   return (
     <section
@@ -63,9 +94,18 @@ export default function ServiceSEO({
                   </h3>
 
                   {/* Card Content */}
-                  <p className='text-sm md:text-base text-muted-foreground leading-relaxed'>
-                    {card.content}
-                  </p>
+                  {useCmsContent ? (
+                    // CMS Mode: Render HTML with styling
+                    <div
+                      className='service-seo-content text-sm md:text-base'
+                      dangerouslySetInnerHTML={{ __html: card.content }}
+                    />
+                  ) : (
+                    // Fallback Mode: Render plain text
+                    <p className='text-sm md:text-base text-muted-foreground leading-relaxed'>
+                      {card.content}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
@@ -90,9 +130,18 @@ export default function ServiceSEO({
                   </h3>
 
                   {/* Card Content */}
-                  <p className='text-sm md:text-base text-muted-foreground leading-relaxed'>
-                    {card.content}
-                  </p>
+                  {useCmsContent ? (
+                    // CMS Mode: Render HTML with styling
+                    <div
+                      className='service-seo-content text-sm md:text-base'
+                      dangerouslySetInnerHTML={{ __html: card.content }}
+                    />
+                  ) : (
+                    // Fallback Mode: Render plain text
+                    <p className='text-sm md:text-base text-muted-foreground leading-relaxed'>
+                      {card.content}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
