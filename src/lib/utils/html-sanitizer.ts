@@ -2,6 +2,8 @@
  * Sanitizes HTML content from TinyMCE tables by removing unwanted elements,
  * classes, IDs, and inline styles while preserving the table structure and
  * semantic bold/strong tags.
+ *
+ * Uses regex-based sanitization for consistent results on both server and client.
  */
 
 export function sanitizeTableHTML(html: string): string {
@@ -9,59 +11,8 @@ export function sanitizeTableHTML(html: string): string {
     return '';
   }
 
-  // Create a temporary DOM element to parse HTML
-  if (typeof document === 'undefined') {
-    // Server-side: use basic regex cleaning
-    return serverSideSanitize(html);
-  }
-
-  // Client-side: use DOM parsing
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-
-  // Get all tables
-  const tables = doc.querySelectorAll('table');
-
-  tables.forEach((table) => {
-    // Remove all attributes from table
-    Array.from(table.attributes).forEach((attr) => {
-      table.removeAttribute(attr.name);
-    });
-
-    // Process all table cells
-    const cells = table.querySelectorAll('td, th');
-    cells.forEach((cell) => {
-      // Remove all attributes from cells
-      Array.from(cell.attributes).forEach((attr) => {
-        cell.removeAttribute(attr.name);
-      });
-
-      // Clean cell content: remove wrapper divs and paragraphs
-      cleanCellContent(cell);
-    });
-
-    // Remove attributes from rows
-    const rows = table.querySelectorAll('tr');
-    rows.forEach((row) => {
-      Array.from(row.attributes).forEach((attr) => {
-        row.removeAttribute(attr.name);
-      });
-    });
-
-    // Remove attributes from tbody/thead
-    const sections = table.querySelectorAll('tbody, thead, tfoot');
-    sections.forEach((section) => {
-      Array.from(section.attributes).forEach((attr) => {
-        section.removeAttribute(attr.name);
-      });
-    });
-
-    // Remove colgroup and col elements (not needed)
-    table.querySelectorAll('colgroup, col').forEach((el) => el.remove());
-  });
-
-  // Return cleaned HTML
-  return doc.body.innerHTML.trim();
+  // Always use regex-based sanitization for consistent server/client results
+  return serverSideSanitize(html);
 }
 
 /**

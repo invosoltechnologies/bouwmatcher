@@ -185,6 +185,25 @@ export default function DynamicServiceSections({
           );
         }
 
+        // Special handling for tips component
+        if (sectionKey === 'tips') {
+          const content = locale === 'nl' ? sectionData.content_nl : sectionData.content_en;
+
+          if (!content || content.trim() === '') {
+            return null;
+          }
+
+          return (
+            <div key={sectionKey}>
+              <ServiceTips
+                heading={locale === 'nl' ? sectionData.heading_nl : sectionData.heading_en}
+                description={locale === 'nl' ? sectionData.description_nl : sectionData.description_en}
+                content={content}
+              />
+            </div>
+          );
+        }
+
         // Get component for other section types
         const Component = SECTION_COMPONENTS[sectionKey];
         if (!Component) {

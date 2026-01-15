@@ -16,6 +16,7 @@ export default function ServicePriceComparison({
   content,
 }: ServicePriceComparisonProps) {
   // Sanitize HTML content (fallback for old data that wasn't sanitized)
+  // Uses regex-based sanitization for consistent server/client results
   const sanitizedContent = useMemo(() => sanitizeTableHTML(content), [content]);
 
   // Safety check for content

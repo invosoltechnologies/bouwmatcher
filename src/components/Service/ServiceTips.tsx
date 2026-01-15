@@ -1,16 +1,28 @@
 'use client';
 
+import { sanitizeTableHTML } from '@/lib/utils/html-sanitizer';
+import { useMemo } from 'react';
+
 interface ServiceTipsProps {
   heading: string;
   description?: string;
-  tips: string[];
+  content: string;
 }
 
 export default function ServiceTips({
   heading,
   description,
-  tips,
+  content,
 }: ServiceTipsProps) {
+  // Sanitize HTML content (fallback for old data that wasn't sanitized)
+  // Uses regex-based sanitization for consistent server/client results
+  const sanitizedContent = useMemo(() => sanitizeTableHTML(content), [content]);
+
+  // Safety check for content
+  if (!content || content.trim() === '') {
+    return null;
+  }
+
   return (
     <section className='py-14 md:py-20 bg-white'>
       <div className='custom-container'>
@@ -26,34 +38,17 @@ export default function ServiceTips({
           )}
         </div>
 
-        {/* Tips Content */}
+        {/* Tips Content - HTML from TinyMCE */}
         <div className='max-w-full px-0 md:max-w-4xl mx-auto md:px-0'>
           <div
-            className='rounded-2xl border border-white/20 p-5 md:p-6 md:p-8'
+            className='rounded-2xl border border-white/20 p-5 md:p-8 service-tips-content'
             style={{
               boxShadow: '0px 10px 30px 0px #023AA214',
               background:
                 'linear-gradient(90deg, rgba(10, 178, 126, 0.1) 0%, rgba(2, 58, 162, 0.1) 100%)',
             }}
-          >
-            <ul className='space-y-4 md:space-y-5'>
-              {tips.map((tip, index) => (
-                <li key={index} className='flex gap-4 md:gap-5 items-start'>
-                  {/* Custom Bullet */}
-                  <div
-                    className='w-2 h-2 md:w-3 md:h-3 rounded-full mt-2 md:mt-3 flex-shrink-0'
-                    style={{
-                      backgroundColor: '#0AB27E',
-                    }}
-                  />
-                  {/* Tip Text */}
-                  <span className='text-sm md:text-lg text-muted-foreground leading-relaxed'>
-                    {tip}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
+            dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+          />
         </div>
       </div>
     </section>
