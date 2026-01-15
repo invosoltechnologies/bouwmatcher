@@ -26,32 +26,18 @@ function cleanCellContent(cell: Element): void {
     if (node.nodeType === Node.ELEMENT_NODE) {
       const element = node as Element;
 
-      // If it's a wrapper div or p with unwanted classes, unwrap it
+      // If it's a wrapper div or p or span, always unwrap it (keep only text and bold)
       if (
         element.tagName === 'DIV' ||
         element.tagName === 'P' ||
         element.tagName === 'SPAN'
       ) {
-        // Check if it has classes (unwanted styled wrappers)
-        if (
-          element.hasAttribute('class') ||
-          element.hasAttribute('style') ||
-          element.hasAttribute('id')
-        ) {
-          // Unwrap: replace element with its contents
-          const contents = Array.from(element.childNodes);
-          contents.forEach((child) => {
-            cell.insertBefore(child, element);
-          });
-          element.remove();
-        } else if (element.tagName !== 'STRONG' && element.tagName !== 'B') {
-          // Even without classes, unwrap divs/p/spans (keep only text and bold)
-          const contents = Array.from(element.childNodes);
-          contents.forEach((child) => {
-            cell.insertBefore(child, element);
-          });
-          element.remove();
-        }
+        // Unwrap: replace element with its contents
+        const contents = Array.from(element.childNodes);
+        contents.forEach((child) => {
+          cell.insertBefore(child, element);
+        });
+        element.remove();
       }
 
       // Keep strong and b tags, but remove their attributes
