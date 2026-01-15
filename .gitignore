@@ -42,7 +42,7 @@ yarn-error.log*
 next-env.d.ts
 
 #SQLFiles
-*sql
+# *sql
 
 # Documentation (internal architecture docs)
 /docs/PROFESSIONAL_ACCOUNT_ARCHITECTURE.md
