@@ -149,7 +149,7 @@ export default function ProcessSteps({
                 boxShadow: '0px 0px 0px 0px #0AB27E26',
               }}
             >
-              {shouldShowCheckmark(index) ? <Check /> : step.id}
+              {shouldShowCheckmark(index) ? <Check /> : index+1}
             </div>
           ))}
 

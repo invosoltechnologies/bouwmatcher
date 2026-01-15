@@ -166,6 +166,28 @@ export default function DynamicServiceSections({
           );
         }
 
+        // Special handling for comparison_table component
+        if (sectionKey === 'comparison_table') {
+          const priceItems = (sectionData.service_page_comparison_table_items as any[])?.map((item) => ({
+            label: locale === 'nl' ? item.label_nl : item.label_en,
+            priceRange: locale === 'nl' ? item.price_range_nl : item.price_range_en,
+          })) || [];
+
+          if (priceItems.length === 0) {
+            return null;
+          }
+
+          return (
+            <div key={sectionKey}>
+              <ServicePriceComparison
+                heading={locale === 'nl' ? sectionData.heading_nl : sectionData.heading_en}
+                description={locale === 'nl' ? sectionData.description_nl : sectionData.description_en}
+                priceItems={priceItems}
+              />
+            </div>
+          );
+        }
+
         // Get component for other section types
         const Component = SECTION_COMPONENTS[sectionKey];
         if (!Component) {

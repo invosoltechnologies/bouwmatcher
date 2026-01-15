@@ -5,7 +5,7 @@ import { useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { ChevronDown, ChevronUp, Trash2, Upload } from 'lucide-react';
+import { ChevronDown, ChevronUp, Trash2, Upload, Plus, Loader2, Check } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import {
   useSaveServicePageProcess,
@@ -145,32 +145,47 @@ export default function ProcessSection({
   };
 
   return (
-    <Card className='py-0 border border-slate-200 rounded-lg overflow-hidden'>
+    <Card className='border py-0 border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow'>
       {/* Header - Collapsible */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className='w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors'
+        className='w-full flex items-center justify-between p-5 hover:bg-gradient-to-r hover:from-slate-50 hover:to-white transition-all group'
       >
-        <h3 className='text-lg font-semibold text-slate-900'>
-          {locale === 'nl' ? 'Proces Sectie' : 'Process Section'}
-        </h3>
-        {isExpanded ? (
-          <ChevronUp className='w-5 h-5 text-slate-600' />
-        ) : (
-          <ChevronDown className='w-5 h-5 text-slate-600' />
-        )}
+        <div className='flex items-center gap-3'>
+          <div className='w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors'>
+            <span className='text-lg'>🔄</span>
+          </div>
+          <h3 className='text-lg font-semibold text-slate-900'>
+            {locale === 'nl' ? 'Proces Sectie' : 'Process Section'}
+          </h3>
+          {steps.length > 0 && (
+            <span className='text-xs text-green-600 font-medium px-2 py-1 bg-green-50 rounded-full'>
+              ✓ {steps.length} {locale === 'nl' ? 'stappen' : 'steps'}
+            </span>
+          )}
+        </div>
+        <div className='flex items-center gap-2'>
+          {isExpanded ? (
+            <ChevronUp className='w-5 h-5 text-slate-600 group-hover:text-primary transition-colors' />
+          ) : (
+            <ChevronDown className='w-5 h-5 text-slate-600 group-hover:text-primary transition-colors' />
+          )}
+        </div>
       </button>
 
       {/* Content - Expandable */}
       {isExpanded && (
-        <div className='border-t border-slate-200 p-6 space-y-6 bg-slate-50'>
+        <div className='border-t border-slate-200 p-8 space-y-8 bg-gradient-to-b from-slate-50 to-white'>
           {/* Section Header */}
           <div className='grid grid-cols-2 gap-6'>
             {/* Dutch (NL) */}
-            <div className='space-y-4 p-4 bg-white rounded-lg border border-slate-200'>
-              <h4 className='font-semibold text-slate-900 text-sm uppercase tracking-wide'>
-                Nederlands (NL)
-              </h4>
+            <div className='space-y-4 p-5 bg-white rounded-xl border-2 border-slate-200 shadow-sm hover:border-primary/50 transition-colors'>
+              <div className='flex items-center gap-2 pb-3 border-b border-slate-100'>
+                <span className='text-xl'>🇳🇱</span>
+                <h4 className='font-semibold text-slate-900 text-sm uppercase tracking-wide'>
+                  Nederlands (NL)
+                </h4>
+              </div>
 
               <div className='space-y-2'>
                 <label className='block text-sm font-medium text-slate-900'>
@@ -202,10 +217,13 @@ export default function ProcessSection({
             </div>
 
             {/* English (EN) */}
-            <div className='space-y-4 p-4 bg-white rounded-lg border border-slate-200'>
-              <h4 className='font-semibold text-slate-900 text-sm uppercase tracking-wide'>
-                English (EN)
-              </h4>
+            <div className='space-y-4 p-5 bg-white rounded-xl border-2 border-slate-200 shadow-sm hover:border-primary/50 transition-colors'>
+              <div className='flex items-center gap-2 pb-3 border-b border-slate-100'>
+                <span className='text-xl'>🇬🇧</span>
+                <h4 className='font-semibold text-slate-900 text-sm uppercase tracking-wide'>
+                  English (EN)
+                </h4>
+              </div>
 
               <div className='space-y-2'>
                 <label className='block text-sm font-medium text-slate-900'>
@@ -238,60 +256,80 @@ export default function ProcessSection({
           </div>
 
           {/* Process Steps */}
-          <div className='space-y-4'>
+          <div className='space-y-6 pt-6 border-t-2 border-slate-300'>
             <div className='flex items-center justify-between'>
-              <h4 className='font-semibold text-slate-900'>
-                {locale === 'nl' ? 'Processtappen' : 'Process Steps'}
-                <span className='text-sm font-normal text-slate-500 ml-2'>
-                  ({steps.length}/8)
+              <div className='flex items-center gap-3'>
+                <h4 className='text-lg font-semibold text-slate-900'>
+                  {locale === 'nl' ? 'Processtappen' : 'Process Steps'}
+                </h4>
+                <span className='text-sm text-slate-600 font-medium px-3 py-1 bg-slate-100 rounded-full'>
+                  {steps.length}/8
                 </span>
-              </h4>
+              </div>
               <Button
                 onClick={handleAddStep}
                 disabled={steps.length >= 8}
+                className='gap-2 px-4 py-2 shadow-sm hover:shadow-md transition-all'
                 variant='outline'
-                size='sm'
               >
+                <Plus className='w-4 h-4' />
                 {locale === 'nl' ? 'Stap Toevoegen' : 'Add Step'}
               </Button>
             </div>
 
             {/* Steps List */}
-            <div className='space-y-4'>
+            <div className='space-y-3'>
               {steps.map((step, index) => (
                 <div
                   key={index}
-                  className='p-4 bg-white rounded-lg border border-slate-200 space-y-4'
+                  className='p-4 bg-white rounded-lg border border-slate-200 hover:shadow-md hover:border-primary/50 transition-all space-y-4'
                 >
-                  {/* Step Number */}
-                  <div className='flex items-center justify-between'>
-                    <h5 className='font-semibold text-slate-900'>
-                      {locale === 'nl' ? 'Stap' : 'Step'} {index + 1}
-                    </h5>
+                  {/* Step Number Header */}
+                  <div className='flex items-start justify-between gap-3 mb-4'>
+                    <div className='flex items-start gap-3'>
+                      <div className='flex-shrink-0 w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center font-semibold text-sm text-slate-700'>
+                        {index + 1}
+                      </div>
+                      <div>
+                        <h5 className='font-semibold text-slate-900'>
+                          {locale === 'nl' ? 'Stap' : 'Step'} {index + 1}
+                        </h5>
+                        <p className='text-xs text-slate-500 mt-0.5'>
+                          {step.heading_nl && step.heading_en
+                            ? `${step.heading_nl} / ${step.heading_en}`
+                            : locale === 'nl'
+                            ? 'Voer gegevens in'
+                            : 'Enter details'}
+                        </p>
+                      </div>
+                    </div>
                     <Button
                       onClick={() => handleDeleteStep(index)}
                       disabled={steps.length <= 4}
                       variant='ghost'
-                      size='sm'
-                      className='text-red-600 hover:text-red-700'
+                      className='h-8 w-8 p-0 hover:bg-red-50'
                     >
-                      <Trash2 className='w-4 h-4' />
+                      <Trash2 className='w-4 h-4 text-red-600 hover:text-red-700' />
                     </Button>
                   </div>
 
                   {/* Two Column Layout NL/EN */}
-                  <div className='grid grid-cols-2 gap-4'>
+                  <div className='grid grid-cols-2 gap-6'>
                     {/* Dutch (NL) */}
-                    <div className='space-y-3'>
+                    <div className='space-y-4'>
+                      <div className='flex items-center gap-2 pb-3 border-b border-slate-100'>
+                        <span className='text-xl'>🇳🇱</span>
+                        <h5 className='font-semibold text-xs uppercase text-slate-700'>Nederlands (NL)</h5>
+                      </div>
                       <div className='space-y-2'>
                         <label className='block text-sm font-medium text-slate-900'>
-                          {locale === 'nl' ? 'Titel (NL)' : 'Title (NL)'}
+                          {locale === 'nl' ? 'Titel' : 'Title'}
                         </label>
                         <Input
                           placeholder='bijv. Beschrijf je project'
                           value={step.heading_nl}
                           onChange={(e) => handleStepChange(index, 'heading_nl', e.target.value)}
-                          className='bg-slate-50 border-slate-300'
+                          className='bg-white border-slate-300'
                           maxLength={80}
                         />
                         <p className='text-xs text-slate-500'>{step.heading_nl.length}/80</p>
@@ -299,13 +337,13 @@ export default function ProcessSection({
 
                       <div className='space-y-2'>
                         <label className='block text-sm font-medium text-slate-900'>
-                          {locale === 'nl' ? 'Beschrijving (NL)' : 'Description (NL)'}
+                          {locale === 'nl' ? 'Beschrijving' : 'Description'}
                         </label>
                         <Textarea
                           placeholder='Voer beschrijving in...'
                           value={step.description_nl}
                           onChange={(e) => handleStepChange(index, 'description_nl', e.target.value)}
-                          className='bg-slate-50 border-slate-300 min-h-[60px]'
+                          className='bg-white border-slate-300 min-h-[80px]'
                           maxLength={300}
                         />
                         <p className='text-xs text-slate-500'>{step.description_nl.length}/300</p>
@@ -313,16 +351,20 @@ export default function ProcessSection({
                     </div>
 
                     {/* English (EN) */}
-                    <div className='space-y-3'>
+                    <div className='space-y-4'>
+                      <div className='flex items-center gap-2 pb-3 border-b border-slate-100'>
+                        <span className='text-xl'>🇬🇧</span>
+                        <h5 className='font-semibold text-xs uppercase text-slate-700'>English (EN)</h5>
+                      </div>
                       <div className='space-y-2'>
                         <label className='block text-sm font-medium text-slate-900'>
-                          {locale === 'nl' ? 'Titel (EN)' : 'Title (EN)'}
+                          {locale === 'nl' ? 'Titel' : 'Title'}
                         </label>
                         <Input
                           placeholder='e.g. Describe your project'
                           value={step.heading_en}
                           onChange={(e) => handleStepChange(index, 'heading_en', e.target.value)}
-                          className='bg-slate-50 border-slate-300'
+                          className='bg-white border-slate-300'
                           maxLength={80}
                         />
                         <p className='text-xs text-slate-500'>{step.heading_en.length}/80</p>
@@ -330,13 +372,13 @@ export default function ProcessSection({
 
                       <div className='space-y-2'>
                         <label className='block text-sm font-medium text-slate-900'>
-                          {locale === 'nl' ? 'Beschrijving (EN)' : 'Description (EN)'}
+                          {locale === 'nl' ? 'Beschrijving' : 'Description'}
                         </label>
                         <Textarea
                           placeholder='Enter description...'
                           value={step.description_en}
                           onChange={(e) => handleStepChange(index, 'description_en', e.target.value)}
-                          className='bg-slate-50 border-slate-300 min-h-[60px]'
+                          className='bg-white border-slate-300 min-h-[80px]'
                           maxLength={300}
                         />
                         <p className='text-xs text-slate-500'>{step.description_en.length}/300</p>
@@ -424,19 +466,23 @@ export default function ProcessSection({
           </div>
 
           {/* Save Button */}
-          <div className='flex justify-end pt-4 border-t border-slate-200'>
+          <div className='flex justify-end pt-6 border-t-2 border-slate-200'>
             <Button
               onClick={handleSave}
               disabled={saveMutation.isPending || steps.length < 4 || steps.length > 8}
-              className='gap-2'
+              className='gap-2 px-6 py-2.5 shadow-md hover:shadow-lg transition-all'
             >
-              {saveMutation.isPending
-                ? locale === 'nl'
-                  ? 'Opslaan...'
-                  : 'Saving...'
-                : locale === 'nl'
-                ? 'Opslaan'
-                : 'Save'}
+              {saveMutation.isPending ? (
+                <>
+                  <Loader2 className='w-4 h-4 animate-spin' />
+                  {locale === 'nl' ? 'Opslaan...' : 'Saving...'}
+                </>
+              ) : (
+                <>
+                  <Check className='w-4 h-4' />
+                  {locale === 'nl' ? 'Opslaan' : 'Save'}
+                </>
+              )}
             </Button>
           </div>
         </div>

@@ -16,6 +16,11 @@ export default function ServicePriceComparison({
   description,
   priceItems,
 }: ServicePriceComparisonProps) {
+  // Safety check for priceItems
+  if (!priceItems || priceItems.length === 0) {
+    return null;
+  }
+
   return (
     <section className='py-14 md:py-20 bg-white'>
       <div className='custom-container'>
