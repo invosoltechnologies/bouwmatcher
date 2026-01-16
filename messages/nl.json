@@ -1725,6 +1725,18 @@
           "description": "Stel je vragen of geef je beschikbaarheid door, snelle reacties helpen met lagere prijzen en eerdere planning."
         }
       }
+    },
+    "siteAccess": {
+      "title": "Site in Onderhoud",
+      "subtitle": "Deze site wordt momenteel voorbereid. Voer het toegangswachtwoord in om verder te gaan.",
+      "passwordPlaceholder": "Voer wachtwoord in",
+      "accessButton": "Toegang tot Site",
+      "errorIncorrect": "Onjuist wachtwoord. Probeer het opnieuw.",
+      "errorNotConfigured": "Sitebescherming is niet correct geconfigureerd",
+      "errorSaveAuth": "Kan authenticatie niet opslaan. Probeer het opnieuw.",
+      "footerNote": "Toegang is 1 uur geldig na authenticatie",
+      "showPassword": "Wachtwoord tonen",
+      "hidePassword": "Wachtwoord verbergen"
     }
   }
 }

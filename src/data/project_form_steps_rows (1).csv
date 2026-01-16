@@ -1,0 +1,9 @@
+id,step_order,step_key,is_category_specific,step_type,is_required,is_active,created_at,updated_at
+3c588452-877d-426f-88fa-cebed498372b,4,photos,false,upload,true,true,2025-10-07 17:12:07.100598+00,2025-10-07 17:12:07.100598+00
+40745bb2-cb06-41a5-8791-101da8bbeeeb,6,location,false,form,true,true,2025-10-07 17:12:07.100598+00,2025-10-07 17:12:07.100598+00
+67c88b87-18e0-4a89-8ee4-0d4c35fadc18,1,category_questions,true,questionnaire,true,true,2025-10-07 17:12:07.100598+00,2025-10-07 17:12:07.100598+00
+7ad5edd4-4dd3-4dda-9f38-9021a4f849ba,2,request_type,false,choice,true,true,2025-10-07 17:12:07.100598+00,2025-10-07 17:12:07.100598+00
+8ca4d690-b8d4-42b3-a871-96dd7cd0f56c,3,execution_date,false,choice,true,true,2025-10-07 17:12:07.100598+00,2025-10-07 17:12:07.100598+00
+8dcfdc6a-67b0-43dd-9d26-0a10a77f666d,7,contact_details,false,form,true,true,2025-10-07 17:12:07.100598+00,2025-10-07 17:12:07.100598+00
+94b0a705-cdab-490b-9c91-812789601b6f,5,description,false,text,true,true,2025-10-07 17:12:07.100598+00,2025-10-07 17:12:07.100598+00
+b6241765-4ef6-492c-b88d-f84ce2ea30fa,8,verification,false,verification,true,true,2025-10-07 17:12:07.100598+00,2025-10-07 17:12:07.100598+00

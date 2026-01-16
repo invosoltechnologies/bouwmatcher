@@ -1,0 +1,68 @@
+id,service_page_id,heading_nl,heading_en,description_nl,description_en,content_nl,content_en,created_at,updated_at
+965710fb-c6b6-460a-8ab6-b3b46a64e6d1,c230dc52-cf98-45f6-832e-065c7aeb7a54,"Ontwerp, Tekeningen Begeleiding",Design & Drawings Guidance,,,"<table>
+<tbody>
+<tr>
+<td><strong>Dienst</strong></td>
+<td><strong>Kosten (particulier)</strong></td>
+<td><strong>Kosten (zakelijk)</strong></td>
+</tr>
+<tr>
+<td>Schetsontwerp</td>
+<td>&euro; 500&nbsp;</td>
+<td>&euro; 2.000</td>
+</tr>
+<tr>
+<td>Definitief ontwerp</td>
+<td>&euro; 1.000</td>
+<td>&euro; 4.000</td>
+</tr>
+<tr>
+<td>Vergunningstekeningen</td>
+<td>&euro; 800</td>
+<td>&euro; 2.500</td>
+</tr>
+<tr>
+<td>3D visualisaties</td>
+<td>&euro; 300</td>
+<td>&euro; 1.200</td>
+</tr>
+<tr>
+<td>Bouwbegeleiding</td>
+<td>&euro; 50p/u</td>
+<td>&euro; 120 p/u</td>
+</tr>
+</tbody>
+</table>","<table>
+<tbody>
+<tr>
+<td><strong>Services</strong></td>
+<td><strong>Price (Private)</strong></td>
+<td><strong>Price (Bussiness)</strong></td>
+</tr>
+<tr>
+<td>Concept design</td>
+<td>&euro; 500&nbsp;</td>
+<td>&euro; 2.000</td>
+</tr>
+<tr>
+<td>Final design</td>
+<td>&euro; 1.000</td>
+<td>&euro; 4.000</td>
+</tr>
+<tr>
+<td>Permit drawings</td>
+<td>&euro; 800</td>
+<td>&euro; 2.500</td>
+</tr>
+<tr>
+<td>3D visualizations</td>
+<td>&euro; 300</td>
+<td>&euro; 1.200</td>
+</tr>
+<tr>
+<td>Construction supervision</td>
+<td>&euro; 50 per hour</td>
+<td>&euro; 120&nbsp; per hour</td>
+</tr>
+</tbody>
+</table>",2026-01-15 06:26:32.497108+00,2026-01-15 06:26:32.497108+00

@@ -1,0 +1,93 @@
+id,service_page_id,heading_nl,heading_en,description_nl,description_en,content_nl,content_en,created_at,updated_at
+89fb2c51-c2f8-4573-835c-ea64aa70f289,c230dc52-cf98-45f6-832e-065c7aeb7a54,Diensten & Gemiddelde prijzen,Services & Average prices,,,"<p>&nbsp;</p>
+<table style=""border-collapse: collapse; width: 100%; height: 278px;"" border=""1""><colgroup><col style=""width: 49.9575%;""><col style=""width: 49.9575%;""></colgroup>
+<tbody>
+<tr>
+<td style=""text-align: center;"">
+<p><strong>Dienst</strong></p>
+</td>
+<td style=""text-align: center;""><strong>Gemiddelde prijs</strong></td>
+</tr>
+<tr style=""height: 33.2px;"">
+<td>Nieuwbouwontwerp</td>
+<td>&euro; 4.000 - &euro; 16.000</td>
+</tr>
+<tr style=""height: 61.2px;"">
+<td>
+<div class=""flex-grow min-w-0"">
+<p class=""text-sm md:text-lg font-medium text-foreground truncate"">Verbouwing / renovatie ontwerp</p>
+</div>
+</td>
+<td>&euro; 1.500 - &euro; 8.000</td>
+</tr>
+<tr style=""height: 61.2px;"">
+<td>
+<div class=""flex-grow min-w-0"">
+<p class=""text-sm md:text-lg font-medium text-foreground truncate"">Aanbouw / uitbreiding ontwerp</p>
+</div>
+</td>
+<td>&euro; 1.000 - &euro; 4.500</td>
+</tr>
+<tr style=""height: 61.2px;"">
+<td>
+<div class=""flex-grow min-w-0"">
+<p class=""text-sm md:text-lg font-medium text-foreground truncate"">Interieurontwerp</p>
+</div>
+</td>
+<td>&euro; 500 - &euro; 3.300</td>
+</tr>
+<tr style=""height: 61.2px;"">
+<td>
+<div class=""flex-grow min-w-0"">
+<p class=""text-sm md:text-lg font-medium text-foreground truncate"">Vergunningstrajecten / uitwerking</p>
+</div>
+</td>
+<td>&euro; 800 - &euro; 2.200</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>","<table style=""border-collapse: collapse; width: 103.515%; height: 278px;"" border=""1""><colgroup><col style=""width: 50%;""><col style=""width: 50%;""></colgroup>
+<tbody>
+<tr>
+<td style=""text-align: center;""><strong>Services</strong></td>
+<td style=""text-align: center;""><strong>Prices</strong></td>
+</tr>
+<tr style=""height: 33.2px;"">
+<td>Nieuwbouwontwerp</td>
+<td>&euro; 4.000 - &euro; 16.000</td>
+</tr>
+<tr style=""height: 61.2px;"">
+<td>
+<div class=""flex-grow min-w-0"">
+<p class=""text-sm md:text-lg font-medium text-foreground truncate"">Verbouwing / renovatie ontwerp</p>
+</div>
+</td>
+<td><strong>&euro; 1.500 - &euro; 8.000</strong></td>
+</tr>
+<tr style=""height: 61.2px;"">
+<td>
+<div class=""flex-grow min-w-0"">
+<p class=""text-sm md:text-lg font-medium text-foreground truncate"">Aanbouw / uitbreiding ontwerp</p>
+</div>
+</td>
+<td>&euro; 1.000 - &euro; 4.500</td>
+</tr>
+<tr style=""height: 61.2px;"">
+<td>
+<div class=""flex-grow min-w-0"">
+<p class=""text-sm md:text-lg font-medium text-foreground truncate""><strong>Interieurontwerp</strong></p>
+</div>
+</td>
+<td>&euro; 500 - &euro; 3.300</td>
+</tr>
+<tr style=""height: 61.2px;"">
+<td>
+<div class=""flex-grow min-w-0"">
+<p class=""text-sm md:text-lg font-medium text-foreground truncate"">Vergunningstrajecten / uitwerking</p>
+</div>
+</td>
+<td>&euro; 800 - &euro; 2.200</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>",2026-01-15 01:15:14.823612+00,2026-01-15 02:17:04.111+00

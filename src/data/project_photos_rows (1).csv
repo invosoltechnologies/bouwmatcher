@@ -1,0 +1,4 @@
+id,project_id,file_name,file_size,mime_type,uploaded_at,project_draft_id,storage_path,display_order,is_primary,upload_status,width,height,updated_at
+0daacfb9-e02f-4015-976d-84d5c18e30c0,,834cb17f-e630-4425-a9ba-820e371d51a9.png,1616932,image/png,2025-12-27 06:23:11.142798+00,3038ea61-0682-45e0-9565-9552dc24b56e,3038ea61-0682-45e0-9565-9552dc24b56e/9efd27d6-d4aa-4636-b128-027c5e25e971.png,2,false,completed,,,2025-12-27 06:23:11.142798+00
+b9374db8-b4d9-4cf2-9398-7e8ab73c1f2c,,TEST.png,113577,image/png,2026-01-12 14:13:33.863454+00,7d327b74-064e-43d2-ade7-10fb105d32e9,7d327b74-064e-43d2-ade7-10fb105d32e9/3b0ea362-6364-4445-841a-30789cca7cf0.png,1,true,completed,,,2026-01-12 14:13:33.863454+00
+eee947cd-e3c2-419e-ac4e-98ea937ee8fc,,banner.png,436266,image/png,2025-12-27 06:20:27.710371+00,3038ea61-0682-45e0-9565-9552dc24b56e,3038ea61-0682-45e0-9565-9552dc24b56e/c3a8c52f-e14c-44ee-9260-0c582325d851.png,1,true,completed,,,2025-12-27 06:20:27.710371+00

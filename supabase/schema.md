@@ -4,7 +4,7 @@
 CREATE TABLE public.admin_users (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   email character varying NOT NULL UNIQUE,
-  role character varying NOT NULL DEFAULT 'admin'::character varying CHECK (role::text = ANY (ARRAY['super_admin'::character varying, 'admin'::character varying, 'moderator'::character varying]::text[])),
+  role character varying NOT NULL DEFAULT 'admin'::character varying CHECK (role::text = ANY (ARRAY['super_admin'::character varying, 'admin'::character varying, 'moderator'::character varying, 'writer'::character varying]::text[])),
   is_active boolean DEFAULT true,
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
@@ -111,7 +111,6 @@ CREATE TABLE public.professional_companies (
 CREATE TABLE public.professional_company_ratings (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   company_id uuid,
-  rated_by_profile_id uuid,
   rating integer CHECK (rating >= 1 AND rating <= 5),
   review_text text,
   created_at timestamp without time zone,
@@ -119,9 +118,12 @@ CREATE TABLE public.professional_company_ratings (
   project_id uuid,
   professional_id uuid,
   rated_by_user_type character varying DEFAULT 'personal_user'::character varying,
+  approval_status character varying DEFAULT 'pending'::character varying CHECK (approval_status::text = ANY (ARRAY['pending'::character varying, 'approved'::character varying, 'rejected'::character varying]::text[])),
+  approved_at timestamp without time zone,
+  approved_by uuid,
+  rejection_reason text,
   CONSTRAINT professional_company_ratings_pkey PRIMARY KEY (id),
   CONSTRAINT professional_company_ratings_company_id_fkey FOREIGN KEY (company_id) REFERENCES public.professional_companies(id),
-  CONSTRAINT professional_company_ratings_rated_by_profile_id_fkey FOREIGN KEY (rated_by_profile_id) REFERENCES public.professional_profiles(id),
   CONSTRAINT professional_company_ratings_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id),
   CONSTRAINT professional_company_ratings_professional_id_fkey FOREIGN KEY (professional_id) REFERENCES public.professional_profiles(id)
 );
@@ -412,6 +414,275 @@ CREATE TABLE public.service_categories (
   is_deleted boolean NOT NULL DEFAULT false,
   deleted_at timestamp with time zone,
   CONSTRAINT service_categories_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.service_page_banners (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  eyebrow_text_nl text,
+  eyebrow_text_en text,
+  h1_text_nl text NOT NULL,
+  h1_text_en text NOT NULL,
+  description_nl text,
+  description_en text,
+  background_image_url text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  background_image_alt text,
+  CONSTRAINT service_page_banners_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_banners_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+CREATE TABLE public.service_page_comparison_tables (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl text,
+  heading_en text,
+  description_nl text,
+  description_en text,
+  content_nl text,
+  content_en text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_comparison_tables_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_comparison_tables_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+CREATE TABLE public.service_page_cta (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl character varying NOT NULL,
+  heading_en character varying NOT NULL,
+  description_nl text,
+  description_en text,
+  button_text_nl character varying NOT NULL,
+  button_text_en character varying NOT NULL,
+  cta_link character varying NOT NULL,
+  created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT service_page_cta_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_cta_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+CREATE TABLE public.service_page_faq_items (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  service_page_faq_id uuid NOT NULL,
+  question_nl text NOT NULL,
+  question_en text NOT NULL,
+  answer_nl text NOT NULL,
+  answer_en text NOT NULL,
+  display_order integer NOT NULL DEFAULT 0,
+  is_visible boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_faq_items_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_faq_items_service_page_faq_id_fkey FOREIGN KEY (service_page_faq_id) REFERENCES public.service_page_faqs(id)
+);
+CREATE TABLE public.service_page_faqs (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl text,
+  heading_en text,
+  description_nl text,
+  description_en text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_faqs_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_faqs_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+CREATE TABLE public.service_page_marquee_items (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  marquee_id uuid NOT NULL,
+  text_nl character varying NOT NULL,
+  text_en character varying NOT NULL,
+  display_order integer NOT NULL,
+  created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT service_page_marquee_items_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_marquee_items_marquee_id_fkey FOREIGN KEY (marquee_id) REFERENCES public.service_page_marquees(id)
+);
+CREATE TABLE public.service_page_marquees (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  is_enabled boolean DEFAULT true,
+  after_sections ARRAY,
+  created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT service_page_marquees_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_marquees_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+CREATE TABLE public.service_page_metas (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  meta_title_nl character varying,
+  meta_title_en character varying,
+  meta_description_nl text,
+  meta_description_en text,
+  canonical_url character varying,
+  og_title_nl character varying,
+  og_title_en character varying,
+  og_description_nl text,
+  og_description_en text,
+  og_image_url text,
+  schema_organization jsonb,
+  schema_breadcrumbs jsonb,
+  schema_faq jsonb,
+  schema_custom jsonb,
+  created_at timestamp without time zone DEFAULT now(),
+  updated_at timestamp without time zone DEFAULT now(),
+  CONSTRAINT service_page_metas_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_metas_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+CREATE TABLE public.service_page_overview_tables (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl text,
+  heading_en text,
+  description_nl text,
+  description_en text,
+  content_nl text,
+  content_en text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_overview_tables_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_overview_tables_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+CREATE TABLE public.service_page_process (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl text,
+  heading_en text,
+  description_nl text,
+  description_en text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_process_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_process_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+CREATE TABLE public.service_page_process_steps (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  process_id uuid NOT NULL,
+  heading_nl text NOT NULL,
+  heading_en text NOT NULL,
+  description_nl text,
+  description_en text,
+  image_url text,
+  icon_url text,
+  step_order integer NOT NULL DEFAULT 0,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_process_steps_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_process_steps_process_id_fkey FOREIGN KEY (process_id) REFERENCES public.service_page_process(id)
+);
+CREATE TABLE public.service_page_reviews (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl character varying NOT NULL,
+  heading_en character varying NOT NULL,
+  description_nl text,
+  description_en text,
+  eye_text_nl character varying NOT NULL,
+  eye_text_en character varying NOT NULL,
+  created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT service_page_reviews_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_reviews_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+CREATE TABLE public.service_page_seo_content (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl text,
+  heading_en text,
+  description_nl text,
+  description_en text,
+  content_nl text,
+  content_en text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_seo_content_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_seo_content_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+CREATE TABLE public.service_page_tips (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl text,
+  heading_en text,
+  description_nl text,
+  description_en text,
+  content_nl text,
+  content_en text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_tips_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_tips_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+CREATE TABLE public.service_page_types (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl character varying NOT NULL,
+  heading_en character varying NOT NULL,
+  description_nl text,
+  description_en text,
+  created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT service_page_types_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_types_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+CREATE TABLE public.service_page_value_items (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  values_id uuid NOT NULL,
+  position character varying NOT NULL CHECK ("position"::text = ANY (ARRAY['top_left'::character varying, 'top_right'::character varying, 'bottom_left'::character varying, 'bottom_right'::character varying]::text[])),
+  heading_nl character varying NOT NULL,
+  heading_en character varying NOT NULL,
+  description_nl character varying,
+  description_en character varying,
+  icon_url text,
+  icon_alt_text text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_value_items_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_value_items_values_id_fkey FOREIGN KEY (values_id) REFERENCES public.service_page_values(id)
+);
+CREATE TABLE public.service_page_values (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl text,
+  heading_en text,
+  description_nl text,
+  description_en text,
+  center_text_nl text,
+  center_text_en text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_values_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_values_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+CREATE TABLE public.service_pages (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_category_id bigint NOT NULL UNIQUE,
+  status character varying NOT NULL DEFAULT 'draft'::character varying CHECK (status::text = ANY (ARRAY['draft'::character varying, 'pending'::character varying, 'active'::character varying]::text[])),
+  created_by uuid,
+  updated_by uuid,
+  published_by uuid,
+  published_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  sections_config jsonb DEFAULT '{"order": ["banner"], "active": ["banner"]}'::jsonb,
+  CONSTRAINT service_pages_pkey PRIMARY KEY (id),
+  CONSTRAINT service_pages_published_by_fkey FOREIGN KEY (published_by) REFERENCES public.admin_users(id),
+  CONSTRAINT service_pages_service_category_id_fkey FOREIGN KEY (service_category_id) REFERENCES public.service_categories(id),
+  CONSTRAINT service_pages_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.admin_users(id),
+  CONSTRAINT service_pages_updated_by_fkey FOREIGN KEY (updated_by) REFERENCES public.admin_users(id)
+);
+CREATE TABLE public.service_pages_intro (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl text NOT NULL,
+  heading_en text NOT NULL,
+  description_nl text NOT NULL,
+  description_en text NOT NULL,
+  background_image_url text,
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  updated_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  background_image_alt text,
+  CONSTRAINT service_pages_intro_pkey PRIMARY KEY (id),
+  CONSTRAINT service_pages_intro_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
 );
 CREATE TABLE public.service_subcategories (
   id bigint NOT NULL DEFAULT nextval('service_subcategories_id_seq'::regclass),

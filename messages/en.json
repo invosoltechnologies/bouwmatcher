@@ -1727,6 +1727,18 @@
           "description": "Ask questions or provide your availability. Quick responses help with lower prices and earlier scheduling."
         }
       }
+    },
+    "siteAccess": {
+      "title": "Site Under Construction",
+      "subtitle": "This site is currently being prepared. Please enter the access password to continue.",
+      "passwordPlaceholder": "Enter password",
+      "accessButton": "Access Site",
+      "errorIncorrect": "Incorrect password. Please try again.",
+      "errorNotConfigured": "Site protection is not properly configured",
+      "errorSaveAuth": "Unable to save authentication. Please try again.",
+      "footerNote": "Access is valid for 1 hour after authentication",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
     }
   }
 }
