@@ -135,7 +135,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full">
-      <div className=" border overflow-x-auto">
+      <div className="w-full border rounded-lg overflow-x-auto">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

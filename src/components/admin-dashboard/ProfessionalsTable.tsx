@@ -560,7 +560,7 @@ export default function ProfessionalsTable({
   ]
 
   return (
-    <div className="bg-white rounded-b-xl border border-slate-200 border-t-0 shadow-sm overflow-hidden">
+    <div className="w-full bg-white rounded-b-xl border border-slate-200 border-t-0 shadow-sm">
       {/* Header */}
       {showHeader && (
         <div className="p-6 border-b border-slate-200 space-y-4">
@@ -580,17 +580,15 @@ export default function ProfessionalsTable({
         </div>
       )}
 
-      <div className={showHeader ? 'p-6 pt-0' : 'p-0'}>
-        <DataTable
-          columns={columns}
-          data={professionals}
-          searchKey="name"
-          searchPlaceholder={t('tableHeaders.searchPlaceholder', { defaultValue: 'Zoeken...' })}
-          getRowClassName={(professional) =>
-            professional.status === 'suspended' ? 'bg-red-50/50 hover:bg-red-100/50' : ''
-          }
-        />
-      </div>
+      <DataTable
+        columns={columns}
+        data={professionals}
+        searchKey="name"
+        searchPlaceholder={t('tableHeaders.searchPlaceholder', { defaultValue: 'Zoeken...' })}
+        getRowClassName={(professional) =>
+          professional.status === 'suspended' ? 'bg-red-50/50 hover:bg-red-100/50' : ''
+        }
+      />
 
       {/* Contact Modal */}
       {selectedProfessional && (

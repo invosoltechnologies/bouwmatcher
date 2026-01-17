@@ -114,9 +114,18 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Combine data
-    const projectsWithBids: ProjectLead[] = projects.map(project => ({
+    // Normalize the data structure and combine with bid counts
+    const projectsWithBids: ProjectLead[] = projects.map((project: any) => ({
       ...project,
+      service_categories: Array.isArray(project.service_categories)
+        ? project.service_categories[0] || null
+        : project.service_categories,
+      service_subcategories: Array.isArray(project.service_subcategories)
+        ? project.service_subcategories[0] || null
+        : project.service_subcategories,
+      professional_profiles: Array.isArray(project.professional_profiles)
+        ? project.professional_profiles[0] || null
+        : project.professional_profiles,
       bidCount: bidsPerProject[project.id] || 0,
     }));
 

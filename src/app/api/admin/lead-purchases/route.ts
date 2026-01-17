@@ -94,11 +94,22 @@ export async function GET(request: NextRequest) {
       } as LeadPurchasesResponse);
     }
 
+    // Normalize the data structure - Supabase may return relations as arrays
+    const normalizedPurchases = purchases.map((purchase: any) => ({
+      ...purchase,
+      professional_profiles: Array.isArray(purchase.professional_profiles)
+        ? purchase.professional_profiles[0] || null
+        : purchase.professional_profiles,
+      projects: Array.isArray(purchase.projects)
+        ? purchase.projects[0] || null
+        : purchase.projects,
+    }));
+
     // If search is provided, filter results client-side
-    let filteredPurchases = purchases;
+    let filteredPurchases = normalizedPurchases;
     if (search) {
       const searchLower = search.toLowerCase();
-      filteredPurchases = purchases.filter((purchase) => {
+      filteredPurchases = normalizedPurchases.filter((purchase) => {
         const professionalName = purchase.professional_profiles
           ? `${purchase.professional_profiles.first_name} ${purchase.professional_profiles.last_name}`.toLowerCase()
           : '';
