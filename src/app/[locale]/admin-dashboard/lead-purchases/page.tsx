@@ -72,17 +72,11 @@ export default function LeadPurchasesPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="custom-container">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">Lead Aankopen</h1>
-          <p className="text-slate-500 mt-1">Beheer alle lead aankopen en betalingen</p>
-        </div>
-      </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
         <StatsCard
           icon={ShoppingCart}
           iconColor="text-blue-600"
@@ -125,7 +119,7 @@ export default function LeadPurchasesPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border border-slate-200 rounded-lg p-4">
+      <div className="bg-white border border-slate-200 rounded-t-lg p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Search */}
           <div className="relative">
@@ -141,7 +135,7 @@ export default function LeadPurchasesPage() {
 
           {/* Payment Status Filter */}
           <Select value={paymentStatusFilter} onValueChange={setPaymentStatusFilter}>
-            <SelectTrigger>
+            <SelectTrigger iconWidth={20} iconHeight={20} >
               <SelectValue placeholder="Filter op betaalstatus" />
             </SelectTrigger>
             <SelectContent>
@@ -157,7 +151,7 @@ export default function LeadPurchasesPage() {
 
       {/* Error State */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="bg-red-50 border border-red-200 rounded-b-lg p-4">
           <p className="text-red-800">
             Fout bij het laden van lead aankopen: {error.message}
           </p>
@@ -165,7 +159,7 @@ export default function LeadPurchasesPage() {
       )}
 
       {/* Table */}
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-b-lg overflow-hidden">
         <LeadPurchasesTable data={data?.purchases || []} isLoading={isLoading} />
       </div>
 

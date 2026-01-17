@@ -63,17 +63,11 @@ export default function ProjectsPage() {
   }, [data]);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="custom-container">
       {/* Header */}
-      {/* <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">Project Leads</h1>
-          <p className="text-slate-500 mt-1">Beheer alle projectaanvragen en leads</p>
-        </div>
-      </div> */}
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
         <StatsCard
           icon={Briefcase}
           iconColor="text-blue-600"
@@ -113,7 +107,7 @@ export default function ProjectsPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border border-slate-200 rounded-lg p-4">
+      <div className="bg-white border border-slate-200 rounded-t-lg p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Search */}
           <div className="relative">
@@ -128,8 +122,8 @@ export default function ProjectsPage() {
           </div>
 
           {/* Status Filter */}
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger>
+          <Select value={statusFilter} onValueChange={setStatusFilter} >
+            <SelectTrigger iconWidth={20} iconHeight={20} >
               <SelectValue placeholder="Filter op status" />
             </SelectTrigger>
             <SelectContent>
@@ -145,7 +139,7 @@ export default function ProjectsPage() {
 
       {/* Error State */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="bg-red-50 border border-red-200 rounded-b-lg p-4">
           <p className="text-red-800">
             Fout bij het laden van projecten: {error.message}
           </p>
@@ -153,7 +147,7 @@ export default function ProjectsPage() {
       )}
 
       {/* Table */}
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-b-lg overflow-hidden">
         <ProjectLeadsTable data={data?.projects || []} isLoading={isLoading} />
       </div>
 
