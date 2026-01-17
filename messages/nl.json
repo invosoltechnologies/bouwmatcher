@@ -1617,6 +1617,89 @@
         "rejectionReason": "Afwijzingsreden",
         "approvedDate": "Goedgekeurd op"
       },
+      "projects": {
+        "title": "Project Leads",
+        "description": "Beheer alle projectaanvragen en leads",
+        "stats": {
+          "total": "Totaal projecten",
+          "newThisMonth": "Nieuw deze maand",
+          "assigned": "Toegewezen",
+          "available": "Beschikbaar",
+          "cancelled": "Geannuleerd"
+        },
+        "tableHeaders": {
+          "index": "#",
+          "client": "Klant",
+          "category": "Categorie",
+          "type": "Type",
+          "phone": "Telefoon",
+          "description": "Beschrijving",
+          "execution": "Uitvoering",
+          "assignedTo": "Toegewezen aan",
+          "bids": "Biedingen",
+          "status": "Status",
+          "created": "Aangemaakt",
+          "actions": "Acties"
+        },
+        "types": {
+          "private": "Particulier",
+          "business": "Zakelijk"
+        },
+        "statusBadges": {
+          "available": "Beschikbaar",
+          "assigned": "Toegewezen",
+          "cancelled": "Geannuleerd"
+        },
+        "executionTiming": {
+          "asap": "Zo snel mogelijk",
+          "within_1_month": "Binnen 1 maand",
+          "within_3_months": "Binnen 3 maanden",
+          "within_6_months": "Binnen 6 maanden",
+          "no_rush": "Geen haast"
+        },
+        "actions": {
+          "contactLead": "Contact lead",
+          "viewProfessional": "Zie professional",
+          "viewCancellation": "Annuleringsreden"
+        },
+        "modals": {
+          "contactLead": {
+            "title": "Contact Lead",
+            "email": "Email",
+            "phone": "Telefoon",
+            "noPhone": "Geen telefoonnummer beschikbaar",
+            "copyEmail": "Kopieer email",
+            "copyPhone": "Kopieer telefoonnummer",
+            "emailCopied": "Email gekopieerd",
+            "phoneCopied": "Telefoonnummer gekopieerd"
+          },
+          "cancellation": {
+            "title": "Annuleringsreden",
+            "project": "Project",
+            "cancelledOn": "Geannuleerd op",
+            "reason": "Reden"
+          }
+        },
+        "filters": {
+          "searchPlaceholder": "Zoek op naam, email, beschrijving...",
+          "allStatuses": "Alle statussen",
+          "completed": "Voltooid",
+          "draft": "Concept",
+          "active": "Actief",
+          "cancelled": "Geannuleerd"
+        },
+        "pagination": {
+          "showing": "Toont",
+          "to": "tot",
+          "of": "van",
+          "previous": "Vorige",
+          "next": "Volgende"
+        },
+        "noData": "Geen projecten gevonden",
+        "loading": "Projecten laden...",
+        "error": "Fout bij het laden van projecten",
+        "notAssigned": "Niet toegewezen"
+      },
       "serviceCategories": "Servicecategorieën",
       "serviceCategoriesDesc": "Aantal professionals per categorie",
       "active": "Actief",

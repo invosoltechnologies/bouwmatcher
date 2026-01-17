@@ -1619,6 +1619,89 @@
         "rejectionReason": "Rejection reason",
         "approvedDate": "Approved on"
       },
+      "projects": {
+        "title": "Project Leads",
+        "description": "Manage all project requests and leads",
+        "stats": {
+          "total": "Total projects",
+          "newThisMonth": "New this month",
+          "assigned": "Assigned",
+          "available": "Available",
+          "cancelled": "Cancelled"
+        },
+        "tableHeaders": {
+          "index": "#",
+          "client": "Client",
+          "category": "Category",
+          "type": "Type",
+          "phone": "Phone",
+          "description": "Description",
+          "execution": "Execution",
+          "assignedTo": "Assigned to",
+          "bids": "Bids",
+          "status": "Status",
+          "created": "Created",
+          "actions": "Actions"
+        },
+        "types": {
+          "private": "Private",
+          "business": "Business"
+        },
+        "statusBadges": {
+          "available": "Available",
+          "assigned": "Assigned",
+          "cancelled": "Cancelled"
+        },
+        "executionTiming": {
+          "asap": "As soon as possible",
+          "within_1_month": "Within 1 month",
+          "within_3_months": "Within 3 months",
+          "within_6_months": "Within 6 months",
+          "no_rush": "No rush"
+        },
+        "actions": {
+          "contactLead": "Contact lead",
+          "viewProfessional": "View professional",
+          "viewCancellation": "Cancellation reason"
+        },
+        "modals": {
+          "contactLead": {
+            "title": "Contact Lead",
+            "email": "Email",
+            "phone": "Phone",
+            "noPhone": "No phone number available",
+            "copyEmail": "Copy email",
+            "copyPhone": "Copy phone number",
+            "emailCopied": "Email copied",
+            "phoneCopied": "Phone number copied"
+          },
+          "cancellation": {
+            "title": "Cancellation Reason",
+            "project": "Project",
+            "cancelledOn": "Cancelled on",
+            "reason": "Reason"
+          }
+        },
+        "filters": {
+          "searchPlaceholder": "Search by name, email, description...",
+          "allStatuses": "All statuses",
+          "completed": "Completed",
+          "draft": "Draft",
+          "active": "Active",
+          "cancelled": "Cancelled"
+        },
+        "pagination": {
+          "showing": "Showing",
+          "to": "to",
+          "of": "of",
+          "previous": "Previous",
+          "next": "Next"
+        },
+        "noData": "No projects found",
+        "loading": "Loading projects...",
+        "error": "Error loading projects",
+        "notAssigned": "Not assigned"
+      },
       "serviceCategories": "Service Categories",
       "serviceCategoriesDesc": "Number of professionals per category",
       "active": "Active",

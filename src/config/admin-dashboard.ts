@@ -48,14 +48,14 @@ export const adminNavigation: NavigationItem[] = [
     iconType: 'lucide',
     type: 'link',
   },
-  // {
-  //   id: 'projects',
-  //   label: 'Projects',
-  //   href: '/admin-dashboard/projects',
-  //   icon: 'Briefcase',
-  //   iconType: 'lucide',
-  //   type: 'link',
-  // },
+  {
+    id: 'projects',
+    label: 'Projects',
+    href: '/admin-dashboard/projects',
+    icon: 'Briefcase',
+    iconType: 'lucide',
+    type: 'link',
+  },
   {
     id: 'service-categories',
     label: 'Service Categories',
