@@ -1338,6 +1338,7 @@
         "verification": "Verification",
         "reviews": "Reviews",
         "projects": "Projects",
+        "lead-purchases": "Lead Purchases",
         "service-categories": "Service Categories",
         "service-pages": "Service Pages",
         "home": "Home",
@@ -1368,6 +1369,10 @@
         "projects": {
           "title": "Projects Management",
           "description": "View and manage all platform projects"
+        },
+        "lead-purchases": {
+          "title": "Lead Purchases",
+          "description": "Manage all lead purchases and payments"
         },
         "service-categories": {
           "title": "Service Categories",
@@ -1701,6 +1706,63 @@
         "loading": "Loading projects...",
         "error": "Error loading projects",
         "notAssigned": "Not assigned"
+      },
+      "leadPurchases": {
+        "title": "Lead Purchases",
+        "description": "Manage all lead purchases and payments",
+        "stats": {
+          "total": "Total purchases",
+          "totalRevenue": "Total revenue",
+          "thisMonth": "This month",
+          "revenueThisMonth": "Revenue this month",
+          "averagePrice": "Average price"
+        },
+        "tableHeaders": {
+          "index": "#",
+          "professional": "Professional",
+          "project": "Project",
+          "type": "Type",
+          "amount": "Amount",
+          "paymentStatus": "Payment Status",
+          "paymentMethod": "Payment Method",
+          "transactionId": "Transaction ID",
+          "purchasedAt": "Purchased At",
+          "actions": "Actions"
+        },
+        "paymentStatus": {
+          "completed": "Completed",
+          "pending": "Pending",
+          "failed": "Failed",
+          "refunded": "Refunded"
+        },
+        "paymentMethods": {
+          "card": "Credit Card",
+          "ideal": "iDEAL",
+          "bancontact": "Bancontact",
+          "paypal": "PayPal"
+        },
+        "actions": {
+          "viewProfessional": "View professional",
+          "viewProject": "View project",
+          "copyTransactionId": "Copy transaction ID"
+        },
+        "filters": {
+          "searchPlaceholder": "Search by professional, client, transaction ID...",
+          "allStatuses": "All statuses"
+        },
+        "pagination": {
+          "showing": "Showing",
+          "to": "to",
+          "of": "of",
+          "purchases": "purchases",
+          "previous": "Previous",
+          "next": "Next"
+        },
+        "noData": "No purchases found",
+        "loading": "Loading purchases...",
+        "error": "Error loading lead purchases",
+        "transactionIdCopied": "Transaction ID copied",
+        "emailCopied": "Email copied"
       },
       "serviceCategories": "Service Categories",
       "serviceCategoriesDesc": "Number of professionals per category",

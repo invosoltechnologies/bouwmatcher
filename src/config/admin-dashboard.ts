@@ -57,6 +57,14 @@ export const adminNavigation: NavigationItem[] = [
     type: 'link',
   },
   {
+    id: 'lead-purchases',
+    label: 'Lead Purchases',
+    href: '/admin-dashboard/lead-purchases',
+    icon: 'ShoppingCart',
+    iconType: 'lucide',
+    type: 'link',
+  },
+  {
     id: 'service-categories',
     label: 'Service Categories',
     href: '/admin-dashboard/service-categories',
@@ -119,6 +127,10 @@ export const adminPageConfigs: Record<string, PageConfig> = {
   projects: {
     title: 'Projects Management',
     description: 'View and manage all platform projects',
+  },
+  'lead-purchases': {
+    title: 'Lead Purchases',
+    description: 'Manage all lead purchases and payments',
   },
   'service-categories': {
     title: 'Service Categories',

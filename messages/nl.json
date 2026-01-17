@@ -1336,6 +1336,7 @@
         "verification": "Verificatie",
         "reviews": "Reviews",
         "projects": "Projecten",
+        "lead-purchases": "Lead Aankopen",
         "service-categories": "Servicecategorieën",
         "service-pages": "Servicepagina's",
         "home": "Home",
@@ -1366,6 +1367,10 @@
         "projects": {
           "title": "Projecten Beheer",
           "description": "Bekijk en beheer alle platformprojecten"
+        },
+        "lead-purchases": {
+          "title": "Lead Aankopen",
+          "description": "Beheer alle lead aankopen en betalingen"
         },
         "service-categories": {
           "title": "Servicecategorieën",
@@ -1699,6 +1704,63 @@
         "loading": "Projecten laden...",
         "error": "Fout bij het laden van projecten",
         "notAssigned": "Niet toegewezen"
+      },
+      "leadPurchases": {
+        "title": "Lead Aankopen",
+        "description": "Beheer alle lead aankopen en betalingen",
+        "stats": {
+          "total": "Totaal aankopen",
+          "totalRevenue": "Totale omzet",
+          "thisMonth": "Deze maand",
+          "revenueThisMonth": "Omzet deze maand",
+          "averagePrice": "Gemiddelde prijs"
+        },
+        "tableHeaders": {
+          "index": "#",
+          "professional": "Professional",
+          "project": "Project",
+          "type": "Type",
+          "amount": "Bedrag",
+          "paymentStatus": "Betaalstatus",
+          "paymentMethod": "Betaalmethode",
+          "transactionId": "Transactie ID",
+          "purchasedAt": "Gekocht op",
+          "actions": "Acties"
+        },
+        "paymentStatus": {
+          "completed": "Voltooid",
+          "pending": "In behandeling",
+          "failed": "Mislukt",
+          "refunded": "Terugbetaald"
+        },
+        "paymentMethods": {
+          "card": "Creditcard",
+          "ideal": "iDEAL",
+          "bancontact": "Bancontact",
+          "paypal": "PayPal"
+        },
+        "actions": {
+          "viewProfessional": "Zie professional",
+          "viewProject": "Zie project",
+          "copyTransactionId": "Kopieer transactie ID"
+        },
+        "filters": {
+          "searchPlaceholder": "Zoek op professional, klant, transactie ID...",
+          "allStatuses": "Alle statussen"
+        },
+        "pagination": {
+          "showing": "Toont",
+          "to": "tot",
+          "of": "van",
+          "purchases": "aankopen",
+          "previous": "Vorige",
+          "next": "Volgende"
+        },
+        "noData": "Geen aankopen gevonden",
+        "loading": "Aankopen laden...",
+        "error": "Fout bij het laden van lead aankopen",
+        "transactionIdCopied": "Transactie ID gekopieerd",
+        "emailCopied": "Email gekopieerd"
       },
       "serviceCategories": "Servicecategorieën",
       "serviceCategoriesDesc": "Aantal professionals per categorie",
