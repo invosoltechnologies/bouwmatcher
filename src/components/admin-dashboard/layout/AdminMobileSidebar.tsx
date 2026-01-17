@@ -16,6 +16,8 @@ import {
   FolderTree,
   Home,
   LogOut,
+  ShoppingCart,
+  FileText,
 } from 'lucide-react';
 import { adminNavigation } from '@/config/admin-dashboard';
 import { cn } from '@/lib/utils';
@@ -105,6 +107,8 @@ export default function AdminMobileSidebar({
         FolderTree,
         Home,
         LogOut,
+        ShoppingCart,
+        FileText,
       };
 
     if (item.iconType === 'lucide' && iconMap[item.icon]) {
