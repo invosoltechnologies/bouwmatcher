@@ -5,6 +5,7 @@ import { Plus, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import QuestionFieldset from './QuestionFieldset';
 import { SubcategoryFormData, QuestionFormData } from '@/types/admin/category-form';
 import { useTranslations } from 'next-intl';
@@ -156,6 +157,37 @@ export default function SubcategoryCard({
             <p className="text-xs text-gray-500 mt-1">
               {t('slugHelp')}
             </p>
+          </div>
+
+          {/* Description */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor={`sub-${subcategoryIndex}-desc-nl`}>
+                {t('descriptionNl')}
+              </Label>
+              <Textarea
+                id={`sub-${subcategoryIndex}-desc-nl`}
+                value={subcategory.description_nl || ''}
+                onChange={(e) => handleFieldChange('description_nl', e.target.value)}
+                placeholder={t('descriptionNlPlaceholder')}
+                rows={4}
+                className="resize-none"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor={`sub-${subcategoryIndex}-desc-en`}>
+                {t('descriptionEn')}
+              </Label>
+              <Textarea
+                id={`sub-${subcategoryIndex}-desc-en`}
+                value={subcategory.description_en || ''}
+                onChange={(e) => handleFieldChange('description_en', e.target.value)}
+                placeholder={t('descriptionEnPlaceholder')}
+                rows={4}
+                className="resize-none"
+              />
+            </div>
           </div>
 
           {/* Prices */}
