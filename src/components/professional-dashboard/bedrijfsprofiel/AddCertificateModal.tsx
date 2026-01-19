@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { format } from 'date-fns';
+import { format, parse, isValid } from 'date-fns';
 import { nl } from 'date-fns/locale';
 import { Calendar as CalendarIcon, Upload, File } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -41,6 +41,10 @@ export default function AddCertificateModal({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [issueDate, setIssueDate] = useState<Date | undefined>();
   const [expiryDate, setExpiryDate] = useState<Date | undefined>();
+  const [issueDateInput, setIssueDateInput] = useState<string>('');
+  const [expiryDateInput, setExpiryDateInput] = useState<string>('');
+  const [issueDateError, setIssueDateError] = useState<string>('');
+  const [expiryDateError, setExpiryDateError] = useState<string>('');
 
   const {
     register,
@@ -64,7 +68,95 @@ export default function AddCertificateModal({
     setSelectedFile(null);
     setIssueDate(undefined);
     setExpiryDate(undefined);
+    setIssueDateInput('');
+    setExpiryDateInput('');
+    setIssueDateError('');
+    setExpiryDateError('');
     onClose();
+  };
+
+  // Parse date from string (dd/MM/yyyy format)
+  const parseDate = (dateString: string): Date | null => {
+    if (!dateString.trim()) return null;
+    const parsed = parse(dateString, 'dd/MM/yyyy', new Date());
+    return isValid(parsed) ? parsed : null;
+  };
+
+  // Handle issue date input
+  const handleIssueDateInput = (value: string) => {
+    setIssueDateInput(value);
+    setIssueDateError('');
+
+    if (!value.trim()) {
+      setIssueDate(undefined);
+      return;
+    }
+
+    const parsed = parseDate(value);
+    if (!parsed) {
+      setIssueDateError(t('invalidDateFormat'));
+      setIssueDate(undefined);
+      return;
+    }
+
+    // Check if date is in the future
+    if (parsed > new Date()) {
+      setIssueDateError(t('issueDateInFuture'));
+      setIssueDate(undefined);
+      return;
+    }
+
+    setIssueDate(parsed);
+  };
+
+  // Handle expiry date input
+  const handleExpiryDateInput = (value: string) => {
+    setExpiryDateInput(value);
+    setExpiryDateError('');
+
+    if (!value.trim()) {
+      setExpiryDate(undefined);
+      return;
+    }
+
+    const parsed = parseDate(value);
+    if (!parsed) {
+      setExpiryDateError(t('invalidDateFormat'));
+      setExpiryDate(undefined);
+      return;
+    }
+
+    if (!issueDate) {
+      setExpiryDateError(t('selectIssueDateFirst'));
+      setExpiryDate(undefined);
+      return;
+    }
+
+    if (parsed <= issueDate) {
+      setExpiryDateError(t('expiryAfterIssue'));
+      setExpiryDate(undefined);
+      return;
+    }
+
+    setExpiryDate(parsed);
+  };
+
+  // Update input when date is selected from calendar
+  const handleIssueDateSelect = (date: Date | undefined) => {
+    setIssueDate(date);
+    if (date) {
+      setIssueDateInput(format(date, 'dd/MM/yyyy', { locale: nl }));
+      setIssueDateError('');
+    }
+  };
+
+  // Update input when expiry date is selected from calendar
+  const handleExpiryDateSelect = (date: Date | undefined) => {
+    setExpiryDate(date);
+    if (date) {
+      setExpiryDateInput(format(date, 'dd/MM/yyyy', { locale: nl }));
+      setExpiryDateError('');
+    }
   };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,34 +261,39 @@ export default function AddCertificateModal({
             <Label className="text-xs sm:text-sm font-medium text-secondary-foreground">
               {t('issueDateLabel')}
             </Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  className={cn(
-                    'w-full mt-1.5 px-3 sm:px-4 py-2 flex items-center justify-start gap-2 text-left font-normal border border-gray-300 rounded-xl bg-white hover:ring-2 hover:ring-primary hover:border-primary transition-all outline-none',
-                    !issueDate && 'text-muted-foreground'
-                  )}
-                >
-                  <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm">
-                    {issueDate ? (
-                      format(issueDate, 'dd/MM/yyyy', { locale: nl })
-                    ) : (
-                      t('datePlaceholder')
-                    )}
-                  </span>
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={issueDate}
-                  onSelect={setIssueDate}
-                  disabled={(date) => date > new Date()}
-                />
-              </PopoverContent>
-            </Popover>
+            <div className="relative mt-1.5">
+              <Input
+                type="text"
+                placeholder={t('datePlaceholder')}
+                value={issueDateInput}
+                onChange={(e) => handleIssueDateInput(e.target.value)}
+                className={cn(
+                  'rounded-xl border-gray-300 text-sm sm:text-base pr-10',
+                  issueDateError && 'border-red-500'
+                )}
+              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={issueDate}
+                    onSelect={handleIssueDateSelect}
+                    disabled={(date) => date > new Date()}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            {issueDateError && (
+              <p className="mt-1 text-xs sm:text-sm text-red-600">{issueDateError}</p>
+            )}
           </div>
 
           {/* Expiry Date */}
@@ -204,37 +301,48 @@ export default function AddCertificateModal({
             <Label className="text-xs sm:text-sm font-medium text-secondary-foreground">
               {t('expiryDateLabel')}
             </Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  className={cn(
-                    'w-full mt-1.5 px-3 sm:px-4 py-2 flex items-center justify-start gap-2 text-left font-normal border border-gray-300 rounded-xl bg-white hover:ring-2 hover:ring-primary hover:border-primary transition-all outline-none',
-                    !expiryDate && 'text-muted-foreground'
-                  )}
-                >
-                  <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm">
-                    {expiryDate ? (
-                      format(expiryDate, 'dd/MM/yyyy', { locale: nl })
-                    ) : (
-                      t('datePlaceholder')
+            <div className="relative mt-1.5">
+              <Input
+                type="text"
+                placeholder={t('datePlaceholder')}
+                value={expiryDateInput}
+                onChange={(e) => handleExpiryDateInput(e.target.value)}
+                disabled={!issueDate}
+                className={cn(
+                  'rounded-xl border-gray-300 text-sm sm:text-base pr-10',
+                  expiryDateError && 'border-red-500',
+                  !issueDate && 'opacity-50 cursor-not-allowed'
+                )}
+              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    disabled={!issueDate}
+                    className={cn(
+                      'absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600',
+                      !issueDate && 'opacity-50 cursor-not-allowed'
                     )}
-                  </span>
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={expiryDate}
-                  onSelect={setExpiryDate}
-                  disabled={(date) => {
-                    if (!issueDate) return true;
-                    return date <= issueDate;
-                  }}
-                />
-              </PopoverContent>
-            </Popover>
+                  >
+                    <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={expiryDate}
+                    onSelect={handleExpiryDateSelect}
+                    disabled={(date) => {
+                      if (!issueDate) return true;
+                      return date <= issueDate;
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            {expiryDateError && (
+              <p className="mt-1 text-xs sm:text-sm text-red-600">{expiryDateError}</p>
+            )}
           </div>
         </div>
 
