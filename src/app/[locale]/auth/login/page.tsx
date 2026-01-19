@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from '@/i18n/navigation';
@@ -14,12 +14,14 @@ import AuthNavbar from '@/components/auth/AuthNavbar';
 import type { LoginFormData } from '@/types/auth';
 import { useAuth } from '@/hooks/useAuth';
 import { useTranslations } from 'next-intl';
+import { Eye, EyeOff } from 'lucide-react';
 
 function LoginForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { signIn, signInWithOAuth } = useAuth();
   const t = useTranslations('auth.login');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Get redirect URL from query params (set by middleware)
   const redirectUrl = searchParams.get('redirect');
@@ -150,13 +152,26 @@ function LoginForm() {
             </div>
 
             <div>
-              <Input
-                {...register('password')}
-                type='password'
-                placeholder={t('passwordPlaceholder')}
-                className='h-12 md:h-14 lg:h-[60px] bg-white border-neutral-300 rounded-lg px-4 md:px-6 lg:px-7 text-base md:text-lg lg:text-xl font-medium'
-                style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
-              />
+              <div className='relative'>
+                <Input
+                  {...register('password')}
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder={t('passwordPlaceholder')}
+                  className='h-12 md:h-14 lg:h-[60px] bg-white border-neutral-300 rounded-lg px-4 md:px-6 lg:px-7 pr-12 md:pr-14 text-base md:text-lg lg:text-xl font-medium'
+                  style={{ boxShadow: '0px 2px 6.5px 0px #0000001A' }}
+                />
+                <button
+                  type='button'
+                  onClick={() => setShowPassword(!showPassword)}
+                  className='absolute right-4 md:right-6 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600'
+                >
+                  {showPassword ? (
+                    <EyeOff className='w-5 h-5' />
+                  ) : (
+                    <Eye className='w-5 h-5' />
+                  )}
+                </button>
+              </div>
               {errors.password && (
                 <p className='text-red-500 text-sm mt-1'>
                   {errors.password.message}

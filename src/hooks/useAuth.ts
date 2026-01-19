@@ -11,6 +11,8 @@ import {
   getProfessionalProfileAction,
   updateProfessionalProfileAction,
   getOAuthUrlAction,
+  sendPasswordResetAction,
+  resetPasswordAction,
 } from '@/app/actions/auth';
 
 /**
@@ -67,11 +69,26 @@ export function useAuth() {
     }
   };
 
+  // Forgot password mutation
+  const forgotPassword = useMutation({
+    mutationFn: sendPasswordResetAction,
+  });
+
+  // Reset password mutation
+  const resetPassword = useMutation({
+    mutationFn: resetPasswordAction,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+    },
+  });
+
   return {
     signUp,
     signIn,
     signOut,
     signInWithOAuth,
+    forgotPassword,
+    resetPassword,
   };
 }
 

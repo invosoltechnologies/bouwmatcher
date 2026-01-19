@@ -181,6 +181,39 @@
       "logoutError": "Kon niet uitloggen. Probeer het opnieuw.",
       "loggingOut": "Bezig met uitloggen..."
     },
+    "forgotPassword": {
+      "heading": "Wachtwoord vergeten?",
+      "description": "Vul je e-mailadres in en we sturen je een link om je wachtwoord opnieuw in te stellen.",
+      "emailLabel": "E-mailadres",
+      "emailPlaceholder": "jouw@email.nl",
+      "emailRequired": "E-mailadres is verplicht",
+      "emailInvalid": "Voer een geldig e-mailadres in",
+      "submitButton": "Verstuur reset link",
+      "submitting": "Bezig met versturen...",
+      "successHeading": "Controleer je e-mail",
+      "successMessage": "We hebben een wachtwoord reset link naar je e-mailadres gestuurd. Controleer je inbox en volg de instructies.",
+      "backToLogin": "Terug naar inloggen",
+      "errorSending": "Kon reset e-mail niet versturen. Probeer het opnieuw."
+    },
+    "resetPassword": {
+      "heading": "Reset je wachtwoord",
+      "description": "Voer hieronder je nieuwe wachtwoord in.",
+      "newPasswordLabel": "Nieuw wachtwoord",
+      "newPasswordPlaceholder": "Voer nieuw wachtwoord in",
+      "confirmPasswordLabel": "Bevestig wachtwoord",
+      "confirmPasswordPlaceholder": "Bevestig je wachtwoord",
+      "passwordRequired": "Wachtwoord is verplicht",
+      "confirmPasswordRequired": "Bevestig alsjeblieft je wachtwoord",
+      "passwordMismatch": "Wachtwoorden komen niet overeen",
+      "passwordTooShort": "Wachtwoord moet minimaal 8 tekens bevatten",
+      "passwordRequirements": "Wachtwoord moet minstens één hoofdletter, één kleine letter, één cijfer en één speciaal teken bevatten",
+      "submitButton": "Wachtwoord resetten",
+      "submitting": "Bezig met resetten...",
+      "successMessage": "Je wachtwoord is succesvol gereset. Je kunt nu inloggen met je nieuwe wachtwoord.",
+      "errorResetting": "Kon wachtwoord niet resetten. De link is mogelijk verlopen. Vraag een nieuwe reset link aan.",
+      "invalidLink": "Ongeldige of verlopen reset link. Vraag een nieuwe aan.",
+      "redirecting": "Doorsturen naar inloggen..."
+    },
     "register": {
       "steps": {
         "personalInfo": "Persoonsgegevens",

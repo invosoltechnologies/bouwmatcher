@@ -181,6 +181,39 @@
       "logoutError": "Could not log out. Please try again.",
       "loggingOut": "Logging out..."
     },
+    "forgotPassword": {
+      "heading": "Forgot password?",
+      "description": "Enter your email address and we'll send you a link to reset your password.",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "your@email.com",
+      "emailRequired": "Email address is required",
+      "emailInvalid": "Please enter a valid email address",
+      "submitButton": "Send reset link",
+      "submitting": "Sending...",
+      "successHeading": "Check your email",
+      "successMessage": "We've sent a password reset link to your email address. Please check your inbox and follow the instructions.",
+      "backToLogin": "Back to login",
+      "errorSending": "Failed to send reset email. Please try again."
+    },
+    "resetPassword": {
+      "heading": "Reset your password",
+      "description": "Enter your new password below.",
+      "newPasswordLabel": "New password",
+      "newPasswordPlaceholder": "Enter new password",
+      "confirmPasswordLabel": "Confirm password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "passwordRequired": "Password is required",
+      "confirmPasswordRequired": "Please confirm your password",
+      "passwordMismatch": "Passwords do not match",
+      "passwordTooShort": "Password must be at least 8 characters",
+      "passwordRequirements": "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+      "submitButton": "Reset password",
+      "submitting": "Resetting...",
+      "successMessage": "Your password has been successfully reset. You can now log in with your new password.",
+      "errorResetting": "Failed to reset password. The link may have expired. Please request a new reset link.",
+      "invalidLink": "Invalid or expired reset link. Please request a new one.",
+      "redirecting": "Redirecting to login..."
+    },
     "register": {
       "steps": {
         "personalInfo": "Personal Information",

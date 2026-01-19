@@ -16,3 +16,12 @@ export type LoginFormData = {
   password: string;
   rememberMe?: boolean;
 };
+
+export type ForgotPasswordFormData = {
+  email: string;
+};
+
+export type ResetPasswordFormData = {
+  password: string;
+  confirmPassword: string;
+};

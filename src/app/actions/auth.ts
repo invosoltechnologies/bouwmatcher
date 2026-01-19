@@ -375,3 +375,72 @@ export async function getOAuthUrlAction(
     };
   }
 }
+
+/**
+ * Send password reset email
+ * Server action - runs on server only
+ */
+export async function sendPasswordResetAction(
+  email: string
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient();
+
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/reset-password`,
+    });
+
+    if (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error('Password reset email error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'An error occurred while sending reset email',
+    };
+  }
+}
+
+/**
+ * Update password with new password
+ * Server action - runs on server only
+ * Used after clicking reset link from email
+ */
+export async function resetPasswordAction(
+  newPassword: string
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createClient();
+
+  try {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+
+    if (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+
+    revalidatePath('/', 'layout');
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error('Password reset error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'An error occurred while resetting password',
+    };
+  }
+}
