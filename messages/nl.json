@@ -1376,6 +1376,7 @@
         "lead-purchases": "Lead Aankopen",
         "service-categories": "Servicecategorieën",
         "service-pages": "Servicepagina's",
+        "blog": "Blog",
         "home": "Home",
         "logout": "Uitloggen"
       },
@@ -1420,6 +1421,10 @@
         "service-pages": {
           "title": "Servicepagina's",
           "description": "Maak en beheer servicepagina's voor elke categorie"
+        },
+        "blog": {
+          "title": "Blogposts",
+          "description": "Maak en beheer blogposts met rijke inhoud"
         },
         "page-builder": {
           "title": "Servicepagina Bouwer",

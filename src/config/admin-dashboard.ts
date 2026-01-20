@@ -81,6 +81,14 @@ export const adminNavigation: NavigationItem[] = [
     type: 'link',
   },
   {
+    id: 'blog',
+    label: 'Blog',
+    href: '/admin-dashboard/blog',
+    icon: 'BookOpen',
+    iconType: 'lucide',
+    type: 'link',
+  },
+  {
     id: 'home',
     label: 'Home',
     href: '/',
@@ -143,5 +151,9 @@ export const adminPageConfigs: Record<string, PageConfig> = {
   'service-pages': {
     title: 'Service Pages',
     description: 'Create and manage service pages for each category',
+  },
+  'blog': {
+    title: 'Blog Posts',
+    description: 'Create and manage blog posts with rich content',
   },
 };

@@ -20,6 +20,7 @@ import {
   ChevronRight,
   FileText,
   ShoppingCart,
+  BookOpen,
 } from 'lucide-react';
 import { adminNavigation } from '@/config/admin-dashboard';
 import { cn } from '@/lib/utils';
@@ -93,6 +94,7 @@ export default function AdminSidebar() {
       LogOut,
       FileText,
       ShoppingCart,
+      BookOpen,
     };
 
     if (item.iconType === 'lucide' && iconMap[item.icon]) {

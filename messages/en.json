@@ -1378,6 +1378,7 @@
         "lead-purchases": "Lead Purchases",
         "service-categories": "Service Categories",
         "service-pages": "Service Pages",
+        "blog": "Blog",
         "home": "Home",
         "logout": "Log out"
       },
@@ -1422,6 +1423,10 @@
         "service-pages": {
           "title": "Service Pages",
           "description": "Create and manage service pages for each category"
+        },
+        "blog": {
+          "title": "Blog Posts",
+          "description": "Create and manage blog posts with rich content"
         },
         "page-builder": {
           "title": "Service Page Builder",
