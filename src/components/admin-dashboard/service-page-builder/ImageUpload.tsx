@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { Upload, Edit, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getPublicStorageUrl } from '@/lib/utils/storage-url';
+import { toast } from 'react-hot-toast';
 
 interface ImageUploadProps {
   imageUrl: string | null;
@@ -54,14 +55,19 @@ export default function ImageUpload({
         body: formData,
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Upload failed');
+        // Show error message to user with toast
+        toast.error(data.error || 'Upload failed');
+        return;
       }
 
-      const data = await response.json();
       onImageChange(data.url);
+      toast.success('Image uploaded successfully');
     } catch (error) {
       console.error('Upload error:', error);
+      toast.error('An error occurred during upload');
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) {

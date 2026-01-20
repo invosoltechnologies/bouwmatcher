@@ -1431,6 +1431,10 @@
         "page-builder": {
           "title": "Service Page Builder",
           "description": "Design and edit service page content"
+        },
+        "post-builder": {
+          "title": "Blog Post Builder",
+          "description": "Edit blog post content and settings"
         }
       },
       "categoryForm": {

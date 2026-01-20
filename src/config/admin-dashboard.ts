@@ -156,4 +156,8 @@ export const adminPageConfigs: Record<string, PageConfig> = {
     title: 'Blog Posts',
     description: 'Create and manage blog posts with rich content',
   },
+  'post-builder': {
+    title: 'Blog Post Builder',
+    description: 'Edit blog post content and settings',
+  },
 };

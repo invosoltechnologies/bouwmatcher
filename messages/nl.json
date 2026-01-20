@@ -1429,6 +1429,10 @@
         "page-builder": {
           "title": "Servicepagina Bouwer",
           "description": "Ontwerp en bewerk servicepagina-inhoud"
+        },
+        "post-builder": {
+          "title": "Blogpost Bouwer",
+          "description": "Bewerk blogpost-inhoud en instellingen"
         }
       },
       "categoryForm": {
