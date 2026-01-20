@@ -1,6 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { generateSlug } from '@/lib/utils/slug-generator';
 
 export async function GET(request: NextRequest) {
   try {
@@ -54,13 +53,19 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Debug: Log what Supabase returns for the first post
+    if (blogPosts && blogPosts.length > 0) {
+      console.log('First blog post raw data:', JSON.stringify(blogPosts[0], null, 2));
+      console.log('blog_post_content:', blogPosts[0].blog_post_content);
+    }
+
     // Filter by search term if provided (search in title)
     let filteredPosts = blogPosts || [];
     if (search) {
       const searchLower = search.toLowerCase();
       filteredPosts = filteredPosts.filter((post: any) => {
-        const titleNl = post.blog_post_content?.[0]?.title_nl?.toLowerCase() || '';
-        const titleEn = post.blog_post_content?.[0]?.title_en?.toLowerCase() || '';
+        const titleNl = post.blog_post_content?.title_nl?.toLowerCase() || '';
+        const titleEn = post.blog_post_content?.title_en?.toLowerCase() || '';
         return titleNl.includes(searchLower) || titleEn.includes(searchLower);
       });
     }
@@ -80,7 +85,7 @@ export async function GET(request: NextRequest) {
       updated_at: post.updated_at,
       service_category: post.service_categories,
       service_subcategory: post.service_subcategories,
-      content: post.blog_post_content?.[0] || null,
+      content: post.blog_post_content || null,
     }));
 
     return NextResponse.json(mappedPosts);
@@ -97,7 +102,17 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
     const body = await request.json();
-    const { slug, title_nl, title_en, service_category_id, service_subcategory_id } = body;
+    const {
+      slug,
+      title_nl,
+      title_en,
+      service_category_id,
+      service_subcategory_id,
+      meta_title_nl,
+      meta_title_en,
+      meta_description_nl,
+      meta_description_en,
+    } = body;
 
     // Validate required fields
     if (!slug) {
@@ -164,11 +179,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create empty meta record
+    // Create meta record with provided values
     const { error: metaError } = await supabase
       .from('blog_post_meta')
       .insert({
         blog_post_id: blogPost.id,
+        meta_title_nl: meta_title_nl || null,
+        meta_title_en: meta_title_en || null,
+        meta_description_nl: meta_description_nl || null,
+        meta_description_en: meta_description_en || null,
       });
 
     if (metaError) {

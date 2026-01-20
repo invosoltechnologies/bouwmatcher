@@ -17,6 +17,10 @@ interface AddBlogDialogProps {
     slug: string;
     title_nl: string;
     title_en: string;
+    meta_title_nl?: string;
+    meta_title_en?: string;
+    meta_description_nl?: string;
+    meta_description_en?: string;
   }) => Promise<void>;
   isLoading?: boolean;
 }
@@ -80,6 +84,10 @@ export default function AddBlogDialog({
         slug,
         title_nl: titleNl,
         title_en: titleEn || titleNl,
+        meta_title_nl: metaTitleNl || undefined,
+        meta_title_en: metaTitleEn || undefined,
+        meta_description_nl: metaDescNl || undefined,
+        meta_description_en: metaDescEn || undefined,
       });
       // Reset form
       resetForm();

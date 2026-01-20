@@ -6,6 +6,10 @@ export interface CreateBlogPostDTO {
   title_en?: string;
   service_category_id?: string;
   service_subcategory_id?: string;
+  meta_title_nl?: string;
+  meta_title_en?: string;
+  meta_description_nl?: string;
+  meta_description_en?: string;
 }
 
 export interface UpdateBlogPostStatusDTO {

@@ -52,7 +52,15 @@ export default function BlogManagementPage() {
   const deleteMutation = useDeleteBlogPost();
   const publishMutation = usePublishBlogPost();
 
-  const handleCreatePost = async (data: { slug: string; title_nl: string; title_en: string }) => {
+  const handleCreatePost = async (data: {
+    slug: string;
+    title_nl: string;
+    title_en: string;
+    meta_title_nl?: string;
+    meta_title_en?: string;
+    meta_description_nl?: string;
+    meta_description_en?: string;
+  }) => {
     await createMutation.mutateAsync(data);
     setIsAddDialogOpen(false);
   };
