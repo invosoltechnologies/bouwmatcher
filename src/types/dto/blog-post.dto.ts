@@ -26,6 +26,7 @@ export interface SaveBlogContentDTO {
   content_nl?: string;
   content_en?: string;
   featured_image_url?: string;
+  featured_image_alt?: string;
 }
 
 export interface SaveBlogMetaDTO {

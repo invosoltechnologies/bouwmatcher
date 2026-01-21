@@ -44,6 +44,37 @@ export default function ImageUpload({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validate image dimensions for blog-posts bucket
+    if (bucket === 'blog-posts') {
+      try {
+        const img = new Image();
+        const objectUrl = URL.createObjectURL(file);
+
+        await new Promise<void>((resolve, reject) => {
+          img.onload = () => {
+            URL.revokeObjectURL(objectUrl);
+
+            if (img.width > 780 || img.height > 620) {
+              toast.error(`Image dimensions must be 780×620px or less. Current: ${img.width}×${img.height}px`);
+              reject(new Error('Invalid dimensions'));
+            } else {
+              resolve();
+            }
+          };
+          img.onerror = () => {
+            URL.revokeObjectURL(objectUrl);
+            reject(new Error('Failed to load image'));
+          };
+          img.src = objectUrl;
+        });
+      } catch (error) {
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+        return;
+      }
+    }
+
     setIsUploading(true);
     try {
       const formData = new FormData();

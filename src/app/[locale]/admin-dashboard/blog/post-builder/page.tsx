@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
@@ -9,21 +9,24 @@ import { ArrowLeft } from 'lucide-react';
 // Sections
 import BannerSection from '@/components/admin-dashboard/blog-builder/BannerSection';
 import ContentSection from '@/components/admin-dashboard/blog-builder/ContentSection';
+import PublishModal from '@/components/admin-dashboard/blog-builder/PublishModal';
 
 // Hooks
-import { useBlogPost } from '@/lib/hooks/admin/blog-post';
+import { useBlogPost, usePublishBlogPost } from '@/lib/hooks/admin/blog-post';
 import { useBlogContent } from '@/lib/hooks/admin/blog-content';
 
 function BlogPostBuilderContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const locale = useLocale();
+  const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
 
   const blogPostId = searchParams.get('id');
 
   // Fetch blog post and content data
   const { data: blogPost, isLoading: isLoadingPost } = useBlogPost(blogPostId || '');
   const { data: content } = useBlogContent(blogPostId || '');
+  const publishMutation = usePublishBlogPost();
 
   if (!blogPostId) {
     return (
@@ -54,6 +57,20 @@ function BlogPostBuilderContent() {
       </div>
     );
   }
+
+  const handleSaveAsDraft = async () => {
+    if (!blogPostId) return;
+    await publishMutation.mutateAsync({ id: blogPostId, status: 'draft' });
+    setIsPublishModalOpen(false);
+    router.push(`/${locale}/admin-dashboard/blog`);
+  };
+
+  const handlePublish = async () => {
+    if (!blogPostId) return;
+    await publishMutation.mutateAsync({ id: blogPostId, status: 'published' });
+    setIsPublishModalOpen(false);
+    router.push(`/${locale}/admin-dashboard/blog`);
+  };
 
   return (
     <div className='space-y-6'>
@@ -103,13 +120,23 @@ function BlogPostBuilderContent() {
         {/* Action Buttons */}
         <div className='flex gap-4 pt-6 border-t border-slate-200'>
           <Button
-            onClick={() => router.push(`/${locale}/admin-dashboard/blog`)}
+            onClick={() => setIsPublishModalOpen(true)}
             className='ml-auto'
           >
             {locale === 'nl' ? 'Pagina Opslaan' : 'Save Page'}
           </Button>
         </div>
       </div>
+
+      {/* Publish Modal */}
+      <PublishModal
+        open={isPublishModalOpen}
+        onOpenChange={setIsPublishModalOpen}
+        onSaveAsDraft={handleSaveAsDraft}
+        onPublish={handlePublish}
+        isLoading={publishMutation.isPending}
+        currentStatus={blogPost?.status || 'draft'}
+      />
     </div>
   );
 }

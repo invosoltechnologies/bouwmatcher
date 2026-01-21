@@ -18,6 +18,7 @@ interface BannerSectionProps {
     excerpt_nl?: string;
     excerpt_en?: string;
     featured_image_url?: string;
+    featured_image_alt?: string;
   } | null;
 }
 
@@ -30,7 +31,9 @@ export default function BannerSection({
   const [featuredImageUrl, setFeaturedImageUrl] = useState(
     initialContent?.featured_image_url || ''
   );
-  const [featuredImageAlt, setFeaturedImageAlt] = useState('');
+  const [featuredImageAlt, setFeaturedImageAlt] = useState(
+    initialContent?.featured_image_alt || ''
+  );
 
   // Dutch (NL) fields
   const [titleNl, setTitleNl] = useState(initialContent?.title_nl || '');
@@ -51,6 +54,7 @@ export default function BannerSection({
         excerpt_nl: excerptNl,
         excerpt_en: excerptEn,
         featured_image_url: featuredImageUrl,
+        featured_image_alt: featuredImageAlt,
       });
     } catch (error) {
       console.error('Error saving banner:', error);

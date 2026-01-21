@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
       content_nl,
       content_en,
       featured_image_url,
+      featured_image_alt,
     } = body;
 
     if (!blog_post_id) {
@@ -89,18 +90,20 @@ export async function POST(request: NextRequest) {
     let error;
 
     if (existingContent) {
-      // Update existing content
+      // Update existing content - only update fields that are provided
+      const updateData: any = {};
+      if (title_nl !== undefined) updateData.title_nl = title_nl;
+      if (title_en !== undefined) updateData.title_en = title_en;
+      if (excerpt_nl !== undefined) updateData.excerpt_nl = excerpt_nl;
+      if (excerpt_en !== undefined) updateData.excerpt_en = excerpt_en;
+      if (content_nl !== undefined) updateData.content_nl = content_nl;
+      if (content_en !== undefined) updateData.content_en = content_en;
+      if (featured_image_url !== undefined) updateData.featured_image_url = featured_image_url;
+      if (featured_image_alt !== undefined) updateData.featured_image_alt = featured_image_alt;
+
       const result = await supabase
         .from('blog_post_content')
-        .update({
-          title_nl: title_nl || null,
-          title_en: title_en || null,
-          excerpt_nl: excerpt_nl || null,
-          excerpt_en: excerpt_en || null,
-          content_nl: content_nl || null,
-          content_en: content_en || null,
-          featured_image_url: featured_image_url || null,
-        })
+        .update(updateData)
         .eq('blog_post_id', blog_post_id)
         .select()
         .single();
@@ -120,6 +123,7 @@ export async function POST(request: NextRequest) {
           content_nl: content_nl || null,
           content_en: content_en || null,
           featured_image_url: featured_image_url || null,
+          featured_image_alt: featured_image_alt || null,
         })
         .select()
         .single();

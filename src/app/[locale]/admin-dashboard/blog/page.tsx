@@ -61,8 +61,10 @@ export default function BlogManagementPage() {
     meta_description_nl?: string;
     meta_description_en?: string;
   }) => {
-    await createMutation.mutateAsync(data);
+    const newPost = await createMutation.mutateAsync(data);
     setIsAddDialogOpen(false);
+    // Redirect to post-builder page
+    router.push(`/${locale}/admin-dashboard/blog/post-builder?id=${newPost.id}`);
   };
 
   const handleEdit = (post: BlogPostFull) => {
