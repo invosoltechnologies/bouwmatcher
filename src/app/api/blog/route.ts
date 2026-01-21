@@ -33,6 +33,8 @@ export async function GET(request: NextRequest) {
           title_en,
           excerpt_nl,
           excerpt_en,
+          content_nl,
+          content_en,
           featured_image_url
         )
       `)
@@ -61,6 +63,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Map the response to flatten the structure
+    // Note: blog_post_content is a one-to-one relationship (not array)
     const mappedPosts = (blogPosts || []).map((post: any) => ({
       id: post.id,
       slug: post.slug,
@@ -69,30 +72,10 @@ export async function GET(request: NextRequest) {
       published_at: post.published_at,
       service_category: post.service_categories,
       service_subcategory: post.service_subcategories,
-      content: post.blog_post_content?.[0] || null,
+      content: post.blog_post_content || null,
     }));
 
-    // Get total count for pagination
-    let countQuery = supabase
-      .from('blog_posts')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'published');
-
-    if (service_category_id) {
-      countQuery = countQuery.eq('service_category_id', service_category_id);
-    }
-    if (service_subcategory_id) {
-      countQuery = countQuery.eq('service_subcategory_id', service_subcategory_id);
-    }
-
-    const { count } = await countQuery;
-
-    return NextResponse.json({
-      posts: mappedPosts,
-      total: count || 0,
-      limit,
-      offset,
-    });
+    return NextResponse.json(mappedPosts);
   } catch (error) {
     console.error('Error in blog GET:', error);
     return NextResponse.json(

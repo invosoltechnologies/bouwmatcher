@@ -507,6 +507,9 @@
     }
   },
   "blog": {
+    "loading": "Loading...",
+    "noBlogs": "No blogs available",
+    "general": "General",
     "hero": {
       "badge": "New!",
       "readTime": "8 mins read",

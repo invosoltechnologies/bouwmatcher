@@ -505,6 +505,9 @@
     }
   },
   "blog": {
+    "loading": "Laden...",
+    "noBlogs": "Geen blogs beschikbaar",
+    "general": "Algemeen",
     "hero": {
       "badge": "Nieuw!",
       "readTime": "8 mins read",
