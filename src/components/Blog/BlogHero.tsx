@@ -37,9 +37,9 @@ export default function BlogHero({ featuredBlog, showReadMore = true }: BlogHero
   const title = locale === 'nl' ? featuredBlog.content?.title_nl : featuredBlog.content?.title_en;
   const excerpt = locale === 'nl' ? featuredBlog.content?.excerpt_nl : featuredBlog.content?.excerpt_en;
   const content = locale === 'nl' ? featuredBlog.content?.content_nl : featuredBlog.content?.content_en;
-  const imageUrl = featuredBlog.content?.featured_image_url
+  const imageUrl = (featuredBlog.content?.featured_image_url
     ? getPublicStorageUrl(featuredBlog.content.featured_image_url, 'blog-posts')
-    : '/images/blog/temp-blog.png';
+    : null) || '/images/blog/temp-blog.png';
 
   // Determine category display
   let categoryLabel = tBlog('general');

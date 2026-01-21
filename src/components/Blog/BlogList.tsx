@@ -64,9 +64,9 @@ export default function BlogList({ blogs, heading, description, showHeader = tru
   const getBlogData = (blog: BlogPostFull) => {
     const title = locale === 'nl' ? blog.content?.title_nl : blog.content?.title_en;
     const excerpt = locale === 'nl' ? blog.content?.excerpt_nl : blog.content?.excerpt_en;
-    const imageUrl = blog.content?.featured_image_url
+    const imageUrl = (blog.content?.featured_image_url
       ? getPublicStorageUrl(blog.content.featured_image_url, 'blog-posts')
-      : '/images/blog/temp-blog.png';
+      : null) || '/images/blog/temp-blog.png';
 
     // Determine category display
     let categoryLabel = t('general');

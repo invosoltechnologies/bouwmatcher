@@ -69,6 +69,8 @@ async function getBlogPostBySlug(slug: string): Promise<BlogPostFull | null> {
     // Note: one-to-one relationships return arrays, but we need single objects
     const contentArray = Array.isArray(blogPost.blog_post_content) ? blogPost.blog_post_content : [blogPost.blog_post_content];
     const metaArray = Array.isArray(blogPost.blog_post_meta) ? blogPost.blog_post_meta : [blogPost.blog_post_meta];
+    const categoryArray = Array.isArray(blogPost.service_categories) ? blogPost.service_categories : [blogPost.service_categories];
+    const subcategoryArray = Array.isArray(blogPost.service_subcategories) ? blogPost.service_subcategories : [blogPost.service_subcategories];
 
     return {
       id: blogPost.id,
@@ -82,10 +84,10 @@ async function getBlogPostBySlug(slug: string): Promise<BlogPostFull | null> {
       published_by: null,
       updated_by: null,
       updated_at: blogPost.created_at,
-      service_category: blogPost.service_categories,
-      service_subcategory: blogPost.service_subcategories,
-      content: contentArray && contentArray[0] ? contentArray[0] : null,
-      meta: metaArray && metaArray[0] ? metaArray[0] : null,
+      service_category: categoryArray && categoryArray[0] ? categoryArray[0] : undefined,
+      service_subcategory: subcategoryArray && subcategoryArray[0] ? subcategoryArray[0] : undefined,
+      content: contentArray && contentArray[0] ? contentArray[0] : undefined,
+      meta: metaArray && metaArray[0] ? metaArray[0] : undefined,
     } as BlogPostFull;
   } catch (error) {
     console.error('Error in getBlogPostBySlug:', error);
@@ -145,6 +147,8 @@ async function getRelatedBlogs(currentBlogPostId: string): Promise<BlogPostFull[
     return relatedPosts.map((post: any) => {
       // Handle one-to-one relationships that may return arrays
       const contentArray = Array.isArray(post.blog_post_content) ? post.blog_post_content : [post.blog_post_content];
+      const categoryArray = Array.isArray(post.service_categories) ? post.service_categories : [post.service_categories];
+      const subcategoryArray = Array.isArray(post.service_subcategories) ? post.service_subcategories : [post.service_subcategories];
 
       return {
         id: post.id,
@@ -158,10 +162,10 @@ async function getRelatedBlogs(currentBlogPostId: string): Promise<BlogPostFull[
         published_by: null,
         updated_by: null,
         updated_at: post.created_at,
-        service_category: post.service_categories,
-        service_subcategory: post.service_subcategories,
-        content: contentArray && contentArray[0] ? contentArray[0] : null,
-        meta: null,
+        service_category: categoryArray && categoryArray[0] ? categoryArray[0] : undefined,
+        service_subcategory: subcategoryArray && subcategoryArray[0] ? subcategoryArray[0] : undefined,
+        content: contentArray && contentArray[0] ? contentArray[0] : undefined,
+        meta: undefined,
       };
     }) as BlogPostFull[];
   } catch (error) {
