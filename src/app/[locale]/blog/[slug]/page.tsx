@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { notFound } from 'next/navigation';
 import type { BlogPostFull } from '@/types/models/blog-post.model';
+import BlogHero from '@/components/Blog/BlogHero';
 import BlogDetailContent from '@/components/Blog/BlogDetailContent';
 
 async function getBlogPostBySlug(slug: string): Promise<BlogPostFull | null> {
@@ -63,6 +64,10 @@ async function getBlogPostBySlug(slug: string): Promise<BlogPostFull | null> {
       service_subcategory_id: blogPost.service_subcategory_id,
       published_at: blogPost.published_at,
       created_at: blogPost.created_at,
+      created_by: null,
+      published_by: null,
+      updated_by: null,
+      updated_at: blogPost.created_at,
       service_category: blogPost.service_categories,
       service_subcategory: blogPost.service_subcategories,
       content: blogPost.blog_post_content || null,
@@ -92,6 +97,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
 
   return (
     <DefaultLayout>
+      <BlogHero featuredBlog={blogPost} showReadMore={false} />
       <BlogDetailContent blogPost={blogPost} />
     </DefaultLayout>
   );

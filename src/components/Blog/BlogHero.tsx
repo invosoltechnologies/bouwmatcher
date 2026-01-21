@@ -11,9 +11,10 @@ import type { BlogPostFull } from '@/types/models/blog-post.model';
 
 interface BlogHeroProps {
   featuredBlog?: BlogPostFull;
+  showReadMore?: boolean;
 }
 
-export default function BlogHero({ featuredBlog }: BlogHeroProps) {
+export default function BlogHero({ featuredBlog, showReadMore = true }: BlogHeroProps) {
   const t = useTranslations('blog.hero');
   const tBlog = useTranslations('blog');
   const locale = useLocale();
@@ -99,14 +100,16 @@ export default function BlogHero({ featuredBlog }: BlogHeroProps) {
                   {excerpt}
                 </p>
 
-                {/* Read more button */}
-                <Link
-                  href={`/${locale}/blog/${featuredBlog.slug}`}
-                  className='flex items-center gap-2 cursor-pointer text-base leading-6 text-primary font-medium hover:bg-gray-50 transition-colors bg-white rounded-full px-5 py-2.5'
-                >
-                  {t('readMore')}
-                  <ArrowRight size={20}/>
-                </Link>
+                {/* Read more button - only show on listing page */}
+                {showReadMore && (
+                  <Link
+                    href={`/${locale}/blog/${featuredBlog.slug}`}
+                    className='flex items-center gap-2 cursor-pointer text-base leading-6 text-primary font-medium hover:bg-gray-50 transition-colors bg-white rounded-full px-5 py-2.5'
+                  >
+                    {t('readMore')}
+                    <ArrowRight size={20}/>
+                  </Link>
+                )}
               </div>
             </Card>
           </div>
@@ -146,14 +149,16 @@ export default function BlogHero({ featuredBlog }: BlogHeroProps) {
               {excerpt}
             </p>
 
-            {/* Read more button */}
-            <Link
-              href={`/${locale}/blog/${featuredBlog.slug}`}
-              className='flex items-center gap-3 cursor-pointer text-2xl leading-7 text-primary font-medium hover:text-primary/80 transition-colors'
-            >
-              {t('readMore')}
-              <ArrowRight size={24}/>
-            </Link>
+            {/* Read more button - only show on listing page */}
+            {showReadMore && (
+              <Link
+                href={`/${locale}/blog/${featuredBlog.slug}`}
+                className='flex items-center gap-3 cursor-pointer text-2xl leading-7 text-primary font-medium hover:text-primary/80 transition-colors'
+              >
+                {t('readMore')}
+                <ArrowRight size={24}/>
+              </Link>
+            )}
           </div>
         </div>
       </div>

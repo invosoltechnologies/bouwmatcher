@@ -13,12 +13,12 @@ import ImageUpload from '../service-page-builder/ImageUpload';
 interface BannerSectionProps {
   blogPostId: string;
   initialContent?: {
-    title_nl?: string;
-    title_en?: string;
-    excerpt_nl?: string;
-    excerpt_en?: string;
-    featured_image_url?: string;
-    featured_image_alt?: string;
+    title_nl?: string | null;
+    title_en?: string | null;
+    excerpt_nl?: string | null;
+    excerpt_en?: string | null;
+    featured_image_url?: string | null;
+    featured_image_alt?: string | null;
   } | null;
 }
 

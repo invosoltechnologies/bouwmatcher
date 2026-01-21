@@ -11,8 +11,8 @@ import { useSaveBlogContent } from '@/lib/hooks/admin/blog-content';
 interface ContentSectionProps {
   blogPostId: string;
   initialContent?: {
-    content_nl?: string;
-    content_en?: string;
+    content_nl?: string | null;
+    content_en?: string | null;
   } | null;
 }
 
