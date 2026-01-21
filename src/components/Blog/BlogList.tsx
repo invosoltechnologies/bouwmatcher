@@ -15,12 +15,35 @@ const BLOGS_PER_PAGE = 3;
 
 interface BlogListProps {
   blogs: BlogPostFull[];
+  heading?: {
+    nl: string;
+    en: string;
+  };
+  description?: {
+    nl: string;
+    en: string;
+  };
+  showHeader?: boolean;
 }
 
-export default function BlogList({ blogs }: BlogListProps) {
+export default function BlogList({ blogs, heading, description, showHeader = true }: BlogListProps) {
   const t = useTranslations('blog');
   const locale = useLocale();
   const [currentPage, setCurrentPage] = useState(0);
+
+  // Default heading and description
+  const defaultHeading = {
+    nl: 'Onze recente artikelen',
+    en: 'Our Latest Articles',
+  };
+
+  const defaultDescription = {
+    nl: 'Blijf op de hoogte van onze nieuwste inzichten',
+    en: 'Stay up to date with our latest insights',
+  };
+
+  const displayHeading = heading || defaultHeading;
+  const displayDescription = description || defaultDescription;
 
   const totalPages = Math.ceil(blogs.length / BLOGS_PER_PAGE);
 
@@ -86,30 +109,32 @@ export default function BlogList({ blogs }: BlogListProps) {
     <section className="py-8 md:py-14 bg-white">
       <div className="custom-container">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 md:mb-16">
-          <div className="flex-1 text-center md:text-left mb-4 md:mb-0">
-            <h2 className="text-2xl md:text-5xl font-display font-normal text-foreground mb-2 md:mb-5">
-              Onze recente artikelen
-            </h2>
-            <p className="text-muted-foreground text-sm md:text-2xl">
-              Blijf op de hoogte van onze nieuwste inzichten
-            </p>
-          </div>
+        {showHeader && (
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 md:mb-16">
+            <div className="flex-1 text-center md:text-left mb-4 md:mb-0">
+              <h2 className="text-2xl md:text-5xl font-display font-normal text-foreground mb-2 md:mb-5">
+                {displayHeading[locale as 'nl' | 'en']}
+              </h2>
+              <p className="text-muted-foreground text-sm md:text-2xl">
+                {displayDescription[locale as 'nl' | 'en']}
+              </p>
+            </div>
 
-          {/* Navigation Arrows - Desktop only */}
-          <div className="hidden md:flex gap-4">
-            <NavigationArrow
-              direction="left"
-              onClick={handlePrevious}
-              disabled={currentPage === 0}
-            />
-            <NavigationArrow
-              direction="right"
-              onClick={handleNext}
-              disabled={currentPage === totalPages - 1}
-            />
+            {/* Navigation Arrows - Desktop only */}
+            <div className="hidden md:flex gap-4">
+              <NavigationArrow
+                direction="left"
+                onClick={handlePrevious}
+                disabled={currentPage === 0}
+              />
+              <NavigationArrow
+                direction="right"
+                onClick={handleNext}
+                disabled={currentPage === totalPages - 1}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Blog Grid - Mobile: all blogs, Desktop: paginated */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
