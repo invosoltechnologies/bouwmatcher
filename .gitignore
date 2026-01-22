@@ -44,5 +44,8 @@ next-env.d.ts
 #SQLFiles
 # *sql
 
+# Database backups (too large for git)
+/backups/
+
 # Documentation (internal architecture docs)
 /docs/PROFESSIONAL_ACCOUNT_ARCHITECTURE.md

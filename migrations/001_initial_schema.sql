@@ -1,0 +1,995 @@
+-- ============================================================================
+-- Migration: 001_initial_schema
+-- Description: Initial database schema with all tables
+-- Created: 2026-01-22
+-- ============================================================================
+
+-- UP Migration
+-- ============================================================================
+
+-- ----------------------------------------------------------------------------
+-- Section 1: CREATE SEQUENCES
+-- ----------------------------------------------------------------------------
+
+CREATE SEQUENCE IF NOT EXISTS service_categories_id_seq;
+CREATE SEQUENCE IF NOT EXISTS service_subcategories_id_seq;
+
+-- ----------------------------------------------------------------------------
+-- Section 2: CREATE TABLES (in dependency order)
+-- ----------------------------------------------------------------------------
+
+-- Independent tables (no foreign keys to other public tables)
+-- ----------------------------------------------------------------------------
+
+CREATE TABLE public.admin_users (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  email character varying NOT NULL UNIQUE,
+  role character varying NOT NULL DEFAULT 'admin'::character varying CHECK (role::text = ANY (ARRAY['super_admin'::character varying, 'admin'::character varying, 'moderator'::character varying, 'writer'::character varying]::text[])),
+  is_active boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT admin_users_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE public.companies (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  company_name character varying NOT NULL,
+  contact_first_name character varying NOT NULL,
+  contact_last_name character varying NOT NULL,
+  contact_email character varying NOT NULL UNIQUE CHECK (contact_email::text ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'::text),
+  contact_phone character varying NOT NULL CHECK (char_length(contact_phone::text) >= 10),
+  vat_number character varying,
+  kvk_number character varying,
+  website character varying,
+  phone_verified boolean DEFAULT false,
+  phone_verified_at timestamp with time zone,
+  password_hash character varying,
+  is_active boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT companies_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE public.contact_submissions (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name character varying NOT NULL,
+  email character varying NOT NULL,
+  phone character varying,
+  subject character varying NOT NULL,
+  category character varying NOT NULL CHECK (category::text = ANY (ARRAY['general'::character varying, 'quote'::character varying, 'support'::character varying, 'partnership'::character varying, 'complaint'::character varying]::text[])),
+  message text NOT NULL,
+  file_url character varying,
+  file_name character varying,
+  status character varying DEFAULT 'new'::character varying CHECK (status::text = ANY (ARRAY['new'::character varying, 'in_progress'::character varying, 'resolved'::character varying, 'spam'::character varying]::text[])),
+  replied_at timestamp with time zone,
+  notes text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT contact_submissions_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE public.personal_users (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  first_name character varying NOT NULL,
+  last_name character varying NOT NULL,
+  email character varying NOT NULL UNIQUE CHECK (email::text ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'::text),
+  phone character varying NOT NULL CHECK (char_length(phone::text) >= 10),
+  phone_verified boolean DEFAULT false,
+  phone_verified_at timestamp with time zone,
+  password_hash character varying,
+  is_active boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT personal_users_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE public.service_categories (
+  id bigint NOT NULL DEFAULT nextval('service_categories_id_seq'::regclass),
+  slug character varying NOT NULL UNIQUE,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  name_nl character varying,
+  name_en character varying,
+  icon_url text,
+  is_active boolean NOT NULL DEFAULT true,
+  is_deleted boolean NOT NULL DEFAULT false,
+  deleted_at timestamp with time zone,
+  CONSTRAINT service_categories_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE public.project_form_steps (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  step_order integer NOT NULL UNIQUE CHECK (step_order >= 1),
+  step_key character varying NOT NULL UNIQUE,
+  is_category_specific boolean DEFAULT false,
+  step_type character varying NOT NULL,
+  is_required boolean DEFAULT true,
+  is_active boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT project_form_steps_pkey PRIMARY KEY (id)
+);
+
+-- Tables with FK to auth.users (Supabase auth)
+-- ----------------------------------------------------------------------------
+
+CREATE TABLE public.professional_companies (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  company_name character varying NOT NULL,
+  business_id character varying UNIQUE,
+  postal_code character varying,
+  house_number character varying,
+  street_name character varying,
+  city character varying,
+  full_address text,
+  business_email character varying,
+  business_phone character varying,
+  website character varying,
+  vat_number character varying,
+  is_verified boolean DEFAULT false,
+  verification_status character varying DEFAULT 'pending'::character varying CHECK (verification_status::text = ANY (ARRAY['pending'::character varying, 'in_review'::character varying, 'verified'::character varying, 'rejected'::character varying, 'suspended'::character varying]::text[])),
+  verification_documents jsonb,
+  verified_at timestamp with time zone,
+  verified_by uuid,
+  business_description text,
+  year_established integer,
+  employee_count character varying,
+  service_categories ARRAY,
+  service_areas ARRAY,
+  created_by uuid,
+  is_active boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  business_id_type character varying,
+  business_id_formatted character varying,
+  country character varying,
+  logo_url text,
+  aggregate_rating numeric DEFAULT 0.00,
+  total_ratings integer DEFAULT 0,
+  CONSTRAINT professional_companies_pkey PRIMARY KEY (id),
+  CONSTRAINT professional_companies_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id)
+);
+
+-- Tables with FK to service_categories
+-- ----------------------------------------------------------------------------
+
+CREATE TABLE public.service_subcategories (
+  id bigint NOT NULL DEFAULT nextval('service_subcategories_id_seq'::regclass),
+  slug character varying NOT NULL UNIQUE,
+  name_nl character varying NOT NULL,
+  name_en character varying,
+  description_nl text,
+  description_en text,
+  price_particulier numeric,
+  price_zakelijk numeric,
+  icon_url text,
+  sort_order integer DEFAULT 0,
+  is_active boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  service_category_id bigint,
+  CONSTRAINT service_subcategories_pkey PRIMARY KEY (id),
+  CONSTRAINT fk_service_category FOREIGN KEY (service_category_id) REFERENCES public.service_categories(id)
+);
+
+CREATE TABLE public.service_pages (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_category_id bigint NOT NULL UNIQUE,
+  status character varying NOT NULL DEFAULT 'draft'::character varying CHECK (status::text = ANY (ARRAY['draft'::character varying, 'pending'::character varying, 'active'::character varying]::text[])),
+  created_by uuid,
+  updated_by uuid,
+  published_by uuid,
+  published_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  sections_config jsonb DEFAULT '{"order": ["banner"], "active": ["banner"]}'::jsonb,
+  CONSTRAINT service_pages_pkey PRIMARY KEY (id),
+  CONSTRAINT service_pages_published_by_fkey FOREIGN KEY (published_by) REFERENCES public.admin_users(id),
+  CONSTRAINT service_pages_service_category_id_fkey FOREIGN KEY (service_category_id) REFERENCES public.service_categories(id),
+  CONSTRAINT service_pages_created_by_fkey FOREIGN KEY (created_by) REFERENCES public.admin_users(id),
+  CONSTRAINT service_pages_updated_by_fkey FOREIGN KEY (updated_by) REFERENCES public.admin_users(id)
+);
+
+CREATE TABLE public.blog_posts (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  slug text NOT NULL UNIQUE,
+  status text NOT NULL DEFAULT 'draft'::text CHECK (status = ANY (ARRAY['draft'::text, 'pending'::text, 'published'::text])),
+  service_category_id bigint,
+  service_subcategory_id bigint,
+  created_by uuid,
+  published_by uuid,
+  updated_by uuid,
+  published_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT blog_posts_pkey PRIMARY KEY (id),
+  CONSTRAINT blog_posts_service_category_id_fkey FOREIGN KEY (service_category_id) REFERENCES public.service_categories(id),
+  CONSTRAINT blog_posts_service_subcategory_id_fkey FOREIGN KEY (service_subcategory_id) REFERENCES public.service_subcategories(id),
+  CONSTRAINT blog_posts_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id),
+  CONSTRAINT blog_posts_published_by_fkey FOREIGN KEY (published_by) REFERENCES auth.users(id),
+  CONSTRAINT blog_posts_updated_by_fkey FOREIGN KEY (updated_by) REFERENCES auth.users(id)
+);
+
+CREATE TABLE public.project_form_questions (
+  id character varying NOT NULL,
+  service_category_id bigint,
+  question_text_nl text NOT NULL,
+  question_text_en text NOT NULL,
+  question_type character varying NOT NULL CHECK (question_type::text = ANY (ARRAY['radio'::character varying, 'checkbox'::character varying, 'text'::character varying, 'textarea'::character varying, 'select'::character varying, 'date'::character varying]::text[])),
+  is_root_question boolean DEFAULT false,
+  parent_question_id character varying,
+  parent_option_id character varying,
+  order_index integer NOT NULL DEFAULT 1,
+  is_required boolean DEFAULT true,
+  placeholder_nl character varying,
+  placeholder_en character varying,
+  help_text_nl text,
+  help_text_en text,
+  is_active boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  step_number integer DEFAULT 1,
+  service_subcategory_id bigint,
+  CONSTRAINT project_form_questions_pkey PRIMARY KEY (id),
+  CONSTRAINT project_form_questions_service_category_id_fkey FOREIGN KEY (service_category_id) REFERENCES public.service_categories(id),
+  CONSTRAINT project_form_questions_parent_question_id_fkey FOREIGN KEY (parent_question_id) REFERENCES public.project_form_questions(id),
+  CONSTRAINT project_form_questions_service_subcategory_id_fkey FOREIGN KEY (service_subcategory_id) REFERENCES public.service_subcategories(id)
+);
+
+CREATE TABLE public.project_drafts (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_category_id bigint,
+  session_token character varying NOT NULL UNIQUE CHECK (char_length(session_token::text) >= 32),
+  ip_address character varying,
+  user_agent text,
+  postcode character varying,
+  execution_timing character varying,
+  current_step integer DEFAULT 1,
+  last_question_id character varying,
+  is_completed boolean DEFAULT false,
+  is_converted_to_project boolean DEFAULT false,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  expires_at timestamp with time zone DEFAULT (now() + '7 days'::interval),
+  personal_user_id uuid,
+  company_id uuid,
+  request_type character varying CHECK (request_type::text = ANY (ARRAY['private'::character varying, 'business'::character varying]::text[])),
+  city character varying,
+  street_name character varying,
+  street_number character varying,
+  description text,
+  has_photos boolean DEFAULT false,
+  first_name character varying,
+  last_name character varying,
+  email character varying,
+  phone character varying,
+  company_name character varying,
+  verification_code character varying,
+  verification_expires_at timestamp with time zone,
+  phone_verified boolean DEFAULT false,
+  phone_verified_at timestamp with time zone,
+  subcategory_id bigint,
+  latitude numeric,
+  longitude numeric,
+  CONSTRAINT project_drafts_pkey PRIMARY KEY (id),
+  CONSTRAINT project_drafts_service_category_id_fkey FOREIGN KEY (service_category_id) REFERENCES public.service_categories(id),
+  CONSTRAINT project_drafts_personal_user_id_fkey FOREIGN KEY (personal_user_id) REFERENCES public.personal_users(id),
+  CONSTRAINT project_drafts_company_id_fkey FOREIGN KEY (company_id) REFERENCES public.companies(id),
+  CONSTRAINT project_drafts_subcategory_id_fkey FOREIGN KEY (subcategory_id) REFERENCES public.service_subcategories(id)
+);
+
+-- Tables with FK to professional_companies
+-- ----------------------------------------------------------------------------
+
+CREATE TABLE public.professional_profiles (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL UNIQUE,
+  first_name character varying NOT NULL,
+  last_name character varying NOT NULL,
+  email character varying NOT NULL UNIQUE,
+  phone character varying,
+  phone_verified boolean DEFAULT false,
+  phone_verified_at timestamp with time zone,
+  company_id uuid,
+  role_in_company character varying,
+  joined_company_at timestamp with time zone,
+  is_active boolean DEFAULT true,
+  is_verified character varying DEFAULT 'unverified'::character varying CHECK (is_verified::text = ANY (ARRAY['unverified'::character varying, 'pending'::character varying, 'in_review'::character varying, 'verified'::character varying, 'rejected'::character varying, 'suspended'::character varying]::text[])),
+  profile_completed boolean DEFAULT false,
+  bio text,
+  years_of_experience integer,
+  specializations ARRAY,
+  certifications jsonb,
+  notification_preferences jsonb DEFAULT '{"sms": false, "email": true}'::jsonb,
+  availability_status character varying DEFAULT 'available'::character varying,
+  auth_provider character varying,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  last_login_at timestamp with time zone,
+  work_address text,
+  work_postal_code character varying,
+  work_city character varying,
+  work_latitude numeric,
+  work_longitude numeric,
+  service_radius_km integer DEFAULT 10,
+  quotes_email character varying,
+  invoices_email character varying,
+  gender character varying CHECK (gender::text = ANY (ARRAY['male'::character varying, 'female'::character varying, 'other'::character varying, 'prefer_not_to_say'::character varying]::text[])),
+  current_step integer DEFAULT 1 CHECK (current_step >= 1 AND current_step <= 6),
+  work_country character varying DEFAULT 'NL'::character varying,
+  portfolio_photos ARRAY DEFAULT ARRAY[]::text[],
+  profile_picture_url text,
+  profile_answers jsonb DEFAULT '{}'::jsonb,
+  CONSTRAINT professional_profiles_pkey PRIMARY KEY (id),
+  CONSTRAINT professional_profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id),
+  CONSTRAINT professional_profiles_company_id_fkey FOREIGN KEY (company_id) REFERENCES public.professional_companies(id)
+);
+
+-- Tables with FK to blog_posts
+-- ----------------------------------------------------------------------------
+
+CREATE TABLE public.blog_post_content (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  blog_post_id uuid NOT NULL UNIQUE,
+  title_nl text,
+  title_en text,
+  excerpt_nl text CHECK (char_length(excerpt_nl) <= 300),
+  excerpt_en text CHECK (char_length(excerpt_en) <= 300),
+  content_nl text,
+  content_en text,
+  featured_image_url text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  featured_image_alt text CHECK (char_length(featured_image_alt) <= 150),
+  CONSTRAINT blog_post_content_pkey PRIMARY KEY (id),
+  CONSTRAINT blog_post_content_blog_post_id_fkey FOREIGN KEY (blog_post_id) REFERENCES public.blog_posts(id)
+);
+
+CREATE TABLE public.blog_post_meta (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  blog_post_id uuid NOT NULL UNIQUE,
+  meta_title_nl text CHECK (char_length(meta_title_nl) <= 60),
+  meta_title_en text CHECK (char_length(meta_title_en) <= 60),
+  meta_description_nl text CHECK (char_length(meta_description_nl) <= 160),
+  meta_description_en text CHECK (char_length(meta_description_en) <= 160),
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT blog_post_meta_pkey PRIMARY KEY (id),
+  CONSTRAINT blog_post_meta_blog_post_id_fkey FOREIGN KEY (blog_post_id) REFERENCES public.blog_posts(id)
+);
+
+CREATE TABLE public.blog_post_related (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  blog_post_id uuid NOT NULL,
+  related_blog_post_id uuid NOT NULL,
+  order_index integer NOT NULL DEFAULT 0,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT blog_post_related_pkey PRIMARY KEY (id),
+  CONSTRAINT blog_post_related_blog_post_id_fkey FOREIGN KEY (blog_post_id) REFERENCES public.blog_posts(id),
+  CONSTRAINT blog_post_related_related_blog_post_id_fkey FOREIGN KEY (related_blog_post_id) REFERENCES public.blog_posts(id)
+);
+
+-- Tables with FK to service_pages
+-- ----------------------------------------------------------------------------
+
+CREATE TABLE public.service_page_banners (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  eyebrow_text_nl text,
+  eyebrow_text_en text,
+  h1_text_nl text NOT NULL,
+  h1_text_en text NOT NULL,
+  description_nl text,
+  description_en text,
+  background_image_url text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  background_image_alt text,
+  CONSTRAINT service_page_banners_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_banners_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+
+CREATE TABLE public.service_page_comparison_tables (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl text,
+  heading_en text,
+  description_nl text,
+  description_en text,
+  content_nl text,
+  content_en text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_comparison_tables_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_comparison_tables_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+
+CREATE TABLE public.service_page_cta (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl character varying NOT NULL,
+  heading_en character varying NOT NULL,
+  description_nl text,
+  description_en text,
+  button_text_nl character varying NOT NULL,
+  button_text_en character varying NOT NULL,
+  cta_link character varying NOT NULL,
+  created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT service_page_cta_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_cta_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+
+CREATE TABLE public.service_page_faqs (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl text,
+  heading_en text,
+  description_nl text,
+  description_en text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_faqs_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_faqs_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+
+CREATE TABLE public.service_page_marquees (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  is_enabled boolean DEFAULT true,
+  after_sections ARRAY,
+  created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT service_page_marquees_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_marquees_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+
+CREATE TABLE public.service_page_metas (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  meta_title_nl character varying,
+  meta_title_en character varying,
+  meta_description_nl text,
+  meta_description_en text,
+  canonical_url character varying,
+  og_title_nl character varying,
+  og_title_en character varying,
+  og_description_nl text,
+  og_description_en text,
+  og_image_url text,
+  schema_organization jsonb,
+  schema_breadcrumbs jsonb,
+  schema_faq jsonb,
+  schema_custom jsonb,
+  created_at timestamp without time zone DEFAULT now(),
+  updated_at timestamp without time zone DEFAULT now(),
+  CONSTRAINT service_page_metas_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_metas_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+
+CREATE TABLE public.service_page_overview_tables (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl text,
+  heading_en text,
+  description_nl text,
+  description_en text,
+  content_nl text,
+  content_en text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_overview_tables_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_overview_tables_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+
+CREATE TABLE public.service_page_process (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl text,
+  heading_en text,
+  description_nl text,
+  description_en text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_process_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_process_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+
+CREATE TABLE public.service_page_reviews (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl character varying NOT NULL,
+  heading_en character varying NOT NULL,
+  description_nl text,
+  description_en text,
+  eye_text_nl character varying NOT NULL,
+  eye_text_en character varying NOT NULL,
+  created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT service_page_reviews_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_reviews_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+
+CREATE TABLE public.service_page_seo_content (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl text,
+  heading_en text,
+  description_nl text,
+  description_en text,
+  content_nl text,
+  content_en text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_seo_content_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_seo_content_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+
+CREATE TABLE public.service_page_tips (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl text,
+  heading_en text,
+  description_nl text,
+  description_en text,
+  content_nl text,
+  content_en text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_tips_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_tips_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+
+CREATE TABLE public.service_page_types (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl character varying NOT NULL,
+  heading_en character varying NOT NULL,
+  description_nl text,
+  description_en text,
+  created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT service_page_types_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_types_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+
+CREATE TABLE public.service_page_values (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl text,
+  heading_en text,
+  description_nl text,
+  description_en text,
+  center_text_nl text,
+  center_text_en text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_values_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_values_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+
+CREATE TABLE public.service_pages_intro (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_page_id uuid NOT NULL UNIQUE,
+  heading_nl text NOT NULL,
+  heading_en text NOT NULL,
+  description_nl text NOT NULL,
+  description_en text NOT NULL,
+  background_image_url text,
+  created_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  updated_at timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  background_image_alt text,
+  CONSTRAINT service_pages_intro_pkey PRIMARY KEY (id),
+  CONSTRAINT service_pages_intro_service_page_id_fkey FOREIGN KEY (service_page_id) REFERENCES public.service_pages(id)
+);
+
+-- Tables with FK to service_page_faqs
+-- ----------------------------------------------------------------------------
+
+CREATE TABLE public.service_page_faq_items (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  service_page_faq_id uuid NOT NULL,
+  question_nl text NOT NULL,
+  question_en text NOT NULL,
+  answer_nl text NOT NULL,
+  answer_en text NOT NULL,
+  display_order integer NOT NULL DEFAULT 0,
+  is_visible boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_faq_items_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_faq_items_service_page_faq_id_fkey FOREIGN KEY (service_page_faq_id) REFERENCES public.service_page_faqs(id)
+);
+
+-- Tables with FK to service_page_marquees
+-- ----------------------------------------------------------------------------
+
+CREATE TABLE public.service_page_marquee_items (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  marquee_id uuid NOT NULL,
+  text_nl character varying NOT NULL,
+  text_en character varying NOT NULL,
+  display_order integer NOT NULL,
+  created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT service_page_marquee_items_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_marquee_items_marquee_id_fkey FOREIGN KEY (marquee_id) REFERENCES public.service_page_marquees(id)
+);
+
+-- Tables with FK to service_page_process
+-- ----------------------------------------------------------------------------
+
+CREATE TABLE public.service_page_process_steps (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  process_id uuid NOT NULL,
+  heading_nl text NOT NULL,
+  heading_en text NOT NULL,
+  description_nl text,
+  description_en text,
+  image_url text,
+  icon_url text,
+  step_order integer NOT NULL DEFAULT 0,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_process_steps_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_process_steps_process_id_fkey FOREIGN KEY (process_id) REFERENCES public.service_page_process(id)
+);
+
+-- Tables with FK to service_page_values
+-- ----------------------------------------------------------------------------
+
+CREATE TABLE public.service_page_value_items (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  values_id uuid NOT NULL,
+  position character varying NOT NULL CHECK ("position"::text = ANY (ARRAY['top_left'::character varying, 'top_right'::character varying, 'bottom_left'::character varying, 'bottom_right'::character varying]::text[])),
+  heading_nl character varying NOT NULL,
+  heading_en character varying NOT NULL,
+  description_nl character varying,
+  description_en character varying,
+  icon_url text,
+  icon_alt_text text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT service_page_value_items_pkey PRIMARY KEY (id),
+  CONSTRAINT service_page_value_items_values_id_fkey FOREIGN KEY (values_id) REFERENCES public.service_page_values(id)
+);
+
+-- Tables with FK to project_form_questions
+-- ----------------------------------------------------------------------------
+
+CREATE TABLE public.project_form_question_options (
+  id character varying NOT NULL,
+  question_id character varying,
+  option_value character varying NOT NULL,
+  option_label_nl character varying NOT NULL,
+  option_label_en character varying NOT NULL,
+  has_follow_up boolean DEFAULT false,
+  order_index integer NOT NULL DEFAULT 1,
+  is_active boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  subcategory_id bigint,
+  CONSTRAINT project_form_question_options_pkey PRIMARY KEY (id),
+  CONSTRAINT project_form_question_options_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.project_form_questions(id),
+  CONSTRAINT project_form_question_options_subcategory_id_fkey FOREIGN KEY (subcategory_id) REFERENCES public.service_subcategories(id)
+);
+
+-- Add the missing FK constraint to project_form_questions after project_form_question_options is created
+ALTER TABLE public.project_form_questions
+  ADD CONSTRAINT fk_parent_option FOREIGN KEY (parent_option_id) REFERENCES public.project_form_question_options(id);
+
+-- Tables with FK to professional_profiles
+-- ----------------------------------------------------------------------------
+
+CREATE TABLE public.professional_certificates (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  professional_profile_id uuid NOT NULL,
+  title character varying NOT NULL,
+  issuing_organization character varying NOT NULL,
+  issue_date date NOT NULL,
+  expiry_date date NOT NULL,
+  file_url text NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT professional_certificates_pkey PRIMARY KEY (id),
+  CONSTRAINT professional_certificates_professional_profile_id_fkey FOREIGN KEY (professional_profile_id) REFERENCES public.professional_profiles(id)
+);
+
+CREATE TABLE public.professional_specializations (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  professional_id uuid NOT NULL,
+  service_category_id bigint NOT NULL,
+  priority integer NOT NULL DEFAULT 1,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT professional_specializations_pkey PRIMARY KEY (id),
+  CONSTRAINT professional_specializations_professional_id_fkey FOREIGN KEY (professional_id) REFERENCES public.professional_profiles(id),
+  CONSTRAINT professional_specializations_service_category_id_fkey FOREIGN KEY (service_category_id) REFERENCES public.service_categories(id)
+);
+
+CREATE TABLE public.professional_subcategories (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  professional_id uuid NOT NULL,
+  subcategory_id bigint NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT professional_subcategories_pkey PRIMARY KEY (id),
+  CONSTRAINT professional_subcategories_professional_id_fkey FOREIGN KEY (professional_id) REFERENCES auth.users(id),
+  CONSTRAINT professional_subcategories_subcategory_id_fkey FOREIGN KEY (subcategory_id) REFERENCES public.service_subcategories(id)
+);
+
+CREATE TABLE public.projects (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  service_category_id bigint,
+  request_type character varying,
+  has_photos boolean DEFAULT false,
+  description text,
+  postcode character varying,
+  street_number character varying,
+  street_name character varying,
+  city character varying,
+  first_name character varying,
+  last_name character varying,
+  company_name character varying,
+  email character varying,
+  phone character varying,
+  phone_verified boolean DEFAULT false,
+  verification_code character varying,
+  verification_expires_at timestamp with time zone,
+  status character varying DEFAULT 'draft'::character varying,
+  current_step integer DEFAULT 1,
+  completed_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  personal_user_id uuid,
+  company_id uuid,
+  source_draft_id uuid,
+  execution_timing character varying,
+  phone_verified_at timestamp with time zone,
+  access_token character varying UNIQUE,
+  access_token_expires_at timestamp with time zone,
+  subcategory_id bigint,
+  latitude numeric,
+  longitude numeric,
+  assigned_professional_id uuid,
+  cancellation_reason text,
+  cancelled_at timestamp without time zone,
+  CONSTRAINT projects_pkey PRIMARY KEY (id),
+  CONSTRAINT projects_service_category_id_fkey FOREIGN KEY (service_category_id) REFERENCES public.service_categories(id),
+  CONSTRAINT projects_personal_user_id_fkey FOREIGN KEY (personal_user_id) REFERENCES public.personal_users(id),
+  CONSTRAINT projects_company_id_fkey FOREIGN KEY (company_id) REFERENCES public.companies(id),
+  CONSTRAINT projects_source_draft_id_fkey FOREIGN KEY (source_draft_id) REFERENCES public.project_drafts(id),
+  CONSTRAINT projects_subcategory_id_fkey FOREIGN KEY (subcategory_id) REFERENCES public.service_subcategories(id),
+  CONSTRAINT projects_assigned_professional_id_fkey FOREIGN KEY (assigned_professional_id) REFERENCES public.professional_profiles(id)
+);
+
+-- Tables with FK to projects
+-- ----------------------------------------------------------------------------
+
+CREATE TABLE public.professional_company_ratings (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  company_id uuid,
+  rating integer CHECK (rating >= 1 AND rating <= 5),
+  review_text text,
+  created_at timestamp without time zone,
+  updated_at timestamp without time zone,
+  project_id uuid,
+  professional_id uuid,
+  rated_by_user_type character varying DEFAULT 'personal_user'::character varying,
+  approval_status character varying DEFAULT 'pending'::character varying CHECK (approval_status::text = ANY (ARRAY['pending'::character varying, 'approved'::character varying, 'rejected'::character varying]::text[])),
+  approved_at timestamp without time zone,
+  approved_by uuid,
+  rejection_reason text,
+  CONSTRAINT professional_company_ratings_pkey PRIMARY KEY (id),
+  CONSTRAINT professional_company_ratings_company_id_fkey FOREIGN KEY (company_id) REFERENCES public.professional_companies(id),
+  CONSTRAINT professional_company_ratings_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id),
+  CONSTRAINT professional_company_ratings_professional_id_fkey FOREIGN KEY (professional_id) REFERENCES public.professional_profiles(id)
+);
+
+CREATE TABLE public.professional_lead_purchases (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  professional_id uuid NOT NULL,
+  project_id uuid NOT NULL,
+  amount_paid numeric NOT NULL,
+  payment_status character varying DEFAULT 'completed'::character varying,
+  payment_method character varying,
+  transaction_id character varying,
+  purchased_at timestamp with time zone DEFAULT now(),
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT professional_lead_purchases_pkey PRIMARY KEY (id),
+  CONSTRAINT professional_lead_purchases_professional_id_fkey FOREIGN KEY (professional_id) REFERENCES public.professional_profiles(id),
+  CONSTRAINT professional_lead_purchases_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id)
+);
+
+CREATE TABLE public.project_form_answers (
+  id character varying NOT NULL,
+  project_id uuid,
+  question_id character varying,
+  selected_option_id character varying,
+  answer_text text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  project_draft_id uuid,
+  CONSTRAINT project_form_answers_pkey PRIMARY KEY (id),
+  CONSTRAINT project_form_answers_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id),
+  CONSTRAINT project_form_answers_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.project_form_questions(id),
+  CONSTRAINT project_form_answers_selected_option_id_fkey FOREIGN KEY (selected_option_id) REFERENCES public.project_form_question_options(id),
+  CONSTRAINT project_form_answers_project_draft_id_fkey FOREIGN KEY (project_draft_id) REFERENCES public.project_drafts(id)
+);
+
+CREATE TABLE public.project_photos (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  project_id uuid,
+  file_name character varying,
+  file_size integer CHECK (file_size > 0 AND file_size <= 5242880),
+  mime_type character varying,
+  uploaded_at timestamp with time zone DEFAULT now(),
+  project_draft_id uuid,
+  storage_path text NOT NULL,
+  display_order integer DEFAULT 1,
+  is_primary boolean DEFAULT false,
+  upload_status character varying DEFAULT 'completed'::character varying CHECK (upload_status::text = ANY (ARRAY['uploading'::character varying, 'completed'::character varying, 'failed'::character varying]::text[])),
+  width integer,
+  height integer,
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT project_photos_pkey PRIMARY KEY (id),
+  CONSTRAINT project_photos_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id),
+  CONSTRAINT project_photos_project_draft_id_fkey FOREIGN KEY (project_draft_id) REFERENCES public.project_drafts(id)
+);
+
+CREATE TABLE public.project_professionals (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  project_id uuid NOT NULL,
+  professional_id uuid NOT NULL,
+  assignment_type character varying NOT NULL,
+  professional_email character varying NOT NULL,
+  assigned_at timestamp without time zone DEFAULT now(),
+  is_active boolean DEFAULT true,
+  created_at timestamp without time zone DEFAULT now(),
+  updated_at timestamp without time zone DEFAULT now(),
+  CONSTRAINT project_professionals_pkey PRIMARY KEY (id),
+  CONSTRAINT project_professionals_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id),
+  CONSTRAINT project_professionals_professional_id_fkey FOREIGN KEY (professional_id) REFERENCES public.professional_profiles(id)
+);
+
+CREATE TABLE public.project_progress (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  project_id uuid,
+  step_number integer NOT NULL,
+  is_completed boolean DEFAULT false,
+  completed_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT project_progress_pkey PRIMARY KEY (id),
+  CONSTRAINT project_progress_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id)
+);
+
+-- ----------------------------------------------------------------------------
+-- Section 3: CREATE INDEXES
+-- ----------------------------------------------------------------------------
+
+-- Service categories indexes
+CREATE INDEX idx_service_categories_slug ON public.service_categories(slug);
+CREATE INDEX idx_service_categories_is_active ON public.service_categories(is_active);
+
+-- Service subcategories indexes
+CREATE INDEX idx_service_subcategories_slug ON public.service_subcategories(slug);
+CREATE INDEX idx_service_subcategories_category ON public.service_subcategories(service_category_id);
+CREATE INDEX idx_service_subcategories_is_active ON public.service_subcategories(is_active);
+
+-- Professional profiles indexes
+CREATE INDEX idx_professional_profiles_user_id ON public.professional_profiles(user_id);
+CREATE INDEX idx_professional_profiles_company_id ON public.professional_profiles(company_id);
+CREATE INDEX idx_professional_profiles_email ON public.professional_profiles(email);
+CREATE INDEX idx_professional_profiles_is_verified ON public.professional_profiles(is_verified);
+
+-- Professional companies indexes
+CREATE INDEX idx_professional_companies_business_id ON public.professional_companies(business_id);
+CREATE INDEX idx_professional_companies_verification_status ON public.professional_companies(verification_status);
+CREATE INDEX idx_professional_companies_created_by ON public.professional_companies(created_by);
+
+-- Projects indexes
+CREATE INDEX idx_projects_service_category ON public.projects(service_category_id);
+CREATE INDEX idx_projects_subcategory ON public.projects(subcategory_id);
+CREATE INDEX idx_projects_status ON public.projects(status);
+CREATE INDEX idx_projects_personal_user ON public.projects(personal_user_id);
+CREATE INDEX idx_projects_company ON public.projects(company_id);
+CREATE INDEX idx_projects_created_at ON public.projects(created_at);
+CREATE INDEX idx_projects_access_token ON public.projects(access_token);
+
+-- Project drafts indexes
+CREATE INDEX idx_project_drafts_session_token ON public.project_drafts(session_token);
+CREATE INDEX idx_project_drafts_service_category ON public.project_drafts(service_category_id);
+CREATE INDEX idx_project_drafts_expires_at ON public.project_drafts(expires_at);
+CREATE INDEX idx_project_drafts_phone ON public.project_drafts(phone);
+
+-- Blog posts indexes
+CREATE INDEX idx_blog_posts_slug ON public.blog_posts(slug);
+CREATE INDEX idx_blog_posts_status ON public.blog_posts(status);
+CREATE INDEX idx_blog_posts_service_category ON public.blog_posts(service_category_id);
+CREATE INDEX idx_blog_posts_service_subcategory ON public.blog_posts(service_subcategory_id);
+CREATE INDEX idx_blog_posts_published_at ON public.blog_posts(published_at);
+
+-- Service pages indexes
+CREATE INDEX idx_service_pages_service_category ON public.service_pages(service_category_id);
+CREATE INDEX idx_service_pages_status ON public.service_pages(status);
+
+-- Professional specializations indexes
+CREATE INDEX idx_professional_specializations_professional ON public.professional_specializations(professional_id);
+CREATE INDEX idx_professional_specializations_category ON public.professional_specializations(service_category_id);
+
+-- Professional ratings indexes
+CREATE INDEX idx_professional_company_ratings_company ON public.professional_company_ratings(company_id);
+CREATE INDEX idx_professional_company_ratings_project ON public.professional_company_ratings(project_id);
+CREATE INDEX idx_professional_company_ratings_professional ON public.professional_company_ratings(professional_id);
+CREATE INDEX idx_professional_company_ratings_approval_status ON public.professional_company_ratings(approval_status);
+
+-- Project form questions indexes
+CREATE INDEX idx_project_form_questions_category ON public.project_form_questions(service_category_id);
+CREATE INDEX idx_project_form_questions_subcategory ON public.project_form_questions(service_subcategory_id);
+CREATE INDEX idx_project_form_questions_parent ON public.project_form_questions(parent_question_id);
+CREATE INDEX idx_project_form_questions_is_root ON public.project_form_questions(is_root_question);
+
+-- Contact submissions indexes
+CREATE INDEX idx_contact_submissions_status ON public.contact_submissions(status);
+CREATE INDEX idx_contact_submissions_category ON public.contact_submissions(category);
+CREATE INDEX idx_contact_submissions_created_at ON public.contact_submissions(created_at);
+
+-- Personal users indexes
+CREATE INDEX idx_personal_users_email ON public.personal_users(email);
+CREATE INDEX idx_personal_users_phone ON public.personal_users(phone);
+
+-- ============================================================================
+-- DOWN Migration
+-- ============================================================================
+
+-- DROP TABLES (in reverse order to respect foreign key constraints)
+/*
+DROP TABLE IF EXISTS public.project_progress CASCADE;
+DROP TABLE IF EXISTS public.project_professionals CASCADE;
+DROP TABLE IF EXISTS public.project_photos CASCADE;
+DROP TABLE IF EXISTS public.project_form_answers CASCADE;
+DROP TABLE IF EXISTS public.professional_lead_purchases CASCADE;
+DROP TABLE IF EXISTS public.professional_company_ratings CASCADE;
+DROP TABLE IF EXISTS public.projects CASCADE;
+DROP TABLE IF EXISTS public.professional_subcategories CASCADE;
+DROP TABLE IF EXISTS public.professional_specializations CASCADE;
+DROP TABLE IF EXISTS public.professional_certificates CASCADE;
+DROP TABLE IF EXISTS public.project_form_question_options CASCADE;
+DROP TABLE IF EXISTS public.service_page_value_items CASCADE;
+DROP TABLE IF EXISTS public.service_page_process_steps CASCADE;
+DROP TABLE IF EXISTS public.service_page_marquee_items CASCADE;
+DROP TABLE IF EXISTS public.service_page_faq_items CASCADE;
+DROP TABLE IF EXISTS public.service_pages_intro CASCADE;
+DROP TABLE IF EXISTS public.service_page_values CASCADE;
+DROP TABLE IF EXISTS public.service_page_types CASCADE;
+DROP TABLE IF EXISTS public.service_page_tips CASCADE;
+DROP TABLE IF EXISTS public.service_page_seo_content CASCADE;
+DROP TABLE IF EXISTS public.service_page_reviews CASCADE;
+DROP TABLE IF EXISTS public.service_page_process CASCADE;
+DROP TABLE IF EXISTS public.service_page_overview_tables CASCADE;
+DROP TABLE IF EXISTS public.service_page_metas CASCADE;
+DROP TABLE IF EXISTS public.service_page_marquees CASCADE;
+DROP TABLE IF EXISTS public.service_page_faqs CASCADE;
+DROP TABLE IF EXISTS public.service_page_cta CASCADE;
+DROP TABLE IF EXISTS public.service_page_comparison_tables CASCADE;
+DROP TABLE IF EXISTS public.service_page_banners CASCADE;
+DROP TABLE IF EXISTS public.blog_post_related CASCADE;
+DROP TABLE IF EXISTS public.blog_post_meta CASCADE;
+DROP TABLE IF EXISTS public.blog_post_content CASCADE;
+DROP TABLE IF EXISTS public.professional_profiles CASCADE;
+DROP TABLE IF EXISTS public.project_drafts CASCADE;
+DROP TABLE IF EXISTS public.project_form_questions CASCADE;
+DROP TABLE IF EXISTS public.blog_posts CASCADE;
+DROP TABLE IF EXISTS public.service_pages CASCADE;
+DROP TABLE IF EXISTS public.service_subcategories CASCADE;
+DROP TABLE IF EXISTS public.professional_companies CASCADE;
+DROP TABLE IF EXISTS public.project_form_steps CASCADE;
+DROP TABLE IF EXISTS public.service_categories CASCADE;
+DROP TABLE IF EXISTS public.personal_users CASCADE;
+DROP TABLE IF EXISTS public.contact_submissions CASCADE;
+DROP TABLE IF EXISTS public.companies CASCADE;
+DROP TABLE IF EXISTS public.admin_users CASCADE;
+
+DROP SEQUENCE IF EXISTS service_subcategories_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS service_categories_id_seq CASCADE;
+*/

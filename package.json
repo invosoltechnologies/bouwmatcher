@@ -10,7 +10,13 @@
     "seed": "tsx scripts/seed.ts",
     "translation:export": "tsx scripts/translation-export.ts export",
     "translation:import": "tsx scripts/translation-export.ts import",
-    "translation:backup": "tsx scripts/translation-export.ts backup"
+    "translation:backup": "tsx scripts/translation-export.ts backup",
+    "db:migrate": "tsx scripts/db/migrate.ts",
+    "db:rollback": "tsx scripts/db/migrate.ts --down",
+    "db:status": "tsx scripts/db/status.ts",
+    "db:backup": "tsx scripts/db/backup.ts",
+    "db:restore": "tsx scripts/db/restore.ts",
+    "db:seed": "tsx scripts/db/seed.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -67,10 +73,12 @@
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.16.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
+    "pg": "^8.17.2",
     "tailwindcss": "^4",
     "tsx": "^4.20.6",
     "tw-animate-css": "^1.3.8",
