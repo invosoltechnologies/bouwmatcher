@@ -10,6 +10,63 @@ CREATE TABLE public.admin_users (
   updated_at timestamp with time zone DEFAULT now(),
   CONSTRAINT admin_users_pkey PRIMARY KEY (id)
 );
+CREATE TABLE public.blog_post_content (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  blog_post_id uuid NOT NULL UNIQUE,
+  title_nl text,
+  title_en text,
+  excerpt_nl text CHECK (char_length(excerpt_nl) <= 300),
+  excerpt_en text CHECK (char_length(excerpt_en) <= 300),
+  content_nl text,
+  content_en text,
+  featured_image_url text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  featured_image_alt text CHECK (char_length(featured_image_alt) <= 150),
+  CONSTRAINT blog_post_content_pkey PRIMARY KEY (id),
+  CONSTRAINT blog_post_content_blog_post_id_fkey FOREIGN KEY (blog_post_id) REFERENCES public.blog_posts(id)
+);
+CREATE TABLE public.blog_post_meta (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  blog_post_id uuid NOT NULL UNIQUE,
+  meta_title_nl text CHECK (char_length(meta_title_nl) <= 60),
+  meta_title_en text CHECK (char_length(meta_title_en) <= 60),
+  meta_description_nl text CHECK (char_length(meta_description_nl) <= 160),
+  meta_description_en text CHECK (char_length(meta_description_en) <= 160),
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT blog_post_meta_pkey PRIMARY KEY (id),
+  CONSTRAINT blog_post_meta_blog_post_id_fkey FOREIGN KEY (blog_post_id) REFERENCES public.blog_posts(id)
+);
+CREATE TABLE public.blog_post_related (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  blog_post_id uuid NOT NULL,
+  related_blog_post_id uuid NOT NULL,
+  order_index integer NOT NULL DEFAULT 0,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT blog_post_related_pkey PRIMARY KEY (id),
+  CONSTRAINT blog_post_related_blog_post_id_fkey FOREIGN KEY (blog_post_id) REFERENCES public.blog_posts(id),
+  CONSTRAINT blog_post_related_related_blog_post_id_fkey FOREIGN KEY (related_blog_post_id) REFERENCES public.blog_posts(id)
+);
+CREATE TABLE public.blog_posts (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  slug text NOT NULL UNIQUE,
+  status text NOT NULL DEFAULT 'draft'::text CHECK (status = ANY (ARRAY['draft'::text, 'pending'::text, 'published'::text])),
+  service_category_id bigint,
+  service_subcategory_id bigint,
+  created_by uuid,
+  published_by uuid,
+  updated_by uuid,
+  published_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT blog_posts_pkey PRIMARY KEY (id),
+  CONSTRAINT blog_posts_service_category_id_fkey FOREIGN KEY (service_category_id) REFERENCES public.service_categories(id),
+  CONSTRAINT blog_posts_service_subcategory_id_fkey FOREIGN KEY (service_subcategory_id) REFERENCES public.service_subcategories(id),
+  CONSTRAINT blog_posts_created_by_fkey FOREIGN KEY (created_by) REFERENCES auth.users(id),
+  CONSTRAINT blog_posts_published_by_fkey FOREIGN KEY (published_by) REFERENCES auth.users(id),
+  CONSTRAINT blog_posts_updated_by_fkey FOREIGN KEY (updated_by) REFERENCES auth.users(id)
+);
 CREATE TABLE public.companies (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   company_name character varying NOT NULL,
