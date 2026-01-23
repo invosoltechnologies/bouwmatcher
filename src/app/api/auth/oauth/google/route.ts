@@ -6,8 +6,9 @@ import { createClient } from '@/lib/supabase/server';
  * This endpoint proxies the OAuth request to hide Supabase URL from users
  */
 export async function GET(request: Request) {
-  const requestUrl = new URL(request.url);
-  const origin = requestUrl.origin;
+  // Use explicit base URL from environment to ensure consistency with Google Console
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const redirectUri = `${baseUrl}/api/auth/oauth/callback`;
 
   try {
     const supabase = await createClient();
@@ -17,7 +18,7 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${origin}/api/auth/oauth/callback`,
+        redirectTo: redirectUri,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -28,14 +29,14 @@ export async function GET(request: Request) {
     if (error) {
       console.error('OAuth initiation error:', error);
       return NextResponse.redirect(
-        new URL('/auth/login?error=oauth_initiation_failed', origin)
+        new URL('/nl/auth/login?error=oauth_initiation_failed', baseUrl)
       );
     }
 
     if (!data.url) {
       console.error('No OAuth URL returned from Supabase');
       return NextResponse.redirect(
-        new URL('/auth/login?error=oauth_url_missing', origin)
+        new URL('/nl/auth/login?error=oauth_url_missing', baseUrl)
       );
     }
 
@@ -44,7 +45,7 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error('OAuth initiation exception:', error);
     return NextResponse.redirect(
-      new URL('/auth/login?error=oauth_exception', origin)
+      new URL('/nl/auth/login?error=oauth_exception', baseUrl)
     );
   }
 }
