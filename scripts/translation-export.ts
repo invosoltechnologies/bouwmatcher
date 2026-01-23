@@ -194,32 +194,79 @@ async function createBackup() {
 
   console.log('💾 Creating backup...');
 
-  // Backup questions
-  const { data: questions } = await supabase
-    .from('project_form_questions')
-    .select('*')
-    .order('id');
+  // Backup questions with pagination
+  let allQuestions: Array<Record<string, unknown>> = [];
+  let offset = 0;
+  const limit = 1000;
+  let hasMore = true;
 
-  if (questions) {
-    fs.writeFileSync(
-      path.join(backupDir, 'questions_backup.json'),
-      JSON.stringify(questions, null, 2),
-      'utf-8'
-    );
+  console.log('  Backing up questions...');
+  while (hasMore) {
+    const { data, error } = await supabase
+      .from('project_form_questions')
+      .select('*')
+      .order('id')
+      .range(offset, offset + limit - 1);
+
+    if (error) {
+      console.error('❌ Error backing up questions:', error);
+      return;
+    }
+
+    if (data && data.length > 0) {
+      allQuestions = allQuestions.concat(data);
+      offset += limit;
+      hasMore = data.length === limit;
+      console.log(`    Fetched ${data.length} records (total: ${allQuestions.length})...`);
+    } else {
+      hasMore = false;
+    }
   }
 
-  // Backup options
-  const { data: options } = await supabase
-    .from('project_form_question_options')
-    .select('*')
-    .order('id');
-
-  if (options) {
+  if (allQuestions.length > 0) {
     fs.writeFileSync(
-      path.join(backupDir, 'question_options_backup.json'),
-      JSON.stringify(options, null, 2),
+      path.join(backupDir, 'questions_backup.json'),
+      JSON.stringify(allQuestions, null, 2),
       'utf-8'
     );
+    console.log(`  ✓ Backed up ${allQuestions.length} questions`);
+  }
+
+  // Backup options with pagination
+  let allOptions: Array<Record<string, unknown>> = [];
+  offset = 0;
+  hasMore = true;
+
+  console.log('  Backing up question options...');
+  while (hasMore) {
+    const { data, error } = await supabase
+      .from('project_form_question_options')
+      .select('*')
+      .order('id')
+      .range(offset, offset + limit - 1);
+
+    if (error) {
+      console.error('❌ Error backing up options:', error);
+      return;
+    }
+
+    if (data && data.length > 0) {
+      allOptions = allOptions.concat(data);
+      offset += limit;
+      hasMore = data.length === limit;
+      console.log(`    Fetched ${data.length} records (total: ${allOptions.length})...`);
+    } else {
+      hasMore = false;
+    }
+  }
+
+  if (allOptions.length > 0) {
+    fs.writeFileSync(
+      path.join(backupDir, 'question_options_backup.json'),
+      JSON.stringify(allOptions, null, 2),
+      'utf-8'
+    );
+    console.log(`  ✓ Backed up ${allOptions.length} question options`);
   }
 
   console.log(`✅ Backup created at: ${backupDir}`);
@@ -251,14 +298,8 @@ function validateTranslations(original: Array<Record<string, unknown>>, translat
     errors.push(`Duplicate IDs found: ${duplicates.map(d => d[idField]).join(', ')}`);
   }
 
-  // Check for empty translations
-  translated.forEach(item => {
-    Object.entries(item).forEach(([key, value]) => {
-      if (key !== idField && !value && typeof value === 'string') {
-        errors.push(`Empty value for ${idField}=${item[idField]}, field=${key}`);
-      }
-    });
-  });
+  // Note: We don't validate empty values because fields like placeholder_nl,
+  // placeholder_en, help_text_nl, help_text_en are optional and can be empty
 
   return {
     valid: errors.length === 0,
@@ -326,7 +367,9 @@ async function importQuestions() {
   let successCount = 0;
   let errorCount = 0;
 
-  for (const item of translations) {
+  console.log(`Updating ${translations.length} questions...`);
+  for (let i = 0; i < translations.length; i++) {
+    const item = translations[i];
     const { id, ...updateData } = item;
 
     const { error } = await supabase
@@ -339,6 +382,11 @@ async function importQuestions() {
       errorCount++;
     } else {
       successCount++;
+    }
+
+    // Show progress every 50 records
+    if ((i + 1) % 50 === 0 || (i + 1) === translations.length) {
+      console.log(`  Progress: ${i + 1}/${translations.length} (${successCount} successful, ${errorCount} failed)`);
     }
   }
 
@@ -405,7 +453,9 @@ async function importOptions() {
   let successCount = 0;
   let errorCount = 0;
 
-  for (const item of translations) {
+  console.log(`Updating ${translations.length} question options...`);
+  for (let i = 0; i < translations.length; i++) {
+    const item = translations[i];
     const { id, ...updateData } = item;
 
     const { error } = await supabase
@@ -418,6 +468,11 @@ async function importOptions() {
       errorCount++;
     } else {
       successCount++;
+    }
+
+    // Show progress every 100 records
+    if ((i + 1) % 100 === 0 || (i + 1) === translations.length) {
+      console.log(`  Progress: ${i + 1}/${translations.length} (${successCount} successful, ${errorCount} failed)`);
     }
   }
 
