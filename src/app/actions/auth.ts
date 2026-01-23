@@ -342,30 +342,20 @@ export async function updateProfessionalProfileAction(
 /**
  * Sign in with OAuth provider (Google, Facebook, Apple)
  * Returns the OAuth URL for client-side redirect
+ * Uses our proxy endpoint to hide Supabase domain from users
  */
 export async function getOAuthUrlAction(
   provider: 'google' | 'facebook' | 'apple'
 ): Promise<{ success: boolean; error?: string; url?: string }> {
-  const supabase = await createClient();
-
   try {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/auth/callback`,
-      },
-    });
-
-    if (error) {
-      return {
-        success: false,
-        error: error.message,
-      };
-    }
+    // Use our proxy endpoint instead of calling Supabase directly
+    // This ensures users only see our domain (bouwmatcher.be) throughout the OAuth flow
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const url = `${baseUrl}/api/auth/oauth/${provider}`;
 
     return {
       success: true,
-      url: data.url,
+      url,
     };
   } catch (error) {
     console.error('OAuth sign in error:', error);
