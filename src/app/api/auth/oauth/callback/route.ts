@@ -204,7 +204,8 @@ export async function GET(request: Request) {
     }
 
     // Redirect to a session verification endpoint with the token
-    const sessionUrl = new URL(`/${locale}/api/auth/verify-token`, baseUrl);
+    // NOTE: API routes don't have locale prefixes
+    const sessionUrl = new URL(`/api/auth/verify-token`, baseUrl);
     sessionUrl.searchParams.set('token', verificationToken);
     sessionUrl.searchParams.set('type', 'magiclink');
 
@@ -216,6 +217,7 @@ export async function GET(request: Request) {
       .single();
 
     const isComplete = profile?.profile_completed && profile?.current_step >= 6;
+    // Final redirect destination has locale prefix
     sessionUrl.searchParams.set('redirect', isComplete ? `/${locale}/pro-dashboard/account` : `/${locale}/auth/register`);
 
     return NextResponse.redirect(sessionUrl.toString());
