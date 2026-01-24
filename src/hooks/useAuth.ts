@@ -10,7 +10,6 @@ import {
   getCurrentUserAction,
   getProfessionalProfileAction,
   updateProfessionalProfileAction,
-  getOAuthUrlAction,
   sendPasswordResetAction,
   resetPasswordAction,
 } from '@/app/actions/auth';
@@ -56,13 +55,8 @@ export function useAuth() {
   // OAuth sign in
   const signInWithOAuth = async (provider: 'google' | 'facebook' | 'apple') => {
     try {
-      const result = await getOAuthUrlAction(provider);
-
-      if (result.success && result.url) {
-        window.location.href = result.url;
-      } else {
-        toast.error(result.error || 'Failed to initiate OAuth sign in');
-      }
+      // Direct navigation to custom OAuth endpoint (avoids server action caching)
+      window.location.href = `/api/auth/oauth/${provider}`;
     } catch (error) {
       toast.error('An error occurred during OAuth sign in');
       console.error('OAuth error:', error);
