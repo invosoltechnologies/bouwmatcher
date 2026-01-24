@@ -13,6 +13,11 @@ export async function GET(request: Request) {
   try {
     const supabase = await createClient();
 
+    // DEBUG: Log the redirect URI we're using
+    console.log('=== OAuth Debug Info ===');
+    console.log('Base URL:', baseUrl);
+    console.log('Redirect URI:', redirectUri);
+
     // Initiate OAuth flow with Google
     // The callback will come to our domain instead of Supabase's domain
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -39,6 +44,10 @@ export async function GET(request: Request) {
         new URL('/nl/auth/login?error=oauth_url_missing', baseUrl)
       );
     }
+
+    // DEBUG: Log the OAuth URL that Supabase generated
+    console.log('OAuth URL generated:', data.url);
+    console.log('=======================');
 
     // Redirect user to Google's OAuth consent screen
     return NextResponse.redirect(data.url);
