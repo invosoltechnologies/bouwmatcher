@@ -1,7 +1,7 @@
 'use client';
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { Search, Menu, X, BriefcaseBusiness, LogOut, LayoutDashboard, Users, Building2, ShieldCheck, Star, Briefcase, FolderTree, Home, ShoppingCart, FileText } from "lucide-react";
+import { Search, Menu, X, BriefcaseBusiness, LogOut, LayoutDashboard, Users, Building2, ShieldCheck, Star, Briefcase, FolderTree, Home, ShoppingCart, FileText, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
@@ -29,6 +29,7 @@ const lucideIcons: Record<string, React.ComponentType<{ className?: string }>> =
   BriefcaseBusiness,
   ShoppingCart,
   FileText,
+  BookOpen,
 };
 
 export default function Navbar() {

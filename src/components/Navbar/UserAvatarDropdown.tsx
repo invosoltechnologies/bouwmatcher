@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from '@/i18n/navigation';
-import { User, LogOut, ChevronDown, BriefcaseBusiness, LayoutDashboard, Users, Building2, ShieldCheck, Star, Briefcase, FolderTree, Home, ShoppingCart, FileText } from 'lucide-react';
+import { User, LogOut, ChevronDown, BriefcaseBusiness, LayoutDashboard, Users, Building2, ShieldCheck, Star, Briefcase, FolderTree, Home, ShoppingCart, FileText, BookOpen } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { dashboardNavigation } from '@/config/professional-dashboard';
@@ -28,6 +28,7 @@ const lucideIcons: Record<string, React.ComponentType<{ className?: string }>> =
   BriefcaseBusiness,
   ShoppingCart,
   FileText,
+  BookOpen,
 };
 
 export default function UserAvatarDropdown() {
