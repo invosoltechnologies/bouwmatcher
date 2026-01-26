@@ -106,6 +106,12 @@ export default function ServicesSection() {
     const desktopTotalSlides = Math.ceil(services.length / desktopServicesPerSlide);
     const mobileTotalSlides = Math.ceil(services.length / mobileServicesPerSlide);
 
+    // Store these values for pagination
+    const totalSlidesByBreakpoint = {
+      mobile: mobileTotalSlides,
+      desktop: desktopTotalSlides
+    };
+
     const slides = [];
 
     // Generate slides - we need to generate enough for mobile (more slides)
@@ -175,11 +181,23 @@ export default function ServicesSection() {
 
         {/* Bullet Pagination */}
         <div className='flex justify-center items-center gap-2 mt-6 md:mt-8'>
-          {Array.from({ length: slides.length }).map((_, index) => (
+          {/* Mobile pagination dots (show all slides) */}
+          {Array.from({ length: totalSlidesByBreakpoint.mobile }).map((_, index) => (
             <button
-              key={index}
+              key={`mobile-${index}`}
               onClick={() => carouselApi?.scrollTo(index)}
-              className={`w-3 h-3 rounded-full transition-colors ${
+              className={`lg:hidden w-3 h-3 rounded-full transition-colors ${
+                currentSlide === index ? 'bg-primary' : 'bg-gray-300'
+              }`}
+              aria-label={`${t('ariaLabel')} ${index + 1}`}
+            />
+          ))}
+          {/* Desktop pagination dots (show fewer slides) */}
+          {Array.from({ length: totalSlidesByBreakpoint.desktop }).map((_, index) => (
+            <button
+              key={`desktop-${index}`}
+              onClick={() => carouselApi?.scrollTo(index)}
+              className={`hidden lg:block w-3 h-3 rounded-full transition-colors ${
                 currentSlide === index ? 'bg-primary' : 'bg-gray-300'
               }`}
               aria-label={`${t('ariaLabel')} ${index + 1}`}
