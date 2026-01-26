@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { Search, X } from 'lucide-react';
 import ProfessionalsTable from '@/components/admin-dashboard/ProfessionalsTable';
 import { useProfessionals } from '@/lib/hooks/admin/professionals';
@@ -20,6 +20,8 @@ import { useDebounce } from '@/hooks/useDebounce';
 export default function ProfessionalsPage() {
   const t = useTranslations('common.adminDashboard');
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string;
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedRating, setSelectedRating] = useState<string>('all');
@@ -197,7 +199,7 @@ export default function ProfessionalsPage() {
 
       <ProfessionalsTable
         professionals={transformedProfessionals}
-        onViewProfile={(id) => console.log('View profile:', id)}
+        onViewProfile={(id) => router.push(`/${locale}/admin-dashboard/professionals/${id}`)}
         showHeader={false}
       />
     </>

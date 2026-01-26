@@ -13,7 +13,9 @@ export default function AdminTopBar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Extract the section from pathname (e.g., /admin-dashboard/professionals -> professionals)
-  let section = pathname.split('/').pop() || 'dashboard';
+  const pathParts = pathname.split('/').filter(Boolean);
+  const adminDashboardIndex = pathParts.findIndex(part => part === 'admin-dashboard');
+  let section = pathParts[adminDashboardIndex + 1] || 'dashboard';
 
   // Handle root admin-dashboard path
   if (section === 'admin-dashboard' || pathname.endsWith('/admin-dashboard')) {
@@ -23,6 +25,14 @@ export default function AdminTopBar() {
   // Handle nested routes (e.g., /admin-dashboard/service-categories/form)
   if (pathname.includes('/service-categories/form')) {
     section = 'service-categories-form';
+  }
+
+  // Handle detail pages with IDs (e.g., /admin-dashboard/professionals/[id])
+  // Check if the section looks like a UUID or ID (contains hyphens and numbers/letters)
+  const nextPart = pathParts[adminDashboardIndex + 2];
+  if (nextPart && /^[a-f0-9-]{36}$/i.test(nextPart)) {
+    // This is a detail page, keep the section name (professionals, not the UUID)
+    section = pathParts[adminDashboardIndex + 1];
   }
 
   // Get page config - use translation with fallback to config
