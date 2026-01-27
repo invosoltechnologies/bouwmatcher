@@ -31,7 +31,7 @@ export const SUPABASE_CONFIG = {
 // Email Configuration (server-side only)
 export const EMAIL_CONFIG = {
   apiKey: process.env.RESEND_API_KEY,
-  fromEmail: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
+  fromEmail: process.env.RESEND_FROM_EMAIL || 'noreply@bouwmatcher.be',
   fromName: 'Bouwmatcher',
   baseUrl: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
 } as const;
