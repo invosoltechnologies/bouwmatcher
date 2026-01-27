@@ -122,7 +122,7 @@ export default function ServicesSection() {
       const mobileSlideStartIndex = slideIndex * mobileServicesPerSlide;
       const mobileSlideServices = services.slice(mobileSlideStartIndex, mobileSlideStartIndex + mobileServicesPerSlide);
 
-      // Desktop calculation
+      // Desktop calculatin
       const desktopSlideStartIndex = slideIndex * desktopServicesPerSlide;
       const desktopSlideServices = services.slice(desktopSlideStartIndex, desktopSlideStartIndex + desktopServicesPerSlide);
 
