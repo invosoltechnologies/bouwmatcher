@@ -430,7 +430,9 @@
       "messageRequired": "Message is required",
       "messageMinLength": "Message must contain at least 10 characters",
       "fileMaxSize": "File may be a maximum of 10MB",
-      "termsRequired": "You must agree to the privacy policy"
+      "termsRequired": "You must agree to the privacy policy",
+      "successMessage": "Your message has been sent successfully! We will contact you within 24 hours.",
+      "errorMessage": "Failed to submit form. Please try again."
     },
     "methods": {
       "heading": "Choose your contact method",

@@ -430,7 +430,9 @@
       "messageRequired": "Bericht is verplicht",
       "messageMinLength": "Bericht moet minimaal 10 karakters bevatten",
       "fileMaxSize": "Bestand mag maximaal 10MB zijn",
-      "termsRequired": "U moet akkoord gaan met de privacyverklaring"
+      "termsRequired": "U moet akkoord gaan met de privacyverklaring",
+      "successMessage": "Uw bericht is succesvol verzonden! We nemen binnen 24 uur contact met u op.",
+      "errorMessage": "Formulier versturen mislukt. Probeer het opnieuw."
     },
     "methods": {
       "heading": "Kies je contactmethode",
