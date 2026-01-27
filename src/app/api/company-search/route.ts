@@ -74,7 +74,8 @@ async function searchBelgianCompanies(query: string) {
       console.log('Searching by enterprise number:', cleanQuery);
     } else {
       // Search by company name using denominations endpoint with filters
-      url = `${apiUrl}/denominations?query=${encodeURIComponent(query)}&entityType=enterprise&type=commercial&active=active&language=nl&limit=20`;
+      // Note: Removed type=commercial filter to allow broader search results
+      url = `${apiUrl}/denominations?query=${encodeURIComponent(query)}&entityType=enterprise&active=active&language=nl&limit=20`;
       console.log('Searching by company name:', query);
     }
 
@@ -122,16 +123,61 @@ async function searchBelgianCompanies(query: string) {
       // Single enterprise result - data is nested under "Enterprise" key
       const enterprise = searchData.Enterprise;
       if (enterprise && enterprise.enterpriseNumber) {
-        // Get denomination from typeDescription
-        const denomination = enterprise.typeDescription?.nl ||
-                           enterprise.JuridicalForm?.description?.nl ||
-                           'Bedrijf';
+        // Fetch the actual company name/denomination from denominations endpoint
+        const denominationsUrl = `${apiUrl}/enterprise/${enterprise.enterpriseNumber}/denominations`;
+        console.log(`Fetching denominations for ${enterprise.enterpriseNumber}:`, denominationsUrl);
 
-        results = [{
-          entityNumber: enterprise.enterpriseNumber,
-          value: denomination,
-          entityNumberFormatted: enterprise.enterpriseNumberFormatted
-        }];
+        try {
+          const denominationsResponse = await fetch(denominationsUrl, {
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Accept': 'application/json',
+            },
+          });
+
+          let companyName = 'Unnamed Company';
+
+          if (denominationsResponse.ok) {
+            const denominationsData = await denominationsResponse.json();
+            console.log(`Denominations data for ${enterprise.enterpriseNumber}:`, JSON.stringify(denominationsData, null, 2));
+
+            // API returns array directly, not wrapped in Denominations key
+            const denominations = Array.isArray(denominationsData) ? denominationsData : (denominationsData.Denominations || []);
+
+            if (denominations.length > 0) {
+              // Map denominations to a simpler format
+              const mappedDenominations = denominations.map((item: { Denomination: { value: string; type?: string } }) => ({
+                value: item.Denomination.value,
+                type: item.Denomination.type
+              }));
+
+              // Prefer social/commercial names over abbreviations
+              const socialName = mappedDenominations.find((d: { type?: string }) => d.type === 'social');
+              const commercialName = mappedDenominations.find((d: { type?: string }) => d.type === 'commercial');
+              const anyName = mappedDenominations[0];
+
+              companyName = socialName?.value || commercialName?.value || anyName?.value || 'Unnamed Company';
+            }
+          } else {
+            console.warn(`Failed to fetch denominations for ${enterprise.enterpriseNumber}:`, denominationsResponse.status);
+            // Fall back to a descriptive name including enterprise number
+            companyName = `Company ${enterprise.enterpriseNumberFormatted || enterprise.enterpriseNumber}`;
+          }
+
+          results = [{
+            entityNumber: enterprise.enterpriseNumber,
+            value: companyName,
+            entityNumberFormatted: enterprise.enterpriseNumberFormatted
+          }];
+        } catch (denominationError) {
+          console.error(`Error fetching denominations for ${enterprise.enterpriseNumber}:`, denominationError);
+          // Fall back to enterprise number if denominations fetch fails
+          results = [{
+            entityNumber: enterprise.enterpriseNumber,
+            value: `Company ${enterprise.enterpriseNumberFormatted || enterprise.enterpriseNumber}`,
+            entityNumberFormatted: enterprise.enterpriseNumberFormatted
+          }];
+        }
       }
     } else {
       // Denominations search results - KBO API returns data under "Denominations" array
