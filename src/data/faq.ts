@@ -27,6 +27,6 @@ export const faqData = [
   {
     question: 'Wat kan ik doen als ik niet tevreden ben met het resultaat?',
     answer:
-      'Bespreek dit eerst met de vakman zelf, vaak kom je samen tot een oplossing. Lukt dit niet, neem contact op met ons team via info@bouwmatcher.com, dan kijken we mee naar een passende oplossing.',
+      'Bespreek dit eerst met de vakman zelf, vaak kom je samen tot een oplossing. Lukt dit niet, neem contact op met ons team via info@bouwmatcher.be, dan kijken we mee naar een passende oplossing.',
   },
 ];

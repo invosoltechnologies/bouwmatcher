@@ -6,7 +6,7 @@ import { EMAIL_CONFIG } from '@/lib/config';
 const resend = new Resend(EMAIL_CONFIG.apiKey);
 
 // Admin email where contact submissions should be sent
-const ADMIN_EMAIL = process.env.CONTACT_ADMIN_EMAIL || 'info@bouwmatcher.com';
+const ADMIN_EMAIL = process.env.CONTACT_ADMIN_EMAIL || 'support@bouwmatcher.be';
 
 export async function POST(request: NextRequest) {
   try {
