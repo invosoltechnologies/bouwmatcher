@@ -87,7 +87,6 @@ export default function LeadDetailsSidebar({ isLocked, status, isAssignedToMe }:
                 </p>
               </div>
             </div>
-{/* test */}
             <div className='flex gap-3'>
               <div className='flex-shrink-0 mt-1'>
                 <div className='w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center'>
