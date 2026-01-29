@@ -353,7 +353,24 @@
         "emptyStateTitle": "Nog niets gekozen",
         "emptyStateDescription": "Kies je vakgebieden uit de lijst links",
         "infoPriorityTitle": "Volgorde bepaalt prioriteit",
-        "infoPriorityDescription": "Sleep om te herschikken."
+        "infoPriorityDescription": "Sleep om te herschikken.",
+        "suggestDialog": {
+          "title": "Vak voorstellen",
+          "description": "Mis je een specialisatie? Laat het ons weten en we zullen het overwegen om toe te voegen.",
+          "categoryNameLabel": "Categorie naam",
+          "categoryNamePlaceholder": "bijv. Zonnepanelen installatie",
+          "categoryNameRequired": "Categorie naam is verplicht",
+          "specializedFieldsLabel": "Gespecialiseerde velden",
+          "specializedFieldsPlaceholder": "bijv. Residentiële zonnepanelen, Commerciële installaties, Onderhoud en reparaties",
+          "specializedFieldsRequired": "Gespecialiseerde velden zijn verplicht",
+          "messageLabel": "Aanvullend bericht (optioneel)",
+          "messagePlaceholder": "Eventuele aanvullende informatie of context...",
+          "cancelButton": "Annuleren",
+          "submitButton": "Versturen",
+          "submittingButton": "Versturen...",
+          "successMessage": "Bedankt! Je suggestie is verstuurd.",
+          "errorMessage": "Er ging iets mis. Probeer het opnieuw."
+        }
       },
       "subcategories": {
         "heading": "Opdrachten die we graag ontvangen zijn...",

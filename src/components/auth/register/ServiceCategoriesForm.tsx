@@ -9,6 +9,7 @@ import PopularCategoriesSection from '@/components/shared/categories/PopularCate
 import AllCategoriesGrid from '@/components/shared/categories/AllCategoriesGrid';
 import SelectedCategoriesCart from '@/components/shared/categories/SelectedCategoriesCart';
 import SelectedCategoriesSidebar from '@/components/shared/categories/SelectedCategoriesSidebar';
+import SuggestSpecializationDialog from '@/components/auth/register/SuggestSpecializationDialog';
 import { useTranslations, useLocale } from 'next-intl';
 import type { ServiceCategory, ProfessionalSpecialization } from '@/types/categories';
 
@@ -38,6 +39,7 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isSaving, setIsSaving] = useState(false);
+  const [showSuggestDialog, setShowSuggestDialog] = useState(false);
 
   // Fetch categories from API
   useEffect(() => {
@@ -317,8 +319,8 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
             <div className='pt-2 sm:pt-4'>
               <button
                 type='button'
-                className='text-primary hover:text-primary/80 text-sm sm:text-base font-medium flex items-center gap-2'
-                onClick={() => toast(t('comingSoon'))}
+                className='text-primary hover:text-primary/80 text-sm sm:text-base font-medium flex items-center gap-2 transition-colors'
+                onClick={() => setShowSuggestDialog(true)}
               >
                 {t('addCustom')}
               </button>
@@ -393,6 +395,12 @@ export default function ServiceCategoriesForm({ onNext, onBack }: ServiceCategor
           {isSaving ? t('submitting') : t('submitButton')}
         </Button>
       </div>
+
+      {/* Suggest Specialization Dialog */}
+      <SuggestSpecializationDialog
+        open={showSuggestDialog}
+        onOpenChange={setShowSuggestDialog}
+      />
     </div>
   );
 }

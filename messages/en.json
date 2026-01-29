@@ -353,7 +353,24 @@
         "emptyStateTitle": "Nothing selected yet",
         "emptyStateDescription": "Choose your specializations from the list on the left",
         "infoPriorityTitle": "Order determines priority",
-        "infoPriorityDescription": "Drag to reorder."
+        "infoPriorityDescription": "Drag to reorder.",
+        "suggestDialog": {
+          "title": "Suggest a Specialization",
+          "description": "Missing a specialization? Let us know and we'll consider adding it.",
+          "categoryNameLabel": "Category name",
+          "categoryNamePlaceholder": "e.g. Solar Panel Installation",
+          "categoryNameRequired": "Category name is required",
+          "specializedFieldsLabel": "Specialized fields",
+          "specializedFieldsPlaceholder": "e.g. Residential solar panels, Commercial installations, Maintenance and repairs",
+          "specializedFieldsRequired": "Specialized fields are required",
+          "messageLabel": "Additional message (optional)",
+          "messagePlaceholder": "Any additional information or context...",
+          "cancelButton": "Cancel",
+          "submitButton": "Submit",
+          "submittingButton": "Submitting...",
+          "successMessage": "Thank you! Your suggestion has been submitted.",
+          "errorMessage": "Something went wrong. Please try again."
+        }
       },
       "subcategories": {
         "heading": "Projects we'd like to receive are...",
