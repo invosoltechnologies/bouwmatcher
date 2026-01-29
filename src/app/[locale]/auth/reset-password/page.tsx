@@ -37,28 +37,35 @@ export default function ResetPasswordPage() {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        // Give Supabase a moment to process the token from URL
-        await new Promise(resolve => setTimeout(resolve, 500));
+        const { createClient } = await import('@/lib/supabase/client');
+        const supabase = createClient();
 
-        // Supabase automatically handles the token from URL hash/query params
-        // We just need to verify the session exists
-        const response = await fetch('/api/auth/session');
-        if (response.ok) {
-          const { session } = await response.json();
-          if (session) {
+        // Listen for auth state changes - this handles the token exchange
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+          if (event === 'PASSWORD_RECOVERY') {
+            // Password recovery session established
+            setIsValidSession(true);
+          } else if (session) {
+            // Session already exists
             setIsValidSession(true);
           } else {
+            // No valid session
             toast.error(t('invalidLink'));
             setTimeout(() => {
               router.push('/auth/forgot-password');
             }, 2000);
           }
-        } else {
-          toast.error(t('invalidLink'));
-          setTimeout(() => {
-            router.push('/auth/forgot-password');
-          }, 2000);
+        });
+
+        // Also check current session immediately
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          setIsValidSession(true);
         }
+
+        return () => {
+          subscription.unsubscribe();
+        };
       } catch (error) {
         console.error('Session check error:', error);
         toast.error(t('invalidLink'));

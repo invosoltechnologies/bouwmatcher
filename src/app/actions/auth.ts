@@ -376,8 +376,10 @@ export async function sendPasswordResetAction(
   const supabase = await createClient();
 
   try {
+    // Use the base URL and include locale in the redirect path
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/reset-password`,
+      redirectTo: `${baseUrl}/nl/auth/reset-password`,
     });
 
     if (error) {
