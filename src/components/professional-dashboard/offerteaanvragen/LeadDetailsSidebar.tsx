@@ -106,7 +106,7 @@ export default function LeadDetailsSidebar({ isLocked, status, isAssignedToMe }:
         </CardContent>
       </Card>
 
-      {/* Tips Card */}
+
       <Card>
         <CardContent className='pt-6'>
           <h3 className='font-semibold text-foreground mb-4'>
