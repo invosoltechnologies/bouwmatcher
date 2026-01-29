@@ -17,7 +17,7 @@ export default function ServiceCTA({
   ctaAction,
 }: ServiceCTAProps) {
   const handleClick = ctaAction || (() => {
-    window.location.href = 'mailto:info@bouwmatcher.nl';
+    window.location.href = 'mailto:support@bouwmatcher.be';
   });
 
   return (

@@ -8,7 +8,7 @@ export default function CTASection() {
 
   const handleCTAClick = () => {
     // Handle contact action - you can customize this
-    window.location.href = 'mailto:info@bouwmatcher.nl'
+    window.location.href = 'mailto:support@bouwmatcher.be'
   }
 
   return (
