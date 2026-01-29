@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import HelpSupportCard from '@/components/professional-dashboard/shared/HelpSupportCard';
 
 interface QuotationSidebarProps {
   accountName: string;
@@ -31,10 +32,6 @@ export default function QuotationSidebar({
 
   const handleAccountStatusClick = () => {
     router.push(`/${locale}/pro-dashboard/account`);
-  };
-
-  const handleContactSupport = () => {
-    router.push(`/${locale}/contact`);
   };
 
   return (
@@ -238,29 +235,7 @@ export default function QuotationSidebar({
       </div>
 
       {/* Help Section */}
-      <div className='bg-white border border-gray-200 rounded-xl sm:rounded-2xl'>
-        <div className='flex items-center gap-2 sm:gap-3 py-3 sm:py-4.5 px-4 sm:px-5.5'>
-          <div className='w-5 h-5 sm:w-6 sm:h-6 bg-primary rounded-full flex items-center justify-center flex-shrink-0'>
-            <span className='text-white text-xs sm:text-sm font-bold'>!</span>
-          </div>
-          <h3 className='text-base sm:text-lg leading-none font-semibold text-foreground'>
-            {t('helpTitle')}
-          </h3>
-        </div>
-
-        <div className='py-4 sm:py-7 border-t px-4 sm:px-5.5 border-gray-200'>
-          <p className='text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4'>
-            {t('helpDescription')}
-          </p>
-
-          <Button
-            onClick={handleContactSupport}
-            className='w-full rounded-xl font-medium text-sm sm:text-base'
-          >
-            {t('contactButton')}
-          </Button>
-        </div>
-      </div>
+      <HelpSupportCard translationNamespace="common.proDashboard.offerteaanvragen.sidebar" />
     </div>
   );
 }
