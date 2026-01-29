@@ -500,7 +500,7 @@ export async function sendPasswordResetEmail({
                 </div>
 
                 <p style="margin-top: 32px; font-size: 13px; color: #666;">
-                  Heb je vragen? Neem gerust contact met ons op via <a href="mailto:support@bouwmatcher.com" style="color: #0AB27E;">support@bouwmatcher.com</a>
+                  Heb je vragen? Neem gerust contact met ons op via <a href="mailto:support@bouwmatcher.be" style="color: #0AB27E;">support@bouwmatcher.be</a>
                 </p>
               </div>
 

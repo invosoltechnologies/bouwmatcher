@@ -18,6 +18,7 @@ import {
   LogOut,
   ShoppingCart,
   FileText,
+  BookOpen,
 } from 'lucide-react';
 import { adminNavigation } from '@/config/admin-dashboard';
 import { cn } from '@/lib/utils';
@@ -84,7 +85,7 @@ export default function AdminMobileSidebar({
     if (item.id === 'logout' && isLoggingOut) {
       return t('common.loggingOut');
     }
-    return t(`common.adminDashboard.navigation.${item.id}` as any, {
+    return t(`common.adminDashboard.navigation.${item.id}`, {
       defaultValue: item.label,
     });
   };
@@ -109,6 +110,7 @@ export default function AdminMobileSidebar({
         LogOut,
         ShoppingCart,
         FileText,
+        BookOpen,
       };
 
     if (item.iconType === 'lucide' && iconMap[item.icon]) {
@@ -155,7 +157,7 @@ export default function AdminMobileSidebar({
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-3 py-4 overflow-y-auto">
+        <nav className="flex-1 px-3 py-4 overflow-y-auto min-h-0">
           <ul className="space-y-1">
             {adminNavigation.map((item) => {
               // Check if pathname ends with the item href (to handle locale prefix)

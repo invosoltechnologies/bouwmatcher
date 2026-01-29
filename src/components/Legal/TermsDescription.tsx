@@ -352,10 +352,10 @@ export default function TermsDescription() {
                 <p className='mb-2'>
                   E-mail:{' '}
                   <Link
-                    href='mailto:support@bouwmatcher.com'
+                    href='mailto:support@bouwmatcher.be'
                     className='text-muted-foreground underline hover:text-primary'
                   >
-                    support@bouwmatcher.com
+                    support@bouwmatcher.be
                   </Link>
                 </p>
                 <p>

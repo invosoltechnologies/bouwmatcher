@@ -96,7 +96,7 @@ export default function Footer() {
                   className='w-4 h-4 brightness-0 invert flex-shrink-0'
                 />
                 <Link
-                  href='mailto:support@bouwmatcher.com'
+                  href='mailto:support@bouwmatcher.be'
                   className='text-white text-sm md:text-base font-light hover:text-white hover:underline transition-colors break-all'
                 >
                   {t('email')}

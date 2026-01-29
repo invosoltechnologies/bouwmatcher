@@ -70,7 +70,7 @@ export default function AdminSidebar() {
       return t('common.navbar.loggingOut');
     }
     // Use admin-specific translation keys
-    return t(`common.adminDashboard.navigation.${item.id}` as any, {
+    return t(`common.adminDashboard.navigation.${item.id}`, {
       defaultValue: item.label,
     });
   };
@@ -156,7 +156,7 @@ export default function AdminSidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-8.5">
+      <nav className="flex-1 px-3 py-8.5 overflow-y-auto min-h-0">
         <ul className="space-y-2.5">
           {adminNavigation.map((item) => {
             // Check if pathname ends with the item href (to handle locale prefix like /en/admin-dashboard)

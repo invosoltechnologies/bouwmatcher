@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Lock, Image as ImageIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { nl, enUS } from 'date-fns/locale';
@@ -27,6 +27,22 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
   const { data: accountData } = useAccount();
   const [showPurchaseDialog, setShowPurchaseDialog] = useState(false);
   const [purchaseDialogData, setPurchaseDialogData] = useState<PurchaseLeadDialogData | null>(null);
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
+
+  // Handle responsive sidebar rendering
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsLargeScreen(window.innerWidth >= 1024);
+    };
+
+    // Initial check
+    checkScreenSize();
+
+    // Listen for resize events
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   // Check if account is verified
   const isVerified = accountData?.accountData?.accountStatus?.status === 'verified';
@@ -352,13 +368,15 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
         </div>
 
         {/* Right Column - Sidebar - Hidden on mobile */}
-        <div className="hidden lg:block lg:w-80">
-          <LeadDetailsSidebar
-            isLocked={is_locked}
-            status={lead.status}
-            isAssignedToMe={lead.is_assigned_to_me}
-          />
-        </div>
+        {isLargeScreen && (
+          <div className="lg:w-80">
+            <LeadDetailsSidebar
+              isLocked={is_locked}
+              status={lead.status}
+              isAssignedToMe={lead.is_assigned_to_me}
+            />
+          </div>
+        )}
       </div>
 
       {/* Purchase Lead Dialog */}

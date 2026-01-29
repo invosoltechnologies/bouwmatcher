@@ -70,7 +70,7 @@ export default function PrivacyDescription() {
                 <p className='mb-2'>Bouwmatcher BV</p>
                 <p className='mb-2'>Philipsite 5 bus 1</p>
                 <p className='mb-2'>3001 Leuven, België</p>
-                <p className='mb-2'>{t('contactEmail')}: <Link href="mailto:support@bouwmatcher.com" className="text-muted-foreground underline hover:text-primary">support@bouwmatcher.com</Link></p>
+                <p className='mb-2'>{t('contactEmail')}: <Link href="mailto:support@bouwmatcher.be" className="text-muted-foreground underline hover:text-primary">support@bouwmatcher.be</Link></p>
                 <p>{t('contactWebsite')}: <Link href="/contact" className="text-muted-foreground underline hover:text-primary">www.bouwmatcher.com/contact</Link></p>
               </div>
             </div>
@@ -312,7 +312,7 @@ export default function PrivacyDescription() {
               </ul>
               <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
                 {t('section14Para2')}{' '}
-                <Link href="mailto:support@bouwmatcher.com" className="text-muted-foreground underline hover:text-primary">support@bouwmatcher.com</Link>
+                <Link href="mailto:support@bouwmatcher.be" className="text-muted-foreground underline hover:text-primary">support@bouwmatcher.be</Link>
                 . {t('section14Para3')}
               </p>
               <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
@@ -343,7 +343,7 @@ export default function PrivacyDescription() {
                 <p className='mb-2'>Bouwmatcher BV</p>
                 <p className='mb-2'>Philipsite 5 bus 1</p>
                 <p className='mb-2'>3001 Leuven, België</p>
-                <p className='mb-2'>{t('contactEmail')}: <Link href="mailto:support@bouwmatcher.com" className="text-muted-foreground underline hover:text-primary">support@bouwmatcher.com</Link></p>
+                <p className='mb-2'>{t('contactEmail')}: <Link href="mailto:support@bouwmatcher.be" className="text-muted-foreground underline hover:text-primary">support@bouwmatcher.be</Link></p>
                 <p>{t('contactWebsite')}: <Link href="/contact" className="text-muted-foreground underline hover:text-primary">www.bouwmatcher.com/contact</Link></p>
               </div>
             </div>

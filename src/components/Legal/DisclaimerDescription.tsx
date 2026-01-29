@@ -22,10 +22,10 @@ export default function DisclaimerDescription() {
               <p className='text-muted-foreground font-normal leading-relaxed text-lg md:text-2xl'>
                 {t('section1Para2')}{' '}
                 <Link
-                  href='mailto:support@bouwmatcher.com'
+                  href='mailto:support@bouwmatcher.be'
                   className='text-muted-foreground underline hover:text-primary'
                 >
-                  support@bouwmatcher.com
+                  support@bouwmatcher.be
                 </Link>
                 .
               </p>
