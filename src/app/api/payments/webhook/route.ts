@@ -165,6 +165,11 @@ export async function POST(request: NextRequest) {
       if (professional && project) {
         console.log('📤 Sending receipt email to:', professional.invoices_email);
 
+        // Handle Supabase returning arrays for relations
+        const categoryData = Array.isArray(project.category) ? project.category[0] : project.category;
+        const subcategoryData = Array.isArray(project.subcategory) ? project.subcategory[0] : project.subcategory;
+        const companyData = Array.isArray(professional.company) ? professional.company[0] : professional.company;
+
         const emailResult = await sendPurchaseReceiptEmail({
           email: professional.invoices_email || '',
           firstName: professional.first_name || 'Professional',
@@ -174,12 +179,12 @@ export async function POST(request: NextRequest) {
           amount: parseFloat(leadPrice),
           paymentMethod: session.payment_method_types?.[0] || 'card',
           leadDetails: {
-            category: project.category?.name_nl || 'Onbekend',
-            subcategory: project.subcategory?.name_nl || 'Onbekend',
+            category: (categoryData as any)?.name_nl || 'Onbekend',
+            subcategory: (subcategoryData as any)?.name_nl || 'Onbekend',
             city: project.city || 'Onbekend',
             clientName: `${project.first_name || ''} ${project.last_name || ''}`.trim() || 'Onbekend',
           },
-          companyName: (professional.company as any)?.company_name,
+          companyName: (companyData as any)?.company_name,
         });
 
         if (emailResult.success) {
