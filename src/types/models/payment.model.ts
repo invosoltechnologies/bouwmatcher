@@ -10,6 +10,7 @@ export interface ProfessionalLeadPurchase {
   payment_status: 'pending' | 'completed' | 'failed' | 'refunded';
   payment_method: string | null;
   transaction_id: string | null;
+  invoice_number: string | null;
   purchased_at: string;
   created_at: string;
   updated_at: string;

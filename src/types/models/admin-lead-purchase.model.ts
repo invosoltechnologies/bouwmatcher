@@ -11,6 +11,7 @@ export interface LeadPurchase {
   payment_status: 'pending' | 'completed' | 'failed' | 'refunded';
   payment_method: string | null;
   transaction_id: string | null;
+  invoice_number: string | null;
   purchased_at: string;
   created_at: string;
   updated_at: string;
@@ -22,6 +23,7 @@ export interface LeadPurchase {
     last_name: string;
     email: string;
     phone: string | null;
+    invoices_email: string | null;
   } | null;
 
   // Related project data
@@ -33,6 +35,7 @@ export interface LeadPurchase {
     email: string;
     description: string | null;
     request_type: 'private' | 'business';
+    city: string | null;
     service_categories: {
       id: number;
       name_nl: string;

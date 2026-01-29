@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
         payment_status,
         payment_method,
         transaction_id,
+        invoice_number,
         purchased_at,
         created_at,
         updated_at,
@@ -44,7 +45,8 @@ export async function GET(request: NextRequest) {
           first_name,
           last_name,
           email,
-          phone
+          phone,
+          invoices_email
         ),
         projects:project_id (
           id,
@@ -54,6 +56,7 @@ export async function GET(request: NextRequest) {
           email,
           description,
           request_type,
+          city,
           service_categories:service_category_id (
             id,
             name_nl,

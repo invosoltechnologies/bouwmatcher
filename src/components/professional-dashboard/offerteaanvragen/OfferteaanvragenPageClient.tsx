@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { DateRange } from 'react-day-picker';
 import { format } from 'date-fns';
 import { nl, enUS } from 'date-fns/locale';
 import { useTranslations, useLocale } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
+import toast from 'react-hot-toast';
 import VerificationBanner from './VerificationBanner';
 import FilterSection from './FilterSection';
 import FilterTabs from './FilterTabs';
@@ -22,12 +24,51 @@ export default function OfferteaanvragenPageClient() {
   const t = useTranslations('common.proDashboard.offerteaanvragen');
   const locale = useLocale();
   const dateLocale = locale === 'en' ? enUS : nl;
+  const searchParams = useSearchParams();
 
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [projectType, setProjectType] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'vergrendeld' | 'ontgrendeld' | 'laatste10'>('vergrendeld');
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
+
+  // Handle Stripe redirect success/cancel
+  useEffect(() => {
+    const success = searchParams.get('success');
+    const canceled = searchParams.get('canceled');
+    const sessionId = searchParams.get('session_id');
+
+    if (success === 'true' && sessionId) {
+      toast.success(
+        locale === 'en'
+          ? 'Payment successful! You can now access the lead details. Check your email for the receipt.'
+          : 'Betaling geslaagd! Je hebt nu toegang tot de lead. Check je email voor de factuur.',
+        { duration: 6000 }
+      );
+
+      // Clear URL parameters
+      if (window.history.replaceState) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('success');
+        url.searchParams.delete('session_id');
+        window.history.replaceState({}, '', url.toString());
+      }
+    } else if (canceled === 'true') {
+      toast.error(
+        locale === 'en'
+          ? 'Payment was canceled. The lead remains locked.'
+          : 'Betaling geannuleerd. De lead blijft vergrendeld.',
+        { duration: 5000 }
+      );
+
+      // Clear URL parameters
+      if (window.history.replaceState) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('canceled');
+        window.history.replaceState({}, '', url.toString());
+      }
+    }
+  }, [searchParams, locale]);
 
   // Fetch leads with real-time updates
   const { data, isLoading, error } = useLeads();

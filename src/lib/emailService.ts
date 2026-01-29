@@ -21,6 +21,23 @@ interface PasswordResetEmailParams {
   resetLink: string;
 }
 
+interface PurchaseReceiptEmailParams {
+  email: string;
+  firstName: string;
+  invoiceNumber: string;
+  purchaseDate: string;
+  transactionId: string;
+  amount: number;
+  paymentMethod: string;
+  leadDetails: {
+    category: string;
+    subcategory: string;
+    city: string;
+    clientName: string;
+  };
+  companyName?: string;
+}
+
 /**
  * Send project created confirmation email with status link
  */
@@ -509,6 +526,305 @@ export async function sendPasswordResetEmail({
     return { success: true, data };
   } catch (error) {
     console.error('❌ Password reset email service error:', error);
+    return { success: false, error };
+  }
+}
+
+/**
+ * Send purchase receipt email to professional
+ */
+export async function sendPurchaseReceiptEmail({
+  email,
+  firstName,
+  invoiceNumber,
+  purchaseDate,
+  transactionId,
+  amount,
+  paymentMethod,
+  leadDetails,
+  companyName,
+}: PurchaseReceiptEmailParams) {
+  try {
+    const { data, error } = await resend.emails.send({
+      from: `${EMAIL_CONFIG.fromName} <${EMAIL_CONFIG.fromEmail}>`,
+      to: email,
+      subject: `Factuur ${invoiceNumber} - Lead aankoop - Bouwmatcher`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+              * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+              }
+              body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                background-color: #f9fafb;
+              }
+              .wrapper {
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: white;
+              }
+              .header {
+                background: linear-gradient(90deg, rgba(10, 178, 126, 0.15) 0%, rgba(2, 58, 162, 0.15) 100%);
+                padding: 40px 20px;
+                text-align: center;
+                border-bottom: 2px solid #0AB27E;
+              }
+              .header h1 {
+                color: #0AB27E;
+                margin: 0;
+                font-size: 28px;
+                font-weight: 600;
+              }
+              .header p {
+                color: #666;
+                font-size: 14px;
+                margin-top: 8px;
+              }
+              .content {
+                padding: 40px 20px;
+              }
+              .content h2 {
+                color: #1a1a1a;
+                font-size: 20px;
+                margin-bottom: 16px;
+                font-weight: 600;
+              }
+              .content p {
+                color: #555;
+                margin-bottom: 16px;
+                font-size: 14px;
+                line-height: 1.8;
+              }
+              .invoice-box {
+                background: #f0fdf4;
+                border: 2px solid #0AB27E;
+                padding: 24px;
+                margin: 24px 0;
+                border-radius: 8px;
+              }
+              .invoice-box h3 {
+                color: #0AB27E;
+                font-size: 18px;
+                margin-bottom: 16px;
+                font-weight: 600;
+                text-align: center;
+              }
+              .invoice-number {
+                text-align: center;
+                font-size: 24px;
+                font-weight: bold;
+                color: #023AA2;
+                margin-bottom: 20px;
+                padding: 12px;
+                background: white;
+                border-radius: 4px;
+              }
+              .details-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 20px 0;
+              }
+              .details-table tr {
+                border-bottom: 1px solid #e5e7eb;
+              }
+              .details-table td {
+                padding: 12px 8px;
+                font-size: 14px;
+              }
+              .details-table td:first-child {
+                color: #666;
+                font-weight: 500;
+                width: 40%;
+              }
+              .details-table td:last-child {
+                color: #1a1a1a;
+                font-weight: 600;
+                text-align: right;
+              }
+              .total-row {
+                background: #f9fafb;
+                font-size: 16px !important;
+              }
+              .total-row td {
+                padding: 16px 8px !important;
+                font-weight: 700 !important;
+                color: #0AB27E !important;
+              }
+              .lead-info {
+                background: #f0f9ff;
+                border-left: 4px solid #023AA2;
+                padding: 20px;
+                margin: 24px 0;
+                border-radius: 4px;
+              }
+              .lead-info h4 {
+                color: #023AA2;
+                font-size: 16px;
+                margin-bottom: 12px;
+                font-weight: 600;
+              }
+              .lead-info p {
+                color: #555;
+                font-size: 14px;
+                margin: 6px 0;
+              }
+              .lead-info strong {
+                color: #1a1a1a;
+              }
+              .transaction-info {
+                background: #fef3c7;
+                padding: 16px;
+                border-radius: 4px;
+                margin: 20px 0;
+                font-size: 12px;
+                color: #92400e;
+              }
+              .transaction-info p {
+                margin: 4px 0;
+                font-size: 12px;
+                color: #92400e;
+              }
+              .footer {
+                background: #f9fafb;
+                padding: 32px 20px;
+                text-align: center;
+                border-top: 1px solid #e5e7eb;
+                font-size: 12px;
+                color: #999;
+              }
+              .footer p {
+                margin: 8px 0;
+              }
+              .footer-brand {
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 4px;
+              }
+              .help-text {
+                margin-top: 32px;
+                padding-top: 24px;
+                border-top: 1px solid #e5e7eb;
+                font-size: 13px;
+                color: #666;
+                text-align: center;
+              }
+              @media (max-width: 600px) {
+                .wrapper {
+                  width: 100%;
+                }
+                .content {
+                  padding: 24px 16px;
+                }
+                .header {
+                  padding: 32px 16px;
+                }
+                .header h1 {
+                  font-size: 24px;
+                }
+                .invoice-box {
+                  padding: 16px;
+                }
+                .invoice-number {
+                  font-size: 20px;
+                }
+                .details-table td {
+                  padding: 10px 4px;
+                  font-size: 13px;
+                }
+              }
+            </style>
+          </head>
+          <body>
+            <div class="wrapper">
+              <div class="header">
+                <h1>✅ Betaling Ontvangen</h1>
+                <p>Bedankt voor je aankoop, ${firstName}!</p>
+              </div>
+
+              <div class="content">
+                <h2>Je lead is succesvol aangekocht</h2>
+                <p>Je hebt toegang gekregen tot een nieuwe projectaanvraag. Hieronder vind je de details van je aankoop.</p>
+
+                <div class="invoice-box">
+                  <h3>📄 Factuur Details</h3>
+                  <div class="invoice-number">
+                    ${invoiceNumber}
+                  </div>
+
+                  <table class="details-table">
+                    <tr>
+                      <td>Factuurdatum</td>
+                      <td>${purchaseDate}</td>
+                    </tr>
+                    <tr>
+                      <td>Betalingsmethode</td>
+                      <td>${paymentMethod === 'card' ? 'Creditcard' : paymentMethod === 'ideal' ? 'iDEAL' : paymentMethod}</td>
+                    </tr>
+                    ${companyName ? `
+                    <tr>
+                      <td>Bedrijf</td>
+                      <td>${companyName}</td>
+                    </tr>
+                    ` : ''}
+                    <tr class="total-row">
+                      <td>Totaal Betaald</td>
+                      <td>€${amount.toFixed(2)}</td>
+                    </tr>
+                  </table>
+                </div>
+
+                <div class="lead-info">
+                  <h4>🏗️ Lead Details</h4>
+                  <p><strong>Categorie:</strong> ${leadDetails.category}</p>
+                  <p><strong>Subcategorie:</strong> ${leadDetails.subcategory}</p>
+                  <p><strong>Locatie:</strong> ${leadDetails.city}</p>
+                  <p><strong>Klant:</strong> ${leadDetails.clientName}</p>
+                </div>
+
+                <div class="transaction-info">
+                  <p><strong>Transactie ID:</strong> ${transactionId}</p>
+                  <p>Bewaar deze factuur voor je administratie</p>
+                </div>
+
+                <p>Je kunt nu contact opnemen met de klant en een offerte opstellen. Je vindt alle projectdetails in je dashboard onder "Offerteaanvragen".</p>
+
+                <div class="help-text">
+                  <p>Heb je vragen over deze factuur of je lead?</p>
+                  <p>Neem contact met ons op via <a href="mailto:support@bouwmatcher.be" style="color: #0AB27E; text-decoration: none;">support@bouwmatcher.be</a></p>
+                </div>
+              </div>
+
+              <div class="footer">
+                <p class="footer-brand">Bouwmatcher</p>
+                <p>Platform voor het vinden van betrouwbare bouwprofessionals</p>
+                <p style="margin-top: 16px; font-size: 11px; color: #bbb;">
+                  Je ontvangt deze factuur omdat je een lead hebt aangekocht via Bouwmatcher.be
+                </p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `,
+    });
+
+    if (error) {
+      console.error('❌ Purchase receipt email send error:', error);
+      return { success: false, error };
+    }
+
+    console.log(`✅ Purchase receipt email sent to ${email}:`, data);
+    return { success: true, data };
+  } catch (error) {
+    console.error('❌ Purchase receipt email service error:', error);
     return { success: false, error };
   }
 }

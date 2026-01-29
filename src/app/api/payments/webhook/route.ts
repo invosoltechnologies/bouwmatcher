@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe/server';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
+import { generateInvoiceNumber, formatInvoiceDate } from '@/lib/utils/invoice-generator';
+import { sendPurchaseReceiptEmail } from '@/lib/emailService';
 
 /**
  * Create admin Supabase client for webhook
@@ -100,6 +102,11 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ received: true });
       }
 
+      // Generate invoice number
+      console.log('🔢 Generating invoice number...');
+      const invoiceNumber = await generateInvoiceNumber();
+      console.log('✅ Invoice number generated:', invoiceNumber);
+
       // Create purchase record
       console.log('💾 Creating purchase record...');
       const { data: purchase, error: purchaseError } = await supabaseAdmin
@@ -111,6 +118,7 @@ export async function POST(request: NextRequest) {
           payment_status: 'completed',
           payment_method: session.payment_method_types?.[0] || 'card',
           transaction_id: session.payment_intent as string,
+          invoice_number: invoiceNumber,
         })
         .select()
         .single();
@@ -128,6 +136,61 @@ export async function POST(request: NextRequest) {
       }
 
       console.log('✅ Purchase record created successfully:', purchase.id);
+
+      // Fetch professional and project details for email
+      console.log('📧 Fetching details for email...');
+      const { data: professional } = await supabaseAdmin
+        .from('professional_profiles')
+        .select(`
+          first_name,
+          invoices_email,
+          company:professional_companies(company_name)
+        `)
+        .eq('id', professionalId)
+        .single();
+
+      const { data: project } = await supabaseAdmin
+        .from('projects')
+        .select(`
+          city,
+          first_name,
+          last_name,
+          category:service_categories(name_nl),
+          subcategory:service_subcategories(name_nl)
+        `)
+        .eq('id', projectId)
+        .single();
+
+      // Send receipt email
+      if (professional && project) {
+        console.log('📤 Sending receipt email to:', professional.invoices_email);
+
+        const emailResult = await sendPurchaseReceiptEmail({
+          email: professional.invoices_email || '',
+          firstName: professional.first_name || 'Professional',
+          invoiceNumber,
+          purchaseDate: formatInvoiceDate(new Date()),
+          transactionId: session.payment_intent as string,
+          amount: parseFloat(leadPrice),
+          paymentMethod: session.payment_method_types?.[0] || 'card',
+          leadDetails: {
+            category: project.category?.name_nl || 'Onbekend',
+            subcategory: project.subcategory?.name_nl || 'Onbekend',
+            city: project.city || 'Onbekend',
+            clientName: `${project.first_name || ''} ${project.last_name || ''}`.trim() || 'Onbekend',
+          },
+          companyName: (professional.company as any)?.company_name,
+        });
+
+        if (emailResult.success) {
+          console.log('✅ Receipt email sent successfully');
+        } else {
+          console.error('❌ Failed to send receipt email:', emailResult.error);
+          // Don't fail the webhook if email fails
+        }
+      } else {
+        console.warn('⚠️ Missing professional or project data for email');
+      }
     }
 
     // Handle failed payment

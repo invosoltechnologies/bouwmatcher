@@ -17,12 +17,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { MoreHorizontal, Copy, User, Mail, CreditCard, ArrowUpDown, Briefcase } from 'lucide-react';
+import { MoreHorizontal, Copy, User, Mail, CreditCard, ArrowUpDown, Briefcase, FileText } from 'lucide-react';
 import { LeadPurchase } from '@/types/models/admin-lead-purchase.model';
 import { format } from 'date-fns';
 import { nl } from 'date-fns/locale';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import PurchaseDetailsDialog from './PurchaseDetailsDialog';
 
 interface LeadPurchasesTableProps {
   data: LeadPurchase[];
@@ -31,6 +32,7 @@ interface LeadPurchasesTableProps {
 
 export default function LeadPurchasesTable({ data, isLoading }: LeadPurchasesTableProps) {
   const router = useRouter();
+  const [selectedPurchase, setSelectedPurchase] = useState<LeadPurchase | null>(null);
 
   // Copy to clipboard handler
   const copyToClipboard = (text: string, label: string) => {
@@ -336,6 +338,10 @@ export default function LeadPurchasesTable({ data, isLoading }: LeadPurchasesTab
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setSelectedPurchase(purchase)}>
+                    <FileText className="mr-2 h-4 w-4" />
+                    Bekijk factuur details
+                  </DropdownMenuItem>
                   {purchase.professional_id && (
                     <DropdownMenuItem
                       onClick={() => handleViewProfessional(purchase.professional_id)}
@@ -380,11 +386,20 @@ export default function LeadPurchasesTable({ data, isLoading }: LeadPurchasesTab
   }
 
   return (
-    <DataTable
-      columns={columns}
-      data={data}
-      searchKey="professional"
-      searchPlaceholder="Zoek op professional, klant, transactie ID..."
-    />
+    <>
+      <DataTable
+        columns={columns}
+        data={data}
+        searchKey="professional"
+        searchPlaceholder="Zoek op professional, klant, transactie ID..."
+      />
+      {selectedPurchase && (
+        <PurchaseDetailsDialog
+          purchase={selectedPurchase}
+          open={!!selectedPurchase}
+          onClose={() => setSelectedPurchase(null)}
+        />
+      )}
+    </>
   );
 }
