@@ -9,6 +9,6 @@ if (!process.env.STRIPE_SECRET_KEY) {
  * Used for creating checkout sessions, processing webhooks, etc.
  */
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-11-17.clover',
+  apiVersion: '2025-10-29.clover',
   typescript: true,
 });
