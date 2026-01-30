@@ -290,9 +290,8 @@ export default function CategoryInfoStep({
                   <Button
                     type="button"
                     variant="outline"
-                    size="sm"
                     onClick={handleRemoveIcon}
-                    className="text-red-600 border-red-600"
+                    className="text-red-600 border-red-600 hover:bg-red-500"
                   >
                     <X className="h-4 w-4 mr-1" />
                     {t('iconRemove')}

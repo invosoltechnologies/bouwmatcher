@@ -267,14 +267,14 @@ export default function SubcategoriesStep({
         ))}
 
         {/* Add Subcategory Button */}
-        <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+        <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary hover:bg-primary/10 transition-colors">
           <Button
             type="button"
             variant="outline"
             onClick={handleAddSubcategory}
-            className="text-green-600 border-green-600 hover:bg-green-50"
+            className='border-primary hover:border-primary'
           >
-            <Plus className="h-5 w-5 mr-2" />
+            <Plus className="h-5 w-5 -mt-1 mr-1" />
             {t('addSubcategory')}
           </Button>
         </div>

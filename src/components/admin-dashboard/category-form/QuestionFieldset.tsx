@@ -76,7 +76,6 @@ export default function QuestionFieldset({
           <Button
             type="button"
             variant="ghost"
-            size="sm"
             onClick={() => onRemove(questionIndex)}
             className="text-red-600 hover:text-red-700 hover:bg-red-50"
           >
@@ -138,9 +137,8 @@ export default function QuestionFieldset({
                 <Button
                   type="button"
                   variant="outline"
-                  size="sm"
                   onClick={handleAddOption}
-                  className="text-green-600 border-green-600 hover:bg-green-50"
+                  className="text-amber-600 border-amber-500 hover:bg-amber-500"
                 >
                   <Plus className="h-4 w-4 mr-1" />
                   {t('addOption')}
@@ -177,7 +175,7 @@ export default function QuestionFieldset({
                       <Button
                         type="button"
                         variant="ghost"
-                        size="sm"
+                        
                         onClick={() => handleRemoveOption(optIndex)}
                         className="text-red-600 hover:text-red-700 hover:bg-red-50 mt-0.5"
                       >

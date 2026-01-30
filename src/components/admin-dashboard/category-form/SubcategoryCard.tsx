@@ -72,52 +72,54 @@ export default function SubcategoryCard({
   };
 
   return (
-    <div className="border rounded-lg bg-white shadow-sm">
+    <div className='border rounded-lg bg-white shadow-sm'>
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b bg-gray-50">
+      <div className='flex items-center justify-between p-4 border-b bg-gray-50'>
         <button
-          type="button"
+          type='button'
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center gap-3 flex-1 text-left"
+          className='flex items-center gap-3 flex-1 text-left'
         >
-          <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm">
+          <span className='flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm'>
             {subcategoryIndex + 1}
           </span>
-          <div className="flex-1">
-            <h3 className="font-medium text-gray-900">
+          <div className='flex-1'>
+            <h3 className='font-medium text-gray-900'>
               {subcategory.name_nl || t('newSubcategory')}
             </h3>
-            <p className="text-sm text-gray-500">
-              {subcategory.questions.length} {subcategory.questions.length === 1 ? t('question') : t('questions')}
+            <p className='text-sm text-gray-500'>
+              {subcategory.questions.length}{' '}
+              {subcategory.questions.length === 1
+                ? t('question')
+                : t('questions')}
             </p>
           </div>
           {isExpanded ? (
-            <ChevronUp className="h-5 w-5 text-gray-400" />
+            <ChevronUp className='h-5 w-5 cursor-pointer text-gray-400 hover:bg-gray-200' />
           ) : (
-            <ChevronDown className="h-5 w-5 text-gray-400" />
+            <ChevronDown className='h-5 w-5 cursor-pointer text-gray-400 hover:bg-gray-200' />
           )}
         </button>
         {canRemove && (
           <Button
-            type="button"
-            variant="ghost"
-            size="sm"
+            type='button'
+            variant='ghost'
             onClick={() => onRemove(subcategoryIndex)}
-            className="text-red-600 hover:text-red-700 hover:bg-red-50 ml-2"
+            className='text-red-600 hover:text-red-700 hover:bg-red-200 ml-2'
           >
-            <X className="h-5 w-5" />
+            <X className='h-5 w-5' />
           </Button>
         )}
       </div>
 
       {/* Content */}
       {isExpanded && (
-        <div className="p-6 space-y-6">
+        <div className='p-6 space-y-6'>
           {/* Basic Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <div>
               <Label htmlFor={`sub-${subcategoryIndex}-name-nl`}>
-                {t('nameNl')} <span className="text-red-500">*</span>
+                {t('nameNl')} <span className='text-red-500'>*</span>
               </Label>
               <Input
                 id={`sub-${subcategoryIndex}-name-nl`}
@@ -130,7 +132,7 @@ export default function SubcategoryCard({
 
             <div>
               <Label htmlFor={`sub-${subcategoryIndex}-name-en`}>
-                {t('nameEn')} <span className="text-red-500">*</span>
+                {t('nameEn')} <span className='text-red-500'>*</span>
               </Label>
               <Input
                 id={`sub-${subcategoryIndex}-name-en`}
@@ -145,7 +147,7 @@ export default function SubcategoryCard({
           {/* Slug */}
           <div>
             <Label htmlFor={`sub-${subcategoryIndex}-slug`}>
-              {t('slug')} <span className="text-red-500">*</span>
+              {t('slug')} <span className='text-red-500'>*</span>
             </Label>
             <Input
               id={`sub-${subcategoryIndex}-slug`}
@@ -154,13 +156,11 @@ export default function SubcategoryCard({
               placeholder={t('slugPlaceholder')}
               required
             />
-            <p className="text-xs text-gray-500 mt-1">
-              {t('slugHelp')}
-            </p>
+            <p className='text-xs text-gray-500 mt-1'>{t('slugHelp')}</p>
           </div>
 
           {/* Description */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <div>
               <Label htmlFor={`sub-${subcategoryIndex}-desc-nl`}>
                 {t('descriptionNl')}
@@ -168,10 +168,12 @@ export default function SubcategoryCard({
               <Textarea
                 id={`sub-${subcategoryIndex}-desc-nl`}
                 value={subcategory.description_nl || ''}
-                onChange={(e) => handleFieldChange('description_nl', e.target.value)}
+                onChange={(e) =>
+                  handleFieldChange('description_nl', e.target.value)
+                }
                 placeholder={t('descriptionNlPlaceholder')}
                 rows={4}
-                className="resize-none"
+                className='resize-none'
               />
             </div>
 
@@ -182,81 +184,96 @@ export default function SubcategoryCard({
               <Textarea
                 id={`sub-${subcategoryIndex}-desc-en`}
                 value={subcategory.description_en || ''}
-                onChange={(e) => handleFieldChange('description_en', e.target.value)}
+                onChange={(e) =>
+                  handleFieldChange('description_en', e.target.value)
+                }
                 placeholder={t('descriptionEnPlaceholder')}
                 rows={4}
-                className="resize-none"
+                className='resize-none'
               />
             </div>
           </div>
 
           {/* Prices */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <div>
               <Label htmlFor={`sub-${subcategoryIndex}-price-b2c`}>
-                {t('priceB2C')} <span className="text-red-500">*</span>
+                {t('priceB2C')} <span className='text-red-500'>*</span>
               </Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">€</span>
+              <div className='relative'>
+                <span className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500'>
+                  €
+                </span>
                 <Input
                   id={`sub-${subcategoryIndex}-price-b2c`}
-                  type="number"
-                  min="0"
-                  step="0.01"
+                  type='number'
+                  min='0'
+                  step='0.01'
                   value={subcategory.price_particulier || ''}
-                  onChange={(e) => handleFieldChange('price_particulier', parseFloat(e.target.value) || 0)}
-                  placeholder="0.00"
+                  onChange={(e) =>
+                    handleFieldChange(
+                      'price_particulier',
+                      parseFloat(e.target.value) || 0,
+                    )
+                  }
+                  placeholder='0.00'
                   required
-                  className="pl-8"
+                  className='pl-8'
                 />
               </div>
             </div>
 
             <div>
               <Label htmlFor={`sub-${subcategoryIndex}-price-b2b`}>
-                {t('priceB2B')} <span className="text-red-500">*</span>
+                {t('priceB2B')} <span className='text-red-500'>*</span>
               </Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">€</span>
+              <div className='relative'>
+                <span className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500'>
+                  €
+                </span>
                 <Input
                   id={`sub-${subcategoryIndex}-price-b2b`}
-                  type="number"
-                  min="0"
-                  step="0.01"
+                  type='number'
+                  min='0'
+                  step='0.01'
                   value={subcategory.price_zakelijk || ''}
-                  onChange={(e) => handleFieldChange('price_zakelijk', parseFloat(e.target.value) || 0)}
-                  placeholder="0.00"
+                  onChange={(e) =>
+                    handleFieldChange(
+                      'price_zakelijk',
+                      parseFloat(e.target.value) || 0,
+                    )
+                  }
+                  placeholder='0.00'
                   required
-                  className="pl-8"
+                  className='pl-8'
                 />
               </div>
             </div>
           </div>
 
           {/* Questions Section */}
-          <div className="border-t pt-6 mt-6">
-            <div className="flex items-center justify-between mb-4">
+          <div className='border-t pt-6 mt-6'>
+            <div className='flex items-center justify-between mb-4'>
               <div>
-                <Label className="text-base font-semibold">
-                  {t('questionsTitle')} <span className="text-red-500">*</span>
+                <Label className='text-base font-semibold'>
+                  {t('questionsTitle')} <span className='text-red-500'>*</span>
                 </Label>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className='text-sm text-gray-500 mt-1'>
                   {t('questionsDescription')}
                 </p>
               </div>
               <Button
-                type="button"
-                variant="outline"
-                size="sm"
+                type='button'
+                variant='outline'
                 onClick={handleAddQuestion}
-                className="text-green-600 border-green-600 hover:bg-green-50"
+                className='text-primary border-primary hover:bg-primary/90'
               >
-                <Plus className="h-4 w-4 mr-1" />
+                <Plus className='h-4 w-4 mr-1' />
                 {t('addQuestion')}
               </Button>
             </div>
 
-            <div className="space-y-4">
+            <div className='space-y-4'>
               {subcategory.questions.map((question, qIndex) => (
                 <QuestionFieldset
                   key={qIndex}
@@ -270,15 +287,15 @@ export default function SubcategoryCard({
             </div>
 
             {subcategory.questions.length === 0 && (
-              <div className="text-center py-8 border-2 border-dashed rounded-lg">
-                <p className="text-gray-500 mb-3">{t('noQuestions')}</p>
+              <div className='text-center py-8 border-2 border-dashed rounded-lg'>
+                <p className='text-gray-500 mb-3'>{t('noQuestions')}</p>
                 <Button
-                  type="button"
-                  variant="outline"
+                  type='button'
+                  variant='outline'
                   onClick={handleAddQuestion}
-                  className="text-green-600 border-green-600 hover:bg-green-50"
+                  className='text-green-600 border-green-600 hover:bg-green-50'
                 >
-                  <Plus className="h-4 w-4 mr-1" />
+                  <Plus className='h-4 w-4 mr-1' />
                   {t('addFirstQuestion')}
                 </Button>
               </div>

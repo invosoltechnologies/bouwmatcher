@@ -33,21 +33,24 @@ export default function FormProgress({ currentStep, totalSteps }: FormProgressPr
           const isCurrent = currentStep === step.number;
 
           return (
-            <div key={step.number} className="flex flex-col items-center flex-1">
+            <div
+              key={step.number}
+              className='flex flex-col items-center flex-1'
+            >
               <div
                 className={`
                   flex items-center justify-center w-10 h-10 rounded-full font-semibold text-sm
-                  transition-all duration-300 bg-white border-2
+                  transition-all duration-300  border-2
                   ${
                     isCompleted
                       ? 'border-accent bg-accent text-white'
                       : isCurrent
-                      ? 'border-primary text-primary'
-                      : 'border-gray-300 text-secondary-foreground'
+                        ? 'border-primary bg-white text-primary'
+                        : 'border-gray-300 bg-white text-secondary-foreground'
                   }
                 `}
               >
-                {isCompleted ? <Check className="h-5 w-5" /> : step.number}
+                {isCompleted ? <Check className='h-5 w-5' /> : step.number}
               </div>
               <p
                 className={`

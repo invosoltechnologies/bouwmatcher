@@ -33,15 +33,20 @@ export default function FormNavigation({
   const displayNextLabel = nextLabel || defaultNextLabel;
 
   return (
-    <div className="flex items-center justify-between pt-6 border-t">
-      <div className="flex items-center gap-3">
-        <Button type="button" variant="outline" onClick={onCancel}>
+    <div className='flex items-center justify-between pt-6 border-t'>
+      <div className='flex items-center gap-3'>
+        <Button
+          type='button'
+          className='text-red-600 border-red-600 hover:bg-red-500'
+          variant='outline'
+          onClick={onCancel}
+        >
           {t('cancel')}
         </Button>
 
         {!isFirstStep && onBack && (
-          <Button type="button" variant="outline" onClick={onBack}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
+          <Button type='button' variant='outline' onClick={onBack}>
+            <ArrowLeft className='h-4 w-4 mr-2' />
             {t('previous')}
           </Button>
         )}
@@ -49,20 +54,20 @@ export default function FormNavigation({
 
       {onNext && (
         <Button
-          type="button"
+          type='button'
           onClick={onNext}
           disabled={isNextDisabled || isNextLoading}
-          className="min-w-[120px]"
+          className='min-w-[120px]'
         >
           {isNextLoading ? (
-            <span className="flex items-center gap-2">
-              <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+            <span className='flex items-center gap-2'>
+              <span className='animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full' />
               {t('saving')}
             </span>
           ) : (
             <>
               {displayNextLabel}
-              {!isLastStep && <ArrowRight className="h-4 w-4 ml-2" />}
+              {!isLastStep && <ArrowRight className='h-4 w-4 ml-2' />}
             </>
           )}
         </Button>
