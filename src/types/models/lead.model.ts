@@ -4,6 +4,7 @@ export interface Lead {
   subcategory_id: number | null;
   request_type: 'private' | 'business';
   has_photos: boolean;
+  photo_count?: number;
   description: string | null;
   postcode: string | null;
   street_number: string | null;
