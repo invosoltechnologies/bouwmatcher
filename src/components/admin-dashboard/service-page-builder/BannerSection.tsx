@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -48,6 +48,20 @@ export default function BannerSection({
   );
 
   const saveMutation = useSaveServicePageBanner();
+
+  // Sync state with initialBanner when it loads
+  useEffect(() => {
+    if (initialBanner) {
+      setBackgroundImageUrl(initialBanner.background_image_url || '');
+      setBackgroundImageAlt(initialBanner.background_image_alt || '');
+      setEyebrowTextNl(initialBanner.eyebrow_text_nl || '');
+      setH1TextNl(initialBanner.h1_text_nl || '');
+      setDescriptionNl(initialBanner.description_nl || '');
+      setEyebrowTextEn(initialBanner.eyebrow_text_en || '');
+      setH1TextEn(initialBanner.h1_text_en || '');
+      setDescriptionEn(initialBanner.description_en || '');
+    }
+  }, [initialBanner]);
 
   const handleSave = async () => {
     try {

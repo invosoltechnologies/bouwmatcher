@@ -4,6 +4,7 @@ import React, { useState, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
+import { Loader } from '@/components/ui/loader';
 import { ArrowLeft } from 'lucide-react';
 
 // Sections
@@ -108,22 +109,28 @@ function ServicePageBuilderContent() {
 
   // Fetch page and all section data
   const { data: servicePage, isLoading: isLoadingPage } = useServicePageById(pageId || '');
-  const { data: sectionsConfig } = useServicePageSections(pageId);
+  const { data: sectionsConfig, isLoading: isLoadingSections } = useServicePageSections(pageId);
 
   // Fetch all section data
-  const { data: banner } = useServicePageBanner(pageId);
-  const { data: intro } = useServicePageIntro(pageId);
-  const { data: faq } = useServicePageFaq(pageId);
-  const { data: comparisonTable } = useServicePageComparisonTable(pageId);
-  const { data: tips } = useServicePageTips(pageId);
-  const { data: overviewTable } = useServicePageOverviewTable(pageId);
-  const { data: seoContent } = useServicePageSeoContent(pageId);
-  const { data: process } = useServicePageProcess(pageId);
-  const { data: values } = useServicePageValues(pageId);
-  const { data: cta } = useServicePageCta(pageId);
-  const { data: types } = useServicePageTypes(pageId);
-  const { data: reviews } = useServicePageReviews(pageId);
-  const { data: marquees } = useServicePageMarquees(pageId);
+  const { data: banner, isLoading: isLoadingBanner } = useServicePageBanner(pageId);
+  const { data: intro, isLoading: isLoadingIntro } = useServicePageIntro(pageId);
+  const { data: faq, isLoading: isLoadingFaq } = useServicePageFaq(pageId);
+  const { data: comparisonTable, isLoading: isLoadingComparisonTable } = useServicePageComparisonTable(pageId);
+  const { data: tips, isLoading: isLoadingTips } = useServicePageTips(pageId);
+  const { data: overviewTable, isLoading: isLoadingOverviewTable } = useServicePageOverviewTable(pageId);
+  const { data: seoContent, isLoading: isLoadingSeoContent } = useServicePageSeoContent(pageId);
+  const { data: process, isLoading: isLoadingProcess } = useServicePageProcess(pageId);
+  const { data: values, isLoading: isLoadingValues } = useServicePageValues(pageId);
+  const { data: cta, isLoading: isLoadingCta } = useServicePageCta(pageId);
+  const { data: types, isLoading: isLoadingTypes } = useServicePageTypes(pageId);
+  const { data: reviews, isLoading: isLoadingReviews } = useServicePageReviews(pageId);
+  const { data: marquees, isLoading: isLoadingMarquees } = useServicePageMarquees(pageId);
+
+  // Check if any section data is still loading
+  const isLoadingAnySectionData = isLoadingBanner || isLoadingIntro || isLoadingFaq ||
+    isLoadingComparisonTable || isLoadingTips || isLoadingOverviewTable ||
+    isLoadingSeoContent || isLoadingProcess || isLoadingValues || isLoadingCta ||
+    isLoadingTypes || isLoadingReviews || isLoadingMarquees;
 
   // Mutations
   const addSectionMutation = useAddSection();
@@ -216,11 +223,11 @@ function ServicePageBuilderContent() {
 
   if (isLoadingPage) {
     return (
-      <div className='p-6 text-center'>
-        <p className='text-slate-600'>
-          {locale === 'nl' ? 'Laden...' : 'Loading...'}
-        </p>
-      </div>
+      <Loader
+        size='md'
+        text={locale === 'nl' ? 'Laden...' : 'Loading...'}
+        className='min-h-[400px]'
+      />
     );
   }
 
@@ -233,6 +240,9 @@ function ServicePageBuilderContent() {
       </div>
     );
   }
+
+  // Show loader while section data is being fetched
+  const isInitialLoad = isLoadingSections || isLoadingAnySectionData;
 
   return (
     <div className='space-y-6'>
@@ -269,68 +279,83 @@ function ServicePageBuilderContent() {
           {locale === 'nl' ? 'Secties' : 'Sections'}
         </h2>
 
-        {/* Banner Section - Always first */}
-        <div className='bg-white rounded-lg'>
-          <BannerSection servicePageId={pageId} initialBanner={banner} />
-        </div>
-
-        {/* Dynamic Sections */}
-        {sectionOrder.map((sectionKey) => {
-          if (sectionKey === 'banner') return null;
-
-          const Component = SECTION_COMPONENTS[sectionKey];
-          const sectionData = allSectionData[sectionKey as keyof typeof allSectionData];
-
-          if (!Component) return null;
-
-          return (
-            <div key={sectionKey} className='bg-white rounded-lg'>
-              <SectionCard
-                sectionName={SECTION_LABELS[sectionKey as keyof typeof SECTION_LABELS]?.[locale as 'nl' | 'en'] || sectionKey}
-                onDelete={() => handleDeleteSection(sectionKey)}
-                isDeleting={
-                  deleteSectionMutation.isPending &&
-                  deleteSectionMutation.variables?.sectionKey === sectionKey
-                }
-              >
-                {Component({
-                  servicePageId: pageId,
-                  initialData: sectionData,
-                })}
-              </SectionCard>
-            </div>
-          );
-        })}
-
-        {/* Add New Section */}
-        <div className='space-y-4 pt-6'>
-          <h3 className='text-lg font-semibold text-slate-900'>
-            {locale === 'nl' ? 'Sectie Beheer' : 'Section Management'}
-          </h3>
-
-          <AddSectionDropdown
-            availableSections={availableSections}
-            onAdd={handleAddSection}
-            isAdding={addSectionMutation.isPending}
+        {/* Show loader while initial data is loading */}
+        {isInitialLoad ? (
+          <Loader
+            size='md'
+            text={locale === 'nl' ? 'Secties laden...' : 'Loading sections...'}
+            className='min-h-[300px]'
           />
-        </div>
+        ) : (
+          <>
+            {/* Banner Section - Always first */}
+            <div className='bg-white rounded-lg'>
+              <BannerSection servicePageId={pageId} initialBanner={banner} />
+            </div>
 
-        {/* Action Buttons */}
-        <div className='flex gap-4 pt-6 border-t border-slate-200'>
-          <Button
-            onClick={() => setShowReorderModal(true)}
-            variant='outline'
-            disabled={sectionOrder.length <= 1}
-          >
-            {locale === 'nl' ? 'Wijzig Volgorde' : 'Change Sections Order'}
-          </Button>
-          <Button
-            onClick={() => setShowPublishModal(true)}
-            className='ml-auto'
-          >
-            {locale === 'nl' ? 'Pagina Opslaan' : 'Save Page'}
-          </Button>
-        </div>
+            {/* Dynamic Sections */}
+            {sectionOrder.map((sectionKey) => {
+              if (sectionKey === 'banner') return null;
+
+              const Component = SECTION_COMPONENTS[sectionKey];
+              const sectionData = allSectionData[sectionKey as keyof typeof allSectionData];
+
+              if (!Component) return null;
+
+              return (
+                <div key={sectionKey} className='bg-white rounded-lg'>
+                  <SectionCard
+                    sectionName={SECTION_LABELS[sectionKey as keyof typeof SECTION_LABELS]?.[locale as 'nl' | 'en'] || sectionKey}
+                    onDelete={() => handleDeleteSection(sectionKey)}
+                    isDeleting={
+                      deleteSectionMutation.isPending &&
+                      deleteSectionMutation.variables?.sectionKey === sectionKey
+                    }
+                  >
+                    {Component({
+                      servicePageId: pageId,
+                      initialData: sectionData,
+                    })}
+                  </SectionCard>
+                </div>
+              );
+            })}
+          </>
+        )}
+
+        {!isInitialLoad && (
+          <>
+            {/* Add New Section */}
+            <div className='space-y-4 pt-6'>
+              <h3 className='text-lg font-semibold text-slate-900'>
+                {locale === 'nl' ? 'Sectie Beheer' : 'Section Management'}
+              </h3>
+
+              <AddSectionDropdown
+                availableSections={availableSections}
+                onAdd={handleAddSection}
+                isAdding={addSectionMutation.isPending}
+              />
+            </div>
+
+            {/* Action Buttons */}
+            <div className='flex gap-4 pt-6 border-t border-slate-200'>
+              <Button
+                onClick={() => setShowReorderModal(true)}
+                variant='outline'
+                disabled={sectionOrder.length <= 1}
+              >
+                {locale === 'nl' ? 'Wijzig Volgorde' : 'Change Sections Order'}
+              </Button>
+              <Button
+                onClick={() => setShowPublishModal(true)}
+                className='ml-auto'
+              >
+                {locale === 'nl' ? 'Pagina Opslaan' : 'Save Page'}
+              </Button>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Modals */}

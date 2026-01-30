@@ -4,6 +4,7 @@ import React, { Suspense, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
+import { Loader } from '@/components/ui/loader';
 import { ArrowLeft } from 'lucide-react';
 
 // Sections
@@ -25,8 +26,11 @@ function BlogPostBuilderContent() {
 
   // Fetch blog post and content data
   const { data: blogPost, isLoading: isLoadingPost } = useBlogPost(blogPostId || '');
-  const { data: content } = useBlogContent(blogPostId || '');
+  const { data: content, isLoading: isLoadingContent } = useBlogContent(blogPostId || '');
   const publishMutation = usePublishBlogPost();
+
+  // Check if any data is still loading
+  const isLoadingData = isLoadingPost || isLoadingContent;
 
   if (!blogPostId) {
     return (
@@ -38,13 +42,13 @@ function BlogPostBuilderContent() {
     );
   }
 
-  if (isLoadingPost) {
+  if (isLoadingData) {
     return (
-      <div className='p-6 text-center'>
-        <p className='text-slate-600'>
-          {locale === 'nl' ? 'Laden...' : 'Loading...'}
-        </p>
-      </div>
+      <Loader
+        size='md'
+        text={locale === 'nl' ? 'Laden...' : 'Loading...'}
+        className='min-h-[400px]'
+      />
     );
   }
 

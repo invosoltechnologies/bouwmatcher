@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -30,6 +30,14 @@ export default function ContentSection({
   const [contentEn, setContentEn] = useState(initialContent?.content_en || '');
 
   const saveMutation = useSaveBlogContent();
+
+  // Sync state with initialContent when it loads
+  useEffect(() => {
+    if (initialContent) {
+      setContentNl(initialContent.content_nl || '');
+      setContentEn(initialContent.content_en || '');
+    }
+  }, [initialContent]);
 
   const handleSave = async () => {
     try {

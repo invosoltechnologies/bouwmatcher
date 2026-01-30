@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -42,6 +42,18 @@ export default function IntroSection({
   );
 
   const saveMutation = useSaveServicePageIntro();
+
+  // Sync state with initialIntro when it loads
+  useEffect(() => {
+    if (initialIntro) {
+      setBackgroundImageUrl(initialIntro.background_image_url || '');
+      setBackgroundImageAlt(initialIntro.background_image_alt || '');
+      setHeadingNl(initialIntro.heading_nl || '');
+      setDescriptionNl(initialIntro.description_nl || '');
+      setHeadingEn(initialIntro.heading_en || '');
+      setDescriptionEn(initialIntro.description_en || '');
+    }
+  }, [initialIntro]);
 
   const handleSave = async () => {
     try {

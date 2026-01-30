@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -44,6 +44,18 @@ export default function BannerSection({
   const [excerptEn, setExcerptEn] = useState(initialContent?.excerpt_en || '');
 
   const saveMutation = useSaveBlogContent();
+
+  // Sync state with initialContent when it loads
+  useEffect(() => {
+    if (initialContent) {
+      setFeaturedImageUrl(initialContent.featured_image_url || '');
+      setFeaturedImageAlt(initialContent.featured_image_alt || '');
+      setTitleNl(initialContent.title_nl || '');
+      setExcerptNl(initialContent.excerpt_nl || '');
+      setTitleEn(initialContent.title_en || '');
+      setExcerptEn(initialContent.excerpt_en || '');
+    }
+  }, [initialContent]);
 
   const handleSave = async () => {
     try {
