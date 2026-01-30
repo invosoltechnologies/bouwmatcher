@@ -22,7 +22,7 @@ export default function FormProgress({ currentStep, totalSteps }: FormProgressPr
         {/* Progress Line */}
         <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200 -z-10">
           <div
-            className="h-full bg-blue-600 transition-all duration-300"
+            className="h-full bg-primary transition-all duration-300"
             style={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
           />
         </div>
@@ -40,10 +40,10 @@ export default function FormProgress({ currentStep, totalSteps }: FormProgressPr
                   transition-all duration-300 bg-white border-2
                   ${
                     isCompleted
-                      ? 'border-blue-600 bg-blue-600 text-white'
+                      ? 'border-accent bg-accent text-white'
                       : isCurrent
-                      ? 'border-blue-600 text-blue-600'
-                      : 'border-gray-300 text-gray-400'
+                      ? 'border-primary text-primary'
+                      : 'border-gray-300 text-secondary-foreground'
                   }
                 `}
               >
@@ -52,7 +52,7 @@ export default function FormProgress({ currentStep, totalSteps }: FormProgressPr
               <p
                 className={`
                   mt-2 text-sm font-medium text-center
-                  ${isCurrent ? 'text-blue-600' : isCompleted ? 'text-gray-700' : 'text-gray-400'}
+                  ${isCurrent ? 'text-primary' : isCompleted ? 'text-accent' : 'text-secondary-foreground'}
                 `}
               >
                 {step.label}
