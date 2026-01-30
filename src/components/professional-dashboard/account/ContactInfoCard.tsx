@@ -43,16 +43,18 @@ export default function ContactInfoCard({
         <CardTitle className='text-xl font-medium leading-normal'>
           {t('title')}
         </CardTitle>
-        <CardAction>
-          <Button
-            variant='outline'
-            size='default'
-            onClick={onEdit}
-            className='text-primary border-primary font-medium text-base rounded-xl px-6'
-          >
-            {t('edit')}
-          </Button>
-        </CardAction>
+        {onEdit && (
+          <CardAction>
+            <Button
+              variant='outline'
+              size='default'
+              onClick={onEdit}
+              className='text-primary border-primary font-medium text-base rounded-xl px-6'
+            >
+              {t('edit')}
+            </Button>
+          </CardAction>
+        )}
       </CardHeader>
       <CardContent className='p-0'>
         <div className='space-y-4'>

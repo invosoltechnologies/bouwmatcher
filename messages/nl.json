@@ -932,6 +932,16 @@
           "generalEmail": "E-mailadres (algemeen)",
           "phoneNumber": "Telefoonnummer"
         },
+        "companyInfo": {
+          "title": "Bedrijfsgegevens",
+          "edit": "Wijzig",
+          "companyName": "Bedrijfsnaam",
+          "address": "Adres",
+          "postalCode": "Postcode",
+          "city": "Plaats",
+          "website": "Website",
+          "businessId": "Bedrijfs ID"
+        },
         "workArea": {
           "title": "Werkgebied",
           "edit": "Wijzig",

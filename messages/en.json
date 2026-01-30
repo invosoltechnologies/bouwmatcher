@@ -934,6 +934,16 @@
           "generalEmail": "Email address (general)",
           "phoneNumber": "Phone number"
         },
+        "companyInfo": {
+          "title": "Company information",
+          "edit": "Edit",
+          "companyName": "Company name",
+          "address": "Address",
+          "postalCode": "Postal code",
+          "city": "City",
+          "website": "Website",
+          "businessId": "Business ID"
+        },
         "workArea": {
           "title": "Work area",
           "edit": "Edit",

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import {
   Card,
   CardHeader,
@@ -27,31 +28,35 @@ export default function CompanyInfoCard({
   companyInfo,
   onEdit,
 }: CompanyInfoCardProps) {
+  const t = useTranslations('common.proDashboard.account.companyInfo');
+
   const fields = [
-    { label: 'Bedrijfsnaam', value: companyInfo.companyName },
-    { label: 'Adres', value: companyInfo.address },
-    { label: 'Postcode', value: companyInfo.postalCode },
-    { label: 'Plaats', value: companyInfo.city },
-    { label: 'Website', value: companyInfo.website },
-    { label: 'Bedrijfs ID', value: companyInfo.businessId },
+    { label: t('companyName'), value: companyInfo.companyName },
+    { label: t('address'), value: companyInfo.address },
+    { label: t('postalCode'), value: companyInfo.postalCode },
+    { label: t('city'), value: companyInfo.city },
+    { label: t('website'), value: companyInfo.website },
+    { label: t('businessId'), value: companyInfo.businessId },
   ];
 
   return (
     <Card className='px-5 gap-4'>
       <CardHeader className='p-0 gap-0'>
         <CardTitle className='text-xl leading-normal'>
-          Bedrijfsgegevens
+          {t('title')}
         </CardTitle>
-        <CardAction>
-          <Button
-            variant='outline'
-            size='default'
-            onClick={onEdit}
-            className='text-primary border-primary font-noramal text-base rounded-xl'
-          >
-            Wijzig
-          </Button>
-        </CardAction>
+        {onEdit && (
+          <CardAction>
+            <Button
+              variant='outline'
+              size='default'
+              onClick={onEdit}
+              className='text-primary border-primary font-noramal text-base rounded-xl'
+            >
+              {t('edit')}
+            </Button>
+          </CardAction>
+        )}
       </CardHeader>
       <CardContent className='p-0'>
         <div className='space-y-4'>
