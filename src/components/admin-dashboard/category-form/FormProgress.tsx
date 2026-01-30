@@ -5,10 +5,10 @@ import { useTranslations } from 'next-intl';
 
 interface FormProgressProps {
   currentStep: number;
-  totalSteps: number;
+  totalSteps?: number;
 }
 
-export default function FormProgress({ currentStep, totalSteps }: FormProgressProps) {
+export default function FormProgress({ currentStep }: FormProgressProps) {
   const t = useTranslations('common.adminDashboard.categoryForm.progress');
 
   const steps = [
@@ -19,13 +19,40 @@ export default function FormProgress({ currentStep, totalSteps }: FormProgressPr
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between relative">
-        {/* Progress Line */}
-        <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200 -z-10">
+        {/* Progress Line Background with shimmer effect */}
+        <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200 -z-10 overflow-hidden">
           <div
-            className="h-full bg-primary transition-all duration-300"
-            style={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
+            className="absolute inset-0 shimmer-effect"
+            style={{
+              background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%)',
+              backgroundSize: '200% 100%',
+            }}
           />
         </div>
+
+        {/* Step 1 - Primary color up to Step 1 */}
+        {currentStep === 1 && (
+          <div
+            className="absolute top-5 left-0 h-0.5 bg-primary transition-all duration-500 -z-10"
+            style={{ width: '50%' }}
+          />
+        )}
+
+        {/* Step 2 - Accent (first half) + Primary (second half) */}
+        {currentStep === 2 && (
+          <>
+            {/* First half - Accent color */}
+            <div
+              className="absolute top-5 left-0 h-0.5 bg-accent transition-all duration-500 -z-10"
+              style={{ width: '50%' }}
+            />
+            {/* Second half - Primary color */}
+            <div
+              className="absolute top-5 h-0.5 bg-primary transition-all duration-500 -z-10"
+              style={{ left: '50%', width: '50%' }}
+            />
+          </>
+        )}
 
         {/* Steps */}
         {steps.map((step) => {
@@ -64,6 +91,20 @@ export default function FormProgress({ currentStep, totalSteps }: FormProgressPr
           );
         })}
       </div>
+
+      <style jsx>{`
+        @keyframes shimmer {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(100%);
+          }
+        }
+        .shimmer-effect {
+          animation: shimmer 2s infinite;
+        }
+      `}</style>
     </div>
   );
 }
