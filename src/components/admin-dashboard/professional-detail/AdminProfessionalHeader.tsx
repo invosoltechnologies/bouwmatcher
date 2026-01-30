@@ -107,13 +107,13 @@ export default function AdminProfessionalHeader({
         <Button
           variant="ghost"
           onClick={onBack}
-          className="text-slate-600 hover:text-slate-900 gap-2"
+          className="text-slate-600 hover:text-white gap-2"
         >
           <ArrowLeft className="w-4 h-4" />
           Terug naar professionals
         </Button>
 
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           {onContact && (
             <Button variant="outline" onClick={onContact} className="gap-2">
               Contact
@@ -151,7 +151,7 @@ export default function AdminProfessionalHeader({
               Deblokkeren
             </Button>
           )}
-        </div>
+        </div> */}
       </div>
 
       {/* Professional Header Card */}

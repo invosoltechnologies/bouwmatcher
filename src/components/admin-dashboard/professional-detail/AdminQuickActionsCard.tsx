@@ -36,7 +36,7 @@ export default function AdminQuickActionsCard({
               variant="outline"
               onClick={onContact}
               disabled={isLoading}
-              className="w-full justify-start gap-3 border-primary text-primary hover:bg-primary/5"
+              className="w-full justify-start gap-3 border-primary text-primary hover:bg-primary"
             >
               <Mail className="w-4 h-4" />
               Contact Opnemen
@@ -48,7 +48,7 @@ export default function AdminQuickActionsCard({
             <Button
               onClick={onVerify}
               disabled={isLoading}
-              className="w-full justify-start gap-3 bg-green-600 hover:bg-green-700"
+              className="w-full justify-start gap-3 bg-green-600 hover:bg-green"
             >
               <CheckCircle2 className="w-4 h-4" />
               Verifiëren
@@ -61,7 +61,7 @@ export default function AdminQuickActionsCard({
               variant="outline"
               onClick={onUnverify}
               disabled={isLoading}
-              className="w-full justify-start gap-3 border-amber-600 text-amber-600 hover:bg-amber-50"
+              className="w-full justify-start gap-3 border-amber-600 text-amber-600 hover:bg-amber-400"
             >
               <CheckCircle2 className="w-4 h-4" />
               Niet Verifiëren
@@ -74,7 +74,7 @@ export default function AdminQuickActionsCard({
               variant="outline"
               onClick={onBlock}
               disabled={isLoading}
-              className="w-full justify-start gap-3 border-red-600 text-red-600 hover:bg-red-50"
+              className="w-full justify-start gap-3 border-red-600 text-red-600 hover:bg-red-400"
             >
               <UserRoundX className="w-4 h-4" />
               Blokkeren
@@ -86,7 +86,7 @@ export default function AdminQuickActionsCard({
             <Button
               onClick={onUnblock}
               disabled={isLoading}
-              className="w-full justify-start gap-3 bg-blue-600 hover:bg-blue-700"
+              className="w-full justify-start gap-3 bg-blue-600 hover:bg-blue-500"
             >
               <CheckCircle2 className="w-4 h-4" />
               Deblokkeren
