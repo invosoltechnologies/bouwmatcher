@@ -154,6 +154,18 @@ export async function GET(
       .eq('project_id', id)
       .order('display_order', { ascending: true });
 
+    // Convert storage paths to full URLs
+    const photosWithUrls = photos?.map(photo => {
+      const { data: { publicUrl } } = supabase.storage
+        .from('project-photos')
+        .getPublicUrl(photo.storage_path);
+
+      return {
+        ...photo,
+        storage_path: publicUrl
+      };
+    }) || [];
+
     // Fetch form answers
     const { data: answers } = await supabase
       .from('project_form_answers')
@@ -178,7 +190,7 @@ export async function GET(
 
     return NextResponse.json({
       lead: maskedProject,
-      photos: photos || [],
+      photos: photosWithUrls,
       answers: answers || [],
       is_locked: !isPaid,
     });

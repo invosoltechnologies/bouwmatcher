@@ -100,6 +100,9 @@ export async function GET() {
         project_professionals (
           professional_id,
           professional_email
+        ),
+        project_photos (
+          id
         )
       `)
       .in('subcategory_id', subcategoryIds)
@@ -173,6 +176,7 @@ export async function GET() {
         assigned_professional_id: project.assigned_professional_id,
         assignment_status: assignmentStatus,
         is_assigned_to_me: isAssignedToCurrentProfessional,
+        photo_count: Array.isArray(project.project_photos) ? project.project_photos.length : 0,
       };
     });
 

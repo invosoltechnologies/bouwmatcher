@@ -155,7 +155,7 @@ export default function OfferteaanvragenPageClient() {
         date,
         isLocked: lead.is_locked, // Use the actual locked status from API
         hasPhotos: lead.has_photos,
-        photoCount: lead.has_photos ? 3 : 0, // We don't have exact count, using placeholder
+        photoCount: lead.photo_count || 0, // Use actual count from API
         isAvailable: true, // Lead is available if it's in the list
         assignmentStatus: lead.assignment_status || 'available',
         projectStatus: lead.status,
