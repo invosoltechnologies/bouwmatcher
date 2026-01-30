@@ -117,11 +117,11 @@ export default function PurchaseDetailsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span>Factuur Details</span>
-            <Button variant="outline" size="sm" onClick={handlePrint}>
+            <Button variant="outline" className='mr-6'  onClick={handlePrint}>
               <Printer className="h-4 w-4 mr-2" />
               Print
             </Button>

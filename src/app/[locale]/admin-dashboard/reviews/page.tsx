@@ -234,7 +234,7 @@ export default function AdminReviewsPage() {
   };
 
   return (
-    <div >
+    <div className='custom-container'>
       {/* Stats Cards Section */}
       <div className='mb-6'>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

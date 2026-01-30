@@ -450,7 +450,7 @@ export default function ReviewsTable({
 
   return (
     <div className="w-full">
-      <div className="rounded-md border">
+      <div className="w-full border rounded-lg overflow-x-auto">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
