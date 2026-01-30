@@ -83,36 +83,62 @@ export async function POST(
       );
     }
 
-    // If subcategory already exists in this category, skip creation and return the existing one
+    // If subcategory already exists in this category, update it
     if (existingSubcategory && existingSubcategory.service_category_id === parseInt(categoryId)) {
-      const { data: existingSubcategoryFull, error: fetchError } = await supabase
+      const { data: updatedSubcategory, error: updateError } = await supabase
         .from('service_subcategories')
-        .select('*')
+        .update({
+          name_nl,
+          name_en,
+          description_nl: description_nl || null,
+          description_en: description_en || null,
+          price_particulier,
+          price_zakelijk,
+          sort_order: sort_order || 0,
+          updated_at: new Date().toISOString(),
+        })
         .eq('id', existingSubcategory.id)
+        .select()
         .single();
 
-      if (fetchError) {
-        console.error('Error fetching existing subcategory:', fetchError);
+      if (updateError) {
+        console.error('Error updating subcategory:', updateError);
         return NextResponse.json(
-          { error: 'Failed to fetch existing subcategory' },
+          { error: 'Failed to update subcategory' },
           { status: 500 }
         );
       }
 
+      // Update the root question option label if name changed
+      const rootOptionId = `opt-${category.slug}-root-${existingSubcategory.id}`;
+      const { error: updateOptionError } = await supabase
+        .from('project_form_question_options')
+        .update({
+          option_label_nl: name_nl,
+          option_label_en: name_en,
+          order_index: sort_order || 0,
+        })
+        .eq('id', rootOptionId);
+
+      if (updateOptionError) {
+        console.error('Error updating root question option:', updateOptionError);
+        // Don't fail the entire request, just log the error
+      }
+
       const response: SubcategoryResponse = {
-        id: existingSubcategoryFull.id,
-        name_nl: existingSubcategoryFull.name_nl,
-        name_en: existingSubcategoryFull.name_en,
-        slug: existingSubcategoryFull.slug,
-        description_nl: existingSubcategoryFull.description_nl,
-        description_en: existingSubcategoryFull.description_en,
-        price_particulier: parseFloat(existingSubcategoryFull.price_particulier),
-        price_zakelijk: parseFloat(existingSubcategoryFull.price_zakelijk),
-        icon_url: existingSubcategoryFull.icon_url,
-        sort_order: existingSubcategoryFull.sort_order,
-        service_category_id: existingSubcategoryFull.service_category_id,
-        created_at: existingSubcategoryFull.created_at,
-        updated_at: existingSubcategoryFull.updated_at,
+        id: updatedSubcategory.id,
+        name_nl: updatedSubcategory.name_nl,
+        name_en: updatedSubcategory.name_en,
+        slug: updatedSubcategory.slug,
+        description_nl: updatedSubcategory.description_nl,
+        description_en: updatedSubcategory.description_en,
+        price_particulier: parseFloat(updatedSubcategory.price_particulier),
+        price_zakelijk: parseFloat(updatedSubcategory.price_zakelijk),
+        icon_url: updatedSubcategory.icon_url,
+        sort_order: updatedSubcategory.sort_order,
+        service_category_id: updatedSubcategory.service_category_id,
+        created_at: updatedSubcategory.created_at,
+        updated_at: updatedSubcategory.updated_at,
       };
 
       return NextResponse.json(response, { status: 200 });
