@@ -10,12 +10,12 @@ export default function PartnersSection() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const partners = [
-    { id: 1, image: '/images/homepage/partners/partner.png', alt: 'Partner 1' },
-    { id: 2, image: '/images/homepage/partners/partner.png', alt: 'Partner 2' },
-    { id: 3, image: '/images/homepage/partners/partner.png', alt: 'Partner 3' },
-    { id: 4, image: '/images/homepage/partners/partner.png', alt: 'Partner 4' },
-    { id: 5, image: '/images/homepage/partners/partner.png', alt: 'Partner 5' },
-    { id: 6, image: '/images/homepage/partners/partner.png', alt: 'Partner 6' },
+    { id: 1, image: '/images/homepage/partners/bouwdepot.png', alt: 'Bouwdepot' },
+    { id: 2, image: '/images/homepage/partners/gedimat.png', alt: 'Gedimat' },
+    // { id: 3, image: '/images/homepage/partners/partner.png', alt: 'Partner 3' },
+    // { id: 4, image: '/images/homepage/partners/partner.png', alt: 'Partner 4' },
+    // { id: 5, image: '/images/homepage/partners/partner.png', alt: 'Partner 5' },
+    // { id: 6, image: '/images/homepage/partners/partner.png', alt: 'Partner 6' },
   ];
 
   return (
