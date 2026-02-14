@@ -127,6 +127,16 @@
       "verified": "Verified"
     }
   },
+  "service": {
+    "banner": {
+      "trustPills": [
+        "Honesty",
+        "Transparency",
+        "Goal-oriented",
+        "No false promises"
+      ]
+    }
+  },
   "auth": {
     "hero": {
       "heading": "New projects always within reach",

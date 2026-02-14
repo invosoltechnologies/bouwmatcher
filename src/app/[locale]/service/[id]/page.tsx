@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import ServiceBanner from '@/components/Service/ServiceBanner';
 import DefaultLayout from '@/components/DefaultLayout';
 import { createClient } from '@/lib/supabase/server';
@@ -36,13 +37,6 @@ interface CmsDataResponse {
     name_en: string;
   };
 }
-
-const trustPills = [
-  { text: 'Eerlijkheid', dotColor: '#0AB27E' },
-  { text: 'Transparantie', dotColor: '#0AB27E' },
-  { text: 'Doelgericht', dotColor: '#0AB27E' },
-  { text: 'Geen valse beloften', dotColor: '#0AB27E' },
-];
 
 // Architect FAQ data - customize per service
 const architectFaqItems = [
@@ -447,6 +441,13 @@ const createSectionRenderer = (): Record<string, SectionRenderer> => ({
 
 export default async function ServicePage({ params }: ServicePageProps) {
   const { id, locale } = await params;
+
+  const t = await getTranslations('service.banner');
+  const trustPillsData = t.raw('trustPills') as string[];
+  const trustPills = trustPillsData.map((text) => ({
+    text,
+    dotColor: '#0AB27E',
+  }));
 
   const supabase = await createClient();
 

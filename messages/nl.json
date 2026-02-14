@@ -127,6 +127,16 @@
       "verified": "Geverifieerd"
     }
   },
+  "service": {
+    "banner": {
+      "trustPills": [
+        "Eerlijkheid",
+        "Transparantie",
+        "Doelgericht",
+        "Geen valse beloften"
+      ]
+    }
+  },
   "auth": {
     "hero": {
       "heading": "Altijd nieuwe opdrachten binnen handbereik",
