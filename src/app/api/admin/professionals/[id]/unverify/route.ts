@@ -23,11 +23,12 @@ export async function POST(
       );
     }
 
-    // Update professional profile to unverified (keep is_active as true)
+    // Update professional profile to unverified and ensure is_active is true
     const { data, error } = await supabase
       .from('professional_profiles')
       .update({
         is_verified: 'unverified',
+        is_active: true,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)

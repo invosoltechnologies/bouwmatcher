@@ -27,6 +27,7 @@ export async function POST(
       .from('professional_profiles')
       .update({
         is_verified: 'verified',
+        is_active: true,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)

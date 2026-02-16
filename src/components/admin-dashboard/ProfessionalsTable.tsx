@@ -512,8 +512,8 @@ export default function ProfessionalsTable({
                   Zie Profiel
                 </DropdownMenuItem>
 
-                {/* Show Verify option only for unverified users */}
-                {professional.status === 'unverified' && (
+                {/* Show Verify option only for unverified or pending users */}
+                {(professional.status === 'unverified' || professional.status === 'pending') && (
                   <DropdownMenuItem
                     onClick={() => openVerifyDialog(professional.id, professional.name)}
                     className="text-green-600"
