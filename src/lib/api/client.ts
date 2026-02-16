@@ -56,6 +56,7 @@ class ApiClient {
 
       // Handle error responses
       if (!response.ok) {
+        console.error(`API Error [${response.status}] ${url}:`, data);
         throw new ApiError(
           data.error || 'An error occurred',
           response.status,
