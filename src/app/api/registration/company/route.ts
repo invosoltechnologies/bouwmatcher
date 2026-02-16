@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     // Link user to company via company_id in professional_profiles
     // Determine verification status based on whether company was found via API
     const verificationStatus = isFromApi ? 'verified' : 'pending';
-    const isActive = isFromApi ? true : false;
+    const isActive = true; // Always active so user can log in
 
     // Get user email to populate quotes_email and invoices_email
     const { data: userEmail } = await supabase
