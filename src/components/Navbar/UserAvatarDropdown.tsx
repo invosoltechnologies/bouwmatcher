@@ -36,10 +36,12 @@ export default function UserAvatarDropdown() {
   const t = useTranslations('common');
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [open, setOpen] = useState(false);
-  const { data: adminStatusData } = useAdminStatus();
-  const { data: professionalData, isLoading: isProfessionalLoading } = useAccount();
-
+  const { data: adminStatusData, isLoading: isAdminLoading } = useAdminStatus();
   const isAdmin = adminStatusData?.isAdmin || false;
+  const { data: professionalData, isLoading: isProfessionalLoading } = useAccount({
+    enabled: !isAdminLoading && !isAdmin,
+  });
+
 
   const handleLogout = async () => {
     if (isLoggingOut) return;

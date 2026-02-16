@@ -12,11 +12,16 @@ export const accountKeys = {
   detail: () => [...accountKeys.all, 'detail'] as const,
 };
 
-export function useAccount() {
+interface UseAccountOptions {
+  enabled?: boolean;
+}
+
+export function useAccount(options: UseAccountOptions = {}) {
   return useQuery<GetAccountResponse>({
     queryKey: accountKeys.detail(),
     queryFn: getAccount,
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 10, // 10 minutes (formerly cacheTime)
+    ...options,
   });
 }
