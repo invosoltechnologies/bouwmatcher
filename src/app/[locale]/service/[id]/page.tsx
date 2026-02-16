@@ -524,7 +524,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
         description: locale === 'nl'
           ? (cmsData.banner.description_nl as string) || ''
           : (cmsData.banner.description_en as string) || '',
-        backgroundImage: (cmsData.banner.background_image as string) || '/images/services/service-bg.png',
+        backgroundImage: (cmsData.banner.background_image_url as string) || (cmsData.banner.background_image as string) || '/images/services/service-bg.png',
       }
     : {
         heading: locale === 'nl' ? 'Vind en vergelijk' : 'Find and compare',

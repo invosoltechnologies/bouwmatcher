@@ -27,6 +27,7 @@ export default function ServiceBanner({
   backgroundImage,
   trustPills,
 }: ServiceBannerProps) {
+
   return (
     <>
       {/* Banner Section */}
