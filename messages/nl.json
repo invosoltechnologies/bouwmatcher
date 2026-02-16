@@ -916,7 +916,8 @@
       "logout": "Log uit",
       "loggingOut": "Uitloggen...",
       "logoutSuccess": "Succesvol uitgelogd",
-      "logoutError": "Kon niet uitloggen. Probeer het opnieuw."
+      "logoutError": "Kon niet uitloggen. Probeer het opnieuw.",
+       "noResultsFound": "Geen resultaten gevonden."
     },
     "proDashboard": {
       "navigation": {

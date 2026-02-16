@@ -14,6 +14,7 @@ import { adminNavigation } from "@/config/admin-dashboard";
 import { useAdminStatus } from "@/lib/hooks/useAdminStatus";
 import { toast } from "react-hot-toast";
 import { useTranslations } from 'next-intl';
+import NavBarSearch from "./NavBarSearch";
 
 // Map of Lucide icon names to components
 const lucideIcons: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -176,16 +177,7 @@ export default function Navbar() {
           {/* Right Side - Search, Login, Language Switcher, Menu */}
           <div className='flex items-center space-x-3 md:space-x-6'>
             {/* Search Bar - Desktop only */}
-            <div className='hidden lg:flex items-center'>
-              <div className='relative'>
-                <Search className='absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5 z-10' />
-                <Input
-                  type='search'
-                  placeholder={t('searchPlaceholder')}
-                  className='pl-12 pr-4 py-[14px] w-80 bg-[#F8F8F8] border border-gray-200 rounded-[12px] text-[#111111] placeholder-muted-foreground hover:border-ring focus:border-ring focus:bg-[#F8F8F8] h-[42px] text-lg'
-                />
-              </div>
-            </div>
+            <NavBarSearch />
 
             {/* User Avatar or Login Button - Desktop */}
             {!loading && (
