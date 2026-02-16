@@ -184,7 +184,7 @@ export default function AdminDashboardPage() {
       {/* Recent Professionals Table - Full Width */}
       <ProfessionalsTable
         professionals={transformedProfessionals}
-        onViewProfile={(id) => console.log('View profile:', id)}
+        onViewProfile={(id) => router.push(`/admin-dashboard/professionals/${id}`)}
         onViewAll={() => router.push('/admin-dashboard/professionals')}
       />
 
