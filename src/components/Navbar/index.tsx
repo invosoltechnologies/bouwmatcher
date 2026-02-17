@@ -88,12 +88,13 @@ export default function Navbar() {
       setIsMobileMenuOpen(false);
       setIsAccountMenuOpen(false);
 
-      // Redirect to home page and reload to clear auth state
-      router.push('/');
-
-      // Use window.location.reload() to ensure complete state reset
+      // Give auth state a moment to update before redirecting
       setTimeout(() => {
-        window.location.reload();
+        router.push('/');
+        // Reload after a short delay to ensure clean state
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 500);
       }, 100);
     } catch (error) {
       console.error('Logout error:', error);
