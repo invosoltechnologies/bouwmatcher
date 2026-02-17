@@ -1270,7 +1270,11 @@
         "verificationBanner": {
           "title": "Nog niet geverifieerd",
           "description": "Rond de verificatie af om direct toegang te krijgen tot interessante aanvragen. Tot die tijd kun je ze alleen bekijken. Het proces is kort, eenvoudig en verhoogt de veiligheid voor iedereen.",
-          "completeButton": "Verificatie voltooien"
+          "completeButton": "Verificatie voltooien",
+          "inTreatment": {
+            "title": "Verificatie in behandeling",
+            "description": "Je verificatieverzoek wordt momenteel beoordeeld door ons team. Je ontvangt binnenkort een update."
+          }
         },
         "filterSection": {
           "dateFromLabel": "Datum vanaf",
@@ -1330,6 +1334,15 @@
           "verificationRequired": "Verificatie vereist",
           "verificationMessage": "Je moet geverifieerd zijn om lead details te bekijken. Voltooi de verificatie om toegang te krijgen tot interessante aanvragen.",
           "verificationButton": "Verificatie voltooien",
+          "verificationInProgressModal": {
+            "title": "Verificatie in behandeling",
+            "description": "Je verificatieverzoek wordt momenteel door ons team beoordeeld. Onze beheerders zullen je snel informeren over de status van je verificatie.",
+            "adminContactLabel": "Neem contact op met onze beheerder:",
+            "copyButton": "Kopiëren",
+            "copiedButton": "Gekopieerd!",
+            "closeButton": "Sluiten",
+            "expectedResponseTime": "Verwachte responstijd: 24-48 uur"
+          },
           "error": "Er is een fout opgetreden",
           "unlockWarningTitle": "Wil je reageren op deze opdracht?",
           "unlockWarningDescription": "Ontgrendel de contactgegevens door je account te verifiëren en het toegangstarief te betalen.",

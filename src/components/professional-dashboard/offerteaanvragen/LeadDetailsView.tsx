@@ -12,6 +12,7 @@ import { useLeadDetails } from '@/lib/hooks/professional/leads';
 import { useAccount } from '@/lib/hooks/professional/account';
 import PurchaseLeadDialog from './PurchaseLeadDialog';
 import LeadDetailsSidebar from './LeadDetailsSidebar';
+import VerificationInProgressModal from './VerificationInProgressModal';
 import { PurchaseLeadDialogData } from '@/types/models/payment.model';
 
 interface LeadDetailsViewProps {
@@ -28,6 +29,7 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
   const [showPurchaseDialog, setShowPurchaseDialog] = useState(false);
   const [purchaseDialogData, setPurchaseDialogData] = useState<PurchaseLeadDialogData | null>(null);
   const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   // Handle responsive sidebar rendering
   useEffect(() => {
@@ -64,40 +66,48 @@ export default function LeadDetailsView({ leadId, onClose }: LeadDetailsViewProp
                                  error?.message?.includes('geverifieerd');
 
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-center max-w-md px-4">
-          {isVerificationError ? (
-            <>
-              <div className="mb-4">
-                <div className="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4">
-                  <Lock className="w-8 h-8 text-yellow-600" />
+      <>
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center max-w-md px-4">
+            {isVerificationError ? (
+              <>
+                <div className="mb-4">
+                  <div className="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-4">
+                    <Lock className="w-8 h-8 text-yellow-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
+                    {t('verificationRequired')}
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    {t('verificationMessage')}
+                  </p>
                 </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {t('verificationRequired')}
-                </h3>
-                <p className="text-muted-foreground mb-4">
-                  {t('verificationMessage')}
-                </p>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Button onClick={onClose} variant="outline">
+                    {t('backToOverview')}
+                  </Button>
+                  <Button onClick={() => setShowVerificationModal(true)}>
+                    {t('verificationButton')}
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="text-destructive mb-2">{t('error')}</p>
                 <Button onClick={onClose} variant="outline">
                   {t('backToOverview')}
                 </Button>
-                <Button onClick={() => window.location.href = '/pro-dashboard/profiel'}>
-                  {t('verificationButton')}
-                </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <p className="text-destructive mb-2">{t('error')}</p>
-              <Button onClick={onClose} variant="outline">
-                {t('backToOverview')}
-              </Button>
-            </>
-          )}
+              </>
+            )}
+          </div>
         </div>
-      </div>
+
+        {/* Verification In Progress Modal */}
+        <VerificationInProgressModal
+          isOpen={showVerificationModal}
+          onClose={() => setShowVerificationModal(false)}
+        />
+      </>
     );
   }
 

@@ -1272,7 +1272,11 @@
         "verificationBanner": {
           "title": "Not yet verified",
           "description": "Complete verification to get immediate access to interesting requests. Until then, you can only view them. The process is short, simple and increases security for everyone.",
-          "completeButton": "Complete verification"
+          "completeButton": "Complete verification",
+          "inTreatment": {
+            "title": "Verification in progress",
+            "description": "Your verification request is currently being reviewed by our team. You will receive an update soon."
+          }
         },
         "filterSection": {
           "dateFromLabel": "Date from",
@@ -1332,6 +1336,15 @@
           "verificationRequired": "Verification required",
           "verificationMessage": "You must be verified to view lead details. Complete verification to get access to interesting requests.",
           "verificationButton": "Complete verification",
+          "verificationInProgressModal": {
+            "title": "Verification in Progress",
+            "description": "Your verification request is currently being reviewed by our team. Our administrators will inform you about the status of your verification shortly.",
+            "adminContactLabel": "Contact our administrator:",
+            "copyButton": "Copy",
+            "copiedButton": "Copied!",
+            "closeButton": "Close",
+            "expectedResponseTime": "Expected response time: 24-48 hours"
+          },
           "error": "An error occurred",
           "unlockWarningTitle": "Want to respond to this assignment?",
           "unlockWarningDescription": "Unlock contact details by verifying your account and paying the access fee.",
