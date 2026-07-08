@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import ServiceBanner from '@/components/Service/ServiceBanner';
 import DefaultLayout from '@/components/DefaultLayout';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js';
 import ServiceIntroduction from '@/components/Service/ServiceIntroduction';
 import ServiceFAQ from '@/components/Service/ServiceFAQ';
 import ServicePriceComparison from '@/components/Service/ServicePriceComparison';
@@ -449,7 +449,10 @@ export default async function ServicePage({ params }: ServicePageProps) {
     dotColor: '#0AB27E',
   }));
 
-  const supabase = await createClient();
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
+  );
 
   const { data: service, error } = await supabase
     .from('service_categories')
